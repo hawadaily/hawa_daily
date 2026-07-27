@@ -337,6 +337,7 @@ export default function AdminDashboard() {
   const [overlayText, setOverlayText] = useState('');
   const [overlayText2, setOverlayText2] = useState('');
   const [bannerColor, setBannerColor] = useState('#000000');
+  const [gradientColor, setGradientColor] = useState('#000000');
   const [fontSize, setFontSize] = useState(40);
   const [fontColor, setFontColor] = useState('#ffffff');
   const [fontStyle, setFontStyle] = useState<'normal' | 'bold' | 'italic' | 'bold italic'>('bold');
@@ -373,6 +374,33 @@ export default function AdminDashboard() {
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0);
+
+      // Add gradient overlay (transparent at bottom, color at top of gradient)
+      const gradientHeight = canvas.height / 2;
+      const gradient = ctx.createLinearGradient(0, canvas.height - gradientHeight, 0, canvas.height);
+      
+      // Parse hex color to RGB
+      const hexToRgb = (hex: string) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : { r: 0, g: 0, b: 0 };
+      };
+      
+      const rgb = hexToRgb(gradientColor);
+      
+      gradient.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);      // 100% transparent (top)
+      gradient.addColorStop(0.15, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.05)`);  // 95% transparent
+      gradient.addColorStop(0.3, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`);   // 85% transparent
+      gradient.addColorStop(0.45, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`);  // 65% transparent
+      gradient.addColorStop(0.6, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.6)`);    // 40% transparent
+      gradient.addColorStop(0.75, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.8)`);   // 20% transparent
+      gradient.addColorStop(0.9, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.95)`);   // 5% transparent
+      gradient.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`);      // 0% transparent (fully opaque)
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, canvas.height - gradientHeight, canvas.width, gradientHeight);
 
       const logo = new Image();
       logo.onload = () => {
@@ -492,14 +520,7 @@ export default function AdminDashboard() {
             bannerWidth = textWidth + bannerPadding * 2;
           }
 
-          ctx.fillStyle = bannerColor;
-          ctx.fillRect(
-            bannerX,
-            text1Y - textHeight,
-            bannerWidth,
-            textHeight + 10
-          );
-
+          // Remove text background - gradient overlay provides contrast
           ctx.fillStyle = fontColor;
           ctx.fillText(overlayText, textX, text1Y);
         }
@@ -542,14 +563,7 @@ export default function AdminDashboard() {
             bannerWidth = textWidth + bannerPadding * 2;
           }
 
-          ctx.fillStyle = bannerColor;
-          ctx.fillRect(
-            bannerX,
-            text2Y - textHeight,
-            bannerWidth,
-            textHeight + 10
-          );
-
+          // Remove text background - gradient overlay provides contrast
           ctx.fillStyle = fontColor;
           ctx.fillText(overlayText2, textX, text2Y);
         }
@@ -559,6 +573,33 @@ export default function AdminDashboard() {
       };
 
       logo.onerror = () => {
+        // Add gradient overlay (transparent at bottom, color at top of gradient)
+        const gradientHeight = canvas.height / 2;
+        const gradient = ctx.createLinearGradient(0, canvas.height - gradientHeight, 0, canvas.height);
+        
+        // Parse hex color to RGB
+        const hexToRgb = (hex: string) => {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+          } : { r: 0, g: 0, b: 0 };
+        };
+        
+        const rgb = hexToRgb(gradientColor);
+        
+        gradient.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);      // 100% transparent (top)
+        gradient.addColorStop(0.15, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.05)`);  // 95% transparent
+        gradient.addColorStop(0.3, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`);   // 85% transparent
+        gradient.addColorStop(0.45, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`);  // 65% transparent
+        gradient.addColorStop(0.6, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.6)`);    // 40% transparent
+        gradient.addColorStop(0.75, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.8)`);   // 20% transparent
+        gradient.addColorStop(0.9, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.95)`);   // 5% transparent
+        gradient.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`);      // 0% transparent (fully opaque)
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, canvas.height - gradientHeight, canvas.width, gradientHeight);
+
         // Draw text lines without logo with independent positions
         const fontName = dhivehiFontRef.current ? 'Dhivehi' : 'Arial';
         ctx.font = `${fontStyle} ${fontSize}px ${fontName}`;
@@ -634,14 +675,7 @@ export default function AdminDashboard() {
             bannerWidth = textWidth + bannerPadding * 2;
           }
 
-          ctx.fillStyle = bannerColor;
-          ctx.fillRect(
-            bannerX,
-            text1Y - textHeight,
-            bannerWidth,
-            textHeight + 10
-          );
-
+          // Remove text background - gradient overlay provides contrast
           ctx.fillStyle = fontColor;
           ctx.fillText(overlayText, textX, text1Y);
         }
@@ -684,14 +718,7 @@ export default function AdminDashboard() {
             bannerWidth = textWidth + bannerPadding * 2;
           }
 
-          ctx.fillStyle = bannerColor;
-          ctx.fillRect(
-            bannerX,
-            text2Y - textHeight,
-            bannerWidth,
-            textHeight + 10
-          );
-
+          // Remove text background - gradient overlay provides contrast
           ctx.fillStyle = fontColor;
           ctx.fillText(overlayText2, textX, text2Y);
         }
@@ -704,7 +731,7 @@ export default function AdminDashboard() {
     };
 
     img.src = uploadedImage;
-  }, [uploadedImage, overlayText, overlayText2, bannerColor, fontSize, fontColor, fontStyle, logoPosition, logoOpacity, textPosition, textPosition2]);
+  }, [uploadedImage, overlayText, overlayText2, bannerColor, gradientColor, fontSize, fontColor, fontStyle, logoPosition, logoOpacity, textPosition, textPosition2]);
   
   // Notifications state
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -1715,6 +1742,20 @@ export default function AdminDashboard() {
                       className="h-10 w-16 rounded-lg border border-gray-300 bg-white cursor-pointer"
                     />
                     <span className="text-sm text-gray-600">{bannerColor}</span>
+                  </div>
+                </div>
+
+                {/* Gradient Color Picker Section */}
+                <div className="mb-4">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">ގްރޭޑިއެންޓް ކަލަރ</label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      value={gradientColor}
+                      onChange={(e) => setGradientColor(e.target.value)}
+                      className="h-10 w-16 rounded-lg border border-gray-300 bg-white cursor-pointer"
+                    />
+                    <span className="text-sm text-gray-600">{gradientColor}</span>
                   </div>
                 </div>
 
