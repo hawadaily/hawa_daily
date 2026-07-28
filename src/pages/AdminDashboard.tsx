@@ -2702,22 +2702,29 @@ export default function AdminDashboard() {
                   
                   // If title is still empty after parsing, try to get it from the first non-heading line
                   if (!title && lines.length > 0) {
-                    // Skip any heading lines and get the first actual content
-                    let contentIndex = 0;
-                    while (contentIndex < lines.length && lines[contentIndex]?.match(/^#{1,6}\s*/)) {
-                      contentIndex++;
-                    }
-                    // Skip empty lines
-                    while (contentIndex < lines.length && !lines[contentIndex]?.trim()) {
-                      contentIndex++;
-                    }
-                    if (contentIndex < lines.length) {
-                      title = cleanMarkdown(lines[contentIndex]);
-                      startIndex = contentIndex + 1;
+                    // Check if the first line is a heading (## ހެޑްލައިން)
+                    if (lines[0]?.match(/^#{1,6}\s+/)) {
+                      // Use the heading as title (cleaned)
+                      title = cleanMarkdown(lines[0]);
+                      startIndex = 1;
+                    } else {
+                      // Skip any heading lines and get the first actual content
+                      let contentIndex = 0;
+                      while (contentIndex < lines.length && lines[contentIndex]?.match(/^#{1,6}\s*/)) {
+                        contentIndex++;
+                      }
+                      // Skip empty lines
+                      while (contentIndex < lines.length && !lines[contentIndex]?.trim()) {
+                        contentIndex++;
+                      }
+                      if (contentIndex < lines.length) {
+                        title = cleanMarkdown(lines[contentIndex]);
+                        startIndex = contentIndex + 1;
+                      }
                     }
                   }
                   
-                  console.log('Parsing result:', { title, startIndex, lines: lines.slice(0, 5) });
+                  console.log('Parsing result:', { title, startIndex, lines: lines.slice(0, 10) });
                   
                   // Find the "އެކްސާޕްޓް" (Excerpt) section - handle markdown format
                   const excerptIndex = lines.findIndex((line, index) => 
@@ -2727,9 +2734,13 @@ export default function AdminDashboard() {
                       line.trim() === '**އެކްސާޕްޓް**' || 
                       line.trim() === '### އެކްސާޕްޓް' ||
                       line.trim() === '## **އެކްސާޕްޓް**' ||
-                      line.trim() === '# **އެކްސާޕްޓް**'
+                      line.trim() === '# **އެކްސާޕްޓް**' ||
+                      line.trim() === '## އެކްސާޕްޓް' ||
+                      line.trim() === '# އެކްސާޕްޓް'
                     )
                   );
+                  
+                  console.log('Excerpt index:', excerptIndex, excerptIndex !== -1 ? lines[excerptIndex] : 'Not found');
                   
                   // Find the "ބޮޑީ" (Body) section - handle markdown format
                   const bodyIndex = lines.findIndex((line, index) => 
@@ -2739,9 +2750,13 @@ export default function AdminDashboard() {
                       line.trim() === '**ބޮޑީ**' || 
                       line.trim() === '### ބޮޑީ' ||
                       line.trim() === '## **ބޮޑީ**' ||
-                      line.trim() === '# **ބޮޑީ**'
+                      line.trim() === '# **ބޮޑީ**' ||
+                      line.trim() === '## ބޮޑީ' ||
+                      line.trim() === '# ބޮޑީ'
                     )
                   );
+                  
+                  console.log('Body index:', bodyIndex, bodyIndex !== -1 ? lines[bodyIndex] : 'Not found');
                   
                   let excerpt = '';
                   let body = '';
