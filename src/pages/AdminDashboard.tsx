@@ -2646,9 +2646,22 @@ export default function AdminDashboard() {
                   let title = '';
                   let startIndex = 0;
                   
-                  // Look for markdown heading (### **Heading**) or just **Title** or plain text
-                  const headingMatch = lines[0]?.match(/^#{1,6}\s*\*\*(.+?)\*\*$/);
-                  if (headingMatch) {
+                  // First, check if the first line is a section header like "ހެޑްލައިން"
+                  if (lines[0]?.trim() === 'ހެޑްލައިން') {
+                    // Skip the section header
+                    startIndex = 1;
+                    console.log('Found ހެޑްލައިން header, skipping it');
+                    // Skip empty lines after heading
+                    while (startIndex < lines.length && !lines[startIndex]?.trim()) {
+                      startIndex++;
+                    }
+                    console.log('After skipping empty lines, startIndex:', startIndex);
+                    if (startIndex < lines.length) {
+                      title = cleanMarkdown(lines[startIndex]).trim();
+                      startIndex++;
+                      console.log('Title set to:', title);
+                    }
+                  } else if (lines[0]?.match(/^#{1,6}\s*\*\*(.+?)\*\*$/)) {
                     // First line is a heading like ### **ހެޑިންގ**
                     // This is just a section marker, skip it and look for the actual title
                     startIndex = 1;
@@ -2726,7 +2739,7 @@ export default function AdminDashboard() {
                   
                   console.log('Parsing result:', { title, startIndex, lines: lines.slice(0, 10) });
                   
-                  // Find the "އެކްސާޕްޓް" (Excerpt) section - handle markdown format
+                  // Find the "އެކްސާޕްޓް" (Excerpt) section - handle plain text and markdown format
                   const excerptIndex = lines.findIndex((line, index) => 
                     index >= startIndex && (
                       line.trim() === 'އެކްސާޕްޓް' || 
@@ -2742,7 +2755,7 @@ export default function AdminDashboard() {
                   
                   console.log('Excerpt index:', excerptIndex, excerptIndex !== -1 ? lines[excerptIndex] : 'Not found');
                   
-                  // Find the "ބޮޑީ" (Body) section - handle markdown format
+                  // Find the "ބޮޑީ" (Body) section - handle plain text and markdown format
                   const bodyIndex = lines.findIndex((line, index) => 
                     index >= startIndex && (
                       line.trim() === 'ބޮޑީ' || 
