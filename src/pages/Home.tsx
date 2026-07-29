@@ -122,8 +122,8 @@ export default function Home() {
           </div>
         </div>
         {/* Sidebar */}
-        <aside className="hidden lg:block lg:h-[384px]">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft h-full">
+        <aside className="hidden lg:block lg:h-[512px]">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft h-full overflow-y-auto">
             <h3 className="text-lg font-semibold text-slate-900">ޚާއްސަ ބައިތައް</h3>
             <div className="mt-5 grid grid-cols-3 gap-4">
               {categories.slice(4).map((category) => (
