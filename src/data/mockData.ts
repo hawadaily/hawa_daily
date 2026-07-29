@@ -32,6 +32,10 @@ export const categories: Category[] = [
   { id: 'health', title: 'ސިއްޙަތު', titleEn: 'Health', color: 'bg-lime-500' },
   { id: 'life', title: 'ދިރިއުޅުން', titleEn: 'Life', color: 'bg-teal-500' },
   { id: 'education', title: 'ތަޢުލީމް', titleEn: 'Education', color: 'bg-orange-500' },
+  { id: 'children', title: 'ކުޑަ ކުދީން', titleEn: 'Children', color: 'bg-pink-500' },
+  { id: 'human-rights', title: 'ޙަޤީޤީ ހާދިސާ', titleEn: 'Human Rights', color: 'bg-red-500' },
+  { id: 'weather', title: 'މޫސުމް', titleEn: 'Weather', color: 'bg-blue-400' },
+  { id: 'religion', title: 'ދީން', titleEn: 'Religion', color: 'bg-purple-600' },
 ];
 
 export const articles: Article[] = [
