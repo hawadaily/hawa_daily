@@ -1317,6 +1317,32 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleToggleFeatured = async (article: any) => {
+    try {
+      await updateDoc(doc(db, 'articles', article.id), {
+        featured: !article.featured
+      });
+      setMessage(article.featured ? 'Featured removed' : 'Featured added');
+      loadDashboard();
+    } catch (error) {
+      setMessage('Error updating featured status');
+      console.error(error);
+    }
+  };
+
+  const handleToggleBreaking = async (article: any) => {
+    try {
+      await updateDoc(doc(db, 'articles', article.id), {
+        breakingNews: !article.breakingNews
+      });
+      setMessage(article.breakingNews ? 'Breaking news removed' : 'Breaking news added');
+      loadDashboard();
+    } catch (error) {
+      setMessage('Error updating breaking status');
+      console.error(error);
+    }
+  };
+
   const handleBannerUpload = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!bannerFile || !user) {
@@ -2142,7 +2168,25 @@ export default function AdminDashboard() {
                           )}
                         </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
+                        {article.featured && (
+                          <button
+                            onClick={() => handleToggleFeatured(article)}
+                            className="rounded-xl border border-amber-600 px-3 py-1.5 text-sm text-amber-600 transition hover:bg-amber-600/20"
+                            title="Remove Featured"
+                          >
+                            ⭐ Featured
+                          </button>
+                        )}
+                        {article.breakingNews && (
+                          <button
+                            onClick={() => handleToggleBreaking(article)}
+                            className="rounded-xl border border-red-600 px-3 py-1.5 text-sm text-red-600 transition hover:bg-red-600/20"
+                            title="Remove Breaking"
+                          >
+                            🔴 Breaking
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={(e) => handlePostToFacebook(article, e)}
