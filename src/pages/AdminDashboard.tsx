@@ -1126,7 +1126,7 @@ export default function AdminDashboard() {
         bodyEn,
         trending,
         featured,
-        breaking,
+        breakingNews: breaking,
         createdAt: serverTimestamp(),
       });
 
@@ -1304,7 +1304,7 @@ export default function AdminDashboard() {
         readingTime: editReadingTime,
         trending: editTrending,
         featured: editFeatured,
-        breaking: editBreaking,
+        breakingNews: editBreaking,
       });
 
       setMessage(t.newsUpdated);
