@@ -772,8 +772,8 @@ export default function AdminDashboard() {
 
   const loadDashboard = async () => {
     try {
-      // Get recent articles for display (limited to 20)
-      const articleSnapshot = await getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc'), limit(20)));
+      // Get all articles for display (removed limit to show all past news)
+      const articleSnapshot = await getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc')));
       const articlesData = articleSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setArticles(articlesData);
       
