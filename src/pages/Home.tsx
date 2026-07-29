@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { collection, getDocs, getDoc, doc, orderBy, query, limit } from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc, orderBy, query, limit, onSnapshot } from 'firebase/firestore';
 import ArticleCard from '../components/ArticleCard';
 import PromoBanner from '../components/PromoBanner';
 import { Article, categories } from '../data/mockData';
@@ -15,30 +15,46 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const articlesQuery = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(articlesQuery);
-        const articles = snapshot.docs.map(docSnap => {
-          const data = docSnap.data();
-          return {
-            id: docSnap.id,
-            ...data,
-            publishedAt: data.createdAt || data.publishedAt
-          } as Article;
-        });
-        setArticlesState(articles);
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const articlesQuery = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(articlesQuery, (snapshot) => {
+      const articles = snapshot.docs.map(docSnap => {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          ...data,
+          publishedAt: data.createdAt || data.publishedAt
+        } as Article;
+      });
+      setArticlesState(articles);
+      setLoading(false);
+    }, (error) => {
+      console.error('Error fetching articles:', error);
+      setLoading(false);
+    });
 
-    fetchArticles();
+    return () => unsubscribe();
   }, []);
 
-  const heroArticles = articlesState.slice(0, 3);
+  const featuredArticles = useMemo(() => articlesState.filter((article) => article.featured), [articlesState]);
+  const breakingArticles = useMemo(() => articlesState.filter((article) => article.breakingNews), [articlesState]);
+  
+  // Priority: Breaking news first, then featured, then regular articles
+  const heroArticles = useMemo(() => {
+    const priorityArticles = [...breakingArticles, ...featuredArticles];
+    const uniquePriorityArticles = Array.from(new Map(priorityArticles.map(article => [article.id, article])).values());
+    
+    if (uniquePriorityArticles.length >= 3) {
+      return uniquePriorityArticles.slice(0, 3);
+    }
+    
+    // Fill remaining slots with recent articles
+    const recentArticles = articlesState.filter(article => 
+      !uniquePriorityArticles.some(p => p.id === article.id)
+    ).slice(0, 3 - uniquePriorityArticles.length);
+    
+    return [...uniquePriorityArticles, ...recentArticles];
+  }, [breakingArticles, featuredArticles, articlesState]);
+  
   const filteredArticles = selectedCategory 
     ? articlesState.filter(article => article.category === selectedCategory)
     : articlesState;
