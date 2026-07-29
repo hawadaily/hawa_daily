@@ -18,6 +18,13 @@ export default function AdminDashboard() {
   const [articles, setArticles] = useState<any[]>([]);
   const [visitorDetails, setVisitorDetails] = useState<any[]>([]);
   const [uniqueVisitors, setUniqueVisitors] = useState(0);
+  const [dailyVisitors, setDailyVisitors] = useState(0);
+  const [weeklyVisitors, setWeeklyVisitors] = useState(0);
+  const [monthlyVisitors, setMonthlyVisitors] = useState(0);
+  const [dateRange, setDateRange] = useState<'today' | 'week' | 'month' | 'custom'>('today');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
+  const [filteredVisitorCount, setFilteredVisitorCount] = useState(0);
   const [facebookInsights, setFacebookInsights] = useState<any>(null);
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminTab>('articles');
@@ -765,10 +772,10 @@ export default function AdminDashboard() {
 
   const loadDashboard = async () => {
     try {
+      // Get recent articles for display (limited to 20)
       const articleSnapshot = await getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc'), limit(20)));
       const articlesData = articleSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setArticles(articlesData);
-      setArticlesCount(articleSnapshot.size);
       
       // Extract unique authors from articles
       const uniqueAuthors = Array.from(new Set(articlesData.map((a: any) => a.author).filter(Boolean)));
@@ -783,24 +790,112 @@ export default function AdminDashboard() {
     }
   };
 
+  // Load articles count in real-time
+  useEffect(() => {
+    if (!user) return;
+
+    const articlesQuery = query(collection(db, 'articles'));
+    const unsubscribe = onSnapshot(articlesQuery, (snapshot) => {
+      setArticlesCount(snapshot.size);
+    }, (error) => {
+      console.error('Error fetching articles count:', error);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
   // Load visitor tracking data from Firestore (real-time)
   useEffect(() => {
     if (!user) return;
 
-    const visitorQuery = query(collection(db, 'visitors'), orderBy('timestamp', 'desc'), limit(1000));
+    const visitorQuery = query(collection(db, 'visitors'), orderBy('timestamp', 'desc'));
     const unsubscribe = onSnapshot(visitorQuery, (snapshot) => {
       const visitors = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setVisitorDetails(visitors);
 
-      // Calculate unique visitors based on user agent (as a proxy for unique users)
-      const uniqueUserAgents = new Set(visitors.map((item: any) => item.userAgent)).size;
-      setUniqueVisitors(uniqueUserAgents);
+      // Calculate unique visitors based on deviceFingerprint (more accurate than userAgent)
+      const uniqueFingerprints = new Set(visitors.map((item: any) => item.deviceFingerprint)).size;
+      setUniqueVisitors(uniqueFingerprints);
+
+      // Calculate time-based visitor statistics
+      const now = new Date();
+      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      const dailyFingerprints = new Set();
+      const weeklyFingerprints = new Set();
+      const monthlyFingerprints = new Set();
+
+      visitors.forEach((visitor: any) => {
+        const visitTime = visitor.timestamp?.toDate ? visitor.timestamp.toDate() : new Date(visitor.timestamp);
+        
+        if (visitTime >= oneDayAgo) {
+          dailyFingerprints.add(visitor.deviceFingerprint);
+        }
+        if (visitTime >= oneWeekAgo) {
+          weeklyFingerprints.add(visitor.deviceFingerprint);
+        }
+        if (visitTime >= oneMonthAgo) {
+          monthlyFingerprints.add(visitor.deviceFingerprint);
+        }
+      });
+
+      setDailyVisitors(dailyFingerprints.size);
+      setWeeklyVisitors(weeklyFingerprints.size);
+      setMonthlyVisitors(monthlyFingerprints.size);
     }, (error) => {
       console.error('Error fetching visitors:', error);
     });
 
     return () => unsubscribe();
   }, [user]);
+
+  // Calculate filtered visitors based on date range
+  useEffect(() => {
+    if (visitorDetails.length === 0) {
+      setFilteredVisitorCount(0);
+      return;
+    }
+
+    const now = new Date();
+    let startDate: Date;
+    let endDate: Date = now;
+
+    switch (dateRange) {
+      case 'today':
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        break;
+      case 'week':
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        break;
+      case 'month':
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        break;
+      case 'custom':
+        if (customStartDate && customEndDate) {
+          startDate = new Date(customStartDate);
+          endDate = new Date(customEndDate);
+          endDate.setHours(23, 59, 59, 999);
+        } else {
+          setFilteredVisitorCount(0);
+          return;
+        }
+        break;
+      default:
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    const filteredFingerprints = new Set();
+    visitorDetails.forEach((visitor: any) => {
+      const visitTime = visitor.timestamp?.toDate ? visitor.timestamp.toDate() : new Date(visitor.timestamp);
+      if (visitTime >= startDate && visitTime <= endDate) {
+        filteredFingerprints.add(visitor.deviceFingerprint);
+      }
+    });
+
+    setFilteredVisitorCount(filteredFingerprints.size);
+  }, [visitorDetails, dateRange, customStartDate, customEndDate]);
 
   // Load notifications data
   useEffect(() => {
@@ -2442,7 +2537,73 @@ export default function AdminDashboard() {
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
               <h3 className="text-xl font-semibold text-gray-900">{t.analytics}</h3>
+              
+              {/* Date Range Selector */}
+              <div className="mt-4 space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setDateRange('today')}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                      dateRange === 'today' ? 'bg-sky-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    މިދުވަސް (Today)
+                  </button>
+                  <button
+                    onClick={() => setDateRange('week')}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                      dateRange === 'week' ? 'bg-sky-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    ހަފުތަކެއް (Week)
+                  </button>
+                  <button
+                    onClick={() => setDateRange('month')}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                      dateRange === 'month' ? 'bg-sky-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    މަހެއް (Month)
+                  </button>
+                  <button
+                    onClick={() => setDateRange('custom')}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                      dateRange === 'custom' ? 'bg-sky-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    އިޚްތިޔާރީ (Custom)
+                  </button>
+                </div>
+                
+                {dateRange === 'custom' && (
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="date"
+                      value={customStartDate}
+                      onChange={(e) => setCustomStartDate(e.target.value)}
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                    />
+                    <span className="text-gray-500">to</span>
+                    <input
+                      type="date"
+                      value={customEndDate}
+                      onChange={(e) => setCustomEndDate(e.target.value)}
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                    />
+                  </div>
+                )}
+              </div>
+              
               <div className="mt-6 space-y-4">
+                <div className="rounded-2xl bg-sky-50 p-4 border border-sky-200">
+                  <p className="text-sm text-sky-700">
+                    {dateRange === 'today' ? 'މިދުވަސްގެ ވިސިޓަރުން' : 
+                     dateRange === 'week' ? 'ހަފުތަކެއްގެ ވިސިޓަރުން' : 
+                     dateRange === 'month' ? 'މަހެއްގެ ވިސިޓަރުން' : 
+                     'އިޚްތިޔާރީ ވިސިޓަރުން'}
+                  </p>
+                  <p className="mt-2 text-3xl font-bold text-sky-900">{filteredVisitorCount}</p>
+                </div>
                 <div className="rounded-2xl bg-gray-100 p-4">
                   <p className="text-sm text-gray-600">{t.totalNews}</p>
                   <p className="mt-2 text-3xl font-bold text-gray-900">{articlesCount}</p>
