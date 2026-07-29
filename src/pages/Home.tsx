@@ -12,6 +12,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [heroIndex, setHeroIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(8);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -38,9 +39,12 @@ export default function Home() {
   }, []);
 
   const heroArticles = articlesState.slice(0, 3);
-  const trending = useMemo(() => articlesState.filter((article) => article.trending), [articlesState]);
-  const latest = useMemo(() => articlesState.slice(0, visibleCount), [articlesState, visibleCount]);
-  const hasMore = articlesState.length > visibleCount;
+  const filteredArticles = selectedCategory 
+    ? articlesState.filter(article => article.category === selectedCategory)
+    : articlesState;
+  const trending = useMemo(() => filteredArticles.filter((article) => article.trending), [filteredArticles]);
+  const latest = useMemo(() => filteredArticles.slice(0, visibleCount), [filteredArticles, visibleCount]);
+  const hasMore = filteredArticles.length > visibleCount;
 
   if (loading) {
     return (
@@ -80,13 +84,17 @@ export default function Home() {
         </div>
         <div className="mt-6 flex flex-wrap gap-4">
           {categories.map((category) => (
-            <Link 
-              key={category.id} 
-              to={`/categories/${category.id}`}
-              className="cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs lg:text-lg text-slate-700 transition hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900"
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
+              className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs lg:text-lg transition ${
+                selectedCategory === category.id
+                  ? 'bg-sky-600 border-sky-600 text-white'
+                  : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900'
+              }`}
             >
               {category.title}
-            </Link>
+            </button>
           ))}
         </div>
       </section>
@@ -127,10 +135,16 @@ export default function Home() {
             <h3 className="text-lg font-semibold text-slate-900">ޚާއްސަ ބައިތައް</h3>
             <div className="mt-5 grid grid-cols-3 gap-4">
               {categories.slice(4).map((category) => (
-                <div key={category.id} className={`rounded-3xl border border-slate-200 px-4 py-4 ${category.color} bg-opacity-10`}>
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
+                  className={`rounded-3xl border px-4 py-4 ${category.color} bg-opacity-10 transition hover:opacity-80 ${
+                    selectedCategory === category.id ? 'ring-2 ring-sky-500' : ''
+                  }`}
+                >
                   <p className="text-sm font-semibold text-slate-900">{category.title}</p>
                   <p className="mt-1 text-xs text-slate-500">ވެ އަވަދިވާ ނިއުސް</p>
-                </div>
+                </button>
               ))}
             </div>
           </div>

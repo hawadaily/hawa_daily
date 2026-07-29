@@ -18,6 +18,8 @@ export type Article = {
   body: string[] | string;
   video?: string;
   trending: boolean;
+  featured?: boolean;
+  breakingNews?: boolean;
 };
 
 export const categories: Category[] = [

@@ -292,6 +292,7 @@ export default function AdminDashboard() {
   const [body, setBody] = useState('');
   const [bodyEn, setBodyEn] = useState('');
   const [trending, setTrending] = useState(false);
+  const [featured, setFeatured] = useState(false);
   const [breaking, setBreaking] = useState(false);
   const [englishText, setEnglishText] = useState('');
   const [dhivehiText, setDhivehiText] = useState('');
@@ -312,6 +313,7 @@ export default function AdminDashboard() {
   const [editBodyEn, setEditBodyEn] = useState('');
   const [editReadingTime, setEditReadingTime] = useState('5މިނިޓް');
   const [editTrending, setEditTrending] = useState(false);
+  const [editFeatured, setEditFeatured] = useState(false);
   const [editBreaking, setEditBreaking] = useState(false);
   
   // News Rephrase state
@@ -1028,6 +1030,7 @@ export default function AdminDashboard() {
         body,
         bodyEn,
         trending,
+        featured,
         breaking,
         createdAt: serverTimestamp(),
       });
@@ -1054,6 +1057,7 @@ export default function AdminDashboard() {
       setBody('');
       setBodyEn('');
       setTrending(false);
+      setFeatured(false);
       setBreaking(false);
       // Don't reload dashboard to allow viewing console logs
       // loadDashboard();
@@ -1150,6 +1154,7 @@ export default function AdminDashboard() {
     setEditBodyEn(Array.isArray(article.bodyEn) ? article.bodyEn.join(' ') : (article.bodyEn || ''));
     setEditReadingTime(article.readingTime || '5މިނިޓް');
     setEditTrending(article.trending || false);
+    setEditFeatured(article.featured || false);
     setEditBreaking(article.breaking || false);
   };
 
@@ -1203,6 +1208,7 @@ export default function AdminDashboard() {
         bodyEn: editBodyEn,
         readingTime: editReadingTime,
         trending: editTrending,
+        featured: editFeatured,
         breaking: editBreaking,
       });
 
@@ -1993,6 +1999,15 @@ export default function AdminDashboard() {
                 <label className="inline-flex items-center gap-2 text-gray-700">
                   <input
                     type="checkbox"
+                    checked={featured}
+                    onChange={(e) => setFeatured(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 bg-white"
+                  />
+                  Featured
+                </label>
+                <label className="inline-flex items-center gap-2 text-gray-700">
+                  <input
+                    type="checkbox"
                     checked={breaking}
                     onChange={(e) => setBreaking(e.target.checked)}
                     className="h-4 w-4 rounded border-gray-300 bg-white"
@@ -2382,6 +2397,15 @@ export default function AdminDashboard() {
                       className="h-4 w-4 rounded border-gray-300 bg-white"
                     />
                     {t.trending}
+                  </label>
+                  <label className="inline-flex items-center gap-2 text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={editFeatured}
+                      onChange={(e) => setEditFeatured(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 bg-white"
+                    />
+                    Featured
                   </label>
                   <label className="inline-flex items-center gap-2 text-gray-700">
                     <input
