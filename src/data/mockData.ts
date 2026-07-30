@@ -38,6 +38,7 @@ export const categories: Category[] = [
   { id: 'human-rights', title: 'ޙަޤީޤީ ހާދިސާ', titleEn: 'Human Rights', color: 'bg-red-500' },
   { id: 'weather', title: 'މޫސުމް', titleEn: 'Weather', color: 'bg-blue-400' },
   { id: 'religion', title: 'ދީން', titleEn: 'Religion', color: 'bg-purple-600' },
+  { id: 'tourism', title: 'ފަތުރުވެރިކަން', titleEn: 'Tourism', color: 'bg-green-500' },
 ];
 
 export const articles: Article[] = [
