@@ -18,36 +18,79 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch('https://www.job-maldives.com/');
-    const html = await response.text();
+    // Use jina.ai reader to get clean markdown content
+    const jinaResponse = await fetch('https://r.jina.ai/http://www.job-maldives.com/');
+    
+    if (!jinaResponse.ok) {
+      throw new Error(`Jina.ai request failed with status ${jinaResponse.status}`);
+    }
 
-    // Parse job listings from the HTML
+    const markdown = await jinaResponse.text();
+
+    // Parse job listings from the markdown
     const jobs = [];
-    const jobRegex = /<h3 class="post-title entry-title">\s*<a href="([^"]+)">([^<]+)<\/a>\s*<\/h3>/g;
+    
+    // Look for job links in markdown format: [Title](url)
+    const jobRegex = /\[([^\]]+)\]\((https?:\/\/[^)]+|\/\d{4}\/\d{2}\/[^)]+)\)/gi;
     let match;
+    
+    const dateRegex = /(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})/gi;
 
-    while ((match = jobRegex.exec(html)) !== null) {
-      const url = match[1];
-      const title = match[2].trim();
+    while ((match = jobRegex.exec(markdown)) !== null) {
+      const title = match[1].trim();
+      let url = match[2];
       
-      // Extract company name from title if possible
-      const companyMatch = title.match(/at\s+(.+?)\s*$/i);
+      const companyMatch = title.match(/at\s+(.+?)\s*(?:Job|Vacancy|Jul|Jan|Feb|Mar|Apr|May|Jun|Aug|Sep|Oct|Nov|Dec|$)/i);
       const company = companyMatch ? companyMatch[1].trim() : 'Unknown';
-
-      // Extract posted date from the HTML near the job title
-      const dateMatch = html.substring(match.index, match.index + 500).match(/(\d{1,2}:\d{2}\s*(?:AM|PM))/i);
-      const postedTime = dateMatch ? dateMatch[1] : '';
-
+      
+      // Extract date from title if present - look for patterns like "Jul 18, 2026"
+      const dateMatch = title.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2}),\s+(\d{4})/i);
+      let postedDate = '';
+      if (dateMatch) {
+        const monthNames = { 'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06', 
+                           'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12' };
+        const month = monthNames[dateMatch[1]] || '01';
+        const day = dateMatch[2].padStart(2, '0');
+        const year = dateMatch[3];
+        const dateString = `${year}-${month}-${day}`;
+        const dateObj = new Date(dateString);
+        if (!isNaN(dateObj.getTime())) {
+          postedDate = dateObj.toISOString();
+        }
+      }
+      
+      // Fallback: extract date from URL structure (e.g., /2026/07/job-title.html)
+      if (!postedDate) {
+        const urlDateMatch = url.match(/\/(\d{4})\/(\d{2})\//);
+        if (urlDateMatch) {
+          const year = urlDateMatch[1];
+          const month = urlDateMatch[2];
+          const dateString = `${year}-${month}-01`;
+          const dateObj = new Date(dateString);
+          if (!isNaN(dateObj.getTime())) {
+            postedDate = dateObj.toISOString();
+          }
+        }
+      }
+      
+      // Clean title by removing date
+      const cleanTitle = title.replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s+\d{4}/i, '').trim();
+      
       jobs.push({
         id: url.split('/').pop()?.replace('.html', '') || Math.random().toString(36).substr(2, 9),
-        title,
+        title: cleanTitle,
         company,
-        url: `https://www.job-maldives.com${url}`,
-        postedTime,
+        url: url.startsWith('http') ? url : `https://www.job-maldives.com${url}`,
+        postedTime: postedDate,
+        postedDate: postedDate,
         source: 'job-maldives.com',
         fetchedAt: new Date().toISOString()
       });
     }
+
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
 
     return res.status(200).json({ 
       success: true, 
@@ -57,6 +100,9 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Jobs API error:', error);
     const message = error instanceof Error ? error.message : 'Failed to fetch jobs';
-    return res.status(500).json({ error: message });
+    return res.status(500).json({ 
+      success: false,
+      error: message 
+    });
   }
 }
