@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { collection, getDocs, getDoc, doc, orderBy, query, limit, onSnapshot } from 'firebase/firestore';
 import ArticleCard from '../components/ArticleCard';
 import PromoBanner from '../components/PromoBanner';
+import JobsPromoSlide from '../components/JobsPromoSlide';
 import { Article, categories } from '../data/mockData';
 import { db } from '../firebase';
 
@@ -89,6 +90,9 @@ export default function Home() {
     <div className="space-y-8 text-right lg:space-y-12">
       {/* Top Promo Banner */}
       <PromoBanner location="home" position="top" />
+
+      {/* Jobs Promotion Slide */}
+      <JobsPromoSlide />
 
       {/* Categories Section */}
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft lg:p-6">

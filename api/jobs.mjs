@@ -18,7 +18,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Use jina.ai reader to get clean markdown content
     const jinaResponse = await fetch('https://r.jina.ai/http://www.job-maldives.com/');
     
     if (!jinaResponse.ok) {
@@ -26,15 +25,10 @@ export default async function handler(req, res) {
     }
 
     const markdown = await jinaResponse.text();
-
-    // Parse job listings from the markdown
     const jobs = [];
     
-    // Look for job links in markdown format: [Title](url)
     const jobRegex = /\[([^\]]+)\]\((https?:\/\/[^)]+|\/\d{4}\/\d{2}\/[^)]+)\)/gi;
     let match;
-    
-    const dateRegex = /(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})/gi;
 
     while ((match = jobRegex.exec(markdown)) !== null) {
       const title = match[1].trim();
@@ -43,7 +37,6 @@ export default async function handler(req, res) {
       const companyMatch = title.match(/at\s+(.+?)\s*(?:Job|Vacancy|Jul|Jan|Feb|Mar|Apr|May|Jun|Aug|Sep|Oct|Nov|Dec|$)/i);
       const company = companyMatch ? companyMatch[1].trim() : 'Unknown';
       
-      // Extract date from title if present - look for patterns like "Jul 18, 2026"
       const dateMatch = title.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2}),\s+(\d{4})/i);
       let postedDate = '';
       if (dateMatch) {
@@ -59,7 +52,6 @@ export default async function handler(req, res) {
         }
       }
       
-      // Fallback: extract date from URL structure (e.g., /2026/07/job-title.html)
       if (!postedDate) {
         const urlDateMatch = url.match(/\/(\d{4})\/(\d{2})\//);
         if (urlDateMatch) {
@@ -73,7 +65,6 @@ export default async function handler(req, res) {
         }
       }
       
-      // Clean title by removing date
       const cleanTitle = title.replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s+\d{4}/i, '').trim();
       
       jobs.push({
