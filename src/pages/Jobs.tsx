@@ -72,7 +72,8 @@ export default function Jobs() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch('http://localhost:3001/api/jobs');
+        const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
+        const response = await fetch(apiUrl);
         const data = await response.json();
         
         if (data.success) {
