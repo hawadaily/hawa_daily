@@ -62,7 +62,7 @@ export default function JobSlider({ jobs }: JobSliderProps) {
 
   return (
     <div 
-      className="relative w-full h-48 md:h-64 bg-gradient-to-r from-sky-600 to-blue-700 rounded-xl overflow-hidden shadow-lg text-left"
+      className="relative w-full h-28 md:h-36 bg-gradient-to-r from-sky-600 to-blue-700 rounded-xl overflow-hidden shadow-lg text-left"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       dir="ltr"
@@ -74,35 +74,35 @@ export default function JobSlider({ jobs }: JobSliderProps) {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.5 }}
-          className="absolute inset-0 flex items-center px-6 md:px-12"
+          className="absolute inset-0 flex items-center px-4 md:px-8"
         >
-          <div className="flex items-center gap-6 w-full">
+          <div className="flex items-center gap-4 w-full">
             {companyLogo && (
               <div className="flex-shrink-0">
                 <img 
                   src={companyLogo} 
                   alt={currentJob.company}
-                  className="w-20 h-20 md:w-24 md:h-24 object-contain bg-white rounded-xl p-3 shadow-lg"
+                  className="w-12 h-12 md:w-16 md:h-16 object-contain bg-white rounded-lg p-2 shadow-lg"
                 />
               </div>
             )}
             <div className="flex-1 text-white">
-              <p className="text-xs md:text-sm font-medium text-sky-200 mb-2">
+              <p className="text-[10px] md:text-xs font-medium text-sky-200 mb-1">
                 Featured Opportunity
               </p>
-              <h3 className="text-lg md:text-2xl font-bold mb-2 line-clamp-2">
+              <h3 className="text-sm md:text-lg font-bold mb-1 line-clamp-1">
                 {currentJob.title}
               </h3>
-              <p className="text-sm md:text-base text-sky-100 mb-3">
+              <p className="text-xs md:text-sm text-sky-100 mb-2">
                 {currentJob.company}
               </p>
-              <div className="flex items-center gap-4">
-                <span className="text-xs bg-white/20 px-3 py-1 rounded-full">
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">
                   {getRelativeTime(currentJob.postedDate)}
                 </span>
                 <button
                   onClick={() => window.open(currentJob.url, '_blank')}
-                  className="text-xs md:text-sm bg-white text-sky-600 px-4 py-2 rounded-lg font-semibold hover:bg-sky-50 transition"
+                  className="text-[10px] md:text-xs bg-white text-sky-600 px-3 py-1 rounded-lg font-semibold hover:bg-sky-50 transition"
                 >
                   View Details
                 </button>
