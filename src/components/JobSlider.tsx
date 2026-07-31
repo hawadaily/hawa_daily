@@ -1,0 +1,146 @@
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { getCompanyLogo } from '../data/companyLogos';
+
+interface Job {
+  id: string;
+  title: string;
+  company: string;
+  url: string;
+  postedDate?: string;
+}
+
+interface JobSliderProps {
+  jobs: Job[];
+}
+
+export default function JobSlider({ jobs }: JobSliderProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [displayedJobs, setDisplayedJobs] = useState<Job[]>([]);
+
+  // Update displayed jobs when jobs prop changes (real-time update)
+  useEffect(() => {
+    if (jobs.length > 0) {
+      setDisplayedJobs(jobs.slice(0, 5));
+      setCurrentIndex(0); // Reset to first slide when jobs update
+    }
+  }, [jobs]);
+
+  // Auto-advance slides
+  useEffect(() => {
+    if (isPaused || displayedJobs.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % displayedJobs.length);
+    }, 3000); // Faster auto-slide (3 seconds)
+
+    return () => clearInterval(interval);
+  }, [displayedJobs.length, isPaused]);
+
+  if (displayedJobs.length === 0) return null;
+
+  const currentJob = displayedJobs[currentIndex];
+  const companyLogo = getCompanyLogo(currentJob.company);
+
+  const getRelativeTime = (dateString?: string) => {
+    if (!dateString) return 'Recently';
+    
+    const now = new Date();
+    const date = new Date(dateString);
+    
+    if (isNaN(date.getTime())) return 'Recently';
+    
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+  };
+
+  return (
+    <div 
+      className="relative w-full h-48 md:h-64 bg-gradient-to-r from-sky-600 to-blue-700 rounded-xl overflow-hidden shadow-lg text-left"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      dir="ltr"
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.5 }}
+          className="absolute inset-0 flex items-center px-6 md:px-12"
+        >
+          <div className="flex items-center gap-6 w-full">
+            {companyLogo && (
+              <div className="flex-shrink-0">
+                <img 
+                  src={companyLogo} 
+                  alt={currentJob.company}
+                  className="w-20 h-20 md:w-24 md:h-24 object-contain bg-white rounded-xl p-3 shadow-lg"
+                />
+              </div>
+            )}
+            <div className="flex-1 text-white">
+              <p className="text-xs md:text-sm font-medium text-sky-200 mb-2">
+                Featured Opportunity
+              </p>
+              <h3 className="text-lg md:text-2xl font-bold mb-2 line-clamp-2">
+                {currentJob.title}
+              </h3>
+              <p className="text-sm md:text-base text-sky-100 mb-3">
+                {currentJob.company}
+              </p>
+              <div className="flex items-center gap-4">
+                <span className="text-xs bg-white/20 px-3 py-1 rounded-full">
+                  {getRelativeTime(currentJob.postedDate)}
+                </span>
+                <button
+                  onClick={() => window.open(currentJob.url, '_blank')}
+                  className="text-xs md:text-sm bg-white text-sky-600 px-4 py-2 rounded-lg font-semibold hover:bg-sky-50 transition"
+                >
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Navigation dots */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+        {displayedJobs.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-2 h-2 rounded-full transition-all ${
+              index === currentIndex ? 'bg-white w-6' : 'bg-white/50'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* Arrow navigation */}
+      <button
+        onClick={() => setCurrentIndex((prev) => (prev - 1 + displayedJobs.length) % displayedJobs.length)}
+        className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition"
+        aria-label="Previous slide"
+      >
+        ←
+      </button>
+      <button
+        onClick={() => setCurrentIndex((prev) => (prev + 1) % displayedJobs.length)}
+        className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition"
+        aria-label="Next slide"
+      >
+        →
+      </button>
+    </div>
+  );
+}

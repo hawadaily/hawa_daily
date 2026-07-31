@@ -1,7 +1,7 @@
 {
-  "name": "ހަވާއިން ޙަބަރު - Hawainn Khabaru",
-  "short_name": "ހަވާއިން ޙަބަރު",
-  "description": "ހަވާއިން ޙަބަރު - ހަވާއިން ޙަބަރު ސެންޓަރު ވެބްސައިޓް",
+  "name": "ހަވާ ޑެއިލީ - Hawa Daily",
+  "short_name": "ހަވާ ޑެއިލީ",
+  "description": "ހަވާ ޑެއިލީ - ހަވާ ޑެއިލީ ސެންޓަރު ވެބްސައިޓް",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#020617",
@@ -11,15 +11,15 @@
   "lang": "dv",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/HAWA LOGO.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "/logo.png",
+      "src": "/HAWA LOGO.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ],

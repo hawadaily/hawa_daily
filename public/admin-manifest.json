@@ -1,7 +1,7 @@
 {
-  "name": "Admin Panel - Hawainn Khabaru",
+  "name": "Admin Panel - Hawa Daily",
   "short_name": "Admin Panel",
-  "description": "Admin Panel for Hawainn Khabaru News Management",
+  "description": "Admin Panel for Hawa Daily News Management",
   "start_url": "/admin/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -11,15 +11,15 @@
   "lang": "dv",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/HAWA LOGO.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "/logo.png",
+      "src": "/HAWA LOGO.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ],

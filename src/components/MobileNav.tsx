@@ -29,9 +29,9 @@ export default function MobileNav({ theme, setTheme, language, setLanguage }: Mo
     <nav className="lg:hidden sticky top-0 z-50 border-b border-slate-800 bg-slate-950 backdrop-blur">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="Hawa News" className="h-8 w-8 object-contain" />
+          <img src="/HAWA LOGO.jpg" alt="Hawa Daily" className="h-8 w-8 object-contain" />
           <span className="text-base font-bold text-white">
-            {language === 'en' ? 'Hawa News' : 'ހަވާ ނޫސް'}
+            {language === 'en' ? 'Hawa Daily' : 'ހަވާ ޑެއިލީ'}
           </span>
         </div>
         
@@ -87,6 +87,23 @@ export default function MobileNav({ theme, setTheme, language, setLanguage }: Mo
                     </Link>
                   ))}
                 </div>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.24em] text-sky-400">ވަޒީފާ</p>
+                    <h2 className="mt-1 text-base sm:text-lg font-bold text-white">ވަޒީފާ ތައް</h2>
+                  </div>
+                </div>
+                <Link 
+                  to="/jobs"
+                  onClick={() => setIsOpen(false)}
+                  className="mt-3 block cursor-pointer rounded-lg border border-slate-700 bg-sky-500/20 px-3 py-3 transition hover:border-slate-600 hover:bg-sky-500/30"
+                >
+                  <p className="text-[8px] uppercase tracking-[0.2em] text-slate-400">jobs</p>
+                  <h3 className="mt-0.5 text-xs font-semibold text-white">މޯލްޑިވްސް ވަޒީފާ ތައް</h3>
+                </Link>
               </div>
               
               <div className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-2">

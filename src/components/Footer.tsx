@@ -10,10 +10,10 @@ export default function Footer() {
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <div className="relative h-14 w-14 overflow-hidden rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 p-0.5">
-                <img src="/logo.png" alt="Hawa News" className="h-full w-full rounded-2xl object-cover" />
+                <img src="/HAWA LOGO.jpg" alt="Hawa Daily" className="h-full w-full rounded-2xl object-cover" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-white">ހަވާ ނޫސް</h3>
+                <h3 className="text-2xl font-bold text-white">ހަވާ ޑެއިލީ</h3>
                 <p className="text-sm text-slate-400">ދިވެހި ބަހުން ލޯކަލް ޚަބަރު</p>
               </div>
             </div>

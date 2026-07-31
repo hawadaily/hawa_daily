@@ -1,10 +1,10 @@
-const CACHE_NAME = 'ahdhamu-v1';
+const CACHE_NAME = 'hawa-daily-v1';
 const urlsToCache = [
   '/',
   '/manifest.json',
   '/admin-manifest.json',
   '/favicon.svg',
-  '/logo.png',
+  '/HAWA LOGO.jpg',
   '/fonts/Dhivehi.ttf',
 ];
 
