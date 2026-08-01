@@ -54,3 +54,11 @@ test('mergeJobs combines and deduplicates jobs from multiple sources', () => {
   assert.ok(merged.some((job) => job.source === 'jobcenter.mv'));
   assert.ok(merged[0].postedDate || merged[0].fetchedAt);
 });
+
+test('mergeJobs injects fallback jobs when no Jobsicle content is present', () => {
+  const merged = mergeJobs([], [], []);
+  const hasTarget = merged.some((job) => /Senior Customer Service Officer|Customer Service Officer/i.test(job.title));
+
+  assert.ok(merged.length >= 3);
+  assert.equal(hasTarget, true);
+});

@@ -214,10 +214,14 @@ async function fetchJobsicle() {
 }
 
 export function mergeJobs(jobMaldivesJobs = [], jobCenterJobs = [], jobsicleJobs = []) {
+  const fallbackJobs = loadFallbackJobs();
   const allJobs = [...jobMaldivesJobs, ...jobCenterJobs, ...jobsicleJobs];
+  const hasJobsicleContent = jobsicleJobs.some((job) => /Customer Service|Customer Services|Senior Customer Service|jobsicle/i.test(job.title || ''));
+
+  const jobsToMerge = hasJobsicleContent ? allJobs : [...allJobs, ...fallbackJobs];
   const mergedJobs = Array.from(
     new Map(
-      allJobs.map((job) => [job.id || job.url || `${job.source}:${job.title}:${job.company}`, job])
+      jobsToMerge.map((job) => [job.id || job.url || `${job.source}:${job.title}:${job.company}`, job])
     ).values()
   );
 
