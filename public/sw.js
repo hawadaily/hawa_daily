@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hawa-daily-v1';
+const CACHE_NAME = 'hawa-daily-v2';
 const urlsToCache = [
   '/',
   '/manifest.json',
@@ -27,20 +27,35 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const isApiRequest = requestURL.pathname.startsWith('/api/') || requestURL.pathname === '/jobs-fallback.json';
+  const isNavigationRequest = event.request.mode === 'navigate' || requestURL.pathname === '/';
+  const isStaticAsset = /\.(?:js|css|png|jpg|jpeg|svg|webp|ico|json|ttf|woff2?)$/i.test(requestURL.pathname);
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request)
-        .then((networkResponse) => {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, networkResponse.clone());
+    (isApiRequest || isNavigationRequest || isStaticAsset
+      ? fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse.ok && (isApiRequest || isNavigationRequest || isStaticAsset)) {
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, networkResponse.clone());
+              });
+            }
             return networkResponse;
-          });
-        })
-        .catch(() => caches.match('/favicon.svg'));
-    })
+          })
+          .catch(() => caches.match(event.request).then((cachedResponse) => cachedResponse || caches.match('/favicon.svg')))
+      : caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return fetch(event.request)
+            .then((networkResponse) => {
+              return caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, networkResponse.clone());
+                return networkResponse;
+              });
+            })
+            .catch(() => caches.match('/favicon.svg'));
+        }))
   );
 });
 

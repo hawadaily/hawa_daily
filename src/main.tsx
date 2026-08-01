@@ -31,5 +31,9 @@ root.render(
 );
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(console.error);
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then((registration) => {
+      registration.update();
+    }).catch(console.error);
+  });
 }

@@ -5,6 +5,7 @@ import JobSlider from '../components/JobSlider';
 import ResortsGrid from '../components/ResortsGrid';
 import { getCompanyLogo } from '../data/companyLogos';
 import companyLogos from '../data/companyLogos';
+import { fallbackJobs } from '../data/fallbackJobs';
 
 interface Job {
   id: string;
@@ -72,8 +73,8 @@ export default function Jobs() {
     const fetchJobs = async () => {
       setLoading(true);
       setError(null);
-      let jobsData: Job[] = [];
-      let jobsCount = 0;
+      let jobsData: Job[] = [...fallbackJobs] as Job[];
+      let jobsCount = fallbackJobs.length;
 
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
@@ -88,20 +89,7 @@ export default function Jobs() {
           jobsCount = data.count || data.jobs.length;
         }
       } catch (err) {
-        console.warn('Jobs API unavailable, using bundled fallback', err);
-      }
-
-      if (jobsData.length === 0) {
-        try {
-          const fallbackResponse = await fetch('/jobs-fallback.json', { cache: 'no-store' });
-          const fallbackJobs = await fallbackResponse.json();
-          if (Array.isArray(fallbackJobs) && fallbackJobs.length > 0) {
-            jobsData = fallbackJobs;
-            jobsCount = fallbackJobs.length;
-          }
-        } catch (fallbackError) {
-          console.warn('Bundled jobs fallback unavailable', fallbackError);
-        }
+        console.warn('Jobs API unavailable, using built-in fallback', err);
       }
 
       if (jobsData.length > 0) {
@@ -128,8 +116,8 @@ export default function Jobs() {
     const fetchJobs = async () => {
       setLoading(true);
       setError(null);
-      let jobsData: Job[] = [];
-      let jobsCount = 0;
+      let jobsData: Job[] = [...fallbackJobs] as Job[];
+      let jobsCount = fallbackJobs.length;
 
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
@@ -144,20 +132,7 @@ export default function Jobs() {
           jobsCount = data.count || data.jobs.length;
         }
       } catch (err) {
-        console.warn('Jobs API unavailable, using bundled fallback', err);
-      }
-
-      if (jobsData.length === 0) {
-        try {
-          const fallbackResponse = await fetch('/jobs-fallback.json', { cache: 'no-store' });
-          const fallbackJobs = await fallbackResponse.json();
-          if (Array.isArray(fallbackJobs) && fallbackJobs.length > 0) {
-            jobsData = fallbackJobs;
-            jobsCount = fallbackJobs.length;
-          }
-        } catch (fallbackError) {
-          console.warn('Bundled jobs fallback unavailable', fallbackError);
-        }
+        console.warn('Jobs API unavailable, using built-in fallback', err);
       }
 
       if (jobsData.length > 0) {
