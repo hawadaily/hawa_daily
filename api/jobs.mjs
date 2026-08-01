@@ -1,6 +1,7 @@
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
+import fs from 'fs';
 
 const execFileAsync = promisify(execFile);
 
@@ -10,6 +11,74 @@ const handleCors = (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 };
+
+export function loadFallbackJobs() {
+  const fallbackJobs = [
+    {
+      id: 'senior-customer-service-officer-airport',
+      title: 'Senior Customer Service Officer (Airport) / Customer Service Officer (Airport)',
+      company: 'Unknown',
+      url: 'https://jobsicle.mv/',
+      postedTime: '2026-08-01T00:00:00.000Z',
+      postedDate: '2026-08-01T00:00:00.000Z',
+      source: 'jobsicle.mv',
+      fetchedAt: new Date().toISOString(),
+    },
+    {
+      id: 'executive-revenue-accounting',
+      title: 'Executive Revenue Accounting',
+      company: 'Ooredoo Maldives',
+      url: 'https://jobsicle.mv/',
+      postedTime: '2026-08-01T00:00:00.000Z',
+      postedDate: '2026-08-01T00:00:00.000Z',
+      source: 'jobsicle.mv',
+      fetchedAt: new Date().toISOString(),
+    },
+    {
+      id: 'customer-services-representative',
+      title: 'Customer Services Representative',
+      company: 'MAAHIYA PVT LTD',
+      url: 'https://jobsicle.mv/',
+      postedTime: '2026-08-01T00:00:00.000Z',
+      postedDate: '2026-08-01T00:00:00.000Z',
+      source: 'jobsicle.mv',
+      fetchedAt: new Date().toISOString(),
+    },
+  ];
+
+  try {
+    const fallbackPath = path.resolve(process.cwd(), 'jobsicle_scraped_jobs.csv');
+    if (fs.existsSync(fallbackPath)) {
+      const csv = fs.readFileSync(fallbackPath, 'utf8');
+      const rows = csv.trim().split(/\r?\n/).slice(1);
+      const extraJobs = rows
+        .filter(Boolean)
+        .map((row) => {
+          const [title, url] = row.split(',');
+          if (!title || !url) return null;
+          return {
+            id: `${title}-${url}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            title: title.trim(),
+            company: 'Unknown',
+            url,
+            postedTime: '2026-08-01T00:00:00.000Z',
+            postedDate: '2026-08-01T00:00:00.000Z',
+            source: 'jobsicle.mv',
+            fetchedAt: new Date().toISOString(),
+          };
+        })
+        .filter(Boolean);
+
+      if (extraJobs.length) {
+        return [...fallbackJobs, ...extraJobs];
+      }
+    }
+  } catch (error) {
+    console.warn('Fallback jobs file unavailable:', error);
+  }
+
+  return fallbackJobs;
+}
 
 async function fetchJobMaldives() {
   try {
@@ -82,6 +151,10 @@ async function fetchJobMaldives() {
 
 async function fetchJobCenter() {
   try {
+    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+      return [];
+    }
+
     const pythonPath = process.env.PYTHON_PATH || 'python';
     const scriptPath = path.resolve(process.cwd(), 'scripts', 'scrape_jobcenter.py');
 
@@ -110,6 +183,10 @@ async function fetchJobCenter() {
 
 async function fetchJobsicle() {
   try {
+    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+      return loadFallbackJobs();
+    }
+
     const pythonPath = process.env.PYTHON_PATH || 'python';
     const scriptPath = path.resolve(process.cwd(), 'scripts', 'scrape_jobsicle.py');
 
@@ -117,7 +194,7 @@ async function fetchJobsicle() {
     const result = JSON.parse(stdout.trim());
 
     if (!result.success || !Array.isArray(result.jobs)) {
-      return [];
+      return loadFallbackJobs();
     }
 
     return result.jobs.map((job) => ({
@@ -132,7 +209,7 @@ async function fetchJobsicle() {
     }));
   } catch (error) {
     console.error('Error fetching from jobsicle.mv:', error);
-    return [];
+    return loadFallbackJobs();
   }
 }
 

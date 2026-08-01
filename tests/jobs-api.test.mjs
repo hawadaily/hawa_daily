@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mergeJobs } from '../api/jobs.mjs';
+import { loadFallbackJobs, mergeJobs } from '../api/jobs.mjs';
 
 test('mergeJobs combines and deduplicates jobs from multiple sources', () => {
   const merged = mergeJobs([
