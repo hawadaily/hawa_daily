@@ -72,6 +72,9 @@ export default function Jobs() {
     const fetchJobs = async () => {
       setLoading(true);
       setError(null);
+      let jobsData: Job[] = [];
+      let jobsCount = 0;
+
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
         const response = await fetch(apiUrl, {
@@ -79,20 +82,37 @@ export default function Jobs() {
           headers: { 'Cache-Control': 'no-cache' }
         });
         const data = await response.json();
-        
-        if (data.success) {
-          setJobs(data.jobs);
-          setJobCount(data.count || data.jobs.length);
-          setLastUpdated(new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
-        } else {
-          setError(data.error || 'Failed to fetch jobs');
+
+        if (data.success && Array.isArray(data.jobs) && data.jobs.length > 0) {
+          jobsData = data.jobs;
+          jobsCount = data.count || data.jobs.length;
         }
       } catch (err) {
-        setError('Failed to connect to jobs server');
-        console.error('Error fetching jobs:', err);
-      } finally {
-        setLoading(false);
+        console.warn('Jobs API unavailable, using bundled fallback', err);
       }
+
+      if (jobsData.length === 0) {
+        try {
+          const fallbackResponse = await fetch('/jobs-fallback.json', { cache: 'no-store' });
+          const fallbackJobs = await fallbackResponse.json();
+          if (Array.isArray(fallbackJobs) && fallbackJobs.length > 0) {
+            jobsData = fallbackJobs;
+            jobsCount = fallbackJobs.length;
+          }
+        } catch (fallbackError) {
+          console.warn('Bundled jobs fallback unavailable', fallbackError);
+        }
+      }
+
+      if (jobsData.length > 0) {
+        setJobs(jobsData);
+        setJobCount(jobsCount || jobsData.length);
+        setLastUpdated(new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
+      } else {
+        setError('No jobs available right now');
+      }
+
+      setLoading(false);
     };
 
     fetchJobs();
@@ -108,6 +128,9 @@ export default function Jobs() {
     const fetchJobs = async () => {
       setLoading(true);
       setError(null);
+      let jobsData: Job[] = [];
+      let jobsCount = 0;
+
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
         const response = await fetch(apiUrl, {
@@ -115,20 +138,37 @@ export default function Jobs() {
           headers: { 'Cache-Control': 'no-cache' }
         });
         const data = await response.json();
-        
-        if (data.success) {
-          setJobs(data.jobs);
-          setJobCount(data.count || data.jobs.length);
-          setLastUpdated(new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
-        } else {
-          setError(data.error || 'Failed to fetch jobs');
+
+        if (data.success && Array.isArray(data.jobs) && data.jobs.length > 0) {
+          jobsData = data.jobs;
+          jobsCount = data.count || data.jobs.length;
         }
       } catch (err) {
-        setError('Failed to connect to jobs server');
-        console.error('Error fetching jobs:', err);
-      } finally {
-        setLoading(false);
+        console.warn('Jobs API unavailable, using bundled fallback', err);
       }
+
+      if (jobsData.length === 0) {
+        try {
+          const fallbackResponse = await fetch('/jobs-fallback.json', { cache: 'no-store' });
+          const fallbackJobs = await fallbackResponse.json();
+          if (Array.isArray(fallbackJobs) && fallbackJobs.length > 0) {
+            jobsData = fallbackJobs;
+            jobsCount = fallbackJobs.length;
+          }
+        } catch (fallbackError) {
+          console.warn('Bundled jobs fallback unavailable', fallbackError);
+        }
+      }
+
+      if (jobsData.length > 0) {
+        setJobs(jobsData);
+        setJobCount(jobsCount || jobsData.length);
+        setLastUpdated(new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
+      } else {
+        setError('No jobs available right now');
+      }
+
+      setLoading(false);
     };
 
     fetchJobs();
