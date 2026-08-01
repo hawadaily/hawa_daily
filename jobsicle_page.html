@@ -1,0 +1,1910 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Jobsicle - Latest Jobs in Maldives</title>
+<meta name="description" content="Find your dream job or the perfect candidate in Maldives with Jobsicle, the leading job portal for employers and job seekers.">
+<meta name="keywords" content="jobs in Maldives, job portal, employment, hiring, recruitment, Maldives careers">
+<link rel="canonical" href="https://jobsicle.mv">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Jobsicle - Latest Jobs in Maldives">
+<meta property="og:description" content="Find your dream job or the perfect candidate in Maldives with Jobsicle, the leading job portal for employers and job seekers.">
+<meta property="og:url" content="https://jobsicle.mv">
+<meta property="og:image" content="https://jobsicle.mv/assets/images/logo.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Jobsicle - Latest Jobs in Maldives">
+<meta name="twitter:description" content="Find your dream job or the perfect candidate in Maldives with Jobsicle, the leading job portal for employers and job seekers.">
+<meta name="twitter:image" content="https://jobsicle.mv/assets/images/logo.png">
+
+<link rel="icon" href="/favicon.ico" sizes="any">
+
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=nunito-sans:200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.5.3/css/intlTelInput.css">
+
+<link rel="preload" as="style" href="https://jobsicle.mv/build/assets/app-CjS9KrHW.css"><link rel="modulepreload" as="script" href="https://jobsicle.mv/build/assets/app-BaruoR1K.js"><link rel="stylesheet" href="https://jobsicle.mv/build/assets/app-CjS9KrHW.css" data-navigate-track="reload"><script type="module" src="https://jobsicle.mv/build/assets/app-BaruoR1K.js" data-navigate-track="reload"></script>
+<style>
+    body #toast-container {
+        position: fixed !important;
+        z-index: 2147483647 !important;
+    }
+    body #toast-container.toast-top-right {
+        top: 1.5rem;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+    }
+
+    .fl-wrapper {
+        z-index: 2147483647 !important;
+        right: auto !important;
+        left: 50% !important;
+        position: fixed;
+        transform: translateX(-50%) !important;
+    }
+
+    [data-flux-modal-overlay],
+    [data-flux-modal-viewport],
+    [data-flux-modal-backdrop],
+    [data-flux-modal-root],
+    [data-flux-modal-container] {
+        z-index: 99999 !important;
+    }
+</style>
+<script>
+    function copyText(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text);
+        } else {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = 0;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+        }
+    }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.5.3/js/intlTelInput.min.js" defer=""></script>
+<script>
+    (function () {
+        function normalize(value) {
+            value = String(value || '').replace(/[^0-9+]/g, '');
+            if (value.length > 15) {
+                value = value.slice(0, 15);
+            }
+            if (value.indexOf('+') > 0) {
+                value = '+' + value.replace(/\+/g, '');
+            }
+            return value;
+        }
+
+        function candidateInputs() {
+            var set = new Set();
+            document.querySelectorAll('input[data-intl-tel-input], input#phone, input#hr_phone, input[name="phone"], input[name="hr_phone"]').forEach(function (el) {
+                set.add(el);
+            });
+            return Array.from(set);
+        }
+
+        function initIntlTelInput() {
+            if (!window.intlTelInput) {
+                window.setTimeout(initIntlTelInput, 100);
+                return;
+            }
+
+            candidateInputs().forEach(function (input) {
+                if (input.dataset.phoneSanitizerAttached !== '1') {
+                    input.addEventListener('input', function () {
+                        input.value = normalize(input.value);
+                    });
+                    input.dataset.phoneSanitizerAttached = '1';
+                }
+
+                var country = input.dataset.intlTelInput || 'mv';
+
+                try {
+                    if (input.dataset.itiInitialized !== '1') {
+                        window.intlTelInput(input, {
+                            initialCountry: country,
+                            nationalMode: false,
+                            autoHideDialCode: false,
+                            utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.5.3/js/utils.js'
+                        });
+                        input.dataset.itiInitialized = '1';
+
+                        input.addEventListener('blur', function () {
+                            var instance = window.intlTelInputGlobals && window.intlTelInputGlobals.getInstance
+                                ? window.intlTelInputGlobals.getInstance(input)
+                                : null;
+
+                            if (instance && typeof instance.setNumber === 'function') {
+                                instance.setNumber(input.value || '');
+                            }
+                        });
+                    }
+
+                    var instance = window.intlTelInputGlobals && window.intlTelInputGlobals.getInstance
+                        ? window.intlTelInputGlobals.getInstance(input)
+                        : null;
+
+                    if (instance && typeof instance.setNumber === 'function') {
+                        instance.setNumber(input.value || '');
+                    }
+                } catch (e) {
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initIntlTelInput);
+        document.addEventListener('livewire:navigated', initIntlTelInput);
+
+        if (window.MutationObserver) {
+            var observer = new MutationObserver(function () {
+                initIntlTelInput();
+            });
+            observer.observe(document.documentElement, {subtree: true, childList: true});
+        }
+    })();
+</script>
+<script>
+    window.showToast = function (message, type) {
+        var container = document.getElementById('custom-toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'custom-toast-container';
+            container.style.position = 'fixed';
+            container.style.left = '50%';
+            container.style.top = '1.25rem';
+            container.style.transform = 'translateX(-50%)';
+            container.style.zIndex = '2147483647';
+            container.style.pointerEvents = 'none';
+            document.body.appendChild(container);
+        }
+
+        var toast = document.createElement('div');
+        var isError = type === 'error';
+        toast.style.display = 'inline-flex';
+        toast.style.alignItems = 'center';
+        toast.style.gap = '10px';
+        toast.style.background = isError ? '#dc2626' : '#0ea5e9';
+        toast.style.color = '#fff';
+        toast.style.padding = '10px 14px';
+        toast.style.margin = '0 auto';
+        toast.style.borderRadius = '10px';
+        toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.18)';
+        toast.style.fontSize = '13px';
+        toast.style.fontWeight = '600';
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 160ms ease-in';
+        toast.style.pointerEvents = 'auto';
+
+        var icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        icon.setAttribute('width', '16');
+        icon.setAttribute('height', '16');
+        icon.setAttribute('viewBox', '0 0 24 24');
+        icon.setAttribute('fill', 'none');
+        icon.setAttribute('stroke', 'currentColor');
+        icon.setAttribute('stroke-width', '2');
+        icon.setAttribute('stroke-linecap', 'round');
+        icon.setAttribute('stroke-linejoin', 'round');
+        if (isError) {
+            var path1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            path1.setAttribute('cx', '12');
+            path1.setAttribute('cy', '12');
+            path1.setAttribute('r', '10');
+            var path2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            path2.setAttribute('x1', '12');
+            path2.setAttribute('y1', '8');
+            path2.setAttribute('x2', '12');
+            path2.setAttribute('y2', '12');
+            var path3 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            path3.setAttribute('x1', '12');
+            path3.setAttribute('y1', '16');
+            path3.setAttribute('x2', '12.01');
+            path3.setAttribute('y2', '16');
+            icon.appendChild(path1);
+            icon.appendChild(path2);
+            icon.appendChild(path3);
+        } else {
+            var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', 'M20 6L9 17l-5-5');
+            icon.appendChild(path);
+        }
+
+        var text = document.createElement('span');
+        text.textContent = message;
+
+        toast.appendChild(icon);
+        toast.appendChild(text);
+        container.appendChild(toast);
+
+        requestAnimationFrame(function () {
+            toast.style.opacity = '1';
+        });
+        setTimeout(function () {
+            toast.style.opacity = '0';
+            setTimeout(function () {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 220);
+        }, 2500);
+    };
+
+    window.copyJobLink = async function (url) {
+        try {
+            if (navigator.share) {
+                await navigator.share({title: document.title, url: url});
+                window.showToast('Link shared', 'success');
+                return;
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(url);
+            } else {
+                var t = document.createElement('textarea');
+                t.value = url;
+                t.setAttribute('readonly', '');
+                t.style.position = 'absolute';
+                t.style.left = '-9999px';
+                document.body.appendChild(t);
+                t.select();
+                document.execCommand('copy');
+                document.body.removeChild(t);
+            }
+
+            window.showToast('Link copied to clipboard', 'success');
+        } catch (e) {
+            window.showToast('Unable to copy link', 'error');
+        }
+    };
+</script>
+    <!-- Google tag (gtag.js) -->
+     <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-HBRS6WVSMQ"></script>
+     <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-HBRS6WVSMQ'); </script>
+    <script type="text/javascript" class="flasher-js" nonce="cd2238d5e499ff2a881b62ee2ed79dac">
+        (function(window, document) {
+            const merge = (first, second) => {
+                if (Array.isArray(first) && Array.isArray(second)) {
+                    return [...first, ...second.filter(item => !first.includes(item))];
+                }
+
+                if (typeof first === 'object' && typeof second === 'object') {
+                    for (const [key, value] of Object.entries(second)) {
+                        first[key] = key in first ? { ...first[key], ...value } : value;
+                    }
+                    return first;
+                }
+
+                return undefined;
+            };
+
+            const mergeOptions = (...options) => {
+                const result = {};
+
+                options.forEach(option => {
+                    Object.entries(option).forEach(([key, value]) => {
+                        result[key] = key in result ? merge(result[key], value) : value;
+                    });
+                });
+
+                return result;
+            };
+
+            const renderCallback = (options) => {
+                if(!window.flasher) {
+                    throw new Error('Flasher is not loaded');
+                }
+
+                window.flasher.render(options);
+            };
+
+            const render = (options) => {
+                if (options instanceof Event) {
+                    options = options.detail;
+                }
+
+                if (['interactive', 'complete'].includes(document.readyState)) {
+                    renderCallback(options);
+                } else {
+                    document.addEventListener('DOMContentLoaded', () => renderCallback(options));
+                }
+            };
+
+            const addScriptAndRender = (options) => {
+                const mainScript = '/vendor/flasher/flasher.min.js?id=2dfca2b3c2159f2ff676a62ad338f092';
+
+                if (window.flasher || !mainScript || document.querySelector('script[src="' + mainScript + '"]')) {
+                    render(options);
+                } else {
+                    const tag = document.createElement('script');
+                    tag.src = mainScript;
+                    tag.type = 'text/javascript';
+                    tag.setAttribute('nonce', 'cd2238d5e499ff2a881b62ee2ed79dac');
+                    tag.onload = () => render(options);
+
+                    document.head.appendChild(tag);
+                }
+            };
+
+            const addRenderListener = () => {
+                if (1 === document.querySelectorAll('script.flasher-js').length) {
+                    document.addEventListener('flasher:render', render);
+                }
+
+                    document.addEventListener('livewire:navigating', () => {
+      document.querySelectorAll('.fl-no-cache').forEach(el => el.remove());
+    });
+            };
+
+            const options = [];
+            options.push({"envelopes":[],"scripts":[],"styles":[],"options":[],"context":{"envelopes_only":false,"csp_script_nonce":"cd2238d5e499ff2a881b62ee2ed79dac","csp_style_nonce":"769736691245157138059229576fd153"}});
+            /** {--FLASHER_REPLACE_ME--} **/
+            addScriptAndRender(mergeOptions(...options));
+            addRenderListener();
+        })(window, document);
+    </script><script src="/vendor/flasher/flasher.min.js?id=2dfca2b3c2159f2ff676a62ad338f092" type="text/javascript" nonce="cd2238d5e499ff2a881b62ee2ed79dac"></script>
+<!-- Livewire Styles --><style>[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.list-item][wire\:loading\.list-item], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #2299dd;}[x-cloak] {display: none !important;}[wire\:cloak] {display: none !important;}dialog#livewire-error::backdrop {background-color: rgba(0, 0, 0, .6);}</style>
+<script async="" type="text/javascript" src="https://cdn.livechatinc.com/tracking.js"></script><style>/* Make clicks pass-through */
+
+    #nprogress {
+      pointer-events: none;
+    }
+
+    #nprogress .bar {
+      background: var(--livewire-progress-bar-color, #29d);
+
+      position: fixed;
+      z-index: 1031;
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 2px;
+    }
+
+    /* Fancy blur effect */
+    #nprogress .peg {
+      display: block;
+      position: absolute;
+      right: 0px;
+      width: 100px;
+      height: 100%;
+      box-shadow: 0 0 10px var(--livewire-progress-bar-color, #29d), 0 0 5px var(--livewire-progress-bar-color, #29d);
+      opacity: 1.0;
+
+      -webkit-transform: rotate(3deg) translate(0px, -4px);
+          -ms-transform: rotate(3deg) translate(0px, -4px);
+              transform: rotate(3deg) translate(0px, -4px);
+    }
+
+    /* Remove these to get rid of the spinner */
+    #nprogress .spinner {
+      display: block;
+      position: fixed;
+      z-index: 1031;
+      top: 15px;
+      right: 15px;
+    }
+
+    #nprogress .spinner-icon {
+      width: 18px;
+      height: 18px;
+      box-sizing: border-box;
+
+      border: solid 2px transparent;
+      border-top-color: var(--livewire-progress-bar-color, #29d);
+      border-left-color: var(--livewire-progress-bar-color, #29d);
+      border-radius: 50%;
+
+      -webkit-animation: nprogress-spinner 400ms linear infinite;
+              animation: nprogress-spinner 400ms linear infinite;
+    }
+
+    .nprogress-custom-parent {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .nprogress-custom-parent #nprogress .spinner,
+    .nprogress-custom-parent #nprogress .bar {
+      position: absolute;
+    }
+
+    @-webkit-keyframes nprogress-spinner {
+      0%   { -webkit-transform: rotate(0deg); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+    @keyframes nprogress-spinner {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    </style></head>
+<body class="min-h-screen bg-[#eee] antialiased">
+<div class="flex min-h-svh flex-col">
+    <header class="fixed px-6 inset-x-0 top-0 z-50 border-b border-neutral-200 bg-white shadow-sm">
+        <div class="mx-auto w-full" style="max-width:1500px;">
+            <div class="flex py-3 w-full items-center justify-between">
+                <div class="flex items-center text-sm gap-x-10">
+                    <a href="https://jobsicle.mv" class="flex items-center w-[6rem]">
+                        <img src="https://jobsicle.mv/assets/images/logo.png" class="w-full h-full" alt="">
+                    </a>
+
+                    <nav class="hidden items-center gap-8 font-bold md:flex" style="color:#393939">
+                        <a href="https://jobsicle.mv" class="text-primary" wire:navigate="" data-current="">
+                            Jobs
+                        </a>
+                        <a href="https://jobsicle.mv/pricing" class="hover:opacity-80" wire:navigate="">
+                            Pricing
+                        </a>
+                        <a href="https://jobsicle.mv/employers" class="hover:opacity-80" wire:navigate="">
+                            Employers
+                        </a>
+                        <!-- <a href="https://jobsicle.mv/talent-pool" class="hover:opacity-80" wire:navigate>
+                            TalentPool
+                        </a> -->
+                        <a href="https://jobsicle.mv/download" class="hover:opacity-80" wire:navigate="">
+                            Download
+                        </a>
+                        <a href="https://jobsicle.mv/about" class="hover:opacity-80" wire:navigate="">
+                            About
+                        </a>
+                    </nav>
+                </div>
+
+                <div class="flex items-center gap-3 text-sm font-bold" style="color:#393939">
+                    <div class="md:hidden">
+                        <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center rounded-md border border-neutral-300 p-2 text-neutral-700 transition hover:bg-neutral-50" aria-expanded="false" aria-controls="mobile-menu" data-bound="1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 6h16"></path>
+                                <path d="M4 12h16"></path>
+                                <path d="M4 18h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="hidden items-center gap-3 md:flex">
+                                                                                    <a href="https://jobsicle.mv/login" class="rounded-full border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50" wire:navigate="">
+                                    Login
+                                </a>
+                                                                                        <a href="https://jobsicle.mv/register" class="rounded-full px-4 py-2 text-sm font-medium text-white shadow-sm transition bg-primary hover:bg-primary/90" wire:navigate="">
+                                    Register
+                                </a>
+                                                                        </div>
+                </div>
+            </div>
+
+            <div id="mobile-menu" class="hidden border-t border-neutral-200 pb-4 pt-3 md:hidden">
+                <nav class="flex flex-col gap-3 text-sm font-bold" style="color:#393939">
+                    <a href="https://jobsicle.mv" class="text-primary" wire:navigate="" data-current="">
+                        Jobs
+                    </a>
+                    <a href="https://jobsicle.mv/pricing" class="hover:opacity-80" wire:navigate="">
+                        Pricing
+                    </a>
+                    <a href="https://jobsicle.mv/employers" class="hover:opacity-80" wire:navigate="">
+                        Employers
+                    </a>
+                    <a href="https://jobsicle.mv/download" class="hover:opacity-80" wire:navigate="">
+                        Download
+                    </a>
+                    <a href="https://jobsicle.mv/about" class="hover:opacity-80" wire:navigate="">
+                        About
+                    </a>
+                </nav>
+
+                <div class="mt-4 flex flex-col gap-2 text-sm font-bold" style="color:#393939">
+                                                                        <a href="https://jobsicle.mv/login" class="rounded-full border border-neutral-300 px-4 py-2 text-center text-sm font-medium text-neutral-700 transition hover:bg-neutral-50" wire:navigate="">
+                                Login
+                            </a>
+                                                                            <a href="https://jobsicle.mv/register" class="rounded-full px-4 py-2 text-center text-sm font-medium text-white shadow-sm transition bg-primary hover:bg-primary/90" wire:navigate="">
+                                Register
+                            </a>
+                                                            </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="mt-16 flex flex-1 justify-center py-10">
+        <div class="mx-auto w-full" style="max-width:1200px; padding-inline:24px">
+            <main class="w-full min-h-[calc(70vh-90px)]">
+        <div wire:snapshot="{&quot;data&quot;:{&quot;search&quot;:&quot;&quot;,&quot;searchDraft&quot;:&quot;&quot;,&quot;sector&quot;:&quot;&quot;,&quot;category&quot;:&quot;&quot;,&quot;type&quot;:&quot;&quot;,&quot;salary&quot;:&quot;&quot;,&quot;location&quot;:&quot;&quot;,&quot;selectedJob&quot;:null,&quot;loadingJobId&quot;:null,&quot;jobSaved&quot;:false,&quot;jobApplied&quot;:false,&quot;showAuthModal&quot;:false,&quot;showOnlineDisabledModal&quot;:false,&quot;showNationalityRestrictedModal&quot;:false,&quot;showProfileIncompleteModal&quot;:false,&quot;completionDetails&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;showJobModal&quot;:false,&quot;showAuthModalState&quot;:false,&quot;showOnlineDisabledModalState&quot;:false,&quot;showNationalityRestrictedModalState&quot;:false,&quot;showProfileIncompleteModalState&quot;:false,&quot;showJobModalState&quot;:false,&quot;authModalMessage&quot;:&quot;&quot;,&quot;paginators&quot;:[{&quot;page&quot;:1},{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;clYtzyklPv50cFrnGd59&quot;,&quot;name&quot;:&quot;home.job-list&quot;,&quot;path&quot;:&quot;\/&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;release&quot;:&quot;a-a-a&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;,&quot;islands&quot;:[]},&quot;checksum&quot;:&quot;74276addb5196251f2fe98d99304104649bc89f45eafd338a8c418af5a7780d0&quot;}" wire:effects="{&quot;returns&quot;:[null]}" wire:id="clYtzyklPv50cFrnGd59" wire:name="home.job-list" id="jobs-top" x-data="{ showMoreFilters: false }" x-init="window.Livewire.find('clYtzyklPv50cFrnGd59').on('jobs-scroll-top', () =&gt; { window.requestAnimationFrame(() =&gt; { $el.scrollIntoView({ behavior: 'smooth', block: 'start' }) }) })" class="space-y-6 lg:space-y-8" data-has-alpine-state="true">
+    
+    <section class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="min-w-0 space-y-1">
+                <h2 class="text-lg font-bold tracking-tight text-neutral-900 sm:text-xl">
+                    Find your next job.
+                </h2>
+                <p class="text-sm font-medium text-neutral-500">
+                    Jobs, served fresh. Updated daily.
+                </p>
+            </div>
+
+            <div class="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-bold text-primary ring-1 ring-primary/20" title="Open roles available right now">
+                <span class="h-2 w-2 rounded-full bg-primary shadow-[0_0_0_6px_rgba(0,187,177,0.16)]"></span>
+                <span><span class="font-extrabold">125</span> open jobs</span>
+            </div>
+        </div>
+
+        <div class="mt-5 grid gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto_auto]">
+            <div class="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2.5 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+</svg>
+
+                        <input type="text" wire:model.defer="searchDraft" wire:keydown.enter="applySearch" placeholder="Job title or keyword (e.g., Driver, Accountant)" class="w-full bg-transparent text-sm font-medium text-neutral-800 outline-none placeholder:text-neutral-400">
+            </div>
+
+            <div class="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2.5 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                        <select wire:model.live="location" class="w-full bg-transparent text-sm font-medium text-neutral-800 outline-none">
+                    <option value="">Location</option>
+                    <!--[if BLOCK]><![endif]-->                        <option value="Addu Atoll">Addu Atoll</option>
+                                            <option value="Alif Alif Atoll">Alif Alif Atoll</option>
+                                            <option value="Alif Dhaalu Atoll">Alif Dhaalu Atoll</option>
+                                            <option value="Baa Atoll">Baa Atoll</option>
+                                            <option value="Dhaalu Atoll">Dhaalu Atoll</option>
+                                            <option value="Faafu Atoll">Faafu Atoll</option>
+                                            <option value="Fuvahmulah">Fuvahmulah</option>
+                                            <option value="Gaafu Alif Atoll">Gaafu Alif Atoll</option>
+                                            <option value="Gaafu Dhaalu Atoll">Gaafu Dhaalu Atoll</option>
+                                            <option value="Haa Alif Atoll">Haa Alif Atoll</option>
+                                            <option value="Haa Dhaalu Atoll">Haa Dhaalu Atoll</option>
+                                            <option value="Hulhule">Hulhule</option>
+                                            <option value="Hulhumale">Hulhumale</option>
+                                            <option value="Laamu Atoll">Laamu Atoll</option>
+                                            <option value="Lhaviyani Atoll">Lhaviyani Atoll</option>
+                                            <option value="Male'">Male'</option>
+                                            <option value="Male' Atoll">Male' Atoll</option>
+                                            <option value="Meemu Atoll">Meemu Atoll</option>
+                                            <option value="Noonu Atoll">Noonu Atoll</option>
+                                            <option value="Not Stated">Not Stated</option>
+                                            <option value="Raa Atoll">Raa Atoll</option>
+                                            <option value="Shaviyani Atoll">Shaviyani Atoll</option>
+                                            <option value="Thaa Atoll">Thaa Atoll</option>
+                                            <option value="Thilafushi">Thilafushi</option>
+                                            <option value="Vaavu Atoll">Vaavu Atoll</option>
+                                            <option value="Vilimale">Vilimale</option>
+                    <!--[if ENDBLOCK]><![endif]-->                </select>
+            </div>
+
+            <button type="button" wire:click="applySearch" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-1">
+                Search
+                <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"></path>
+</svg>
+
+                    </button>
+
+            <div class="flex items-stretch gap-2">
+                <button type="button" x-on:click="showMoreFilters = !showMoreFilters" x-bind:aria-expanded="showMoreFilters" aria-controls="more-filters" x-bind:class="showMoreFilters ? 'border-primary bg-primary text-white hover:bg-primary/90' : 'border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50'" class="inline-flex items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold shadow-sm transition focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-1 border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50" aria-expanded="false">
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-500" x-bind:class="showMoreFilters ? 'h-4 w-4 text-white' : 'h-4 w-4 text-neutral-500'" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"></path>
+</svg>
+
+                            <span class="hidden sm:inline">More</span>
+                </button>
+
+                <button type="button" wire:click="resetFilters" class="inline-flex h-[42px] w-[42px] items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 shadow-sm transition hover:bg-neutral-50 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-1" title="Reset filters">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="more-filters" x-show="showMoreFilters" x-transition="" class="mt-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-4 shadow-sm" style="display: none;">
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <select wire:model.live="sector" class="w-full rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-neutral-800 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
+                    <option value="">Sector</option>
+                    <!--[if BLOCK]><![endif]-->                        <option value="Government / Civil Service">Government / Civil Service</option>
+                                            <option value="Private (Others)">Private (Others)</option>
+                                            <option value="Private (Tourism)">Private (Tourism)</option>
+                    <!--[if ENDBLOCK]><![endif]-->                </select>
+
+                <select wire:model.live="category" class="w-full rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-neutral-800 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
+                    <option value="">Category</option>
+                    <!--[if BLOCK]><![endif]-->                        <option value="Accounts / Taxation / Audit">Accounts / Taxation / Audit</option>
+                                            <option value="Administration">Administration</option>
+                                            <option value="Architecture / Interior Design / Shop Drawing / Drafting">Architecture / Interior Design / Shop Drawing / Drafting</option>
+                                            <option value="Cashier / Teller / Billing &amp; Payment">Cashier / Teller / Billing &amp; Payment</option>
+                                            <option value="Consulting / Corporate Planning / Strategy / M&amp;A">Consulting / Corporate Planning / Strategy / M&amp;A</option>
+                                            <option value="Contract Management / Estimation / Tendering / Quantity Surveying">Contract Management / Estimation / Tendering / Quantity Surveying</option>
+                                            <option value="Customer Service / Helpdesk">Customer Service / Helpdesk</option>
+                                            <option value="Data Entry / Operations / Back Office Processing">Data Entry / Operations / Back Office Processing</option>
+                                            <option value="Engineering (Civil / Mechanical / Marine / Electrical / Aviation / Telecom / Industrial / Chemical)">Engineering (Civil / Mechanical / Marine / Electrical / Aviation / Telecom / Industrial / Chemical)</option>
+                                            <option value="Entertainment (Music / Acting / Performing / Film Production)">Entertainment (Music / Acting / Performing / Film Production)</option>
+                                            <option value="Equipment Operations (Machines / Crane / Forklift / Excavator)">Equipment Operations (Machines / Crane / Forklift / Excavator)</option>
+                                            <option value="Finance / Treasury">Finance / Treasury</option>
+                                            <option value="Flight Operations (Pilots / Cabin Crew / Technical Staff / Ground Staff)">Flight Operations (Pilots / Cabin Crew / Technical Staff / Ground Staff)</option>
+                                            <option value="Food &amp; Beverages">Food &amp; Beverages</option>
+                                            <option value="General Labor">General Labor</option>
+                                            <option value="Graphic Design / Photography / Animation / Art">Graphic Design / Photography / Animation / Art</option>
+                                            <option value="Guest Relations / Front Office / Reception">Guest Relations / Front Office / Reception</option>
+                                            <option value="Healthcare (Doctor / Nurse / Paramedics / Lab Technicians / Pharmacy / Medical Research)">Healthcare (Doctor / Nurse / Paramedics / Lab Technicians / Pharmacy / Medical Research)</option>
+                                            <option value="Housekeeping">Housekeeping</option>
+                                            <option value="Human Resources">Human Resources</option>
+                                            <option value="Insurance / Underwriting / Surveying / Actuary">Insurance / Underwriting / Surveying / Actuary</option>
+                                            <option value="Intern / Trainee / Fresh Graduates / No Experience">Intern / Trainee / Fresh Graduates / No Experience</option>
+                                            <option value="IT Hardware (Hardware Repair &amp; Maintenance / Support)">IT Hardware (Hardware Repair &amp; Maintenance / Support)</option>
+                                            <option value="IT Networking (System Administration / Network Administration / Security)">IT Networking (System Administration / Network Administration / Security)</option>
+                                            <option value="IT Software (Software Engineering / Development / Application Development)">IT Software (Software Engineering / Development / Application Development)</option>
+                                            <option value="Journalism &amp; Media (Content Writing / Editing / Reporting / Presenting)">Journalism &amp; Media (Content Writing / Editing / Reporting / Presenting)</option>
+                                            <option value="Legal Services (Lawyers / Legal Advisors / Judicial)">Legal Services (Lawyers / Legal Advisors / Judicial)</option>
+                                            <option value="Logistics / Supply Chain">Logistics / Supply Chain</option>
+                                            <option value="Management / Top Management / Senior Management">Management / Top Management / Senior Management</option>
+                                            <option value="Marine Biology / Oceanography">Marine Biology / Oceanography</option>
+                                            <option value="Marine Services (Boat Captain / Crew / Marine Officer)">Marine Services (Boat Captain / Crew / Marine Officer)</option>
+                                            <option value="Marketing / Public Relations / Advertising / Digital Marketing">Marketing / Public Relations / Advertising / Digital Marketing</option>
+                                            <option value="Other">Other</option>
+                                            <option value="Procurement / Merchandising / Purchase">Procurement / Merchandising / Purchase</option>
+                                            <option value="Production / Manufacturing / Research &amp; Development">Production / Manufacturing / Research &amp; Development</option>
+                                            <option value="Quality / Testing / Inspecting">Quality / Testing / Inspecting</option>
+                                            <option value="Sales / Business Development">Sales / Business Development</option>
+                                            <option value="Secretary / Personal Assistant (PA)">Secretary / Personal Assistant (PA)</option>
+                                            <option value="Security Services / Protection / Safety / Rescue">Security Services / Protection / Safety / Rescue</option>
+                                            <option value="Site Engineering / Supervision / Foreman">Site Engineering / Supervision / Foreman</option>
+                                            <option value="Skilled Construction (Masonry / Carpentry / Plumbing / Other)">Skilled Construction (Masonry / Carpentry / Plumbing / Other)</option>
+                                            <option value="Skilled Technical (Installation / Maintenance / Repair)">Skilled Technical (Installation / Maintenance / Repair)</option>
+                                            <option value="Teaching / Education / Training">Teaching / Education / Training</option>
+                                            <option value="Ticketing / Reservations / Tour Guide">Ticketing / Reservations / Tour Guide</option>
+                                            <option value="Transport / Driving">Transport / Driving</option>
+                                            <option value="Watersports / Diving">Watersports / Diving</option>
+                                            <option value="Wellness (Spa Therapy / Beautician / Fitness)">Wellness (Spa Therapy / Beautician / Fitness)</option>
+                    <!--[if ENDBLOCK]><![endif]-->                </select>
+
+                <select wire:model.live="type" class="w-full rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-neutral-800 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
+                    <option value="">Job Type</option>
+                    <!--[if BLOCK]><![endif]-->                        <option value="Freelance">Freelance</option>
+                                            <option value="Full-time">Full-time</option>
+                                            <option value="Intern">Intern</option>
+                                            <option value="Part-time">Part-time</option>
+                    <!--[if ENDBLOCK]><![endif]-->                </select>
+
+                <select wire:model.live="salary" class="w-full rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-neutral-800 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
+                    <option value="">Salary</option>
+                    <!--[if BLOCK]><![endif]-->                        <option value="MVR 1000 - 2999">MVR 1000 - 2999</option>
+                                            <option value="MVR 3000 - 4999">MVR 3000 - 4999</option>
+                                            <option value="MVR 5000 - 6999">MVR 5000 - 6999</option>
+                                            <option value="MVR 7000 - 9999">MVR 7000 - 9999</option>
+                                            <option value="MVR 10000 - 11999">MVR 10000 - 11999</option>
+                                            <option value="MVR 12000 - 15999">MVR 12000 - 15999</option>
+                                            <option value="MVR 16000 - 19999">MVR 16000 - 19999</option>
+                                            <option value="MVR 20000 - 24999">MVR 20000 - 24999</option>
+                                            <option value="MVR 25000+">MVR 25000+</option>
+                                            <option value="Not Stated">Not Stated</option>
+                    <!--[if ENDBLOCK]><![endif]-->                </select>
+            </div>
+        </div>
+
+        
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+        <div class="mt-5 hidden sm:grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-5 w-5" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"></path>
+</svg>
+
+                        </div>
+                <div class="leading-tight">
+                    <div class="text-base font-extrabold text-neutral-900">
+                        25,275
+                    </div>
+                    <div class="text-[12px] font-semibold text-neutral-500">Jobs posted</div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-5 w-5" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                        </div>
+                <div class="leading-tight">
+                    <div class="text-base font-extrabold text-neutral-900">
+                        125
+                    </div>
+                    <div class="text-[12px] font-semibold text-neutral-500">Open jobs</div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-5 w-5" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"></path>
+</svg>
+
+                        </div>
+                <div class="leading-tight">
+                    <div class="text-base font-extrabold text-neutral-900">
+                        58,117
+                    </div>
+                    <div class="text-[12px] font-semibold text-neutral-500">Jobseekers</div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-5 w-5" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                        </div>
+                <div class="leading-tight">
+                    <div class="text-base font-extrabold text-neutral-900">
+                        1,000+
+                    </div>
+                    <div class="text-[12px] font-semibold text-neutral-500">Employers</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <a href="https://mianzcollege.edu.mv/en/" target="_blank" class="mt-4 block overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-r from-[#e6fbf9] via-white to-[#e6fbf9] shadow-sm">
+        <img class="w-full hidden lg:block object-cover" src="https://jobsicle.mv/assets/images/adslot1.jpg" alt="">
+        <img class="w-full block lg:hidden object-cover" src="https://jobsicle.mv/assets/images/adslot2.jpg" alt="">
+    </a>
+
+    <div class="mt-6 overflow-hidden rounded-xl border border-neutral-200 bg-white/95 shadow-sm" wire:key="jobs-list-page-1">
+        <!--[if BLOCK]><![endif]-->            <button wire:key="job-row-1-25423" wire:click="viewJob(25423)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://jobsicle.mv/storage/employers/logos/logo-17854938876141.jpg" alt="Aviation Services Maldives logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Senior Customer Service Officer (Airport) / Customer Service Officer (Airport)
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">Aviation Services Maldives</span>
+                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Male'</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>Not Stated</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>Not Stated</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    17 hours ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+                    <button wire:key="job-row-1-25422" wire:click="viewJob(25422)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://jobsicle.org/uploads/16606250828585.png" alt="Ooredoo Maldives logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Executive Revenue Accounting
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">Ooredoo Maldives</span>
+                                <!--[if BLOCK]><![endif]-->                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-primary" title="Verified employer" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd"></path>
+</svg>
+
+                                        <!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Hulhumale</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>Not Stated</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>Not Stated</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    1 day ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+                    <button wire:key="job-row-1-25421" wire:click="viewJob(25421)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://www.jobsicle.mv/storage/employers/logos/logo-1623123922.jpg" alt="ILAA Maldives Pvt Ltd logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Sales Executive
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">ILAA Maldives Pvt Ltd</span>
+                                <!--[if BLOCK]><![endif]-->                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-primary" title="Verified employer" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd"></path>
+</svg>
+
+                                        <!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Hulhumale</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 12000 - 15999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 12000 - 15999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    1 day ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+                    <button wire:key="job-row-1-25420" wire:click="viewJob(25420)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://jobsicle.mv/storage/employers/logos/logo-17854061223971.png" alt="ACCORD INSURANCE BROKERS MALDIVES PVT LTD logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Manager – Admin &amp; HR
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">ACCORD INSURANCE BROKERS MALDIVES PVT LTD</span>
+                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Male'</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 12000 - 15999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 12000 - 15999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    1 day ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+                    <button wire:key="job-row-1-25419" wire:click="viewJob(25419)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://jobsicle.mv/storage/employers/logos/logo-17854061223971.png" alt="ACCORD INSURANCE BROKERS MALDIVES PVT LTD logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Sales and Marketing Executive
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">ACCORD INSURANCE BROKERS MALDIVES PVT LTD</span>
+                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Male'</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 10000 - 11999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 10000 - 11999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    1 day ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+                    <button wire:key="job-row-1-25418" wire:click="viewJob(25418)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://jobsicle.mv/storage/employers/logos/logo-1558939261.jpg" alt="Rainbow Group logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Sales and Marketing Assistant
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">Rainbow Group</span>
+                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Addu Atoll</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 10000 - 11999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 10000 - 11999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    1 day ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+                    <button wire:key="job-row-1-25417" wire:click="viewJob(25417)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://www.jobsicle.mv/storage/employers/logos/logo-1583819013.jpg" alt="Araaby Pvt Ltd logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Marketing Officer
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">Araaby Pvt Ltd</span>
+                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Male'</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>Not Stated</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>Not Stated</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    1 day ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+                    <button wire:key="job-row-1-25416" wire:click="viewJob(25416)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://jobsicle.mv/storage/employers/logos/logo-1554099932.jpeg" alt="Crowe Maldives LLP logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Human Resource Executive
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">Crowe Maldives LLP</span>
+                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Male'</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>Not Stated</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>Not Stated</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    1 day ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+                    <button wire:key="job-row-1-25415" wire:click="viewJob(25415)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://jobsicle.mv/storage/employers/logos/logo-17837641527354.png" alt="MIANZ College logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Administrative Officer
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">MIANZ College</span>
+                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Male'</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 7000 - 9999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 7000 - 9999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    1 day ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+                    <button wire:key="job-row-1-25414" wire:click="viewJob(25414)" type="button" class="group flex w-full flex-col items-stretch gap-3 border-b border-neutral-100 px-4 py-4 text-left transition hover:bg-neutral-50/80 focus:bg-neutral-50/80 focus:outline-none last:border-b-0 sm:px-6 md:flex-row md:items-center">
+                <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-12 w-12 overflow-hidden shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-bold uppercase tracking-wide text-primary shadow-sm md:h-13 md:w-13">
+                                                <!--[if BLOCK]><![endif]-->                            <img src="https://www.jobsicle.mv/storage/employers/logos/logo-1585641525.png" alt="MAAHIYA PVT LTD logo" class="h-full w-full object-cover">
+                        <!--[if ENDBLOCK]><![endif]-->                    </div>
+
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                        <span class="truncate text-[15px] font-semibold leading-tight text-neutral-900 transition-colors group-hover:text-primary sm:text-[15px] md:text-base">
+                            Customer Services Representative
+                        </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] text-neutral-500">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"></path>
+</svg>
+
+                                        <span class="font-medium text-neutral-700">MAAHIYA PVT LTD</span>
+                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                            </span>
+
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="shrink-0 [:where(&amp;)]:size-6 h-3.5 w-3.5 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
+</svg>
+
+                                        <span>Male'</span>
+                            </span>
+
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="hidden md:inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 7000 - 9999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] text-neutral-500 md:hidden">
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"></path>
+</svg>
+
+                                            <span>Full-time</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->
+                            <!--[if BLOCK]><![endif]-->                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">
+                                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-3 w-3 text-emerald-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"></path>
+</svg>
+
+                                            <span>MVR 7000 - 9999</span>
+                                </span>
+                            <!--[if ENDBLOCK]><![endif]-->                        </div>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center justify-between gap-2 text-right md:flex-col md:items-end md:justify-center">
+                <span class="text-[11px] font-medium text-neutral-400">
+                    1 day ago
+                </span>
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4 text-neutral-300 transition-colors group-hover:text-primary" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </div>
+            </button>
+        <!--[if ENDBLOCK]><![endif]-->    </div>
+
+    <!-- Pagination -->
+        <!--[if BLOCK]><![endif]-->        <nav class="mt-4 flex flex-wrap items-center justify-center gap-1.5" role="navigation" aria-label="Pagination Navigation">
+            <!--[if BLOCK]><![endif]-->                <span class="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-300">
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+</svg>
+
+                        </span>
+            <!--[if ENDBLOCK]><![endif]-->
+            <!--[if BLOCK]><![endif]-->                                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]-->                        <span class="inline-flex h-9 min-w-9 items-center justify-center rounded-full bg-primary px-3 text-sm font-semibold text-white" aria-current="page" wire:key="jobs-page-active-1">
+                            1
+                        </span>
+                    <!--[if ENDBLOCK]><![endif]-->                <!--[if ENDBLOCK]><![endif]-->                                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]-->                        <button type="button" wire:click="goToPageAndScroll(2, 'page')" wire:key="jobs-page-2" class="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-neutral-200 bg-white px-3 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900">
+                            2
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                <!--[if ENDBLOCK]><![endif]-->                                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]-->                        <button type="button" wire:click="goToPageAndScroll(3, 'page')" wire:key="jobs-page-3" class="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-neutral-200 bg-white px-3 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900">
+                            3
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                <!--[if ENDBLOCK]><![endif]-->                                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]-->                        <button type="button" wire:click="goToPageAndScroll(4, 'page')" wire:key="jobs-page-4" class="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-neutral-200 bg-white px-3 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900">
+                            4
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                <!--[if ENDBLOCK]><![endif]-->                                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]-->                        <button type="button" wire:click="goToPageAndScroll(5, 'page')" wire:key="jobs-page-5" class="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-neutral-200 bg-white px-3 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900">
+                            5
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                <!--[if ENDBLOCK]><![endif]-->                                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]-->                        <button type="button" wire:click="goToPageAndScroll(6, 'page')" wire:key="jobs-page-6" class="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-neutral-200 bg-white px-3 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900">
+                            6
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                <!--[if ENDBLOCK]><![endif]-->                                            <!--[if BLOCK]><![endif]-->                    <span class="inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-sm text-neutral-400" wire:key="jobs-page-separator-6">
+                        ...
+                    </span>
+                <!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->                                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]-->                        <button type="button" wire:click="goToPageAndScroll(12, 'page')" wire:key="jobs-page-12" class="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-neutral-200 bg-white px-3 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900">
+                            12
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                <!--[if ENDBLOCK]><![endif]-->                                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]-->                    <!--[if BLOCK]><![endif]-->                        <button type="button" wire:click="goToPageAndScroll(13, 'page')" wire:key="jobs-page-13" class="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-neutral-200 bg-white px-3 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900">
+                            13
+                        </button>
+                    <!--[if ENDBLOCK]><![endif]-->                <!--[if ENDBLOCK]><![endif]-->            <!--[if ENDBLOCK]><![endif]-->
+            <!--[if BLOCK]><![endif]-->                <button type="button" wire:click="nextPageAndScroll('page')" class="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900">
+                    <svg class="shrink-0 [:where(&amp;)]:size-6 h-4 w-4" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+</svg>
+
+                        </button>
+            <!--[if ENDBLOCK]><![endif]-->        </nav>
+    <!--[if ENDBLOCK]><![endif]-->
+    <!-- Job Details Modal -->
+    <ui-modal wire:model.self="showJobModalState" wire:key="job-loader-" wire:init="loadJobDetails" data-flux-modal="">
+    
+    <dialog wire:ignore.self="" class="p-6 [:where(&amp;)]:max-w-xl [:where(&amp;)]:min-w-xs shadow-lg rounded-xl bg-white dark:bg-zinc-800 ring ring-black/5 dark:ring-zinc-700 shadow-lg rounded-xl w-[95%] max-w-[81.25rem] max-h-[45rem] bg-white p-0 border-t-4 border-primary" x-data="fluxModal(null, 'clYtzyklPv50cFrnGd59')" x-on:modal-show.document="handleShow($event)" x-on:modal-close.document="handleClose($event)"><div data-flux-focus-placeholder="" data-appended="" tabindex="0"></div>
+        <!--[if BLOCK]><![endif]-->            <div class="flex items-center justify-center py-12">
+                <svg class="shrink-0 [:where(&amp;)]:size-6 animate-spin h-8 w-8 animate-spin text-neutral-400" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true" data-slot="icon">
+    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+</svg>
+                    </div>
+        <!--[if ENDBLOCK]><![endif]-->
+
+                    <div class="absolute top-0 end-0 mt-4 me-4">
+                <ui-close data-flux-modal-close="">
+    <button type="button" class="relative items-center font-medium justify-center gap-2 whitespace-nowrap disabled:opacity-75 dark:disabled:opacity-75 disabled:cursor-default disabled:pointer-events-none justify-center h-8 text-sm rounded-md w-8 inline-flex  bg-transparent hover:bg-zinc-800/5 dark:hover:bg-white/15 text-zinc-800 dark:text-white      text-zinc-400! hover:text-zinc-800! dark:text-zinc-500! dark:hover:text-white!" data-flux-button="data-flux-button" aria-label="Close modal">
+        <svg class="shrink-0 [:where(&amp;)]:size-5" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
+</svg>
+    </button>
+</ui-close>
+            </div>
+            </dialog>
+</ui-modal>
+
+    <ui-modal wire:model.self="showNationalityRestrictedModalState" data-flux-modal="">
+    
+    <dialog wire:ignore.self="" class="p-6 [:where(&amp;)]:max-w-xl [:where(&amp;)]:min-w-xs shadow-lg rounded-xl bg-white dark:bg-zinc-800 ring ring-black/5 dark:ring-zinc-700 shadow-lg rounded-xl max-w-sm" x-data="fluxModal(null, 'clYtzyklPv50cFrnGd59')" x-on:modal-show.document="handleShow($event)" x-on:modal-close.document="handleClose($event)"><div data-flux-focus-placeholder="" data-appended="" tabindex="0"></div>
+        <div class="flex flex-col items-center gap-4 px-6 py-6">
+            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-amber-100">
+                <svg class="shrink-0 [:where(&amp;)]:size-6 h-12 w-12 text-amber-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"></path>
+</svg>
+
+                    </div>
+            <div class="text-center space-y-2">
+                <div class="text-sm font-semibold text-neutral-900">
+                    Maldivians Only
+                </div>
+                <div class="text-xs text-neutral-600">
+                    This job is open for Maldivian candidates only. International applicants cannot apply online for this job.
+                </div>
+            </div>
+            <div class="mt-2">
+                <button type="button" class="rounded-full bg-neutral-100 px-4 py-2 text-xs font-semibold text-neutral-900 hover:bg-neutral-200" wire:click="$set('showNationalityRestrictedModalState', false)">
+                    Close
+                </button>
+            </div>
+        </div>
+
+                    <div class="absolute top-0 end-0 mt-4 me-4">
+                <ui-close data-flux-modal-close="">
+    <button type="button" class="relative items-center font-medium justify-center gap-2 whitespace-nowrap disabled:opacity-75 dark:disabled:opacity-75 disabled:cursor-default disabled:pointer-events-none justify-center h-8 text-sm rounded-md w-8 inline-flex  bg-transparent hover:bg-zinc-800/5 dark:hover:bg-white/15 text-zinc-800 dark:text-white      text-zinc-400! hover:text-zinc-800! dark:text-zinc-500! dark:hover:text-white!" data-flux-button="data-flux-button" aria-label="Close modal">
+        <svg class="shrink-0 [:where(&amp;)]:size-5" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
+</svg>
+    </button>
+</ui-close>
+            </div>
+            </dialog>
+</ui-modal>
+    <ui-modal wire:model.self="showAuthModalState" data-flux-modal="">
+    
+    <dialog wire:ignore.self="" class="p-6 [:where(&amp;)]:max-w-xl [:where(&amp;)]:min-w-xs shadow-lg rounded-xl bg-white dark:bg-zinc-800 ring ring-black/5 dark:ring-zinc-700 shadow-lg rounded-xl max-w-sm" x-data="fluxModal(null, 'clYtzyklPv50cFrnGd59')" x-on:modal-show.document="handleShow($event)" x-on:modal-close.document="handleClose($event)"><div data-flux-focus-placeholder="" data-appended="" tabindex="0"></div>
+        <div class="flex flex-col items-center gap-4 px-6 py-6">
+            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="8" r="4"></circle>
+                    <path d="M6 20c0-2.5 2.5-4 6-4s6 1.5 6 4"></path>
+                </svg>
+            </div>
+            <div class="text-center space-y-2">
+                <div class="text-sm font-semibold text-neutral-900">
+                    Please login to Apply / Saved jobs.
+                </div>
+            </div>
+            <div class="mt-2">
+                <button type="button" class="text-xs font-semibold text-primary hover:underline" wire:click="$set('showAuthModalState', false)">
+                    Maybe later
+                </button>
+            </div>
+        </div>
+
+                    <div class="absolute top-0 end-0 mt-4 me-4">
+                <ui-close data-flux-modal-close="">
+    <button type="button" class="relative items-center font-medium justify-center gap-2 whitespace-nowrap disabled:opacity-75 dark:disabled:opacity-75 disabled:cursor-default disabled:pointer-events-none justify-center h-8 text-sm rounded-md w-8 inline-flex  bg-transparent hover:bg-zinc-800/5 dark:hover:bg-white/15 text-zinc-800 dark:text-white      text-zinc-400! hover:text-zinc-800! dark:text-zinc-500! dark:hover:text-white!" data-flux-button="data-flux-button" aria-label="Close modal">
+        <svg class="shrink-0 [:where(&amp;)]:size-5" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
+</svg>
+    </button>
+</ui-close>
+            </div>
+            </dialog>
+</ui-modal>
+
+    <ui-modal wire:model.self="showOnlineDisabledModalState" data-flux-modal="">
+    
+    <dialog wire:ignore.self="" class="p-6 [:where(&amp;)]:max-w-xl [:where(&amp;)]:min-w-xs shadow-lg rounded-xl bg-white dark:bg-zinc-800 ring ring-black/5 dark:ring-zinc-700 shadow-lg rounded-xl max-w-sm" x-data="fluxModal(null, 'clYtzyklPv50cFrnGd59')" x-on:modal-show.document="handleShow($event)" x-on:modal-close.document="handleClose($event)"><div data-flux-focus-placeholder="" data-appended="" tabindex="0"></div>
+        <div class="flex flex-col items-center gap-4 px-6 py-6">
+            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-amber-100">
+                <svg class="shrink-0 [:where(&amp;)]:size-6 h-12 w-12 text-amber-500" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"></path>
+</svg>
+
+                    </div>
+            <div class="text-center space-y-2">
+                <div class="text-sm font-semibold text-neutral-900">
+                    Online Application Disabled
+                </div>
+                <div class="text-xs text-neutral-600">
+                    This employer does not accept Online Application through Jobsicle for this job. Please submit Applications as instructed in the job description.
+                </div>
+            </div>
+            <div class="mt-2">
+                <button type="button" class="rounded-full bg-neutral-100 px-4 py-2 text-xs font-semibold text-neutral-900 hover:bg-neutral-200" wire:click="$set('showOnlineDisabledModalState', false)">
+                    Close
+                </button>
+            </div>
+        </div>
+
+                    <div class="absolute top-0 end-0 mt-4 me-4">
+                <ui-close data-flux-modal-close="">
+    <button type="button" class="relative items-center font-medium justify-center gap-2 whitespace-nowrap disabled:opacity-75 dark:disabled:opacity-75 disabled:cursor-default disabled:pointer-events-none justify-center h-8 text-sm rounded-md w-8 inline-flex  bg-transparent hover:bg-zinc-800/5 dark:hover:bg-white/15 text-zinc-800 dark:text-white      text-zinc-400! hover:text-zinc-800! dark:text-zinc-500! dark:hover:text-white!" data-flux-button="data-flux-button" aria-label="Close modal">
+        <svg class="shrink-0 [:where(&amp;)]:size-5" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
+</svg>
+    </button>
+</ui-close>
+            </div>
+            </dialog>
+</ui-modal>
+
+    <ui-modal wire:model.self="showProfileIncompleteModalState" data-flux-modal="">
+    
+    <dialog wire:ignore.self="" class="p-6 [:where(&amp;)]:max-w-xl [:where(&amp;)]:min-w-xs shadow-lg rounded-xl bg-white dark:bg-zinc-800 ring ring-black/5 dark:ring-zinc-700 shadow-lg rounded-xl max-w-sm" x-data="fluxModal(null, 'clYtzyklPv50cFrnGd59')" x-on:modal-show.document="handleShow($event)" x-on:modal-close.document="handleClose($event)"><div data-flux-focus-placeholder="" data-appended="" tabindex="0"></div>
+        <div class="flex flex-col items-center gap-4 px-6 py-6">
+            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="8" r="4"></circle>
+                    <path d="M6 20c0-2.5 2.5-4 6-4s6 1.5 6 4"></path>
+                </svg>
+            </div>
+            <div class="text-center space-y-2">
+                <div class="text-sm font-semibold text-neutral-900">
+                    Profile Incomplete
+                </div>
+                <div class="text-xs text-neutral-600">
+                Please complete your profile to 100% to apply for this job.
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            </div>
+            </div>
+            <div class="mt-2 flex gap-3">
+                 <a href="https://jobsicle.mv/basic-info" class="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary-600">
+                    Go to Profile
+                </a>
+                <button type="button" class="rounded-full bg-neutral-100 px-4 py-2 text-xs font-semibold text-neutral-900 hover:bg-neutral-200" wire:click="$set('showProfileIncompleteModalState', false)">
+                    Close
+                </button>
+            </div>
+        </div>
+
+                    <div class="absolute top-0 end-0 mt-4 me-4">
+                <ui-close data-flux-modal-close="">
+    <button type="button" class="relative items-center font-medium justify-center gap-2 whitespace-nowrap disabled:opacity-75 dark:disabled:opacity-75 disabled:cursor-default disabled:pointer-events-none justify-center h-8 text-sm rounded-md w-8 inline-flex  bg-transparent hover:bg-zinc-800/5 dark:hover:bg-white/15 text-zinc-800 dark:text-white      text-zinc-400! hover:text-zinc-800! dark:text-zinc-500! dark:hover:text-white!" data-flux-button="data-flux-button" aria-label="Close modal">
+        <svg class="shrink-0 [:where(&amp;)]:size-5" data-flux-icon="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
+</svg>
+    </button>
+</ui-close>
+            </div>
+            </dialog>
+</ui-modal>
+</div>
+    </main>
+        </div>
+    </main>
+    <footer class="mt-auto border-t border-neutral-200 bg-white text-sm text-neutral-700">
+    <div class="mx-auto w-full max-w-screen-xl px-6 lg:px-8">
+        <div class="grid gap-6 py-6 md:grid-cols-12 md:gap-6 md:py-8">
+            <div class="space-y-3 md:col-span-5">
+                <div class="space-y-2">
+                    <div class="text-lg font-bold tracking-tight text-neutral-900">
+                        © Jobsicle <span class="text-neutral-400">—</span> Jobs, served fresh.
+                    </div>
+                    <div class="max-w-prose leading-6 text-neutral-600">
+                        The #1 job portal and career brand in the Maldives, since 2016.
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="https://jobsicle.mv/tos" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-800 shadow-sm transition hover:border-neutral-300 hover:bg-neutral-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                        Terms of Service
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <a href="https://facebook.com/jobsicle" target="_blank" rel="noopener noreferrer" class="group inline-flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100 text-neutral-700 shadow-sm ring-1 ring-neutral-200 transition hover:bg-primary/10 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" aria-label="Facebook">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M13.5 22v-8h2.7l.4-3H13.5V9.1c0-.9.2-1.5 1.5-1.5H16.7V5.1c-.3 0-1.4-.1-2.7-.1-2.7 0-4.6 1.6-4.6 4.7V11H6.7v3h2.7v8h4.1Z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/jobsicle" target="_blank" rel="noopener noreferrer" class="group inline-flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100 text-neutral-700 shadow-sm ring-1 ring-neutral-200 transition hover:bg-primary/10 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" aria-label="Instagram">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9Zm4.5 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm5.2-.9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://twitter.com/jobsiclemv" target="_blank" rel="noopener noreferrer" class="group inline-flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100 text-neutral-700 shadow-sm ring-1 ring-neutral-200 transition hover:bg-primary/10 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" aria-label="X">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M18.9 2H22l-6.8 7.8L22.9 22H16.9l-4.7-6.3L6.8 22H3.7l7.3-8.4L3 2h6.2l4.2 5.6L18.9 2Zm-1.1 18h1.7L7.1 3.9H5.3L17.8 20Z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://mv.linkedin.com/company/jobsicle-maldives/" target="_blank" rel="noopener noreferrer" class="group inline-flex h-10 w-10 items-center justify-center rounded-full bg-neutral-100 text-neutral-700 shadow-sm ring-1 ring-neutral-200 transition hover:bg-primary/10 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" aria-label="LinkedIn">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M6.5 6.5a2 2 0 1 1 0-4 2 2 0 0 1 0 4ZM4.7 21.5h3.6V8.4H4.7v13.1ZM9.9 8.4h3.4v1.8h.1c.5-1 1.7-2.1 3.6-2.1 3.8 0 4.5 2.5 4.5 5.8v7.6H18v-6.7c0-1.6 0-3.7-2.3-3.7s-2.6 1.7-2.6 3.6v6.8H9.9V8.4Z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="space-y-2 md:col-span-3">
+                <div class="text-base font-semibold tracking-tight text-neutral-900">Need help?</div>
+                <div class="leading-6 text-neutral-600">
+                    Don’t panic. Call us on
+                    <a href="tel:+9607379494" class="font-semibold text-neutral-900 hover:underline">7379494</a>
+                    and we’ll talk you through it, or send an email to
+                    <a href="mailto:hello@jobsicle.mv" class="font-semibold text-neutral-900 hover:underline">hello@jobsicle.mv</a>
+                    and we’ll rescue you from the situation.
+                </div>
+            </div>
+
+            <div class="space-y-2 md:col-span-4">
+                <div class="text-base font-semibold tracking-tight text-neutral-900">Want to post a job?</div>
+                <div class="leading-6 text-neutral-600">
+                    Sign up as an employer, choose a package, and start posting and managing your job listings.
+                </div>
+                <div class="leading-6 text-neutral-600">
+                    Every job posted on Jobsicle will be published immediately on
+                    <a href="https://careers.mv" target="_blank" rel="noopener noreferrer" class="font-semibold text-primary hover:underline">career.mv</a>
+                    and shared across our social media channels.
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="https://jobsicle.mv/pricing" class="inline-flex items-center rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" wire:navigate="">
+                        View pricing
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-neutral-200"></div>
+
+        <div class="py-3">
+            <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+                                <img src="https://jobsicle.mv/assets/footer/footerlogo01.png" alt="Jobsicle" class="h-16 object-contain">
+                <a href="https://career.mv" target="_blank" rel="noopener noreferrer" class="h-16 object-contain">
+                    <img src="https://jobsicle.mv/assets/footer/footerlogo02.png" alt="career.mv" class="h-16 object-contain">
+                </a>
+                <a href="https://resortcareer.com" target="_blank" rel="noopener noreferrer" class="h-16 object-contain">
+                    <img src="https://jobsicle.mv/assets/footer/footerlogo03.png" alt="resortcareer.mv" class="h-16 object-contain">
+                </a>
+                <img src="https://jobsicle.mv/assets/footer/footerlogo04.png" alt="TalentVAULT" class="h-16 object-contain">
+            </div>
+
+            <div class="mt-4 flex flex-wrap items-center justify-center gap-x-10 gap-y-2 text-neutral-800">
+                                <img src="https://jobsicle.mv/assets/footer/strengthimg01.png" alt="No. 1 job portal in the Maldives" class="h-10 object-contain">
+                <img src="https://jobsicle.mv/assets/footer/strengthimg02.png" alt="10 years of non stop service" class="h-10 object-contain">
+                <img src="https://jobsicle.mv/assets/footer/strengthimg03.png" alt="a maldivian career brand" class="h-10 object-contain">
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+
+<script src="https://jobsicle.mv/flux/flux.min.js?id=a81ab97b" data-navigate-once=""></script>
+<script>
+    function initMobileMenu() {
+        var button = document.getElementById('mobile-menu-button');
+        var menu = document.getElementById('mobile-menu');
+        if (!button || !menu || button.dataset.bound === '1') {
+            return;
+        }
+        button.dataset.bound = '1';
+        button.addEventListener('click', function () {
+            var isOpen = !menu.classList.contains('hidden');
+            menu.classList.toggle('hidden');
+            button.setAttribute('aria-expanded', String(!isOpen));
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initMobileMenu);
+    document.addEventListener('livewire:navigated', initMobileMenu);
+</script>
+<!-- Start of LiveChat (www.livechat.com) code -->
+<script>
+    window.__lc = window.__lc || {};
+    window.__lc.license = 19484435;
+    window.__lc.integration_name = "manual_channels";
+    window.__lc.product_name = "livechat";
+    ;(function(n,t,c){function i(n){return e._h?e._h.apply(null,n):e._q.push(n)}var e={_q:[],_h:null,_v:"2.0",on:function(){i(["on",c.call(arguments)])},once:function(){i(["once",c.call(arguments)])},off:function(){i(["off",c.call(arguments)])},get:function(){if(!e._h)throw new Error("[LiveChatWidget] You can't use getters before load.");return i(["get",c.call(arguments)])},call:function(){i(["call",c.call(arguments)])},init:function(){var n=t.createElement("script");n.async=!0,n.type="text/javascript",n.src="https://cdn.livechatinc.com/tracking.js",t.head.appendChild(n)}};!n.__lc.asyncInit&&e.init(),n.LiveChatWidget=n.LiveChatWidget||e}(window,document,[].slice))
+</script>
+<noscript><a href="https://www.livechat.com/chat-with/19484435/" rel="nofollow">Chat with us</a>, powered by <a href="https://www.livechat.com/?welcome" rel="noopener nofollow" target="_blank">LiveChat</a></noscript>
+<!-- End of LiveChat code -->
+<script src="https://jobsicle.mv/livewire-e61f9b50/livewire.min.js?id=51c462b0" data-csrf="PgKvXZM1L2wecD9xQxhCnK1aTYjr6Xv5PlOcSKMK" data-module-url="https://jobsicle.mv/livewire-e61f9b50" data-update-uri="https://jobsicle.mv/livewire-e61f9b50/update" data-navigate-once="true"></script>
+
+
+</body></html>

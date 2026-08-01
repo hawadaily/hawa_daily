@@ -50,6 +50,7 @@ export default function Jobs() {
   const [resortFilter, setResortFilter] = useState('');
   const [positionFilter, setPositionFilter] = useState('');
   const [jobCount, setJobCount] = useState<number>(0);
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
   // Extract unique resorts and positions for sidebar navigation
   const uniqueResorts = Array.from(new Set(jobs.map(job => job.company))).sort();
@@ -73,12 +74,16 @@ export default function Jobs() {
       setError(null);
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
-        const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
         const data = await response.json();
         
         if (data.success) {
           setJobs(data.jobs);
           setJobCount(data.count || data.jobs.length);
+          setLastUpdated(new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
         } else {
           setError(data.error || 'Failed to fetch jobs');
         }
@@ -91,19 +96,30 @@ export default function Jobs() {
     };
 
     fetchJobs();
-  }, []); // Empty dependency array means it runs on mount
+
+    const interval = setInterval(() => {
+      fetchJobs();
+    }, 2 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleRefresh = () => {
     const fetchJobs = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch('http://localhost:3001/api/jobs');
+        const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
+        const response = await fetch(apiUrl, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
         const data = await response.json();
         
         if (data.success) {
           setJobs(data.jobs);
           setJobCount(data.count || data.jobs.length);
+          setLastUpdated(new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }));
         } else {
           setError(data.error || 'Failed to fetch jobs');
         }
@@ -144,12 +160,15 @@ export default function Jobs() {
               <span className="text-sm text-slate-400">Active Jobs:</span>
               <span className="text-sm font-semibold text-sky-400">{jobCount}</span>
             </div>
+            <div className="text-xs text-slate-400">
+              {lastUpdated ? `Updated ${lastUpdated}` : 'Refreshing...'}
+            </div>
           </div>
         </div>
 
         {/* Featured Job Slider */}
         {!loading && jobs.length > 0 && (
-          <JobSlider jobs={jobs.slice(0, 5)} />
+          <JobSlider jobs={jobs.slice(0, 5)} onViewDetails={(job) => setSelectedJob(job)} />
         )}
       </div>
 
@@ -362,15 +381,11 @@ export default function Jobs() {
                   </div>
                 </div>
 
-                {/* CTA Button */}
+                {/* In-app detail notice */}
                 <div className="text-center mb-6">
-                  <button
-                    onClick={() => window.open(selectedJob.url, '_blank')}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-600 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-sky-500 hover:to-blue-500 transition shadow-lg shadow-sky-500/25"
-                  >
-                    <span>Apply Now</span>
-                    <span>→</span>
-                  </button>
+                  <div className="inline-flex items-center gap-2 rounded-xl border border-sky-700/40 bg-slate-800/70 px-6 py-3 text-sm text-slate-300">
+                    <span>Details are shown here on Hawa Daily</span>
+                  </div>
                 </div>
 
                 {/* Powered by Footer */}
@@ -390,7 +405,7 @@ export default function Jobs() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => {
-                      const text = `Job Opportunity at ${selectedJob.company}: ${selectedJob.title}. Apply now: ${selectedJob.url}`;
+                      const text = `Job Opportunity at ${selectedJob.company}: ${selectedJob.title}. Details are available on Hawa Daily.`;
                       const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
                       window.open(url, '_blank');
                     }}
@@ -403,7 +418,7 @@ export default function Jobs() {
                   </button>
                   <button
                     onClick={() => {
-                      const text = `Job Opportunity at ${selectedJob.company}: ${selectedJob.title}. Apply now: ${selectedJob.url}`;
+                      const text = `Job Opportunity at ${selectedJob.company}: ${selectedJob.title}. Details are available on Hawa Daily.`;
                       const url = `viber://forward?text=${encodeURIComponent(text)}`;
                       window.location.href = url;
                     }}

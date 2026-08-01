@@ -7,14 +7,18 @@ interface Job {
   title: string;
   company: string;
   url: string;
+  postedTime: string;
+  source: string;
+  fetchedAt: string;
   postedDate?: string;
 }
 
 interface JobSliderProps {
   jobs: Job[];
+  onViewDetails?: (job: Job) => void;
 }
 
-export default function JobSlider({ jobs }: JobSliderProps) {
+export default function JobSlider({ jobs, onViewDetails }: JobSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [displayedJobs, setDisplayedJobs] = useState<Job[]>([]);
@@ -74,7 +78,8 @@ export default function JobSlider({ jobs }: JobSliderProps) {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.5 }}
-          className="absolute inset-0 flex items-center px-4 md:px-8"
+          className="absolute inset-0 flex items-center px-4 md:px-8 cursor-pointer"
+          onClick={() => onViewDetails?.(currentJob)}
         >
           <div className="flex items-center gap-4 w-full">
             {companyLogo && (
@@ -101,7 +106,10 @@ export default function JobSlider({ jobs }: JobSliderProps) {
                   {getRelativeTime(currentJob.postedDate)}
                 </span>
                 <button
-                  onClick={() => window.open(currentJob.url, '_blank')}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onViewDetails?.(currentJob);
+                  }}
                   className="text-[10px] md:text-xs bg-white text-sky-600 px-3 py-1 rounded-lg font-semibold hover:bg-sky-50 transition"
                 >
                   View Details
@@ -128,14 +136,20 @@ export default function JobSlider({ jobs }: JobSliderProps) {
 
       {/* Arrow navigation */}
       <button
-        onClick={() => setCurrentIndex((prev) => (prev - 1 + displayedJobs.length) % displayedJobs.length)}
+        onClick={(event) => {
+          event.stopPropagation();
+          setCurrentIndex((prev) => (prev - 1 + displayedJobs.length) % displayedJobs.length);
+        }}
         className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition"
         aria-label="Previous slide"
       >
         ←
       </button>
       <button
-        onClick={() => setCurrentIndex((prev) => (prev + 1) % displayedJobs.length)}
+        onClick={(event) => {
+          event.stopPropagation();
+          setCurrentIndex((prev) => (prev + 1) % displayedJobs.length);
+        }}
         className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition"
         aria-label="Next slide"
       >

@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import jobsHandler from './api/jobs.mjs';
 
 dotenv.config();
 
@@ -566,99 +567,7 @@ app.delete('/api/facebook/post/:postId', async (req, res) => {
   }
 });
 
-app.get('/api/jobs', async (req, res) => {
-  try {
-    // Use jina.ai reader to get clean markdown content
-    const jinaResponse = await fetch('https://r.jina.ai/http://www.job-maldives.com/');
-    
-    if (!jinaResponse.ok) {
-      throw new Error(`Jina.ai request failed with status ${jinaResponse.status}`);
-    }
-
-    const markdown = await jinaResponse.text();
-
-    // Parse job listings from the markdown
-    const jobs = [];
-    
-    // Look for job links in markdown format: [Title](url) - match any link with date-based URL structure
-    const jobRegex = /\[([^\]]+)\]\((https?:\/\/[^)]+|\/\d{4}\/\d{2}\/[^)]+)\)/gi;
-    let match;
-    
-    // Also look for dates in the markdown that might be associated with jobs
-    const dateRegex = /(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})/gi;
-
-    while ((match = jobRegex.exec(markdown)) !== null) {
-      const title = match[1].trim();
-      let url = match[2];
-      
-      const companyMatch = title.match(/at\s+(.+?)\s*(?:Job|Vacancy|Jul|Jan|Feb|Mar|Apr|May|Jun|Aug|Sep|Oct|Nov|Dec|$)/i);
-      const company = companyMatch ? companyMatch[1].trim() : 'Unknown';
-      
-      // Extract date from title if present - look for patterns like "Jul 18, 2026"
-      const dateMatch = title.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2}),\s+(\d{4})/i);
-      let postedDate = '';
-      if (dateMatch) {
-        const monthNames = { 'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06', 
-                           'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12' };
-        const month = monthNames[dateMatch[1]] || '01';
-        const day = dateMatch[2].padStart(2, '0');
-        const year = dateMatch[3];
-        // Create date string in YYYY-MM-DD format to avoid timezone issues
-        const dateString = `${year}-${month}-${day}`;
-        const dateObj = new Date(dateString);
-        if (!isNaN(dateObj.getTime())) {
-          postedDate = dateObj.toISOString();
-        }
-      }
-      
-      // Fallback: extract date from URL structure (e.g., /2026/07/job-title.html)
-      if (!postedDate) {
-        const urlDateMatch = url.match(/\/(\d{4})\/(\d{2})\//);
-        if (urlDateMatch) {
-          const year = urlDateMatch[1];
-          const month = urlDateMatch[2];
-          // Use the first day of the month as a reasonable default
-          const dateString = `${year}-${month}-01`;
-          const dateObj = new Date(dateString);
-          if (!isNaN(dateObj.getTime())) {
-            postedDate = dateObj.toISOString();
-          }
-        }
-      }
-      
-      // Clean title by removing date
-      const cleanTitle = title.replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s+\d{4}/i, '').trim();
-      
-      jobs.push({
-        id: url.split('/').pop()?.replace('.html', '') || Math.random().toString(36).substr(2, 9),
-        title: cleanTitle,
-        company,
-        url: url.startsWith('http') ? url : `https://www.job-maldives.com${url}`,
-        postedTime: postedDate,
-        postedDate: postedDate,
-        source: 'job-maldives.com',
-        fetchedAt: new Date().toISOString()
-      });
-    }
-
-    // Add cache-control headers to prevent browser caching
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-
-    return res.json({ 
-      success: true, 
-      jobs,
-      count: jobs.length 
-    });
-  } catch (error) {
-    console.error('Jobs API error:', error);
-    return res.status(500).json({ 
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch jobs' 
-    });
-  }
-});
+app.get('/api/jobs', jobsHandler);
 
 app.get('/api/facebook/insights', async (req, res) => {
   console.log('Facebook insights endpoint called');

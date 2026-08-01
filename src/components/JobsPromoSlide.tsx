@@ -21,11 +21,14 @@ export default function JobsPromoSlide() {
     const fetchJobs = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
-        const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
         const data = await response.json();
         
         if (data.success && data.jobs.length > 0) {
-          setJobs(data.jobs.slice(0, 10)); // Take first 10 jobs
+          setJobs(data.jobs.slice(0, 10));
         }
       } catch (error) {
         console.error('Error fetching jobs for promo:', error);
@@ -36,8 +39,7 @@ export default function JobsPromoSlide() {
 
     fetchJobs();
     
-    // Refresh jobs every 5 minutes
-    const interval = setInterval(fetchJobs, 5 * 60 * 1000);
+    const interval = setInterval(fetchJobs, 2 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 

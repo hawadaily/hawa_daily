@@ -1,9 +1,164 @@
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+import path from 'path';
+
+const execFileAsync = promisify(execFile);
+
 const handleCors = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 };
+
+async function fetchJobMaldives() {
+  try {
+    const jinaResponse = await fetch('https://r.jina.ai/http://www.job-maldives.com/');
+
+    if (!jinaResponse.ok) {
+      throw new Error(`Jina.ai request failed with status ${jinaResponse.status}`);
+    }
+
+    const markdown = await jinaResponse.text();
+    const jobs = [];
+
+    const jobRegex = /\[([^\]]+)\]\((https?:\/\/[^)]+|\/\d{4}\/\d{2}\/[^)]+)\)/gi;
+    let match;
+
+    while ((match = jobRegex.exec(markdown)) !== null) {
+      const title = match[1].trim();
+      const url = match[2];
+
+      const companyMatch = title.match(/at\s+(.+?)\s*(?:Job|Vacancy|Jul|Jan|Feb|Mar|Apr|May|Jun|Aug|Sep|Oct|Nov|Dec|$)/i);
+      const company = companyMatch ? companyMatch[1].trim() : 'Unknown';
+
+      const dateMatch = title.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2}),\s+(\d{4})/i);
+      let postedDate = '';
+      if (dateMatch) {
+        const monthNames = { Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12' };
+        const month = monthNames[dateMatch[1]] || '01';
+        const day = dateMatch[2].padStart(2, '0');
+        const year = dateMatch[3];
+        const dateString = `${year}-${month}-${day}`;
+        const dateObj = new Date(dateString);
+        if (!isNaN(dateObj.getTime())) {
+          postedDate = dateObj.toISOString();
+        }
+      }
+
+      if (!postedDate) {
+        const urlDateMatch = url.match(/\/(\d{4})\/(\d{2})\//);
+        if (urlDateMatch) {
+          const year = urlDateMatch[1];
+          const month = urlDateMatch[2];
+          const dateString = `${year}-${month}-01`;
+          const dateObj = new Date(dateString);
+          if (!isNaN(dateObj.getTime())) {
+            postedDate = dateObj.toISOString();
+          }
+        }
+      }
+
+      const cleanTitle = title.replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s+\d{4}/i, '').trim();
+
+      jobs.push({
+        id: url.split('/').pop()?.replace('.html', '') || Math.random().toString(36).slice(2, 11),
+        title: cleanTitle,
+        company,
+        url: url.startsWith('http') ? url : `https://www.job-maldives.com${url}`,
+        postedTime: postedDate,
+        postedDate: postedDate,
+        source: 'job-maldives.com',
+        fetchedAt: new Date().toISOString(),
+      });
+    }
+
+    return jobs;
+  } catch (error) {
+    console.error('Error fetching from job-maldives.com:', error);
+    return [];
+  }
+}
+
+async function fetchJobCenter() {
+  try {
+    const pythonPath = process.env.PYTHON_PATH || 'python';
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'scrape_jobcenter.py');
+
+    const { stdout } = await execFileAsync(pythonPath, [scriptPath, '--pages', '3', '--limit', '20']);
+    const result = JSON.parse(stdout.trim());
+
+    if (!result.success || !Array.isArray(result.jobs)) {
+      return [];
+    }
+
+    return result.jobs.map((job) => ({
+      id: job.url?.split('/').pop() || Math.random().toString(36).slice(2, 11),
+      title: job.title,
+      company: job.company || 'Unknown',
+      url: job.url || 'https://jobcenter.mv/',
+      postedTime: job.postedDate || '',
+      postedDate: job.postedDate || '',
+      source: 'jobcenter.mv',
+      fetchedAt: new Date().toISOString(),
+    }));
+  } catch (error) {
+    console.error('Error fetching from jobcenter.mv:', error);
+    return [];
+  }
+}
+
+async function fetchJobsicle() {
+  try {
+    const pythonPath = process.env.PYTHON_PATH || 'python';
+    const scriptPath = path.resolve(process.cwd(), 'scripts', 'scrape_jobsicle.py');
+
+    const { stdout } = await execFileAsync(pythonPath, [scriptPath]);
+    const result = JSON.parse(stdout.trim());
+
+    if (!result.success || !Array.isArray(result.jobs)) {
+      return [];
+    }
+
+    return result.jobs.map((job) => ({
+      id: `${job.title}-${job.company || 'unknown'}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || Math.random().toString(36).slice(2, 11),
+      title: job.title,
+      company: job.company || 'Unknown',
+      url: job.url || 'https://jobsicle.mv/',
+      postedTime: job.postedDate || '',
+      postedDate: job.postedDate || '',
+      source: 'jobsicle.mv',
+      fetchedAt: new Date().toISOString(),
+    }));
+  } catch (error) {
+    console.error('Error fetching from jobsicle.mv:', error);
+    return [];
+  }
+}
+
+export function mergeJobs(jobMaldivesJobs = [], jobCenterJobs = [], jobsicleJobs = []) {
+  const allJobs = [...jobMaldivesJobs, ...jobCenterJobs, ...jobsicleJobs];
+  const mergedJobs = Array.from(
+    new Map(
+      allJobs.map((job) => [job.id || job.url || `${job.source}:${job.title}:${job.company}`, job])
+    ).values()
+  );
+
+  mergedJobs.sort((a, b) => {
+    const dateA = a.postedDate || a.postedTime || a.fetchedAt || '';
+    const dateB = b.postedDate || b.postedTime || b.fetchedAt || '';
+    const aTime = dateA ? new Date(dateA).getTime() : 0;
+    const bTime = dateB ? new Date(dateB).getTime() : 0;
+
+    if (aTime === bTime) {
+      return (b.title || '').localeCompare(a.title || '');
+    }
+
+    return bTime - aTime;
+  });
+
+  return mergedJobs;
+}
 
 export default async function handler(req, res) {
   handleCors(req, res);
@@ -18,82 +173,29 @@ export default async function handler(req, res) {
   }
 
   try {
-    const jinaResponse = await fetch('https://r.jina.ai/http://www.job-maldives.com/');
-    
-    if (!jinaResponse.ok) {
-      throw new Error(`Jina.ai request failed with status ${jinaResponse.status}`);
-    }
+    const [jobMaldivesJobs, jobCenterJobs, jobsicleJobs] = await Promise.all([
+      fetchJobMaldives(),
+      fetchJobCenter(),
+      fetchJobsicle(),
+    ]);
 
-    const markdown = await jinaResponse.text();
-    const jobs = [];
-    
-    const jobRegex = /\[([^\]]+)\]\((https?:\/\/[^)]+|\/\d{4}\/\d{2}\/[^)]+)\)/gi;
-    let match;
-
-    while ((match = jobRegex.exec(markdown)) !== null) {
-      const title = match[1].trim();
-      let url = match[2];
-      
-      const companyMatch = title.match(/at\s+(.+?)\s*(?:Job|Vacancy|Jul|Jan|Feb|Mar|Apr|May|Jun|Aug|Sep|Oct|Nov|Dec|$)/i);
-      const company = companyMatch ? companyMatch[1].trim() : 'Unknown';
-      
-      const dateMatch = title.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2}),\s+(\d{4})/i);
-      let postedDate = '';
-      if (dateMatch) {
-        const monthNames = { 'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06', 
-                           'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12' };
-        const month = monthNames[dateMatch[1]] || '01';
-        const day = dateMatch[2].padStart(2, '0');
-        const year = dateMatch[3];
-        const dateString = `${year}-${month}-${day}`;
-        const dateObj = new Date(dateString);
-        if (!isNaN(dateObj.getTime())) {
-          postedDate = dateObj.toISOString();
-        }
-      }
-      
-      if (!postedDate) {
-        const urlDateMatch = url.match(/\/(\d{4})\/(\d{2})\//);
-        if (urlDateMatch) {
-          const year = urlDateMatch[1];
-          const month = urlDateMatch[2];
-          const dateString = `${year}-${month}-01`;
-          const dateObj = new Date(dateString);
-          if (!isNaN(dateObj.getTime())) {
-            postedDate = dateObj.toISOString();
-          }
-        }
-      }
-      
-      const cleanTitle = title.replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s+\d{4}/i, '').trim();
-      
-      jobs.push({
-        id: url.split('/').pop()?.replace('.html', '') || Math.random().toString(36).substr(2, 9),
-        title: cleanTitle,
-        company,
-        url: url.startsWith('http') ? url : `https://www.job-maldives.com${url}`,
-        postedTime: postedDate,
-        postedDate: postedDate,
-        source: 'job-maldives.com',
-        fetchedAt: new Date().toISOString()
-      });
-    }
+    const mergedJobs = mergeJobs(jobMaldivesJobs, jobCenterJobs, jobsicleJobs);
 
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
 
-    return res.status(200).json({ 
-      success: true, 
-      jobs,
-      count: jobs.length 
+    return res.status(200).json({
+      success: true,
+      jobs: mergedJobs,
+      count: mergedJobs.length,
     });
   } catch (error) {
     console.error('Jobs API error:', error);
     const message = error instanceof Error ? error.message : 'Failed to fetch jobs';
-    return res.status(500).json({ 
+    return res.status(500).json({
       success: false,
-      error: message 
+      error: message,
     });
   }
 }
