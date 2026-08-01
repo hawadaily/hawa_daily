@@ -1,5 +1,6 @@
 name: Deploy to Vercel
 # Auto-deploys on push to master branch
+# Secrets required: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
 
 on:
   push:
