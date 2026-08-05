@@ -87,7 +87,7 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-8 text-right lg:space-y-12">
+    <div className="space-y-8 pt-12 text-right lg:space-y-12 lg:pt-16">
       {/* Top Promo Banner */}
       <PromoBanner location="home" position="top" />
 
