@@ -18,5 +18,8 @@
       "path": "/api/weather",
       "schedule": "0 * * * *"
     }
-  ]
+  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install"
 }
