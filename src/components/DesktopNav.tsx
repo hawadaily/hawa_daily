@@ -22,6 +22,7 @@ export default function DesktopNav({ theme, setTheme, language, setLanguage }: D
             <li><Link to="/" className="rounded-full px-4 py-2 transition duration-200 hover:bg-slate-100 hover:text-sky-600">މައި ޞަފްޙާ</Link></li>
             <li><Link to="/categories" className="rounded-full px-4 py-2 transition duration-200 hover:bg-slate-100 hover:text-sky-600">ބައިތައް</Link></li>
             <li><Link to="/jobs" className="rounded-full px-4 py-2 transition duration-200 hover:bg-slate-100 hover:text-sky-600">ވަޒީފާ</Link></li>
+            <li><Link to="/weather" className="rounded-full px-4 py-2 transition duration-200 hover:bg-slate-100 hover:text-sky-600">މޫސުން</Link></li>
             <li><Link to="/videos" className="rounded-full px-4 py-2 transition duration-200 hover:bg-slate-100 hover:text-sky-600">ވީޑިއޯތައް</Link></li>
             <li><Link to="/notifications" className="rounded-full px-4 py-2 transition duration-200 hover:bg-slate-100 hover:text-sky-600">ނޮޓިފިކޭޝަންތައް</Link></li>
             <li><Link to="/profile" className="rounded-full px-4 py-2 transition duration-200 hover:bg-slate-100 hover:text-sky-600">ޕްރޮފައިލް</Link></li>

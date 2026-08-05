@@ -13,6 +13,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import ImageGenerator from './pages/ImageGenerator';
 import Jobs from './pages/Jobs';
+import Weather from './pages/Weather';
 import AdminRoute from './components/AdminRoute';
 import DesktopNav from './components/DesktopNav';
 import MobileNav from './components/MobileNav';
@@ -30,6 +31,12 @@ function App() {
     document.body.classList.toggle('dark', theme === 'dark');
     document.body.classList.toggle('light', theme === 'light');
   }, [theme]);
+
+  // Set text direction based on language
+  useEffect(() => {
+    document.documentElement.dir = language === 'dv' ? 'rtl' : 'ltr';
+    document.documentElement.lang = language;
+  }, [language]);
 
   // Track visitor - only once per session
   useEffect(() => {
@@ -131,6 +138,7 @@ function App() {
           { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: '🏠' },
           { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: '📂' },
           { label: language === 'en' ? 'Jobs' : 'ވަޒީފާ', path: '/jobs', icon: '💼' },
+          { label: language === 'en' ? 'Weather' : 'މޫސުން', path: '/weather', icon: '🌤️' },
           { label: language === 'en' ? 'Videos' : 'ވީޑިއޯތައް', path: '/videos', icon: '🎬' },
           { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: '👤' },
         ]}
@@ -154,6 +162,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/article/:id" element={<ArticlePage />} />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/weather" element={<Weather />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/image-generator" element={<AdminRoute><ImageGenerator /></AdminRoute>} />

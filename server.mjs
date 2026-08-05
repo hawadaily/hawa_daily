@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import jobsHandler from './api/jobs.mjs';
+import weatherHandler from './api/weather.mjs';
 
 dotenv.config();
 
@@ -568,6 +569,7 @@ app.delete('/api/facebook/post/:postId', async (req, res) => {
 });
 
 app.get('/api/jobs', jobsHandler);
+app.get('/api/weather', weatherHandler);
 
 app.get('/api/facebook/insights', async (req, res) => {
   console.log('Facebook insights endpoint called');
