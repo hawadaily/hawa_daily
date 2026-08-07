@@ -434,28 +434,29 @@ export default function AdminDashboard() {
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0);
 
-      // Add gradient overlay (transparent at bottom, color at top of gradient)
+      // Add gradient overlay (transparent at one end, color at the other)
       const gradientHeight = canvas.height / 2;
-      let gradientY1, gradientY2;
+      let gradientStartY, gradientEndY;
       
       // Calculate gradient position based on selected location
+      // The gradient always fades from transparent to opaque in the same direction
       switch (gradientLocation) {
         case 'top':
-          gradientY1 = 0;
-          gradientY2 = gradientHeight;
+          gradientStartY = 0;
+          gradientEndY = gradientHeight;
           break;
         case 'middle':
-          gradientY1 = (canvas.height - gradientHeight) / 2;
-          gradientY2 = gradientY1 + gradientHeight;
+          gradientStartY = (canvas.height - gradientHeight) / 2;
+          gradientEndY = gradientStartY + gradientHeight;
           break;
         case 'bottom':
         default:
-          gradientY1 = canvas.height - gradientHeight;
-          gradientY2 = canvas.height;
+          gradientStartY = canvas.height - gradientHeight;
+          gradientEndY = canvas.height;
           break;
       }
       
-      const gradient = ctx.createLinearGradient(0, gradientY1, 0, gradientY2);
+      const gradient = ctx.createLinearGradient(0, gradientStartY, 0, gradientEndY);
       
       // Parse hex color to RGB
       const hexToRgb = (hex: string) => {
@@ -478,7 +479,7 @@ export default function AdminDashboard() {
       gradient.addColorStop(0.9, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.95)`);   // 5% transparent
       gradient.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`);      // 0% transparent (fully opaque)
       ctx.fillStyle = gradient;
-      ctx.fillRect(0, canvas.height - gradientHeight, canvas.width, gradientHeight);
+      ctx.fillRect(0, gradientStartY, canvas.width, gradientHeight);
 
       const logo = new Image();
       logo.onload = () => {
@@ -651,28 +652,29 @@ export default function AdminDashboard() {
       };
 
       logo.onerror = () => {
-        // Add gradient overlay (transparent at bottom, color at top of gradient)
+        // Add gradient overlay (transparent at one end, color at the other)
         const gradientHeight = canvas.height / 2;
-        let gradientY1, gradientY2;
+        let gradientStartY, gradientEndY;
         
         // Calculate gradient position based on selected location
+        // The gradient always fades from transparent to opaque in the same direction
         switch (gradientLocation) {
           case 'top':
-            gradientY1 = 0;
-            gradientY2 = gradientHeight;
+            gradientStartY = 0;
+            gradientEndY = gradientHeight;
             break;
           case 'middle':
-            gradientY1 = (canvas.height - gradientHeight) / 2;
-            gradientY2 = gradientY1 + gradientHeight;
+            gradientStartY = (canvas.height - gradientHeight) / 2;
+            gradientEndY = gradientStartY + gradientHeight;
             break;
           case 'bottom':
           default:
-            gradientY1 = canvas.height - gradientHeight;
-            gradientY2 = canvas.height;
+            gradientStartY = canvas.height - gradientHeight;
+            gradientEndY = canvas.height;
             break;
         }
         
-        const gradient = ctx.createLinearGradient(0, gradientY1, 0, gradientY2);
+        const gradient = ctx.createLinearGradient(0, gradientStartY, 0, gradientEndY);
         
         // Parse hex color to RGB
         const hexToRgb = (hex: string) => {
@@ -695,7 +697,7 @@ export default function AdminDashboard() {
         gradient.addColorStop(0.9, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.95)`);   // 5% transparent
         gradient.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`);      // 0% transparent (fully opaque)
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, canvas.height - gradientHeight, canvas.width, gradientHeight);
+        ctx.fillRect(0, gradientStartY, canvas.width, gradientHeight);
 
         // Draw text lines without logo with independent positions
         const fontName = dhivehiFontRef.current ? 'Dhivehi' : 'Arial';
