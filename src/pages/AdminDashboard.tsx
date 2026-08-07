@@ -8,7 +8,7 @@ import { categories } from '../data/mockData';
 import { postToFacebook, deleteFromFacebook, getFacebookPageInsights } from '../utils/facebook';
 import { uploadImage, uploadVideo, uploadToGitHub } from '../utils/cloudinary';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'notifications' | 'rephrase';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'notifications' | 'rephrase' | 'checklist';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -156,6 +156,23 @@ export default function AdminDashboard() {
       sizeMobile: 'Mobile Only',
       sizeDesktop: 'Desktop Only',
       sizeBoth: 'Both Mobile & Desktop',
+      gradientLocation: 'Gradient Location',
+      gradientTop: 'Top',
+      gradientMiddle: 'Middle',
+      gradientBottom: 'Bottom',
+      postLaunchChecklist: 'Post-Launch Checklist',
+      checklistDescription: '10 things to do after your website is live',
+      addGoogleSearchConsole: 'Add Google Search Console',
+      addGoogleTagManager: 'Add Google Tag Manager',
+      addGoogleAnalytics: 'Add Google Analytics',
+      addMicrosoftClarity: 'Add Microsoft Clarity',
+      addBingWebmaster: 'Add Bing Webmaster',
+      doKeywordResearch: 'Do keyword research',
+      createKeywordClusters: 'Create keyword clusters',
+      createMetaTitles: 'Create meta titles and description',
+      createLocationPages: 'Create separate page for each location you serve',
+      createServicePages: 'Create separate service page for each service',
+      createUniqueContent: 'Create unique content for each page and make sure they are indexed',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -279,6 +296,23 @@ export default function AdminDashboard() {
       sizeMobile: 'މޮބައިލް',
       sizeDesktop: 'ޑެސްކްޓޮޕް',
       sizeBoth: 'ދެވަނަ (މޮބައިލް + ޑެސްކްޓޮޕް)',
+      gradientLocation: 'ގްރޭޑިއެންޓް ހުސްކަން',
+      gradientTop: 'މައްޗު',
+      gradientMiddle: 'މެދު',
+      gradientBottom: 'ތިރީ',
+      postLaunchChecklist: 'ވެބްސައިޓް ލާންޗް ކުރުމަށް ފަހު ކުރެވޭ ކަންތައްތައް',
+      checklistDescription: 'ވެބްސައިޓް ލައިވް ކުރުމަށް ފަހު 10 ކަންތައް',
+      addGoogleSearchConsole: 'ގޫގަލް ސާޗް ކޮންސޯލް އިތުރުކުރޭ',
+      addGoogleTagManager: 'ގޫގަލް ޓެގް މެނޭޖަރު އިތުރުކުރޭ',
+      addGoogleAnalytics: 'ގޫގަލް އެނަލިޓިކްސް އިތުރުކުރޭ',
+      addMicrosoftClarity: 'މައިކްރޮސޮފްޓް ކްލެރިޓީ އިތުރުކުރޭ',
+      addBingWebmaster: 'ބިންގް ވެބްމާސްޓަރު އިތުރުކުރޭ',
+      doKeywordResearch: 'ކީވޯޑް ރިސާރޗް ކުރޭ',
+      createKeywordClusters: 'ކީވޯޑް ކްލަސްޓަރުތައް އުފައްދާ',
+      createMetaTitles: 'މެޓާ ޓައިޓަލް އަދި ޑިސްކްރިޕްޝަން އުފައްދާ',
+      createLocationPages: 'ކޮންމެ ހުސްކަމަކަށް ވެސް ތަނެއް ހަދާ',
+      createServicePages: 'ކޮންމެ ޚިދުމަތަކަށް ވެސް ޞަފްޙާއެއް ހަދާ',
+      createUniqueContent: 'ކޮންމެ ޞަފްޙާއަކަށް ވެސް އަންހެން ކޮންޓެންޓް ހަދާ އަދި އިންޑެކްސް ކުރިއަށް ގެންދާ',
     },
   };
 
@@ -354,7 +388,23 @@ export default function AdminDashboard() {
   const [logoOpacity, setLogoOpacity] = useState(100);
   const [textPosition, setTextPosition] = useState<'bottom-center' | 'bottom-left' | 'bottom-right' | 'top-center' | 'top-left' | 'top-right' | 'middle-center' | 'middle-left' | 'middle-right'>('bottom-center');
   const [textPosition2, setTextPosition2] = useState<'bottom-center' | 'bottom-left' | 'bottom-right' | 'top-center' | 'top-left' | 'top-right' | 'middle-center' | 'middle-left' | 'middle-right'>('bottom-center');
+  const [gradientLocation, setGradientLocation] = useState<'top' | 'middle' | 'bottom'>('bottom');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  
+  // Post-launch checklist state
+  const [checklistItems, setChecklistItems] = useState([
+    { id: 1, text: 'addGoogleSearchConsole', completed: false },
+    { id: 2, text: 'addGoogleTagManager', completed: false },
+    { id: 3, text: 'addGoogleAnalytics', completed: false },
+    { id: 4, text: 'addMicrosoftClarity', completed: false },
+    { id: 5, text: 'addBingWebmaster', completed: false },
+    { id: 6, text: 'doKeywordResearch', completed: false },
+    { id: 7, text: 'createKeywordClusters', completed: false },
+    { id: 8, text: 'createMetaTitles', completed: false },
+    { id: 9, text: 'createLocationPages', completed: false },
+    { id: 10, text: 'createServicePages', completed: false },
+    { id: 11, text: 'createUniqueContent', completed: false },
+  ]);
   const [isGenerating, setIsGenerating] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dhivehiFontRef = useRef<FontFace | null>(null);
@@ -386,7 +436,26 @@ export default function AdminDashboard() {
 
       // Add gradient overlay (transparent at bottom, color at top of gradient)
       const gradientHeight = canvas.height / 2;
-      const gradient = ctx.createLinearGradient(0, canvas.height - gradientHeight, 0, canvas.height);
+      let gradientY1, gradientY2;
+      
+      // Calculate gradient position based on selected location
+      switch (gradientLocation) {
+        case 'top':
+          gradientY1 = 0;
+          gradientY2 = gradientHeight;
+          break;
+        case 'middle':
+          gradientY1 = (canvas.height - gradientHeight) / 2;
+          gradientY2 = gradientY1 + gradientHeight;
+          break;
+        case 'bottom':
+        default:
+          gradientY1 = canvas.height - gradientHeight;
+          gradientY2 = canvas.height;
+          break;
+      }
+      
+      const gradient = ctx.createLinearGradient(0, gradientY1, 0, gradientY2);
       
       // Parse hex color to RGB
       const hexToRgb = (hex: string) => {
@@ -584,7 +653,26 @@ export default function AdminDashboard() {
       logo.onerror = () => {
         // Add gradient overlay (transparent at bottom, color at top of gradient)
         const gradientHeight = canvas.height / 2;
-        const gradient = ctx.createLinearGradient(0, canvas.height - gradientHeight, 0, canvas.height);
+        let gradientY1, gradientY2;
+        
+        // Calculate gradient position based on selected location
+        switch (gradientLocation) {
+          case 'top':
+            gradientY1 = 0;
+            gradientY2 = gradientHeight;
+            break;
+          case 'middle':
+            gradientY1 = (canvas.height - gradientHeight) / 2;
+            gradientY2 = gradientY1 + gradientHeight;
+            break;
+          case 'bottom':
+          default:
+            gradientY1 = canvas.height - gradientHeight;
+            gradientY2 = canvas.height;
+            break;
+        }
+        
+        const gradient = ctx.createLinearGradient(0, gradientY1, 0, gradientY2);
         
         // Parse hex color to RGB
         const hexToRgb = (hex: string) => {
@@ -740,7 +828,7 @@ export default function AdminDashboard() {
     };
 
     img.src = uploadedImage;
-  }, [uploadedImage, overlayText, overlayText2, bannerColor, gradientColor, fontSize, fontColor, fontStyle, logoPosition, logoOpacity, textPosition, textPosition2]);
+  }, [uploadedImage, overlayText, overlayText2, bannerColor, gradientColor, fontSize, fontColor, fontStyle, logoPosition, logoOpacity, textPosition, textPosition2, gradientLocation]);
   
   // Notifications state
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -1588,7 +1676,7 @@ export default function AdminDashboard() {
       <>
         {/* Tabs */}
         <div className="flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'analytics', 'settings', 'notifications', 'rephrase'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'analytics', 'settings', 'notifications', 'rephrase', 'checklist'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -1605,6 +1693,7 @@ export default function AdminDashboard() {
               {tab === 'settings' && t.settings}
               {tab === 'notifications' && 'ނޮޓިފިކޭޝަންތައް'}
               {tab === 'rephrase' && 'ޚަބަރު ރީފްރޭޒް (Rephrase)'}
+              {tab === 'checklist' && t.postLaunchChecklist}
             </button>
           ))}
         </div>
@@ -1883,6 +1972,46 @@ export default function AdminDashboard() {
                       className="h-10 w-16 rounded-lg border border-gray-300 bg-white cursor-pointer"
                     />
                     <span className="text-sm text-gray-600">{gradientColor}</span>
+                  </div>
+                </div>
+
+                {/* Gradient Location Section */}
+                <div className="mb-4">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">{t.gradientLocation}</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setGradientLocation('top')}
+                      className={`px-4 py-2 rounded-lg border-2 transition-colors ${
+                        gradientLocation === 'top'
+                          ? 'border-sky-500 bg-sky-50 text-sky-700'
+                          : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                      }`}
+                    >
+                      {t.gradientTop}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGradientLocation('middle')}
+                      className={`px-4 py-2 rounded-lg border-2 transition-colors ${
+                        gradientLocation === 'middle'
+                          ? 'border-sky-500 bg-sky-50 text-sky-700'
+                          : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                      }`}
+                    >
+                      {t.gradientMiddle}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGradientLocation('bottom')}
+                      className={`px-4 py-2 rounded-lg border-2 transition-colors ${
+                        gradientLocation === 'bottom'
+                          ? 'border-sky-500 bg-sky-50 text-sky-700'
+                          : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                      }`}
+                    >
+                      {t.gradientBottom}
+                    </button>
                   </div>
                 </div>
 
@@ -3044,6 +3173,60 @@ export default function AdminDashboard() {
               >
                 ޚަބަރު އުފެއްދާ (Create News)
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Post-Launch Checklist Tab */}
+        {activeTab === 'checklist' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">{t.postLaunchChecklist}</h3>
+            <p className="mt-2 text-sm text-gray-600">{t.checklistDescription}</p>
+            
+            <div className="mt-6 space-y-3">
+              {checklistItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-start gap-3 p-4 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors"
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setChecklistItems(prev =>
+                        prev.map(i =>
+                          i.id === item.id ? { ...i, completed: !i.completed } : i
+                        )
+                      );
+                    }}
+                    className={`mt-1 flex-shrink-0 w-6 h-6 rounded-md border-2 transition-colors ${
+                      item.completed
+                        ? 'bg-emerald-500 border-emerald-500'
+                        : 'border-gray-300 hover:border-emerald-400'
+                    }`}
+                  >
+                    {item.completed && (
+                      <svg className="w-full h-full text-white p-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                  <span className={`text-sm ${item.completed ? 'text-gray-400 line-through' : 'text-gray-700'}`}>
+                    {t[item.text as keyof typeof t]}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 p-4 bg-sky-50 rounded-xl border border-sky-200">
+              <p className="text-sm text-sky-700">
+                <strong>Progress:</strong> {checklistItems.filter(i => i.completed).length} / {checklistItems.length} completed
+              </p>
+              <div className="mt-2 h-2 bg-sky-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-sky-500 transition-all duration-300"
+                  style={{ width: `${(checklistItems.filter(i => i.completed).length / checklistItems.length) * 100}%` }}
+                />
+              </div>
             </div>
           </div>
         )}
