@@ -10,6 +10,7 @@ interface Job {
   source: string;
   fetchedAt: string;
   postedDate?: string; // Added for actual posted date
+  description?: string; // Optional description
 }
 
 interface JobCardProps {
