@@ -66,11 +66,19 @@ export default function JobSlider({ jobs, onViewDetails }: JobSliderProps) {
 
   return (
     <div 
-      className="relative w-full h-28 md:h-36 bg-gradient-to-r from-sky-600 to-blue-700 rounded-xl overflow-hidden shadow-lg text-left"
+      className="relative w-full h-28 md:h-36 bg-gradient-to-r from-[#00b4d8] to-[#0077b6] rounded-xl overflow-hidden shadow-lg text-left"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       dir="ltr"
     >
+      {/* SVG Illustration Background */}
+      <div className="absolute right-0 top-0 w-40 h-40 opacity-10">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="80" fill="currentColor" className="text-white"/>
+          <path d="M100 20 L120 80 L180 80 L130 120 L150 180 L100 140 L50 180 L70 120 L20 80 L80 80 Z" fill="currentColor" className="text-white"/>
+        </svg>
+      </div>
+      
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
@@ -92,13 +100,13 @@ export default function JobSlider({ jobs, onViewDetails }: JobSliderProps) {
               </div>
             )}
             <div className="flex-1 text-white">
-              <p className="text-[10px] md:text-xs font-medium text-sky-200 mb-1">
+              <p className="text-[10px] md:text-xs font-medium text-sky-100 mb-1">
                 Featured Opportunity
               </p>
               <h3 className="text-sm md:text-lg font-bold mb-1 line-clamp-1">
                 {currentJob.title}
               </h3>
-              <p className="text-xs md:text-sm text-sky-100 mb-2">
+              <p className="text-xs md:text-sm text-sky-50 mb-2">
                 {currentJob.company}
               </p>
               <div className="flex items-center gap-3">

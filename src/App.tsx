@@ -23,14 +23,8 @@ import AdBanner from './components/AdBanner';
 import NewsTicker from './components/NewsTicker';
 
 function App() {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [language, setLanguage] = useState<'en' | 'dv'>('dv');
   const location = useLocation();
-
-  useEffect(() => {
-    document.body.classList.toggle('dark', theme === 'dark');
-    document.body.classList.toggle('light', theme === 'light');
-  }, [theme]);
 
   // Set text direction based on language
   useEffect(() => {
@@ -128,11 +122,11 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-[#caf0f8] text-slate-800">
       <AdBanner />
       <NewsTicker />
-      <DesktopNav theme={theme} setTheme={setTheme} language={language} setLanguage={setLanguage} />
-      <MobileNav theme={theme} setTheme={setTheme} language={language} setLanguage={setLanguage} />
+      <DesktopNav language={language} setLanguage={setLanguage} />
+      <MobileNav language={language} setLanguage={setLanguage} />
       <BottomNav 
         links={[
           { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: '🏠' },

@@ -7,7 +7,7 @@ export const fallbackJobs = [
     postedTime: '2 days ago',
     source: 'job-maldives.com',
     fetchedAt: new Date().toISOString(),
-    postedDate: new Date().toISOString(),
+    postedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'fallback-2',
@@ -17,7 +17,7 @@ export const fallbackJobs = [
     postedTime: '3 days ago',
     source: 'job-maldives.com',
     fetchedAt: new Date().toISOString(),
-    postedDate: new Date().toISOString(),
+    postedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'fallback-3',
@@ -27,7 +27,7 @@ export const fallbackJobs = [
     postedTime: '1 week ago',
     source: 'job-maldives.com',
     fetchedAt: new Date().toISOString(),
-    postedDate: new Date().toISOString(),
+    postedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'fallback-4',
@@ -37,7 +37,7 @@ export const fallbackJobs = [
     postedTime: '5 days ago',
     source: 'job-maldives.com',
     fetchedAt: new Date().toISOString(),
-    postedDate: new Date().toISOString(),
+    postedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'fallback-5',
@@ -47,6 +47,6 @@ export const fallbackJobs = [
     postedTime: '4 days ago',
     source: 'job-maldives.com',
     fetchedAt: new Date().toISOString(),
-    postedDate: new Date().toISOString(),
+    postedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
   },
 ];

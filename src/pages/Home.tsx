@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { collection, getDocs, getDoc, doc, orderBy, query, limit, onSnapshot } from 'firebase/firestore';
 import ArticleCard from '../components/ArticleCard';
 import PromoBanner from '../components/PromoBanner';
 import JobsPromoSlide from '../components/JobsPromoSlide';
+import { getCompanyLogo } from '../data/companyLogos';
 import { Article, categories } from '../data/mockData';
 import { db } from '../firebase';
 
@@ -14,6 +15,9 @@ export default function Home() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(8);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [jobIndex, setJobIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const articlesQuery = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
@@ -35,6 +39,37 @@ export default function Home() {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
+        const response = await fetch(apiUrl, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+        const data = await response.json();
+        
+        if (data.success && data.jobs.length > 0) {
+          setJobs(data.jobs.slice(0, 8));
+        }
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+      }
+    };
+
+    fetchJobs();
+    const interval = setInterval(fetchJobs, 2 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (isPaused || jobs.length === 0) return;
+    const interval = setInterval(() => {
+      setJobIndex((prev) => (prev + 1) % jobs.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [jobs.length, isPaused]);
 
   const featuredArticles = useMemo(() => articlesState.filter((article) => article.featured), [articlesState]);
   const breakingArticles = useMemo(() => articlesState.filter((article) => article.breakingNews), [articlesState]);
@@ -86,6 +121,24 @@ export default function Home() {
     return cat ? cat.title : categoryId;
   };
 
+  const getRelativeTime = (dateString?: string) => {
+    if (!dateString) return 'އަވަސްޓެއް';
+    
+    const now = new Date();
+    const date = new Date(dateString);
+    
+    if (isNaN(date.getTime())) return 'އަވަސްޓެއް';
+    
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffHours < 1) return 'އަންނަވަނީ';
+    if (diffHours < 24) return `${diffHours} ގަޑިއިރު ކުރިން`;
+    if (diffDays < 7) return `${diffDays} ދުވަސް ކުރިން`;
+    return date.toLocaleDateString('dv-MV');
+  };
+
   return (
     <div className="space-y-8 pt-12 text-right lg:space-y-12 lg:pt-16">
       {/* Top Promo Banner */}
@@ -93,31 +146,6 @@ export default function Home() {
 
       {/* Jobs Promotion Slide */}
       <JobsPromoSlide />
-
-      {/* Categories Section */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft lg:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3 text-right">
-          <div>
-            <p className="text-xs lg:text-4xl uppercase tracking-[0.2em] text-sky-600">ހުރިހާ ބައިތައް</p>
-          </div>
-          <Link to="/categories" className="text-xs lg:text-2xl text-sky-700 transition hover:text-sky-900">އިތުރަށް ބަލާ</Link>
-        </div>
-        <div className="mt-6 flex flex-wrap gap-4">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-              className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs lg:text-lg transition ${
-                selectedCategory === category.id
-                  ? 'bg-sky-600 border-sky-600 text-white'
-                  : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-900'
-              }`}
-            >
-              {category.title}
-            </button>
-          ))}
-        </div>
-      </section>
 
       {/* Main News Section */}
       <section className="grid gap-8 lg:grid-cols-3 lg:items-start">
@@ -149,24 +177,105 @@ export default function Home() {
             ))}
           </div>
         </div>
-        {/* Sidebar */}
+        {/* Sidebar - Latest Jobs Slider */}
         <aside className="hidden lg:block lg:h-[512px]">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft h-full overflow-y-auto">
-            <h3 className="text-lg font-semibold text-slate-900">ޚާއްސަ ބައިތައް</h3>
-            <div className="mt-5 grid grid-cols-3 gap-4">
-              {categories.slice(4).map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-                  className={`rounded-3xl border px-4 py-4 ${category.color} bg-opacity-10 transition hover:opacity-80 ${
-                    selectedCategory === category.id ? 'ring-2 ring-sky-500' : ''
-                  }`}
-                >
-                  <p className="text-sm font-semibold text-slate-900">{category.title}</p>
-                  <p className="mt-1 text-xs text-slate-500">ވެ އަވަދިވާ ނިއުސް</p>
-                </button>
-              ))}
+          <div className="rounded-2xl border border-[#90e0ef] bg-white p-5 shadow-lg h-full overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-[#0077b6]">ފަހުގެ ވަޒީފާ</h3>
+              <Link to="/jobs" className="text-sm text-[#00b4d8] hover:text-[#0077b6] transition">
+                އިތުރަށް ބަލާ →
+              </Link>
             </div>
+            
+            {jobs.length > 0 ? (
+              <div 
+                className="relative h-[420px]"
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
+              >
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={jobIndex}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.5 }}
+                    className="absolute inset-0"
+                  >
+                    <Link to="/jobs" className="block h-full">
+                      <div className="h-full flex flex-col">
+                        {jobs.slice(jobIndex, jobIndex + 3).map((job, idx) => {
+                          const companyLogo = getCompanyLogo(job.company);
+                          return (
+                            <div 
+                              key={`${job.id}-${idx}`}
+                              className="flex items-center gap-3 p-3 rounded-xl border border-[#90e0ef] bg-[#caf0f8]/50 hover:bg-[#caf0f8] transition mb-2 last:mb-0"
+                            >
+                              {companyLogo && (
+                                <div className="flex-shrink-0">
+                                  <img 
+                                    src={companyLogo} 
+                                    alt={job.company}
+                                    className="w-10 h-10 object-contain bg-white rounded-lg p-1.5 shadow"
+                                  />
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-bold text-[#0077b6] line-clamp-1">
+                                  {job.title}
+                                </h4>
+                                <p className="text-xs text-[#00b4d8]">{job.company}</p>
+                                <span className="text-[10px] text-[#0077b6]/70">
+                                  {getRelativeTime(job.postedDate)}
+                                </span>
+                              </div>
+                              <svg className="w-5 h-5 text-[#00b4d8] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </Link>
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Navigation dots */}
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex gap-2">
+                  {Array.from({ length: Math.ceil(jobs.length / 3) }).map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setJobIndex(index * 3)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        Math.floor(jobIndex / 3) === index ? 'bg-[#0077b6] w-6' : 'bg-[#90e0ef]'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Arrow navigation */}
+                <button
+                  onClick={() => setJobIndex((prev) => (prev - 3 + jobs.length) % jobs.length)}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-[#caf0f8] hover:bg-[#00b4d8] hover:text-white rounded-full flex items-center justify-center text-[#0077b6] transition shadow"
+                  aria-label="Previous slide"
+                >
+                  ←
+                </button>
+                <button
+                  onClick={() => setJobIndex((prev) => (prev + 3) % jobs.length)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-[#caf0f8] hover:bg-[#00b4d8] hover:text-white rounded-full flex items-center justify-center text-[#0077b6] transition shadow"
+                  aria-label="Next slide"
+                >
+                  →
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[420px] text-center">
+                <div className="text-4xl mb-2">💼</div>
+                <p className="text-sm text-[#00b4d8]">ވަޒީފާ ލޯޑް ވަނީ...</p>
+              </div>
+            )}
           </div>
         </aside>
       </section>
