@@ -8,37 +8,40 @@ type MobileNavProps = {
 };
 
 const categories = [
-  { id: 'local', title: 'ލޯކަލް', color: 'bg-[#0077b6]' },
-  { id: 'politics', title: 'ސިޔާސީ', color: 'bg-[#00b4d8]' },
-  { id: 'sports', title: 'ކުޅިވަރު', color: 'bg-[#90e0ef]' },
-  { id: 'islamic', title: 'އިސްލާމީ', color: 'bg-[#0077b6]' },
-  { id: 'business', title: 'ވިޔަފާރި', color: 'bg-[#00b4d8]' },
-  { id: 'technology', title: 'ޓެކްނޮލޮޖީ', color: 'bg-[#90e0ef]' },
-  { id: 'world', title: 'ދުނިޔެ', color: 'bg-[#0077b6]' },
-  { id: 'entertainment', title: 'މަޖާ', color: 'bg-[#00b4d8]' },
-  { id: 'health', title: 'ސިއްޙަތު', color: 'bg-[#90e0ef]' },
-  { id: 'education', title: 'ތަޢުލީމް', color: 'bg-[#0077b6]' },
+  { id: 'local', title: 'ލޯކަލް', color: 'from-[#0077b6] to-[#00b4d8]' },
+  { id: 'politics', title: 'ސިޔާސީ', color: 'from-[#00b4d8] to-[#90e0ef]' },
+  { id: 'sports', title: 'ކުޅިވަރު', color: 'from-[#90e0ef] to-[#caf0f8]' },
+  { id: 'islamic', title: 'އިސްލާމީ', color: 'from-[#0077b6] to-[#00b4d8]' },
+  { id: 'business', title: 'ވިޔަފާރި', color: 'from-[#00b4d8] to-[#90e0ef]' },
+  { id: 'technology', title: 'ޓެކްނޮލޮޖީ', color: 'from-[#90e0ef] to-[#caf0f8]' },
+  { id: 'world', title: 'ދުނިޔެ', color: 'from-[#0077b6] to-[#00b4d8]' },
+  { id: 'entertainment', title: 'މަޖާ', color: 'from-[#00b4d8] to-[#90e0ef]' },
+  { id: 'health', title: 'ސިއްޙަތު', color: 'from-[#90e0ef] to-[#caf0f8]' },
+  { id: 'education', title: 'ތަޢުލީމް', color: 'from-[#0077b6] to-[#00b4d8]' },
 ];
 
 export default function MobileNav({ language, setLanguage }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="lg:hidden sticky top-0 z-50 border-b border-[#90e0ef] bg-white/95 backdrop-blur">
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-3">
-          <img src="/HAWA LOGO.jpg" alt="Hawa Daily" className="h-8 w-8 object-contain" />
-          <span className="text-base font-bold text-[#0077b6]">
+    <nav className="lg:hidden sticky top-0 z-50 bg-white shadow-sm">
+      <div className="flex items-center justify-between px-4 py-4">
+        <Link to="/" className="flex items-center gap-3">
+          <div className="relative">
+            <img src="/HAWA LOGO.jpg" alt="Hawa Daily" className="relative h-10 w-10 object-contain rounded-xl bg-white p-1.5 shadow-md" />
+          </div>
+          <span className="text-xl font-bold text-[#0077b6] text-center">
             {language === 'en' ? 'Hawa Daily' : 'ހަވާ ޑެއިލީ'}
           </span>
-        </div>
+        </Link>
         
-        <button
+        <motion.button
           onClick={() => setIsOpen(!isOpen)}
-          className="text-[#0077b6] focus:outline-none"
+          className="relative h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-[#caf0f8] to-[#90e0ef] text-[#0077b6] transition-all duration-300 hover:from-[#90e0ef] hover:to-[#00b4d8] hover:scale-105 shadow-md"
+          whileTap={{ scale: 0.95 }}
         >
           <svg
-            className="h-6 w-6"
+            className="h-5 w-5"
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -52,7 +55,7 @@ export default function MobileNav({ language, setLanguage }: MobileNavProps) {
               <path d="M4 6h16M4 12h16M4 18h16" />
             )}
           </svg>
-        </button>
+        </motion.button>
       </div>
 
       <AnimatePresence>
@@ -61,59 +64,65 @@ export default function MobileNav({ language, setLanguage }: MobileNavProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden border-t border-[#90e0ef] bg-[#caf0f8]"
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden border-t border-[#90e0ef]/30 bg-gradient-to-b from-[#caf0f8]/50 to-white"
           >
-            <div className="space-y-2 px-3 py-4">
-              <div className="mb-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.24em] text-[#0077b6]">ބައިތައް</p>
-                    <h2 className="mt-1 text-base sm:text-lg font-bold text-[#0077b6]">ހުރިހާ ބައިތައް</h2>
-                  </div>
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  {categories.map((category) => (
-                    <Link 
-                      key={category.id} 
-                      to={`/categories/${category.id}`}
+            <div className="px-4 py-6 space-y-6">
+              {/* Main Navigation */}
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#0077b6] font-semibold mb-3">މެއިން</p>
+                <div className="space-y-2">
+                  {[
+                    { to: '/', label: 'މައި ޞަފްޙާ' },
+                    { to: '/categories', label: 'ބައިތައް' },
+                    { to: '/jobs', label: 'ވަޒީފާ' },
+                    { to: '/weather', label: 'މޫސުން' },
+                    { to: '/videos', label: 'ވީޑިއޯތައް' },
+                    { to: '/notifications', label: 'ނޮޓިފިކޭޝަންތައް' },
+                    { to: '/profile', label: 'ޕްރޮފައިލް' },
+                  ].map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
                       onClick={() => setIsOpen(false)}
-                      className={`cursor-pointer rounded-lg border border-[#90e0ef] px-2 py-2 ${category.color} bg-opacity-20 transition hover:border-[#00b4d8]`}
+                      className="block px-4 py-3 rounded-xl text-sm font-semibold text-[#0077b6] transition-all duration-200 hover:bg-gradient-to-r hover:from-[#caf0f8] hover:to-[#90e0ef] hover:shadow-md"
                     >
-                      <p className="text-[8px] uppercase tracking-[0.2em] text-[#0077b6]">{category.id}</p>
-                      <h3 className="mt-0.5 text-xs font-semibold text-[#0077b6]">{category.title}</h3>
+                      {item.label}
                     </Link>
                   ))}
                 </div>
               </div>
 
-              <div className="mb-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.24em] text-[#0077b6]">ވަޒީފާ</p>
-                    <h2 className="mt-1 text-base sm:text-lg font-bold text-[#0077b6]">ވަޒީފާ ތައް</h2>
-                  </div>
+              {/* Categories */}
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#0077b6] font-semibold mb-3">ބައިތައް</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={`/categories/${category.id}`}
+                      onClick={() => setIsOpen(false)}
+                      className={`relative overflow-hidden rounded-xl border border-[#90e0ef]/30 bg-gradient-to-br ${category.color} bg-opacity-10 p-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02]`}
+                    >
+                      <p className="text-[8px] uppercase tracking-[0.15em] text-[#0077b6]/70">{category.id}</p>
+                      <h3 className="mt-1 text-xs font-semibold text-[#0077b6]">{category.title}</h3>
+                    </Link>
+                  ))}
                 </div>
-                <Link 
-                  to="/jobs"
-                  onClick={() => setIsOpen(false)}
-                  className="mt-3 block cursor-pointer rounded-lg border border-[#90e0ef] bg-[#00b4d8]/20 px-3 py-3 transition hover:border-[#00b4d8] hover:bg-[#00b4d8]/30"
-                >
-                  <p className="text-[8px] uppercase tracking-[0.2em] text-[#0077b6]">jobs</p>
-                  <h3 className="mt-0.5 text-xs font-semibold text-[#0077b6]">މޯލްޑިވްސް ވަޒީފާ ތައް</h3>
-                </Link>
               </div>
-              
-              <div className="flex items-center justify-between rounded-lg border border-[#90e0ef] bg-[#caf0f8]/50 px-3 py-2">
-                <span className="text-xs text-[#0077b6]">
+
+              {/* Language Toggle */}
+              <div className="flex items-center justify-between rounded-xl border border-[#90e0ef]/30 bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 px-4 py-3">
+                <span className="text-xs font-medium text-[#0077b6]">
                   {language === 'en' ? 'Language' : 'ބަސް'}
                 </span>
-                <button
+                <motion.button
                   onClick={() => setLanguage(language === 'en' ? 'dv' : 'en')}
-                  className="text-xs font-semibold text-[#00b4d8] transition hover:text-[#0077b6]"
+                  className="text-lg transition-transform hover:scale-110"
+                  whileTap={{ scale: 0.9 }}
                 >
                   {language === 'en' ? '🇲🇻' : '🇬🇧'}
-                </button>
+                </motion.button>
               </div>
             </div>
           </motion.div>

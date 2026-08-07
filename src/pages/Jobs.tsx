@@ -53,15 +53,6 @@ export default function Jobs() {
   const [jobCount, setJobCount] = useState<number>(0);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
-  // Extract unique resorts and positions for sidebar navigation
-  const uniqueResorts = Array.from(new Set(jobs.map(job => job.company))).sort();
-  
-  // Extract unique positions (simplified - first word of title)
-  const uniquePositions = Array.from(new Set(jobs.map(job => {
-    const words = job.title.split(' ');
-    return words[0]; // Get first word as position type
-  }))).filter(Boolean).sort();
-
   // Filter jobs based on resort and position
   const filteredJobs = jobs.filter(job => {
     const matchesResort = !resortFilter || job.company.toLowerCase().includes(resortFilter.toLowerCase());
@@ -184,83 +175,8 @@ export default function Jobs() {
         )}
       </div>
 
-      <div className="flex gap-6">
-        {/* Sticky Sidebar */}
-        <aside className="hidden lg:block w-64 flex-shrink-0 space-y-6 sticky top-20 h-[calc(100vh-6rem)] overflow-y-auto">
-          {/* Resorts */}
-          <div className="bg-white/80 rounded-xl overflow-hidden sticky top-0 shadow-sm border border-sky-100">
-            <h3 className="sticky top-0 text-xs font-semibold uppercase tracking-wider text-slate-600 px-4 py-6 bg-white/90 border-b border-sky-100 z-10">Resorts</h3>
-            <div className="space-y-1 max-h-64 overflow-y-auto p-2">
-              <button
-                onClick={() => setResortFilter('')}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${
-                  !resortFilter 
-                    ? 'bg-sky-500 text-white' 
-                    : 'text-slate-600 hover:bg-sky-50'
-                }`}
-              >
-                All Resorts
-              </button>
-              {uniqueResorts.slice(0, 20).map((resort) => {
-                const logo = getCompanyLogo(resort);
-                return (
-                  <button
-                    key={resort}
-                    onClick={() => setResortFilter(resort)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition flex items-center gap-2 ${
-                      resortFilter === resort 
-                        ? 'bg-sky-500 text-white' 
-                        : 'text-slate-600 hover:bg-sky-50'
-                    }`}
-                    title={resort}
-                  >
-                    {logo && (
-                      <img 
-                        src={logo} 
-                        alt={resort} 
-                        className="w-6 h-6 object-contain flex-shrink-0 bg-white rounded p-0.5 shadow-sm"
-                      />
-                    )}
-                    <span className="truncate">{resort}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Positions */}
-          <div className="bg-white/80 rounded-xl overflow-hidden sticky top-0 shadow-sm border border-sky-100">
-            <h3 className="sticky top-0 text-xs font-semibold uppercase tracking-wider text-slate-600 px-4 py-6 bg-white/90 border-b border-sky-100 z-10">Positions</h3>
-            <div className="space-y-1 max-h-64 overflow-y-auto p-2">
-              <button
-                onClick={() => setPositionFilter('')}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${
-                  !positionFilter 
-                    ? 'bg-sky-500 text-white' 
-                    : 'text-slate-600 hover:bg-sky-50'
-                }`}
-              >
-                All Positions
-              </button>
-              {uniquePositions.slice(0, 20).map((position) => (
-                <button
-                  key={position}
-                  onClick={() => setPositionFilter(position)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${
-                    positionFilter === position 
-                      ? 'bg-sky-500 text-white' 
-                      : 'text-slate-600 hover:bg-sky-50'
-                  }`}
-                >
-                  {position}
-                </button>
-              ))}
-            </div>
-          </div>
-        </aside>
-
-        {/* Main Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto h-[calc(100vh-6rem)] space-y-6">
+      {/* Main Content - Full Width */}
+      <div className="space-y-6">
           {/* Sticky Search and Filter Bar */}
           <div className="sticky top-0 bg-white/95 backdrop-blur-sm p-4 z-30 border-b border-sky-100 rounded-xl mb-6 shadow-sm">
             <div className="flex flex-wrap gap-3">
@@ -305,7 +221,7 @@ export default function Jobs() {
               <p className="text-red-600">{error}</p>
             </div>
           ) : filteredJobs.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {filteredJobs.map((job) => (
                 <JobCard key={job.id} job={job} onClick={() => setSelectedJob(job)} />
               ))}
@@ -317,7 +233,6 @@ export default function Jobs() {
               </p>
             </div>
           )}
-        </div>
       </div>
 
       {/* Resorts Grid - Outside scrollable area */}

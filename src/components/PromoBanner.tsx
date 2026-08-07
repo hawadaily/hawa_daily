@@ -72,7 +72,7 @@ export default function PromoBanner({ location = 'home', position = 'top' }: Pro
   const currentBanner = banners[currentIndex];
 
   return (
-    <div className="relative w-full h-32 overflow-hidden bg-slate-900">
+    <div className="relative w-full h-32 overflow-hidden bg-gradient-to-r from-[#0077b6] to-[#00b4d8]">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
