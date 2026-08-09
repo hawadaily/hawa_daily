@@ -35,7 +35,7 @@ export default function NewsTicker() {
   }, []);
 
   return (
-    <div className="w-full bg-sky-600 text-white py-1 px-4 overflow-hidden flex items-center mt-0 lg:mt-20" dir="rtl">
+    <div className="w-full bg-sky-600 text-white py-1 px-4 overflow-hidden flex items-center mt-24" dir="rtl">
       <span className="font-bold ml-4">ފަހުގެ ޚަބަރު:</span>
       <div className="flex-1 whitespace-nowrap overflow-hidden">
         <div 
