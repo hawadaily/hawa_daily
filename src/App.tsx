@@ -14,6 +14,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import ImageGenerator from './pages/ImageGenerator';
 import Jobs from './pages/Jobs';
 import Weather from './pages/Weather';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 import AdminRoute from './components/AdminRoute';
 import DesktopNav from './components/DesktopNav';
 import MobileNav from './components/MobileNav';
@@ -157,6 +159,8 @@ function App() {
             <Route path="/article/:id" element={<ArticlePage />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/weather" element={<Weather />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/image-generator" element={<AdminRoute><ImageGenerator /></AdminRoute>} />
