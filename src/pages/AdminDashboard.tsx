@@ -8,7 +8,7 @@ import { categories } from '../data/mockData';
 import { postToFacebook, deleteFromFacebook, getFacebookPageInsights } from '../utils/facebook';
 import { uploadImage, uploadVideo, uploadToGitHub } from '../utils/cloudinary';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'notifications' | 'rephrase' | 'checklist';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'rephrase' | 'checklist' | 'flyers' | 'quotes';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -173,6 +173,20 @@ export default function AdminDashboard() {
       createLocationPages: 'Create separate page for each location you serve',
       createServicePages: 'Create separate service page for each service',
       createUniqueContent: 'Create unique content for each page and make sure they are indexed',
+      jobFlyers: 'Job Flyers',
+      jobFlyersDesc: 'Create and download job flyers',
+      selectJob: 'Select Job',
+      generateFlyer: 'Generate Flyer',
+      downloadFlyer: 'Download Flyer',
+      generating: 'Generating...',
+      noJobs: 'No jobs available',
+      quotePosters: 'Quote Posters',
+      quotePostersDesc: 'Create quote posters with photos and text',
+      uploadPhoto: 'Upload Photo',
+      quoteText: 'Quote Text',
+      authorText: 'Author (optional)',
+      generatePoster: 'Generate Poster',
+      downloadPoster: 'Download Poster',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -313,6 +327,20 @@ export default function AdminDashboard() {
       createLocationPages: 'ކޮންމެ ހުސްކަމަކަށް ވެސް ތަނެއް ހަދާ',
       createServicePages: 'ކޮންމެ ޚިދުމަތަކަށް ވެސް ޞަފްޙާއެއް ހަދާ',
       createUniqueContent: 'ކޮންމެ ޞަފްޙާއަކަށް ވެސް އަންހެން ކޮންޓެންޓް ހަދާ އަދި އިންޑެކްސް ކުރިއަށް ގެންދާ',
+      jobFlyers: 'ވަޒީފާ ފްލައިއަރުތައް',
+      jobFlyersDesc: 'ވަޒީފާ ފްލައިއަރުތައް ހަދާ އަދި ޑައުންލޯޑް ކުރޭ',
+      selectJob: 'ވަޒީފާ ހޮވާ',
+      generateFlyer: 'ފްލައިއަރު ހަދާ',
+      downloadFlyer: 'ފްލައިއަރު ޑައުންލޯޑް ކުރޭ',
+      generating: 'ހަދަނީ...',
+      noJobs: 'ވަޒީފާތައް ނެތް',
+      quotePosters: 'ކޮޓް ޕޯސްޓަރުތައް',
+      quotePostersDesc: 'ފޮޓޯ އަދި ލިޔުން އާއި އެއްކޮށައިގައި ކޮޓް ޕޯސްޓަރުތައް ހަދާ',
+      uploadPhoto: 'ފޮޓޯ އަޕްލޯޑް ކުރޭ',
+      quoteText: 'ކޮޓް ލިޔުން',
+      authorText: 'ލިޔެކިއްވާ (އިޚްތިޔާރީ)',
+      generatePoster: 'ޕޯސްޓަރު ހަދާ',
+      downloadPoster: 'ޕޯސްޓަރު ޑައުންލޯޑް ކުރޭ',
     },
   };
 
@@ -408,6 +436,20 @@ export default function AdminDashboard() {
   const [isGenerating, setIsGenerating] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dhivehiFontRef = useRef<FontFace | null>(null);
+  
+  // Job Flyers state
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [flyerCanvas, setFlyerCanvas] = useState<HTMLCanvasElement | null>(null);
+  const [generatingFlyer, setGeneratingFlyer] = useState(false);
+  
+  // Quote Posters state
+  const [quotePhoto, setQuotePhoto] = useState<File | null>(null);
+  const [quotePhotoUrl, setQuotePhotoUrl] = useState<string>('');
+  const [quoteText, setQuoteText] = useState('');
+  const [quoteAuthor, setQuoteAuthor] = useState('');
+  const [quoteCanvas, setQuoteCanvas] = useState<HTMLCanvasElement | null>(null);
+  const [generatingPoster, setGeneratingPoster] = useState(false);
 
   // Load Dhivehi font
   useEffect(() => {
@@ -418,6 +460,29 @@ export default function AdminDashboard() {
     }).catch((error) => {
       console.error('Failed to load Dhivehi font:', error);
     });
+  }, []);
+
+  // Fetch jobs for flyers
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const jobsQuery = query(
+          collection(db, 'jobs'),
+          orderBy('createdAt', 'desc'),
+          limit(20)
+        );
+        const snapshot = await getDocs(jobsQuery);
+        const jobsData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setJobs(jobsData);
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+      }
+    };
+
+    fetchJobs();
   }, []);
 
   // Real-time preview regeneration
@@ -831,11 +896,7 @@ export default function AdminDashboard() {
 
     img.src = uploadedImage;
   }, [uploadedImage, overlayText, overlayText2, bannerColor, gradientColor, fontSize, fontColor, fontStyle, logoPosition, logoOpacity, textPosition, textPosition2, gradientLocation]);
-  
-  // Notifications state
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [loadingNotifications, setLoadingNotifications] = useState(true);
-  
+
   // Article image upload state
   const [articleFile, setArticleFile] = useState<File | null>(null);
   const [uploadingArticle, setUploadingArticle] = useState(false);
@@ -986,62 +1047,6 @@ export default function AdminDashboard() {
 
     setFilteredVisitorCount(filteredFingerprints.size);
   }, [visitorDetails, dateRange, customStartDate, customEndDate]);
-
-  // Load notifications data
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const articlesQuery = query(
-          collection(db, 'articles'),
-          orderBy('createdAt', 'desc'),
-          limit(10)
-        );
-        const snapshot = await getDocs(articlesQuery);
-        
-        const articleNotifications = snapshot.docs.map(doc => {
-          const data = doc.data();
-          const title = data.title || data.titleEn || 'ޚަބަރު';
-          const createdAt = data.createdAt;
-          let time = 'އަވަސްޓެއް ނުވެއެވެ';
-          
-          if (createdAt) {
-            const date = new Date(createdAt.seconds * 1000);
-            const now = new Date();
-            const diffMs = now.getTime() - date.getTime();
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-            
-            if (diffMins < 1) {
-              time = 'ހަތަރުވަނަ ހިސާބުގައި';
-            } else if (diffMins < 60) {
-              time = `${diffMins} މިނިޓް ކުރިން`;
-            } else if (diffHours < 24) {
-              time = `${diffHours} ގަޑިއަކު ކުރިން`;
-            } else {
-              time = `${diffDays} ދުވަސް ކުރިން`;
-            }
-          }
-          
-          return {
-            id: doc.id,
-            title: `އާ ޚަބަރު: ${title}`,
-            time,
-            articleId: doc.id
-          };
-        });
-        
-        setNotifications(articleNotifications);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-      } finally {
-        setLoadingNotifications(false);
-      }
-    };
-
-    fetchNotifications();
-  }, []);
-
 
   // Load Facebook insights
   const loadFacebookInsights = async (e?: React.MouseEvent) => {
@@ -1597,6 +1602,197 @@ export default function AdminDashboard() {
     }
   }, [titleDv]);
 
+  // Generate flyer function
+  const generateFlyer = async () => {
+    if (!selectedJob || !flyerCanvas) return;
+    
+    setGeneratingFlyer(true);
+    
+    try {
+      const canvas = flyerCanvas;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Create gradient background
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#0077b6');
+      gradient.addColorStop(1, '#00b4d8');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Set text properties
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Draw job title
+      const title = selectedJob.title || selectedJob.titleEn || selectedJob.titleDv || 'Job Title';
+      ctx.font = 'bold 48px Arial';
+      ctx.fillText(title, canvas.width / 2, 200);
+
+      // Draw company
+      if (selectedJob.company) {
+        ctx.font = 'bold 32px Arial';
+        ctx.fillText(selectedJob.company, canvas.width / 2, 280);
+      }
+
+      // Draw location
+      if (selectedJob.location) {
+        ctx.font = '28px Arial';
+        ctx.fillText(`📍 ${selectedJob.location}`, canvas.width / 2, 360);
+      }
+
+      // Draw salary
+      if (selectedJob.salary) {
+        ctx.font = '28px Arial';
+        ctx.fillText(`💰 ${selectedJob.salary}`, canvas.width / 2, 440);
+      }
+
+      // Draw description (truncated)
+      if (selectedJob.description) {
+        ctx.font = '20px Arial';
+        const desc = selectedJob.description.substring(0, 150) + '...';
+        ctx.fillText(desc, canvas.width / 2, 550);
+      }
+
+      // Draw apply URL
+      ctx.font = 'bold 24px Arial';
+      ctx.fillText('Apply at: hawadaily.com/jobs', canvas.width / 2, 700);
+
+      // Draw date
+      ctx.font = '18px Arial';
+      const date = new Date().toLocaleDateString();
+      ctx.fillText(date, canvas.width / 2, 750);
+
+    } catch (error) {
+      console.error('Error generating flyer:', error);
+    } finally {
+      setGeneratingFlyer(false);
+    }
+  };
+
+  // Download flyer function
+  const downloadFlyer = () => {
+    if (!flyerCanvas) return;
+    
+    const link = document.createElement('a');
+    link.download = `job-flyer-${selectedJob?.id || 'flyer'}.png`;
+    link.href = flyerCanvas.toDataURL('image/png');
+    link.click();
+  };
+
+  // Handle quote photo upload
+  const handleQuotePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setQuotePhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setQuotePhotoUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Generate quote poster function
+  const generateQuotePoster = async () => {
+    if (!quoteCanvas || !quotePhotoUrl) return;
+    
+    setGeneratingPoster(true);
+    
+    try {
+      const canvas = quoteCanvas;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Load and draw the uploaded photo
+      const img = new Image();
+      img.onload = () => {
+        // Draw image to fill canvas
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Create gradient overlay
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, 'rgba(0, 119, 182, 0.3)');
+        gradient.addColorStop(0.5, 'rgba(0, 180, 216, 0.5)');
+        gradient.addColorStop(1, 'rgba(0, 119, 182, 0.7)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Set text properties
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Draw quote text
+        const fontName = dhivehiFontRef.current ? 'Dhivehi' : 'Arial';
+        ctx.font = `bold 36px ${fontName}`;
+        
+        // Wrap text if too long
+        const maxTextWidth = canvas.width - 100;
+        const words = quoteText.split(' ');
+        let line = '';
+        let y = canvas.height / 2 - 50;
+        
+        for (let i = 0; i < words.length; i++) {
+          const testLine = line + words[i] + ' ';
+          const metrics = ctx.measureText(testLine);
+          if (metrics.width > maxTextWidth && i > 0) {
+            ctx.fillText(line, canvas.width / 2, y);
+            line = words[i] + ' ';
+            y += 45;
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, canvas.width / 2, y);
+
+        // Draw author if provided
+        if (quoteAuthor) {
+          ctx.font = `italic 24px ${fontName}`;
+          ctx.fillText(`— ${quoteAuthor}`, canvas.width / 2, y + 60);
+        }
+
+        // Draw logo
+        const logo = new Image();
+        logo.onload = () => {
+          const logoSize = 80;
+          const logoPadding = 20;
+          ctx.globalAlpha = 0.9;
+          ctx.drawImage(logo, canvas.width - logoSize - logoPadding, canvas.height - logoSize - logoPadding, logoSize, logoSize);
+          ctx.globalAlpha = 1;
+        };
+        logo.onerror = () => {
+          // Logo failed to load, continue without it
+        };
+        logo.src = '/logo.png';
+
+      };
+      img.src = quotePhotoUrl;
+
+    } catch (error) {
+      console.error('Error generating quote poster:', error);
+    } finally {
+      setTimeout(() => setGeneratingPoster(false), 500);
+    }
+  };
+
+  // Download quote poster function
+  const downloadQuotePoster = () => {
+    if (!quoteCanvas) return;
+    
+    const link = document.createElement('a');
+    link.download = `quote-poster-${Date.now()}.png`;
+    link.href = quoteCanvas.toDataURL('image/png');
+    link.click();
+  };
+
   if (user === undefined) {
     return (
       <div className="rounded-[32px] border border-gray-200 bg-white p-8 shadow-soft text-right">
@@ -1678,7 +1874,7 @@ export default function AdminDashboard() {
       <>
         {/* Tabs */}
         <div className="flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'analytics', 'settings', 'notifications', 'rephrase', 'checklist'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -1693,9 +1889,10 @@ export default function AdminDashboard() {
               {tab === 'banners' && t.manageBanners}
               {tab === 'analytics' && t.analytics}
               {tab === 'settings' && t.settings}
-              {tab === 'notifications' && 'ނޮޓިފިކޭޝަންތައް'}
               {tab === 'rephrase' && 'ޚަބަރު ރީފްރޭޒް (Rephrase)'}
               {tab === 'checklist' && t.postLaunchChecklist}
+              {tab === 'flyers' && t.jobFlyers}
+              {tab === 'quotes' && t.quotePosters}
             </button>
           ))}
         </div>
@@ -2941,29 +3138,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Notifications Tab */}
-        {activeTab === 'notifications' && (
-          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
-            <h3 className="text-2xl font-bold text-gray-900">ނޮޓިފިކޭޝަންތައް</h3>
-            <div className="mt-6 space-y-4">
-              {loadingNotifications ? (
-                <p className="text-center text-gray-600">ލޯޑް ކުރަމުން...</p>
-              ) : notifications.length === 0 ? (
-                <p className="text-center text-gray-600">ނޮޓިފިކޭޝަންތައް ނެތް</p>
-              ) : (
-                notifications.map((notification: any) => (
-                  <div key={notification.id} className="rounded-2xl border border-gray-300 bg-gray-100 p-5">
-                    <div className="flex items-center justify-between gap-4 text-sm text-gray-700">
-                      <p>{notification.title}</p>
-                      <span className="text-xs text-slate-500">{notification.time}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Rephrase Tab */}
         {activeTab === 'rephrase' && (
           <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
@@ -3229,6 +3403,188 @@ export default function AdminDashboard() {
                   style={{ width: `${(checklistItems.filter(i => i.completed).length / checklistItems.length) * 100}%` }}
                 />
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Job Flyers Tab */}
+        {activeTab === 'flyers' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">{t.jobFlyers}</h3>
+            <p className="mt-2 text-sm text-gray-600">{t.jobFlyersDesc}</p>
+            
+            <div className="mt-6 space-y-6">
+              {/* Job Selection */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.selectJob}</label>
+                <select
+                  value={selectedJob?.id || ''}
+                  onChange={(e) => {
+                    const job = jobs.find(j => j.id === e.target.value);
+                    setSelectedJob(job || null);
+                  }}
+                  className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                >
+                  <option value="">{t.selectJob}</option>
+                  {jobs.map((job) => (
+                    <option key={job.id} value={job.id}>
+                      {job.title || job.titleEn || job.titleDv || 'Untitled Job'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Flyer Preview */}
+              {selectedJob && (
+                <div className="space-y-4">
+                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-4 bg-gray-50">
+                    <canvas
+                      ref={(canvas) => setFlyerCanvas(canvas)}
+                      width={800}
+                      height={1200}
+                      className="w-full h-auto rounded-lg shadow-md"
+                      style={{ display: 'none' }}
+                    />
+                    <div
+                      id="flyer-preview"
+                      className="w-full h-auto rounded-lg shadow-md bg-gradient-to-br from-blue-500 to-cyan-400 p-8 text-white"
+                      style={{ minHeight: '400px' }}
+                    >
+                      <div className="text-center space-y-4">
+                        <h2 className="text-3xl font-bold">{selectedJob.title || selectedJob.titleEn || selectedJob.titleDv || 'Job Title'}</h2>
+                        {selectedJob.company && (
+                          <p className="text-xl font-semibold">{selectedJob.company}</p>
+                        )}
+                        {selectedJob.location && (
+                          <p className="text-lg">📍 {selectedJob.location}</p>
+                        )}
+                        {selectedJob.salary && (
+                          <p className="text-lg">💰 {selectedJob.salary}</p>
+                        )}
+                        {selectedJob.description && (
+                          <p className="text-sm mt-4 opacity-90">{selectedJob.description.substring(0, 200)}...</p>
+                        )}
+                        <div className="mt-6 pt-4 border-t border-white/30">
+                          <p className="text-sm">Apply at: hawadaily.com/jobs</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={generateFlyer}
+                      disabled={generatingFlyer}
+                      className="flex-1 rounded-full bg-brand-500 px-6 py-3 font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
+                    >
+                      {generatingFlyer ? t.generating : t.generateFlyer}
+                    </button>
+                    <button
+                      onClick={downloadFlyer}
+                      disabled={!flyerCanvas || generatingFlyer}
+                      className="flex-1 rounded-full border-2 border-brand-500 px-6 py-3 font-semibold text-brand-500 transition hover:bg-brand-50 disabled:opacity-50"
+                    >
+                      {t.downloadFlyer}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {!selectedJob && jobs.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  {t.noJobs}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Quote Posters Tab */}
+        {activeTab === 'quotes' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">{t.quotePosters}</h3>
+            <p className="mt-2 text-sm text-gray-600">{t.quotePostersDesc}</p>
+            
+            <div className="mt-6 space-y-6">
+              {/* Photo Upload */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.uploadPhoto}</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleQuotePhotoUpload}
+                  className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                />
+              </div>
+
+              {/* Quote Text */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.quoteText}</label>
+                <textarea
+                  value={quoteText}
+                  onChange={(e) => setQuoteText(e.target.value)}
+                  className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500 min-h-[100px]"
+                  placeholder="Enter your quote..."
+                />
+              </div>
+
+              {/* Author (Optional) */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.authorText}</label>
+                <input
+                  type="text"
+                  value={quoteAuthor}
+                  onChange={(e) => setQuoteAuthor(e.target.value)}
+                  className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  placeholder="Author name (optional)"
+                />
+              </div>
+
+              {/* Poster Preview */}
+              {quotePhotoUrl && (
+                <div className="space-y-4">
+                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-4 bg-gray-50">
+                    <canvas
+                      ref={(canvas) => setQuoteCanvas(canvas)}
+                      width={800}
+                      height={1200}
+                      className="w-full h-auto rounded-lg shadow-md"
+                      style={{ display: 'none' }}
+                    />
+                    <div
+                      id="quote-preview"
+                      className="w-full h-auto rounded-lg shadow-md bg-gradient-to-br from-blue-500 to-cyan-400 p-8 text-white"
+                      style={{ minHeight: '400px', backgroundImage: `url(${quotePhotoUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                    >
+                      <div className="h-full flex flex-col justify-center items-center text-center space-y-4 bg-black/30 p-8 rounded-lg">
+                        <p className="text-2xl font-bold">{quoteText || 'Your quote will appear here'}</p>
+                        {quoteAuthor && (
+                          <p className="text-lg italic">— {quoteAuthor}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={generateQuotePoster}
+                      disabled={generatingPoster || !quotePhotoUrl}
+                      className="flex-1 rounded-full bg-brand-500 px-6 py-3 font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
+                    >
+                      {generatingPoster ? t.generating : t.generatePoster}
+                    </button>
+                    <button
+                      onClick={downloadQuotePoster}
+                      disabled={!quoteCanvas || generatingPoster}
+                      className="flex-1 rounded-full border-2 border-brand-500 px-6 py-3 font-semibold text-brand-500 transition hover:bg-brand-50 disabled:opacity-50"
+                    >
+                      {t.downloadPoster}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
