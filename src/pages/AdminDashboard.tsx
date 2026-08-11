@@ -187,6 +187,10 @@ export default function AdminDashboard() {
       authorText: 'Author (optional)',
       generatePoster: 'Generate Poster',
       downloadPoster: 'Download Poster',
+      platformSize: 'Platform Size',
+      facebook: 'Facebook (1080x1350)',
+      instagramSquare: 'Instagram Square (1080x1080)',
+      instagramPortrait: 'Instagram Portrait (1080x1350)',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -341,6 +345,10 @@ export default function AdminDashboard() {
       authorText: 'ލިޔެކިއްވާ (އިޚްތިޔާރީ)',
       generatePoster: 'ޕޯސްޓަރު ހަދާ',
       downloadPoster: 'ޕޯސްޓަރު ޑައުންލޯޑް ކުރޭ',
+      platformSize: 'ޕްލެޓްފޯމް ސައިޒް',
+      facebook: 'ފޭސްބުކް (1080x1350)',
+      instagramSquare: 'އިންސްޓަގްރާމް ސަކުއަރު (1080x1080)',
+      instagramPortrait: 'އިންސްޓަގްރާމް ޕޯޓްރެއިޓް (1080x1350)',
     },
   };
 
@@ -442,6 +450,7 @@ export default function AdminDashboard() {
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [flyerCanvas, setFlyerCanvas] = useState<HTMLCanvasElement | null>(null);
   const [generatingFlyer, setGeneratingFlyer] = useState(false);
+  const [flyerPlatform, setFlyerPlatform] = useState<'facebook' | 'instagram-square' | 'instagram-portrait'>('facebook');
   
   // Quote Posters state
   const [quotePhoto, setQuotePhoto] = useState<File | null>(null);
@@ -450,6 +459,7 @@ export default function AdminDashboard() {
   const [quoteAuthor, setQuoteAuthor] = useState('');
   const [quoteCanvas, setQuoteCanvas] = useState<HTMLCanvasElement | null>(null);
   const [generatingPoster, setGeneratingPoster] = useState(false);
+  const [quotePlatform, setQuotePlatform] = useState<'facebook' | 'instagram-square' | 'instagram-portrait'>('facebook');
 
   // Load Dhivehi font
   useEffect(() => {
@@ -1613,6 +1623,14 @@ export default function AdminDashboard() {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
+      // Get dimensions based on platform
+      const dimensions = flyerPlatform === 'instagram-square' 
+        ? { width: 1080, height: 1080 }
+        : { width: 1080, height: 1350 };
+      
+      canvas.width = dimensions.width;
+      canvas.height = dimensions.height;
+
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1628,44 +1646,47 @@ export default function AdminDashboard() {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
+      // Calculate scale factor based on height
+      const scaleFactor = canvas.height / 1350;
+
       // Draw job title
       const title = selectedJob.title || selectedJob.titleEn || selectedJob.titleDv || 'Job Title';
-      ctx.font = 'bold 48px Arial';
-      ctx.fillText(title, canvas.width / 2, 200);
+      ctx.font = `bold ${Math.round(65 * scaleFactor)}px Arial`;
+      ctx.fillText(title, canvas.width / 2, Math.round(225 * scaleFactor));
 
       // Draw company
       if (selectedJob.company) {
-        ctx.font = 'bold 32px Arial';
-        ctx.fillText(selectedJob.company, canvas.width / 2, 280);
+        ctx.font = `bold ${Math.round(43 * scaleFactor)}px Arial`;
+        ctx.fillText(selectedJob.company, canvas.width / 2, Math.round(315 * scaleFactor));
       }
 
       // Draw location
       if (selectedJob.location) {
-        ctx.font = '28px Arial';
-        ctx.fillText(`📍 ${selectedJob.location}`, canvas.width / 2, 360);
+        ctx.font = `${Math.round(38 * scaleFactor)}px Arial`;
+        ctx.fillText(`📍 ${selectedJob.location}`, canvas.width / 2, Math.round(405 * scaleFactor));
       }
 
       // Draw salary
       if (selectedJob.salary) {
-        ctx.font = '28px Arial';
-        ctx.fillText(`💰 ${selectedJob.salary}`, canvas.width / 2, 440);
+        ctx.font = `${Math.round(38 * scaleFactor)}px Arial`;
+        ctx.fillText(`💰 ${selectedJob.salary}`, canvas.width / 2, Math.round(495 * scaleFactor));
       }
 
       // Draw description (truncated)
       if (selectedJob.description) {
-        ctx.font = '20px Arial';
+        ctx.font = `${Math.round(27 * scaleFactor)}px Arial`;
         const desc = selectedJob.description.substring(0, 150) + '...';
-        ctx.fillText(desc, canvas.width / 2, 550);
+        ctx.fillText(desc, canvas.width / 2, Math.round(619 * scaleFactor));
       }
 
       // Draw apply URL
-      ctx.font = 'bold 24px Arial';
-      ctx.fillText('Apply at: hawadaily.com/jobs', canvas.width / 2, 700);
+      ctx.font = `bold ${Math.round(32 * scaleFactor)}px Arial`;
+      ctx.fillText('Apply at: hawadaily.com/jobs', canvas.width / 2, Math.round(788 * scaleFactor));
 
       // Draw date
-      ctx.font = '18px Arial';
+      ctx.font = `${Math.round(24 * scaleFactor)}px Arial`;
       const date = new Date().toLocaleDateString();
-      ctx.fillText(date, canvas.width / 2, 750);
+      ctx.fillText(date, canvas.width / 2, Math.round(844 * scaleFactor));
 
     } catch (error) {
       console.error('Error generating flyer:', error);
@@ -1708,6 +1729,14 @@ export default function AdminDashboard() {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
+      // Get dimensions based on platform
+      const dimensions = quotePlatform === 'instagram-square' 
+        ? { width: 1080, height: 1080 }
+        : { width: 1080, height: 1350 };
+      
+      canvas.width = dimensions.width;
+      canvas.height = dimensions.height;
+
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1730,23 +1759,26 @@ export default function AdminDashboard() {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
+        // Calculate scale factor based on height
+        const scaleFactor = canvas.height / 1350;
+
         // Draw quote text
         const fontName = dhivehiFontRef.current ? 'Dhivehi' : 'Arial';
-        ctx.font = `bold 36px ${fontName}`;
-        
+        ctx.font = `bold ${Math.round(49 * scaleFactor)}px ${fontName}`;
+
         // Wrap text if too long
-        const maxTextWidth = canvas.width - 100;
+        const maxTextWidth = canvas.width - Math.round(135 * scaleFactor);
         const words = quoteText.split(' ');
         let line = '';
-        let y = canvas.height / 2 - 50;
-        
+        let y = canvas.height / 2 - Math.round(67 * scaleFactor);
+
         for (let i = 0; i < words.length; i++) {
           const testLine = line + words[i] + ' ';
           const metrics = ctx.measureText(testLine);
           if (metrics.width > maxTextWidth && i > 0) {
             ctx.fillText(line, canvas.width / 2, y);
             line = words[i] + ' ';
-            y += 45;
+            y += Math.round(61 * scaleFactor);
           } else {
             line = testLine;
           }
@@ -1755,15 +1787,15 @@ export default function AdminDashboard() {
 
         // Draw author if provided
         if (quoteAuthor) {
-          ctx.font = `italic 24px ${fontName}`;
-          ctx.fillText(`— ${quoteAuthor}`, canvas.width / 2, y + 60);
+          ctx.font = `italic ${Math.round(32 * scaleFactor)}px ${fontName}`;
+          ctx.fillText(`— ${quoteAuthor}`, canvas.width / 2, y + Math.round(81 * scaleFactor));
         }
 
         // Draw logo
         const logo = new Image();
         logo.onload = () => {
-          const logoSize = 80;
-          const logoPadding = 20;
+          const logoSize = Math.round(108 * scaleFactor);
+          const logoPadding = Math.round(27 * scaleFactor);
           ctx.globalAlpha = 0.9;
           ctx.drawImage(logo, canvas.width - logoSize - logoPadding, canvas.height - logoSize - logoPadding, logoSize, logoSize);
           ctx.globalAlpha = 1;
@@ -3434,14 +3466,28 @@ export default function AdminDashboard() {
                 </select>
               </div>
 
+              {/* Platform Size Selector */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.platformSize}</label>
+                <select
+                  value={flyerPlatform}
+                  onChange={(e) => setFlyerPlatform(e.target.value as 'facebook' | 'instagram-square' | 'instagram-portrait')}
+                  className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:border-emerald-500 focus:outline-none"
+                >
+                  <option value="facebook">{t.facebook}</option>
+                  <option value="instagram-square">{t.instagramSquare}</option>
+                  <option value="instagram-portrait">{t.instagramPortrait}</option>
+                </select>
+              </div>
+
               {/* Flyer Preview */}
               {selectedJob && (
                 <div className="space-y-4">
                   <div className="border-2 border-dashed border-gray-300 rounded-2xl p-4 bg-gray-50">
                     <canvas
                       ref={(canvas) => setFlyerCanvas(canvas)}
-                      width={800}
-                      height={1200}
+                      width={1080}
+                      height={1350}
                       className="w-full h-auto rounded-lg shadow-md"
                       style={{ display: 'none' }}
                     />
@@ -3541,14 +3587,28 @@ export default function AdminDashboard() {
                 />
               </div>
 
+              {/* Platform Size Selector */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.platformSize}</label>
+                <select
+                  value={quotePlatform}
+                  onChange={(e) => setQuotePlatform(e.target.value as 'facebook' | 'instagram-square' | 'instagram-portrait')}
+                  className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                >
+                  <option value="facebook">{t.facebook}</option>
+                  <option value="instagram-square">{t.instagramSquare}</option>
+                  <option value="instagram-portrait">{t.instagramPortrait}</option>
+                </select>
+              </div>
+
               {/* Poster Preview */}
               {quotePhotoUrl && (
                 <div className="space-y-4">
                   <div className="border-2 border-dashed border-gray-300 rounded-2xl p-4 bg-gray-50">
                     <canvas
                       ref={(canvas) => setQuoteCanvas(canvas)}
-                      width={800}
-                      height={1200}
+                      width={1080}
+                      height={1350}
                       className="w-full h-auto rounded-lg shadow-md"
                       style={{ display: 'none' }}
                     />
