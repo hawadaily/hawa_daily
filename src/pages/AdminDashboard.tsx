@@ -191,6 +191,14 @@ export default function AdminDashboard() {
       facebook: 'Facebook (1080x1350)',
       instagramSquare: 'Instagram Square (1080x1080)',
       instagramPortrait: 'Instagram Portrait (1080x1350)',
+      imageControls: 'Image Controls',
+      zoom: 'Zoom',
+      positionX: 'Position X',
+      positionY: 'Position Y',
+      textControls: 'Text Controls',
+      fontSize: 'Font Size',
+      textPositionX: 'Text Position X',
+      textPositionY: 'Text Position Y',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -349,6 +357,14 @@ export default function AdminDashboard() {
       facebook: 'ފޭސްބުކް (1080x1350)',
       instagramSquare: 'އިންސްޓަގްރާމް ސަކުއަރު (1080x1080)',
       instagramPortrait: 'އިންސްޓަގްރާމް ޕޯޓްރެއިޓް (1080x1350)',
+      imageControls: 'އިމޭޖް ކޮންޓްރޯލުތައް',
+      zoom: 'ޒޫމް',
+      positionX: 'ޕޮޒިޝަން X',
+      positionY: 'ޕޮޒިޝަން Y',
+      textControls: 'ލިޔުން ކޮންޓްރޯލުތައް',
+      fontSize: 'ފޮންޓް ސައިޒް',
+      textPositionX: 'ލިޔުން ޕޮޒިޝަން X',
+      textPositionY: 'ލިޔުން ޕޮޒިޝަން Y',
     },
   };
 
@@ -460,6 +476,21 @@ export default function AdminDashboard() {
   const [quoteCanvas, setQuoteCanvas] = useState<HTMLCanvasElement | null>(null);
   const [generatingPoster, setGeneratingPoster] = useState(false);
   const [quotePlatform, setQuotePlatform] = useState<'facebook' | 'instagram-square' | 'instagram-portrait'>('facebook');
+  
+  // Quote Poster controls
+  const [imageZoom, setImageZoom] = useState(100);
+  const [imageX, setImageX] = useState(0);
+  const [imageY, setImageY] = useState(0);
+  const [textSize, setTextSize] = useState(49);
+  const [textX, setTextX] = useState(50);
+  const [textY, setTextY] = useState(50);
+
+  // Live preview update
+  useEffect(() => {
+    if (quotePhotoUrl && quoteCanvas) {
+      generateQuotePoster();
+    }
+  }, [imageZoom, imageX, imageY, textSize, textX, textY, quotePlatform]);
 
   // Load Dhivehi font
   useEffect(() => {
@@ -1743,7 +1774,7 @@ export default function AdminDashboard() {
       // Load and draw the uploaded photo
       const img = new Image();
       img.onload = () => {
-        // Calculate cover crop (object-fit: cover equivalent)
+        // Calculate cover crop with custom controls
         const imgRatio = img.width / img.height;
         const canvasRatio = canvas.width / canvas.height;
         
@@ -1763,8 +1794,19 @@ export default function AdminDashboard() {
           sy = (img.height - sHeight) / 2;
         }
         
-        // Draw cropped image to fill canvas
-        ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+        // Apply custom position offset
+        const zoomFactor = imageZoom / 100;
+        const offsetX = (imageX / 100) * sWidth * 0.5;
+        const offsetY = (imageY / 100) * sHeight * 0.5;
+        
+        // Apply zoom by adjusting source dimensions
+        const zoomedSWidth = sWidth / zoomFactor;
+        const zoomedSHeight = sHeight / zoomFactor;
+        const zoomedSx = sx + (sWidth - zoomedSWidth) / 2 + offsetX;
+        const zoomedSy = sy + (sHeight - zoomedSHeight) / 2 + offsetY;
+        
+        // Draw cropped image to fill canvas with controls
+        ctx.drawImage(img, zoomedSx, zoomedSy, zoomedSWidth, zoomedSHeight, 0, 0, canvas.width, canvas.height);
 
         // Create gradient overlay
         const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
@@ -1782,33 +1824,38 @@ export default function AdminDashboard() {
         // Calculate scale factor based on height
         const scaleFactor = canvas.height / 1350;
 
-        // Draw quote text
+        // Draw quote text with custom controls
         const fontName = dhivehiFontRef.current ? 'Dhivehi' : 'Arial';
-        ctx.font = `bold ${Math.round(49 * scaleFactor)}px ${fontName}`;
+        const customTextSize = Math.round(textSize * scaleFactor);
+        ctx.font = `bold ${customTextSize}px ${fontName}`;
+
+        // Calculate text position based on controls
+        const textPosX = (textX / 100) * canvas.width;
+        const textPosY = (textY / 100) * canvas.height;
 
         // Wrap text if too long
         const maxTextWidth = canvas.width - Math.round(135 * scaleFactor);
         const words = quoteText.split(' ');
         let line = '';
-        let y = canvas.height / 2 - Math.round(67 * scaleFactor);
+        let y = textPosY;
 
         for (let i = 0; i < words.length; i++) {
           const testLine = line + words[i] + ' ';
           const metrics = ctx.measureText(testLine);
           if (metrics.width > maxTextWidth && i > 0) {
-            ctx.fillText(line, canvas.width / 2, y);
+            ctx.fillText(line, textPosX, y);
             line = words[i] + ' ';
             y += Math.round(61 * scaleFactor);
           } else {
             line = testLine;
           }
         }
-        ctx.fillText(line, canvas.width / 2, y);
+        ctx.fillText(line, textPosX, y);
 
         // Draw author if provided
         if (quoteAuthor) {
           ctx.font = `italic ${Math.round(32 * scaleFactor)}px ${fontName}`;
-          ctx.fillText(`— ${quoteAuthor}`, canvas.width / 2, y + Math.round(81 * scaleFactor));
+          ctx.fillText(`— ${quoteAuthor}`, textPosX, y + Math.round(81 * scaleFactor));
         }
 
         // Draw logo
@@ -3621,6 +3668,86 @@ export default function AdminDashboard() {
                 </select>
               </div>
 
+              {/* Image Controls */}
+              <div className="border border-gray-200 rounded-2xl p-4 bg-gray-50">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">{t.imageControls}</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.zoom} ({imageZoom}%)</label>
+                    <input
+                      type="range"
+                      min="50"
+                      max="200"
+                      value={imageZoom}
+                      onChange={(e) => setImageZoom(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.positionX} ({imageX}%)</label>
+                    <input
+                      type="range"
+                      min="-50"
+                      max="50"
+                      value={imageX}
+                      onChange={(e) => setImageX(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.positionY} ({imageY}%)</label>
+                    <input
+                      type="range"
+                      min="-50"
+                      max="50"
+                      value={imageY}
+                      onChange={(e) => setImageY(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Text Controls */}
+              <div className="border border-gray-200 rounded-2xl p-4 bg-gray-50">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">{t.textControls}</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.fontSize} ({textSize}px)</label>
+                    <input
+                      type="range"
+                      min="20"
+                      max="100"
+                      value={textSize}
+                      onChange={(e) => setTextSize(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textPositionX} ({textX}%)</label>
+                    <input
+                      type="range"
+                      min="10"
+                      max="90"
+                      value={textX}
+                      onChange={(e) => setTextX(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textPositionY} ({textY}%)</label>
+                    <input
+                      type="range"
+                      min="10"
+                      max="90"
+                      value={textY}
+                      onChange={(e) => setTextY(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Poster Preview */}
               {quotePhotoUrl && (
                 <div className="space-y-4">
@@ -3630,20 +3757,7 @@ export default function AdminDashboard() {
                       width={1080}
                       height={1350}
                       className="w-full h-auto rounded-lg shadow-md"
-                      style={{ display: 'none' }}
                     />
-                    <div
-                      id="quote-preview"
-                      className="w-full h-auto rounded-lg shadow-md bg-gradient-to-br from-blue-500 to-cyan-400 p-8 text-white"
-                      style={{ minHeight: '400px', backgroundImage: `url(${quotePhotoUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                    >
-                      <div className="h-full flex flex-col justify-center items-center text-center space-y-4 bg-black/30 p-8 rounded-lg">
-                        <p className="text-2xl font-bold">{quoteText || 'Your quote will appear here'}</p>
-                        {quoteAuthor && (
-                          <p className="text-lg italic">— {quoteAuthor}</p>
-                        )}
-                      </div>
-                    </div>
                   </div>
 
                   {/* Action Buttons */}
