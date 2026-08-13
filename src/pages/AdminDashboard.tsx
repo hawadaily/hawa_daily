@@ -5,6 +5,7 @@ import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { categories } from '../data/mockData';
+import { fallbackJobs } from '../data/fallbackJobs';
 import { postToFacebook, deleteFromFacebook, getFacebookPageInsights } from '../utils/facebook';
 import { uploadImage, uploadVideo, uploadToGitHub } from '../utils/cloudinary';
 
@@ -532,6 +533,8 @@ export default function AdminDashboard() {
         setJobs(jobsData);
       } catch (error) {
         console.error('Error fetching jobs:', error);
+        // Use fallback jobs if Firebase fails
+        setJobs(fallbackJobs);
       }
     };
 
