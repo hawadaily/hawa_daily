@@ -1814,14 +1814,6 @@ export default function AdminDashboard() {
         // Draw cropped image to fill canvas with controls
         ctx.drawImage(img, zoomedSx, zoomedSy, zoomedSWidth, zoomedSHeight, 0, 0, canvas.width, canvas.height);
 
-        // Create gradient overlay
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, 'rgba(0, 119, 182, 0.3)');
-        gradient.addColorStop(0.5, 'rgba(0, 180, 216, 0.5)');
-        gradient.addColorStop(1, 'rgba(0, 119, 182, 0.7)');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         // Set text properties with custom controls
         const alphaValue = textTransparency / 100;
         ctx.fillStyle = textColor;
