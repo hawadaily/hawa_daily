@@ -141,25 +141,25 @@ export default function Jobs() {
   };
 
   return (
-    <motion.section 
-      className="pt-24 text-left bg-gradient-to-br from-[#caf0f8] via-white to-[#90e0ef] min-h-screen" 
+    <motion.section
+      className="pt-24 text-left bg-white min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       dir="ltr"
     >
       {/* Sticky Header */}
-      <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-sm border-b border-[#90e0ef] pb-4 mb-6 shadow-sm">
+      <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-sm border-b-2 border-[#0077b6] pb-4 mb-6 shadow-md">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#0077b6] font-semibold">Jobs</p>
-            <h2 className="mt-1 text-2xl font-bold text-[#0077b6]">Maldives Jobs</h2>
+            <p className="text-xs uppercase tracking-[0.2em] text-[#0077b6] font-bold">Jobs</p>
+            <h2 className="mt-1 text-3xl font-extrabold text-[#0077b6]">Maldives Jobs</h2>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-lg border border-[#90e0ef] bg-white px-4 py-2 text-sm font-semibold text-[#0077b6] transition hover:bg-[#caf0f8] hover:border-[#00b4d8] disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg border-2 border-[#0077b6] bg-[#0077b6] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#005f73] disabled:opacity-50"
             >
               <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
