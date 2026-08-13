@@ -201,6 +201,8 @@ export default function AdminDashboard() {
       textPositionY: 'Text Position Y',
       fontColor: 'Font Color',
       textTransparency: 'Text Transparency',
+      textBackgroundColor: 'Text Background Color',
+      textBackgroundTransparency: 'Text Background Transparency',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -369,6 +371,8 @@ export default function AdminDashboard() {
       textPositionY: 'ލިޔުން ޕޮޒިޝަން Y',
       fontColor: 'ފޮންޓް ކައުލަރ',
       textTransparency: 'ލިޔުން ޝައްޕާރަންސީ',
+      textBackgroundColor: 'ލިޔުން ބެކްގްރައުންޑް ކައުލަރ',
+      textBackgroundTransparency: 'ލިޔުން ބެކްގްރައުންޑް ޝައްޕާރަންސީ',
     },
   };
 
@@ -490,13 +494,15 @@ export default function AdminDashboard() {
   const [textY, setTextY] = useState(50);
   const [textColor, setTextColor] = useState('#ffffff');
   const [textTransparency, setTextTransparency] = useState(100);
+  const [textBackgroundColor, setTextBackgroundColor] = useState('#000000');
+  const [textBackgroundTransparency, setTextBackgroundTransparency] = useState(50);
 
   // Live preview update
   useEffect(() => {
     if (quotePhotoUrl && quoteCanvas) {
       generateQuotePoster();
     }
-  }, [imageZoom, imageX, imageY, textSize, textX, textY, textColor, textTransparency, quotePlatform]);
+  }, [imageZoom, imageX, imageY, textSize, textX, textY, textColor, textTransparency, textBackgroundColor, textBackgroundTransparency, quotePlatform]);
 
   // Load Dhivehi font
   useEffect(() => {
@@ -1842,18 +1848,47 @@ export default function AdminDashboard() {
         let line = '';
         let y = textPosY;
 
+        // Store lines for background calculation
+        const lines = [];
         for (let i = 0; i < words.length; i++) {
           const testLine = line + words[i] + ' ';
           const metrics = ctx.measureText(testLine);
           if (metrics.width > maxTextWidth && i > 0) {
-            ctx.fillText(line, textPosX, y);
+            lines.push({ text: line, y: y });
             line = words[i] + ' ';
             y += autoLineGap;
           } else {
             line = testLine;
           }
         }
-        ctx.fillText(line, textPosX, y);
+        lines.push({ text: line, y: y });
+
+        // Draw text background
+        const bgAlphaValue = textBackgroundTransparency / 100;
+        ctx.globalAlpha = bgAlphaValue;
+        ctx.fillStyle = textBackgroundColor;
+
+        const padding = Math.round(20 * scaleFactor);
+        const firstLineY = lines[0].y;
+        const lastLineY = lines[lines.length - 1].y;
+        const bgHeight = lastLineY - firstLineY + autoLineGap + padding * 2;
+        const bgY = firstLineY - autoLineGap / 2 - padding;
+
+        ctx.fillRect(
+          textPosX - maxTextWidth / 2 - padding,
+          bgY,
+          maxTextWidth + padding * 2,
+          bgHeight
+        );
+
+        // Reset alpha for text
+        ctx.globalAlpha = alphaValue;
+        ctx.fillStyle = textColor;
+
+        // Draw text lines
+        lines.forEach((lineData) => {
+          ctx.fillText(lineData.text, textPosX, lineData.y);
+        });
 
         // Draw author if provided
         if (quoteAuthor) {
@@ -3768,6 +3803,26 @@ export default function AdminDashboard() {
                       max="100"
                       value={textTransparency}
                       onChange={(e) => setTextTransparency(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textBackgroundColor}</label>
+                    <input
+                      type="color"
+                      value={textBackgroundColor}
+                      onChange={(e) => setTextBackgroundColor(e.target.value)}
+                      className="w-full h-8 rounded cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textBackgroundTransparency} ({textBackgroundTransparency}%)</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={textBackgroundTransparency}
+                      onChange={(e) => setTextBackgroundTransparency(Number(e.target.value))}
                       className="w-full"
                     />
                   </div>
