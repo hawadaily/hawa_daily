@@ -199,6 +199,8 @@ export default function AdminDashboard() {
       fontSize: 'Font Size',
       textPositionX: 'Text Position X',
       textPositionY: 'Text Position Y',
+      fontColor: 'Font Color',
+      textTransparency: 'Text Transparency',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -365,6 +367,8 @@ export default function AdminDashboard() {
       fontSize: 'ފޮންޓް ސައިޒް',
       textPositionX: 'ލިޔުން ޕޮޒިޝަން X',
       textPositionY: 'ލިޔުން ޕޮޒިޝަން Y',
+      fontColor: 'ފޮންޓް ކައުލަރ',
+      textTransparency: 'ލިޔުން ޝައްޕާރަންސީ',
     },
   };
 
@@ -484,13 +488,15 @@ export default function AdminDashboard() {
   const [textSize, setTextSize] = useState(49);
   const [textX, setTextX] = useState(50);
   const [textY, setTextY] = useState(50);
+  const [textColor, setTextColor] = useState('#ffffff');
+  const [textTransparency, setTextTransparency] = useState(100);
 
   // Live preview update
   useEffect(() => {
     if (quotePhotoUrl && quoteCanvas) {
       generateQuotePoster();
     }
-  }, [imageZoom, imageX, imageY, textSize, textX, textY, quotePlatform]);
+  }, [imageZoom, imageX, imageY, textSize, textX, textY, textColor, textTransparency, quotePlatform]);
 
   // Load Dhivehi font
   useEffect(() => {
@@ -1816,8 +1822,10 @@ export default function AdminDashboard() {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Set text properties
-        ctx.fillStyle = '#ffffff';
+        // Set text properties with custom controls
+        const alphaValue = textTransparency / 100;
+        ctx.fillStyle = textColor;
+        ctx.globalAlpha = alphaValue;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -1833,6 +1841,9 @@ export default function AdminDashboard() {
         const textPosX = (textX / 100) * canvas.width;
         const textPosY = (textY / 100) * canvas.height;
 
+        // Auto-calculate line gap based on font size (1.25x font size)
+        const autoLineGap = Math.round(customTextSize * 1.25);
+
         // Wrap text if too long
         const maxTextWidth = canvas.width - Math.round(135 * scaleFactor);
         const words = quoteText.split(' ');
@@ -1845,7 +1856,7 @@ export default function AdminDashboard() {
           if (metrics.width > maxTextWidth && i > 0) {
             ctx.fillText(line, textPosX, y);
             line = words[i] + ' ';
-            y += Math.round(61 * scaleFactor);
+            y += autoLineGap;
           } else {
             line = testLine;
           }
@@ -1857,6 +1868,9 @@ export default function AdminDashboard() {
           ctx.font = `italic ${Math.round(32 * scaleFactor)}px ${fontName}`;
           ctx.fillText(`— ${quoteAuthor}`, textPosX, y + Math.round(81 * scaleFactor));
         }
+
+        // Reset alpha
+        ctx.globalAlpha = 1;
 
         // Draw logo
         const logo = new Image();
@@ -3745,6 +3759,26 @@ export default function AdminDashboard() {
                       className="w-full"
                     />
                   </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.fontColor}</label>
+                    <input
+                      type="color"
+                      value={textColor}
+                      onChange={(e) => setTextColor(e.target.value)}
+                      className="w-full h-8 rounded cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textTransparency} ({textTransparency}%)</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={textTransparency}
+                      onChange={(e) => setTextTransparency(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -3756,7 +3790,7 @@ export default function AdminDashboard() {
                       ref={(canvas) => setQuoteCanvas(canvas)}
                       width={1080}
                       height={1350}
-                      className="w-full h-auto rounded-lg shadow-md"
+                      className="w-64 h-auto rounded-lg shadow-md mx-auto"
                     />
                   </div>
 
