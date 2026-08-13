@@ -1743,8 +1743,28 @@ export default function AdminDashboard() {
       // Load and draw the uploaded photo
       const img = new Image();
       img.onload = () => {
-        // Draw image to fill canvas
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        // Calculate cover crop (object-fit: cover equivalent)
+        const imgRatio = img.width / img.height;
+        const canvasRatio = canvas.width / canvas.height;
+        
+        let sx, sy, sWidth, sHeight;
+        
+        if (imgRatio > canvasRatio) {
+          // Image is wider than canvas - crop sides
+          sHeight = img.height;
+          sWidth = img.height * canvasRatio;
+          sx = (img.width - sWidth) / 2;
+          sy = 0;
+        } else {
+          // Image is taller than canvas - crop top/bottom
+          sWidth = img.width;
+          sHeight = img.width / canvasRatio;
+          sx = 0;
+          sy = (img.height - sHeight) / 2;
+        }
+        
+        // Draw cropped image to fill canvas
+        ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
 
         // Create gradient overlay
         const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
