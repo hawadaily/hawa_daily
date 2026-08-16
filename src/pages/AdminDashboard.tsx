@@ -223,7 +223,6 @@ export default function AdminDashboard() {
       editRecipe: 'Edit Recipe',
       deleteRecipe: 'Delete Recipe',
       saveRecipe: 'Save Recipe',
-      cancel: 'Cancel',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -412,7 +411,6 @@ export default function AdminDashboard() {
       editRecipe: 'ރެސިޕީ އަންޑޭޓް ކުރޭ',
       deleteRecipe: 'ރެސިޕީ ފޮހޮވާ',
       saveRecipe: 'ރެސިޕީ ސޭވް ކުރޭ',
-      cancel: 'ކެންސަލް',
     },
   };
 
