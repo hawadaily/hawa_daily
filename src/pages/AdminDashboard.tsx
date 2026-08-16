@@ -6,10 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
+import { getCompanyLogo } from '../data/companyLogos';
 import { postToFacebook, deleteFromFacebook, getFacebookPageInsights } from '../utils/facebook';
 import { uploadImage, uploadVideo, uploadToGitHub } from '../utils/cloudinary';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'rephrase' | 'checklist' | 'flyers' | 'quotes';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'recipes';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -204,6 +205,25 @@ export default function AdminDashboard() {
       textTransparency: 'Text Transparency',
       textBackgroundColor: 'Text Background Color',
       textBackgroundTransparency: 'Text Background Transparency',
+      recipes: 'Recipes',
+      recipesDesc: 'Manage and create recipes',
+      recipeTitleDv: 'Recipe Title (Dhivehi)',
+      recipeTitleEn: 'Recipe Title (English)',
+      recipeImage: 'Recipe Image',
+      recipeImageUrl: 'Recipe Image URL',
+      recipeIngredientsDv: 'Ingredients (Dhivehi)',
+      recipeIngredientsEn: 'Ingredients (English)',
+      recipeInstructionsDv: 'Instructions (Dhivehi)',
+      recipeInstructionsEn: 'Instructions (English)',
+      recipeCategory: 'Category',
+      recipePrepTime: 'Prep Time',
+      recipeCookTime: 'Cook Time',
+      recipeServings: 'Servings',
+      addRecipe: 'Add Recipe',
+      editRecipe: 'Edit Recipe',
+      deleteRecipe: 'Delete Recipe',
+      saveRecipe: 'Save Recipe',
+      cancel: 'Cancel',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -374,6 +394,25 @@ export default function AdminDashboard() {
       textTransparency: 'ލިޔުން ޝައްޕާރަންސީ',
       textBackgroundColor: 'ލިޔުން ބެކްގްރައުންޑް ކައުލަރ',
       textBackgroundTransparency: 'ލިޔުން ބެކްގްރައުންޑް ޝައްޕާރަންސީ',
+      recipes: 'ރެސިޕީތައް',
+      recipesDesc: 'ރެސިޕީތައް މެނޭޖް ކުރާއި އުފައްދާ',
+      recipeTitleDv: 'ރެސިޕީގެ ސުރުޚީ (ދިވެހި)',
+      recipeTitleEn: 'ރެސިޕީގެ ސުރުޚީ (އިނގިލިޝް)',
+      recipeImage: 'ރެސިޕީގެ ފޮޓޯ',
+      recipeImageUrl: 'ރެސިޕީގެ ފޮޓޯ URL',
+      recipeIngredientsDv: 'ތަކެތި (ދިވެހި)',
+      recipeIngredientsEn: 'ތަކެތި (އިނގިލިޝް)',
+      recipeInstructionsDv: 'ހެދުމުގެ ގޮތް (ދިވެހި)',
+      recipeInstructionsEn: 'ހެދުމުގެ ގޮތް (އިނގިލިޝް)',
+      recipeCategory: 'ބައި',
+      recipePrepTime: 'ހެދުމުގެ ވަގުތު',
+      recipeCookTime: 'ފިއްޓުވަގުތު',
+      recipeServings: 'ބައިތައް',
+      addRecipe: 'ރެސިޕީ އިތުރުކުރޭ',
+      editRecipe: 'ރެސިޕީ އަންޑޭޓް ކުރޭ',
+      deleteRecipe: 'ރެސިޕީ ފޮހޮވާ',
+      saveRecipe: 'ރެސިޕީ ސޭވް ކުރޭ',
+      cancel: 'ކެންސަލް',
     },
   };
 
@@ -498,6 +537,27 @@ export default function AdminDashboard() {
   const [textBackgroundColor, setTextBackgroundColor] = useState('#000000');
   const [textBackgroundTransparency, setTextBackgroundTransparency] = useState(50);
 
+  // Recipes state
+  const [recipesList, setRecipesList] = useState<any[]>([]);
+  const [recipeTitleDv, setRecipeTitleDv] = useState('');
+  const [recipeTitleEn, setRecipeTitleEn] = useState('');
+  const [recipeImage, setRecipeImage] = useState<File | null>(null);
+  const [recipeImageUrl, setRecipeImageUrl] = useState('');
+  const [recipeImageUrlInput, setRecipeImageUrlInput] = useState('');
+  const [recipeIngredientsDv, setRecipeIngredientsDv] = useState('');
+  const [recipeIngredientsEn, setRecipeIngredientsEn] = useState('');
+  const [recipeInstructionsDv, setRecipeInstructionsDv] = useState('');
+  const [recipeInstructionsEn, setRecipeInstructionsEn] = useState('');
+  const [recipeCategory, setRecipeCategory] = useState('');
+  const [recipePrepTime, setRecipePrepTime] = useState('');
+  const [recipeCookTime, setRecipeCookTime] = useState('');
+  const [recipeServings, setRecipeServings] = useState('');
+  const [editingRecipe, setEditingRecipe] = useState<any>(null);
+  const [submittingRecipe, setSubmittingRecipe] = useState(false);
+  const [savingAllRecipes, setSavingAllRecipes] = useState(false);
+  const [importingHedhikaa, setImportingHedhikaa] = useState(false);
+  const [importingNadiyasKitchen, setImportingNadiyasKitchen] = useState(false);
+
   // Live preview update
   useEffect(() => {
     if (quotePhotoUrl && quoteCanvas) {
@@ -539,6 +599,22 @@ export default function AdminDashboard() {
     };
 
     fetchJobs();
+  }, []);
+
+  // Fetch recipes from Firestore
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const recipesQuery = query(collection(db, 'recipes'), orderBy('id'));
+        const snapshot = await getDocs(recipesQuery);
+        const recipesData = snapshot.docs.map(doc => doc.data());
+        setRecipesList(recipesData);
+      } catch (error) {
+        console.error('Error fetching recipes:', error);
+      }
+    };
+
+    fetchRecipes();
   }, []);
 
   // Real-time preview regeneration
@@ -1661,19 +1737,19 @@ export default function AdminDashboard() {
   // Generate flyer function
   const generateFlyer = async () => {
     if (!selectedJob || !flyerCanvas) return;
-    
+
     setGeneratingFlyer(true);
-    
+
     try {
       const canvas = flyerCanvas;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
       // Get dimensions based on platform
-      const dimensions = flyerPlatform === 'instagram-square' 
+      const dimensions = flyerPlatform === 'instagram-square'
         ? { width: 1080, height: 1080 }
         : { width: 1080, height: 1350 };
-      
+
       canvas.width = dimensions.width;
       canvas.height = dimensions.height;
 
@@ -1683,56 +1759,121 @@ export default function AdminDashboard() {
       // Create gradient background
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
       gradient.addColorStop(0, '#0077b6');
-      gradient.addColorStop(1, '#00b4d8');
+      gradient.addColorStop(0.5, '#00b4d8');
+      gradient.addColorStop(1, '#0077b6');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Calculate scale factor based on height
+      const scaleFactor = canvas.height / 1350;
+
+      // Draw decorative circles
+      ctx.globalAlpha = 0.1;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(canvas.width * 0.1, canvas.height * 0.2, Math.round(200 * scaleFactor), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(canvas.width * 0.9, canvas.height * 0.8, Math.round(150 * scaleFactor), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Draw company name in styled box (primary approach due to CORS)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      const boxWidth = Math.round(350 * scaleFactor);
+      const boxHeight = Math.round(100 * scaleFactor);
+      ctx.fillRect(canvas.width / 2 - boxWidth / 2, Math.round(60 * scaleFactor), boxWidth, boxHeight);
+
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(canvas.width / 2 - boxWidth / 2, Math.round(60 * scaleFactor), boxWidth, boxHeight);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold ${Math.round(28 * scaleFactor)}px Arial`;
+      const companyName = selectedJob.company || 'Company Name';
+      ctx.fillText(companyName, canvas.width / 2, Math.round(110 * scaleFactor));
 
       // Set text properties
       ctx.fillStyle = '#ffffff';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // Calculate scale factor based on height
-      const scaleFactor = canvas.height / 1350;
+      // Draw "HIRING NOW" badge
+      ctx.fillStyle = '#ff6b6b';
+      ctx.font = `bold ${Math.round(28 * scaleFactor)}px Arial`;
+      const badgeWidth = ctx.measureText('HIRING NOW').width + Math.round(40 * scaleFactor);
+      ctx.fillRect(canvas.width / 2 - badgeWidth / 2, Math.round(220 * scaleFactor), badgeWidth, Math.round(45 * scaleFactor));
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('HIRING NOW', canvas.width / 2, Math.round(242 * scaleFactor));
 
       // Draw job title
+      ctx.fillStyle = '#ffffff';
       const title = selectedJob.title || selectedJob.titleEn || selectedJob.titleDv || 'Job Title';
-      ctx.font = `bold ${Math.round(65 * scaleFactor)}px Arial`;
-      ctx.fillText(title, canvas.width / 2, Math.round(225 * scaleFactor));
+      ctx.font = `bold ${Math.round(55 * scaleFactor)}px Arial`;
+      ctx.fillText(title, canvas.width / 2, Math.round(320 * scaleFactor));
 
       // Draw company
       if (selectedJob.company) {
-        ctx.font = `bold ${Math.round(43 * scaleFactor)}px Arial`;
-        ctx.fillText(selectedJob.company, canvas.width / 2, Math.round(315 * scaleFactor));
+        ctx.font = `bold ${Math.round(38 * scaleFactor)}px Arial`;
+        ctx.fillStyle = '#caf0f8';
+        ctx.fillText(selectedJob.company, canvas.width / 2, Math.round(380 * scaleFactor));
       }
 
       // Draw location
       if (selectedJob.location) {
-        ctx.font = `${Math.round(38 * scaleFactor)}px Arial`;
-        ctx.fillText(`📍 ${selectedJob.location}`, canvas.width / 2, Math.round(405 * scaleFactor));
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `${Math.round(32 * scaleFactor)}px Arial`;
+        ctx.fillText(`📍 ${selectedJob.location}`, canvas.width / 2, Math.round(450 * scaleFactor));
       }
 
       // Draw salary
       if (selectedJob.salary) {
-        ctx.font = `${Math.round(38 * scaleFactor)}px Arial`;
-        ctx.fillText(`💰 ${selectedJob.salary}`, canvas.width / 2, Math.round(495 * scaleFactor));
+        ctx.font = `${Math.round(32 * scaleFactor)}px Arial`;
+        ctx.fillText(`💰 ${selectedJob.salary}`, canvas.width / 2, Math.round(510 * scaleFactor));
       }
 
       // Draw description (truncated)
       if (selectedJob.description) {
-        ctx.font = `${Math.round(27 * scaleFactor)}px Arial`;
-        const desc = selectedJob.description.substring(0, 150) + '...';
-        ctx.fillText(desc, canvas.width / 2, Math.round(619 * scaleFactor));
+        ctx.font = `${Math.round(24 * scaleFactor)}px Arial`;
+        const desc = selectedJob.description.substring(0, 120) + '...';
+        ctx.fillText(desc, canvas.width / 2, Math.round(580 * scaleFactor));
       }
 
+      // Draw app logo box with larger styling
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      const appLogoBoxWidth = Math.round(280 * scaleFactor);
+      const appLogoBoxHeight = Math.round(80 * scaleFactor);
+      ctx.fillRect(canvas.width / 2 - appLogoBoxWidth / 2, Math.round(630 * scaleFactor), appLogoBoxWidth, appLogoBoxHeight);
+
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(canvas.width / 2 - appLogoBoxWidth / 2, Math.round(630 * scaleFactor), appLogoBoxWidth, appLogoBoxHeight);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold ${Math.round(24 * scaleFactor)}px Arial`;
+      ctx.fillText('HAWA DAILY', canvas.width / 2, Math.round(670 * scaleFactor));
+
       // Draw apply URL
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold ${Math.round(36 * scaleFactor)}px Arial`;
+      ctx.fillText('www.hawadaily.com/jobs', canvas.width / 2, Math.round(780 * scaleFactor));
+
+      // Draw "Apply Now" button
+      const buttonWidth = Math.round(300 * scaleFactor);
+      const buttonHeight = Math.round(60 * scaleFactor);
+      const buttonX = canvas.width / 2 - buttonWidth / 2;
+      const buttonY = Math.round(820 * scaleFactor);
+      ctx.fillStyle = '#ff6b6b';
+      ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+      ctx.fillStyle = '#ffffff';
       ctx.font = `bold ${Math.round(32 * scaleFactor)}px Arial`;
-      ctx.fillText('Apply at: hawadaily.com/jobs', canvas.width / 2, Math.round(788 * scaleFactor));
+      ctx.fillText('APPLY NOW', canvas.width / 2, buttonY + buttonHeight / 2);
 
       // Draw date
-      ctx.font = `${Math.round(24 * scaleFactor)}px Arial`;
+      ctx.fillStyle = '#caf0f8';
+      ctx.font = `${Math.round(20 * scaleFactor)}px Arial`;
       const date = new Date().toLocaleDateString();
-      ctx.fillText(date, canvas.width / 2, Math.round(844 * scaleFactor));
+      ctx.fillText(date, canvas.width / 2, Math.round(920 * scaleFactor));
 
     } catch (error) {
       console.error('Error generating flyer:', error);
@@ -1744,11 +1885,184 @@ export default function AdminDashboard() {
   // Download flyer function
   const downloadFlyer = () => {
     if (!flyerCanvas) return;
-    
+
     const link = document.createElement('a');
     link.download = `job-flyer-${selectedJob?.id || 'flyer'}.png`;
     link.href = flyerCanvas.toDataURL('image/png');
     link.click();
+  };
+
+  // Recipe management functions
+  const clearRecipeForm = () => {
+    setRecipeTitleDv('');
+    setRecipeTitleEn('');
+    setRecipeImage(null);
+    setRecipeImageUrl('');
+    setRecipeImageUrlInput('');
+    setRecipeIngredientsDv('');
+    setRecipeIngredientsEn('');
+    setRecipeInstructionsDv('');
+    setRecipeInstructionsEn('');
+    setRecipeCategory('');
+    setRecipePrepTime('');
+    setRecipeCookTime('');
+    setRecipeServings('');
+    setEditingRecipe(null);
+  };
+
+  const handleSaveRecipe = async () => {
+    setSubmittingRecipe(true);
+
+    try {
+      const ingredientsDv = recipeIngredientsDv.split('\n').filter(i => i.trim());
+      const ingredientsEn = recipeIngredientsEn.split('\n').filter(i => i.trim());
+
+      const newRecipe = {
+        id: editingRecipe ? editingRecipe.id : `recipe-${Date.now()}`,
+        titleDv: recipeTitleDv,
+        titleEn: recipeTitleEn,
+        image: recipeImageUrl || '/images/placeholder.jpg',
+        category: recipeCategory,
+        prepTime: recipePrepTime,
+        cookTime: recipeCookTime,
+        servings: recipeServings,
+        ingredients: {
+          dv: ingredientsDv,
+          en: ingredientsEn
+        },
+        instructions: {
+          dv: recipeInstructionsDv,
+          en: recipeInstructionsEn
+        }
+      };
+
+      if (editingRecipe) {
+        // Update existing recipe in local state
+        setRecipesList(recipesList.map(r => r.id === editingRecipe.id ? newRecipe : r));
+        setMessage('Recipe updated successfully!');
+      } else {
+        // Add new recipe to local state
+        setRecipesList([...recipesList, newRecipe]);
+        setMessage('Recipe added successfully!');
+      }
+
+      clearRecipeForm();
+    } catch (error) {
+      console.error('Error saving recipe:', error);
+      setMessage('Failed to save recipe. Please try again.');
+    } finally {
+      setSubmittingRecipe(false);
+    }
+  };
+
+  const handleEditRecipe = (recipe: any) => {
+    setEditingRecipe(recipe);
+    setRecipeTitleDv(recipe.titleDv);
+    setRecipeTitleEn(recipe.titleEn);
+    setRecipeImageUrl(recipe.image);
+    setRecipeIngredientsDv(recipe.ingredients.dv.join('\n'));
+    setRecipeIngredientsEn(recipe.ingredients.en.join('\n'));
+    setRecipeInstructionsDv(recipe.instructions.dv);
+    setRecipeInstructionsEn(recipe.instructions.en);
+    setRecipeCategory(recipe.category);
+    setRecipePrepTime(recipe.prepTime);
+    setRecipeCookTime(recipe.cookTime);
+    setRecipeServings(recipe.servings);
+  };
+
+  const handleDeleteRecipe = (id: string) => {
+    if (confirm('Are you sure you want to delete this recipe?')) {
+      setRecipesList(recipesList.filter(r => r.id !== id));
+      setMessage('Recipe deleted successfully!');
+    }
+  };
+
+  const handleSaveAllRecipesToFirebase = async () => {
+    if (!confirm('Are you sure you want to save all recipes to Firebase? This may overwrite existing data.')) {
+      return;
+    }
+
+    setSavingAllRecipes(true);
+    setMessage('Saving recipes to Firebase...');
+
+    try {
+      const recipesCollection = collection(db, 'recipes');
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const recipe of recipesList) {
+        try {
+          await setDoc(doc(recipesCollection, recipe.id), {
+            ...recipe,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          successCount++;
+        } catch (error) {
+          console.error(`Error saving recipe ${recipe.id}:`, error);
+          errorCount++;
+        }
+      }
+
+      setMessage(`Successfully saved ${successCount} recipes to Firebase. ${errorCount > 0 ? `${errorCount} recipes failed.` : ''}`);
+    } catch (error) {
+      console.error('Error saving recipes to Firebase:', error);
+      setMessage('Error saving recipes to Firebase. Please try again.');
+    } finally {
+      setSavingAllRecipes(false);
+    }
+  };
+
+  const handleImportHedhikaaRecipes = async () => {
+    if (!confirm('Are you sure you want to import hedhikaa recipes? This will add them to the current list.')) {
+      return;
+    }
+
+    setImportingHedhikaa(true);
+    setMessage('Importing hedhikaa recipes...');
+
+    try {
+      const response = await fetch('/src/data/hedhikaa-recipes.json');
+      const hedhikaaRecipes = await response.json();
+      
+      // Add hedhikaa recipes to the current list
+      const existingIds = new Set(recipesList.map(r => r.id));
+      const newRecipes = hedhikaaRecipes.filter((r: any) => !existingIds.has(r.id));
+      
+      setRecipesList([...recipesList, ...newRecipes]);
+      setMessage(`Successfully imported ${newRecipes.length} hedhikaa recipes.`);
+    } catch (error) {
+      console.error('Error importing hedhikaa recipes:', error);
+      setMessage('Error importing hedhikaa recipes. Please try again.');
+    } finally {
+      setImportingHedhikaa(false);
+    }
+  };
+
+  const handleImportNadiyasKitchenRecipes = async () => {
+    if (!confirm('Are you sure you want to import nadiyaskitchen recipes? This will add them to the current list.')) {
+      return;
+    }
+
+    setImportingNadiyasKitchen(true);
+    setMessage('Importing nadiyaskitchen recipes...');
+
+    try {
+      const response = await fetch('/src/data/nadiyaskitchen-recipes.json');
+      const nadiyasKitchenRecipes = await response.json();
+      
+      // Add nadiyaskitchen recipes to the current list
+      const existingIds = new Set(recipesList.map(r => r.id));
+      const newRecipes = nadiyasKitchenRecipes.filter((r: any) => !existingIds.has(r.id));
+      
+      setRecipesList([...recipesList, ...newRecipes]);
+      setMessage(`Successfully imported ${newRecipes.length} nadiyaskitchen recipes.`);
+    } catch (error) {
+      console.error('Error importing nadiyaskitchen recipes:', error);
+      setMessage('Error importing nadiyaskitchen recipes. Please try again.');
+    } finally {
+      setImportingNadiyasKitchen(false);
+    }
   };
 
   // Handle quote photo upload
@@ -2017,7 +2331,7 @@ export default function AdminDashboard() {
       <>
         {/* Tabs */}
         <div className="flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'recipes'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -2036,6 +2350,7 @@ export default function AdminDashboard() {
               {tab === 'checklist' && t.postLaunchChecklist}
               {tab === 'flyers' && t.jobFlyers}
               {tab === 'quotes' && t.quotePosters}
+              {tab === 'recipes' && t.recipes}
             </button>
           ))}
         </div>
@@ -3863,6 +4178,253 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Recipes Tab */}
+        {activeTab === 'recipes' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">{t.recipes}</h3>
+                <p className="mt-2 text-sm text-gray-600">{t.recipesDesc}</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleImportHedhikaaRecipes}
+                  disabled={importingHedhikaa}
+                  className="rounded-full bg-emerald-500 px-6 py-3 font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-50"
+                >
+                  {importingHedhikaa ? 'Importing...' : 'Import Hedhikaa'}
+                </button>
+                <button
+                  onClick={handleImportNadiyasKitchenRecipes}
+                  disabled={importingNadiyasKitchen}
+                  className="rounded-full bg-purple-500 px-6 py-3 font-semibold text-white transition hover:bg-purple-600 disabled:opacity-50"
+                >
+                  {importingNadiyasKitchen ? 'Importing...' : 'Import NadiyasKitchen'}
+                </button>
+                <button
+                  onClick={handleSaveAllRecipesToFirebase}
+                  disabled={savingAllRecipes}
+                  className="rounded-full bg-brand-500 px-6 py-3 font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
+                >
+                  {savingAllRecipes ? 'Saving...' : 'Save All to Firebase'}
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-6">
+              {/* Recipe Form */}
+              <div className="border border-gray-200 rounded-2xl p-4 bg-gray-50">
+                <h4 className="text-sm font-semibold text-gray-700 mb-4">
+                  {editingRecipe ? t.editRecipe : t.addRecipe}
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeTitleDv}</label>
+                    <input
+                      type="text"
+                      value={recipeTitleDv}
+                      onChange={(e) => setRecipeTitleDv(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="ރެސިޕީގެ ސުރުޚީ..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeTitleEn}</label>
+                    <input
+                      type="text"
+                      value={recipeTitleEn}
+                      onChange={(e) => setRecipeTitleEn(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Recipe Title..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeCategory}</label>
+                    <select
+                      value={recipeCategory}
+                      onChange={(e) => setRecipeCategory(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    >
+                      <option value="">Select Category</option>
+                      <option value="breakfast">Breakfast / ހެދުމަށް</option>
+                      <option value="main">Main / މެއިން</option>
+                      <option value="dessert">Dessert / ޑިޒަޓް</option>
+                      <option value="side">Side / ސައިޑް</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeImage}</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setRecipeImage(file);
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setRecipeImageUrl(reader.result as string);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeImageUrl}</label>
+                    <input
+                      type="text"
+                      value={recipeImageUrlInput}
+                      onChange={(e) => {
+                        setRecipeImageUrlInput(e.target.value);
+                        setRecipeImageUrl(e.target.value);
+                      }}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="https://example.com/image.jpg"
+                    />
+                  </div>
+                  {(recipeImageUrl || recipeImageUrlInput) && (
+                    <div className="md:col-span-2">
+                      <img
+                        src={recipeImageUrl || recipeImageUrlInput}
+                        alt="Preview"
+                        className="w-32 h-32 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipePrepTime}</label>
+                    <input
+                      type="text"
+                      value={recipePrepTime}
+                      onChange={(e) => setRecipePrepTime(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="15 މިނިޓް / 15 min"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeCookTime}</label>
+                    <input
+                      type="text"
+                      value={recipeCookTime}
+                      onChange={(e) => setRecipeCookTime(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="30 މިނިޓް / 30 min"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeServings}</label>
+                    <input
+                      type="text"
+                      value={recipeServings}
+                      onChange={(e) => setRecipeServings(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="4 ބައި / 4 servings"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeIngredientsDv}</label>
+                    <textarea
+                      value={recipeIngredientsDv}
+                      onChange={(e) => setRecipeIngredientsDv(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 h-32"
+                      placeholder="1 ކުޅި ބިސް&#10;4 ބިސް&#10;¾ ކަޕް ހިކިން..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeIngredientsEn}</label>
+                    <textarea
+                      value={recipeIngredientsEn}
+                      onChange={(e) => setRecipeIngredientsEn(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 h-32"
+                      placeholder="1 Egg&#10;4 Eggs&#10;¾ Cup Sugar..."
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeInstructionsDv}</label>
+                    <textarea
+                      value={recipeInstructionsDv}
+                      onChange={(e) => setRecipeInstructionsDv(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 h-32"
+                      placeholder="ބިސް ހަނދާ، ހިކިން އަދި ވޭނިލާ އެއްކޮށް ކަރައިން މިކްސް ކުރާށެވެ..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">{t.recipeInstructionsEn}</label>
+                    <textarea
+                      value={recipeInstructionsEn}
+                      onChange={(e) => setRecipeInstructionsEn(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 h-32"
+                      placeholder="Beat eggs, sugar and vanilla together..."
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4 flex gap-3">
+                  <button
+                    onClick={handleSaveRecipe}
+                    disabled={submittingRecipe}
+                    className="flex-1 rounded-full bg-brand-500 px-6 py-3 font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
+                  >
+                    {submittingRecipe ? t.generating : t.saveRecipe}
+                  </button>
+                  {editingRecipe && (
+                    <button
+                      onClick={() => {
+                        setEditingRecipe(null);
+                        clearRecipeForm();
+                      }}
+                      className="rounded-full border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
+                    >
+                      {t.cancel}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Recipes List */}
+              <div className="border border-gray-200 rounded-2xl p-4 bg-gray-50">
+                <h4 className="text-sm font-semibold text-gray-700 mb-4">Existing Recipes</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {recipesList.map((recipe) => (
+                    <div key={recipe.id} className="border border-gray-200 rounded-lg bg-white p-4">
+                      <img
+                        src={recipe.image}
+                        alt={recipe.titleDv}
+                        className="w-full h-32 object-cover rounded-lg mb-2"
+                      />
+                      <h5 className="font-bold text-gray-900">{recipe.titleDv}</h5>
+                      <p className="text-sm text-gray-600">{recipe.titleEn}</p>
+                      <div className="mt-2 flex gap-2">
+                        <button
+                          onClick={() => handleEditRecipe(recipe)}
+                          className="flex-1 rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-white transition hover:bg-brand-600"
+                        >
+                          {t.editRecipe}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteRecipe(recipe.id)}
+                          className="flex-1 rounded-full border-2 border-red-500 px-3 py-1 text-xs font-semibold text-red-500 transition hover:bg-red-50"
+                        >
+                          {t.deleteRecipe}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}

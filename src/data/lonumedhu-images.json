@@ -1,0 +1,758 @@
+[
+  {
+    "recipeId": "Hawa-daily-1",
+    "imageName": "sweet-potato-fries.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/sweet-potato-fries.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-2",
+    "imageName": "chunky-choc-milkshake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chunky-choc-milkshake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-3",
+    "imageName": "saagu-bondibaiy.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/saagu-bondibaiy.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-4",
+    "imageName": "kandu-kukulhu.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/kandu-kukulhu.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-5",
+    "imageName": "butter-cake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/butter-cake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-6",
+    "imageName": "chocolate-filled-donuts.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chocolate-filled-donuts.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-7",
+    "imageName": "chicken-kabsa.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chicken-kabsa.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-8",
+    "imageName": "maalhoskeylu-kandhi.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/maalhoskeylu-kandhi.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-9",
+    "imageName": "rava-pirini.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/rava-pirini.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-10",
+    "imageName": "kukulhu-biriyani.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/kukulhu-biriyani.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-11",
+    "imageName": "chocos-cheesecake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chocos-cheesecake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-12",
+    "imageName": "ashotchu.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/ashotchu.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-13",
+    "imageName": "chocolate-muesli-cookie-bar.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chocolate-muesli-cookie-bar.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-14",
+    "imageName": "glucose-biscuit-pudding.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/glucose-biscuit-pudding.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-15",
+    "imageName": "dhon-anbu-riha.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/dhon-anbu-riha.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-16",
+    "imageName": "almond-milk-chai-latte.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/almond-milk-chai-latte.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-17",
+    "imageName": "masmirus-noodles.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/masmirus-noodles.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-18",
+    "imageName": "valhomas-kohthu-roshi.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/valhomas-kohthu-roshi.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-19",
+    "imageName": "strawberry-milkshake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/strawberry-milkshake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-20",
+    "imageName": "breakfast-sandwich.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/breakfast-sandwich.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-21",
+    "imageName": "kruger-pasta-nussa-dark-choco-brownies.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/kruger-pasta-nussa-dark-choco-brownies.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-22",
+    "imageName": "aluvi-kukulhu-riha.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/aluvi-kukulhu-riha.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-23",
+    "imageName": "crunchy-nut-salad.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/crunchy-nut-salad.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-24",
+    "imageName": "cornflakes-fried-chicken.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/cornflakes-fried-chicken.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-25",
+    "imageName": "vanilla-milkshake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/vanilla-milkshake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-26",
+    "imageName": "jam-filled-french-toast.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/jam-filled-french-toast.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-27",
+    "imageName": "chichanda-kirugarudhiya.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chichanda-kirugarudhiya.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-28",
+    "imageName": "chicken-pizza-sliders.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chicken-pizza-sliders.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-29",
+    "imageName": "wafer-no-bake-cheesecake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/wafer-no-bake-cheesecake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-30",
+    "imageName": "chicken-katsu-sandwich.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chicken-katsu-sandwich.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-31",
+    "imageName": "chocolate-covered-pringles.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chocolate-covered-pringles.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-32",
+    "imageName": "chicken-aglio-olio.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chicken-aglio-olio.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-33",
+    "imageName": "rice-noodles-peanut-sauce.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/rice-noodles-peanut-sauce.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-34",
+    "imageName": "bis-keemiya-hafifa-sunflower-oil.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/bis-keemiya-hafifa-sunflower-oil.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-35",
+    "imageName": "chocolate-chunk-cookies.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chocolate-chunk-cookies.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-36",
+    "imageName": "tuna-patties-sunar-pure-sunflower-oil.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/tuna-patties-sunar-pure-sunflower-oil.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-37",
+    "imageName": "muesli-cookies.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/muesli-cookies.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-38",
+    "imageName": "iced-matcha-coconut-water.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/iced-matcha-coconut-water.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-39",
+    "imageName": "fish-curry-loajehi-havaadhu.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/fish-curry-loajehi-havaadhu.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-40",
+    "imageName": "garlic-bread-pizza.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/garlic-bread-pizza.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-41",
+    "imageName": "custard-cake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/custard-cake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-42",
+    "imageName": "spicy-tuna-melt.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/spicy-tuna-melt.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-43",
+    "imageName": "japanese-egg-sandwich.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/japanese-egg-sandwich.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-44",
+    "imageName": "strawberry-guava-shake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/strawberry-guava-shake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-45",
+    "imageName": "fihunu-bajiya.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/fihunu-bajiya.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-46",
+    "imageName": "kulhi-boakibaa-zeeba.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/kulhi-boakibaa-zeeba.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-47",
+    "imageName": "pineapple-punch.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/pineapple-punch.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-48",
+    "imageName": "easy-riha-folhi.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/easy-riha-folhi.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-49",
+    "imageName": "mozzarella-sticks.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/mozzarella-sticks.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-50",
+    "imageName": "mango-sago-mango-jelly.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/mango-sago-mango-jelly.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-51",
+    "imageName": "quick-beef-stir-fry.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/quick-beef-stir-fry.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-52",
+    "imageName": "caramel-folhi-saji-condensed-creamer.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/caramel-folhi-saji-condensed-creamer.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-53",
+    "imageName": "oats-boakibaa.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/oats-boakibaa.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-54",
+    "imageName": "cheesy-tuna-panini.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/cheesy-tuna-panini.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-55",
+    "imageName": "rose-falooda.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/rose-falooda.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-56",
+    "imageName": "easy-beef-curry.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/easy-beef-curry.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-57",
+    "imageName": "dhalhu-alanaasi-fani.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/dhalhu-alanaasi-fani.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-58",
+    "imageName": "honeydew-falooda.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/honeydew-falooda.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-59",
+    "imageName": "sausage-rolls.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/sausage-rolls.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-60",
+    "imageName": "guava-limeade.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/guava-limeade.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-61",
+    "imageName": "egg-puffs-domo-baking-powder.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/egg-puffs-domo-baking-powder.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-62",
+    "imageName": "sriracha-crispy-chicken-dirty-fries.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/sriracha-crispy-chicken-dirty-fries.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-63",
+    "imageName": "caramel-pudding-fresh-condensed-creamer.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/caramel-pudding-fresh-condensed-creamer.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-64",
+    "imageName": "chocolate-biscuit-fudge.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chocolate-biscuit-fudge.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-65",
+    "imageName": "dhon-riha-chaokoh.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/dhon-riha-chaokoh.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-66",
+    "imageName": "cake-folhi-milgro.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/cake-folhi-milgro.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-67",
+    "imageName": "blueberry-milkshake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/blueberry-milkshake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-68",
+    "imageName": "milk-chocolate-biscuit-pudding.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/milk-chocolate-biscuit-pudding.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-69",
+    "imageName": "magnum-pudding-lactal.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/magnum-pudding-lactal.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-70",
+    "imageName": "quick-cornflour-kiruboakibaa.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/quick-cornflour-kiruboakibaa.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-71",
+    "imageName": "mas-banas-bruggeman.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/mas-banas-bruggeman.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-72",
+    "imageName": "fehi-paan-boakibaa.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/fehi-paan-boakibaa.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-73",
+    "imageName": "quick-mango-lassi.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/quick-mango-lassi.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-74",
+    "imageName": "baked-honey-mustard-chicken.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/baked-honey-mustard-chicken.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-75",
+    "imageName": "kirulee-rihaakuru-dhiya.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/kirulee-rihaakuru-dhiya.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-76",
+    "imageName": "chicken-supreme-pizza.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chicken-supreme-pizza.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-77",
+    "imageName": "gerikiru-boakibaa.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/gerikiru-boakibaa.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-78",
+    "imageName": "havaadhulee-bis.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/havaadhulee-bis.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-79",
+    "imageName": "rice-paper-dumplings.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/rice-paper-dumplings.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-80",
+    "imageName": "cheesy-tuna-sandwich.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/cheesy-tuna-sandwich.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-81",
+    "imageName": "nachos-casserole.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/nachos-casserole.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-82",
+    "imageName": "smores-bars.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/smores-bars.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-83",
+    "imageName": "mashed-potatoes.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/mashed-potatoes.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-84",
+    "imageName": "sambal-sausage-noodles.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/sambal-sausage-noodles.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-85",
+    "imageName": "tandoori-pizza.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/tandoori-pizza.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-86",
+    "imageName": "matcha-tiramisu.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/matcha-tiramisu.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-87",
+    "imageName": "bagels.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/bagels.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-88",
+    "imageName": "aloe-vera-strawberry-lemonade.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/aloe-vera-strawberry-lemonade.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-89",
+    "imageName": "thai-red-curry-fried-rice.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/thai-red-curry-fried-rice.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-90",
+    "imageName": "shan-spicy-dry-aloo.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/shan-spicy-dry-aloo.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-91",
+    "imageName": "blackcurrant-milkshake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/blackcurrant-milkshake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-92",
+    "imageName": "cheesy-garlic-sausage-bread.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/cheesy-garlic-sausage-bread.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-93",
+    "imageName": "butternut-chicken-pasta.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/butternut-chicken-pasta.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-94",
+    "imageName": "tiramisu-french-toast.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/tiramisu-french-toast.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-95",
+    "imageName": "masala-baked-beans.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/masala-baked-beans.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-96",
+    "imageName": "chilli-chicken-wraps.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chilli-chicken-wraps.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-97",
+    "imageName": "marry-me-chicken-pasta.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/marry-me-chicken-pasta.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-98",
+    "imageName": "baked-jalapeno-poppers.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/baked-jalapeno-poppers.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-99",
+    "imageName": "thai-chicken-coconut-cream.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/thai-chicken-coconut-cream.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-100",
+    "imageName": "pakora.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/pakora.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-101",
+    "imageName": "peri-peri-chicken-submarine.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/peri-peri-chicken-submarine.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-102",
+    "imageName": "tharukaary-riha.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/tharukaary-riha.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-103",
+    "imageName": "cheese-cracker-casserole.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/cheese-cracker-casserole.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-104",
+    "imageName": "spicy-fried-chicken-popcorn.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/spicy-fried-chicken-popcorn.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-105",
+    "imageName": "sloppy-joe.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/sloppy-joe.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-106",
+    "imageName": "easy-chicken-burger.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/easy-chicken-burger.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-107",
+    "imageName": "creamy-blue-cheese-pasta.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/creamy-blue-cheese-pasta.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-108",
+    "imageName": "peri-peri-chicken.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/peri-peri-chicken.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-109",
+    "imageName": "coconut-water-mojito.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/coconut-water-mojito.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-110",
+    "imageName": "imee-beef-noodles.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/imee-beef-noodles.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-111",
+    "imageName": "easy-tandoori-chicken-wrap.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/easy-tandoori-chicken-wrap.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-112",
+    "imageName": "spicy-chilli-sausage.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/spicy-chilli-sausage.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-113",
+    "imageName": "marie-biscuit-delight.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/marie-biscuit-delight.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-114",
+    "imageName": "huni-baiy.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/huni-baiy.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-115",
+    "imageName": "hanaakuri-boava.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/hanaakuri-boava.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-116",
+    "imageName": "butterscotch-ice-cream-cake.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/butterscotch-ice-cream-cake.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-117",
+    "imageName": "hanaakuri-masdhalhu.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/hanaakuri-masdhalhu.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-118",
+    "imageName": "theyo-mirus-baiy.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/theyo-mirus-baiy.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-119",
+    "imageName": "baked-mac-n-cheese-munchee-sun-cracker.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/baked-mac-n-cheese-munchee-sun-cracker.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-120",
+    "imageName": "custard-biscuit-pudding.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/custard-biscuit-pudding.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-121",
+    "imageName": "gerikiru-banas.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/gerikiru-banas.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-122",
+    "imageName": "muru-muru.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/muru-muru.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-123",
+    "imageName": "submarine-buns.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/submarine-buns.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-124",
+    "imageName": "chicken-pad-thai.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/chicken-pad-thai.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-125",
+    "imageName": "overnight-oats.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/overnight-oats.jpg"
+  },
+  {
+    "recipeId": "Hawa-daily-126",
+    "imageName": "cashew-carrot-rice.jpg",
+    "sourceUrl": "",
+    "localPath": "/images/cashew-carrot-rice.jpg"
+  }
+]

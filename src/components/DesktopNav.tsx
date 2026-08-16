@@ -29,6 +29,7 @@ export default function DesktopNav({ language, setLanguage }: DesktopNavProps) {
               {[
                 { to: '/', label: 'މައި ޞަފްޙާ' },
                 { to: '/categories', label: 'ބައިތައް' },
+                { to: '/recipes', label: 'ރަހަގެ ސިއްރު' },
                 { to: '/jobs', label: 'ވަޒީފާ' },
                 { to: '/weather', label: 'މޫސުން' },
                 { to: '/videos', label: 'ވީޑިއޯތައް' },

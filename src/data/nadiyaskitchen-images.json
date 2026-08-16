@@ -1,0 +1,62 @@
+[
+  {
+    "recipeId": "NadiyasKitchen-chicken-rolls",
+    "imageName": "nadiyaskitchen-chicken-rolls.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-chicken-rolls.jpg"
+  },
+  {
+    "recipeId": "NadiyasKitchen-pastry-tray",
+    "imageName": "nadiyaskitchen-pastry-tray.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-pastry-tray.jpg"
+  },
+  {
+    "recipeId": "NadiyasKitchen-pineapple-juice-cake",
+    "imageName": "nadiyaskitchen-pineapple-juice-cake.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-pineapple-juice-cake.jpg"
+  },
+  {
+    "recipeId": "NadiyasKitchen-bis-keemiya-egg-pastry",
+    "imageName": "nadiyaskitchen-bis-keemiya-egg-pastry.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-bis-keemiya-egg-pastry.jpg"
+  },
+  {
+    "recipeId": "NadiyasKitchen-egg-hopper-with-chicken-dry-curry",
+    "imageName": "nadiyaskitchen-egg-hopper-with-chicken-dry-curry.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-egg-hopper-with-chicken-dry-curry.jpg"
+  },
+  {
+    "recipeId": "NadiyasKitchen-oats-kadhuru-cake",
+    "imageName": "nadiyaskitchen-oats-kadhuru-cake.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-oats-kadhuru-cake.jpg"
+  },
+  {
+    "recipeId": "NadiyasKitchen-fish-roti",
+    "imageName": "nadiyaskitchen-fish-roti.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-fish-roti.jpg"
+  },
+  {
+    "recipeId": "NadiyasKitchen-butterscotch-pudding",
+    "imageName": "nadiyaskitchen-butterscotch-pudding.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-butterscotch-pudding.jpg"
+  },
+  {
+    "recipeId": "NadiyasKitchen-theyomirus-bai-with-roasbis",
+    "imageName": "nadiyaskitchen-theyomirus-bai-with-roasbis.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-theyomirus-bai-with-roasbis.jpg"
+  },
+  {
+    "recipeId": "NadiyasKitchen-oates-gulha",
+    "imageName": "nadiyaskitchen-oates-gulha.jpg",
+    "sourceUrl": "https://www.nadiyaskitchen.com/wp-content/uploads/2022/04/logo_wide.png",
+    "localPath": "/images/nadiyaskitchen-oates-gulha.jpg"
+  }
+]

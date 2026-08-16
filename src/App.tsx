@@ -14,6 +14,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ImageGenerator from './pages/ImageGenerator';
 import Jobs from './pages/Jobs';
 import Weather from './pages/Weather';
+import Recipes from './pages/Recipes';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import AdminRoute from './components/AdminRoute';
@@ -129,10 +130,11 @@ function App() {
       <NewsTicker />
       <DesktopNav language={language} setLanguage={setLanguage} />
       <MobileNav language={language} setLanguage={setLanguage} />
-      <BottomNav 
+      <BottomNav
         links={[
           { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: '🏠' },
           { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: '📂' },
+          { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: '🍳' },
           { label: language === 'en' ? 'Jobs' : 'ވަޒީފާ', path: '/jobs', icon: '💼' },
           { label: language === 'en' ? 'Weather' : 'މޫސުން', path: '/weather', icon: '🌤️' },
           { label: language === 'en' ? 'Videos' : 'ވީޑިއޯތައް', path: '/videos', icon: '🎬' },
@@ -158,6 +160,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/article/:id" element={<ArticlePage />} />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/recipes" element={<Recipes />} />
             <Route path="/weather" element={<Weather />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />

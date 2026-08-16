@@ -48,6 +48,7 @@ export default function ArticlePage() {
   const [userReaction, setUserReaction] = useState<'like' | 'dislike' | null>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [commentName, setCommentName] = useState('');
   const [showComments, setShowComments] = useState(false);
   const [commentReactions, setCommentReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
 
@@ -89,20 +90,29 @@ export default function ArticlePage() {
             console.warn('Unable to load like/dislike counts:', err);
           });
 
-          // User-specific data (only if logged in)
-          if (auth.currentUser) {
-            Promise.all([
-              getDoc(doc(db, 'articles', id, 'userReactions', auth.currentUser.uid)),
-              getDoc(doc(db, 'users', auth.currentUser.uid, 'bookmarks', id))
-            ]).then(([userLikeDoc, bookmarkDoc]) => {
-              if (userLikeDoc.exists()) {
-                setUserReaction(userLikeDoc.data().type);
+          // User-specific data (logged in or anonymous)
+          const userId = auth.currentUser?.uid || 'anonymous';
+          const bookmarkPromise = auth.currentUser 
+            ? getDoc(doc(db, 'users', auth.currentUser.uid, 'bookmarks', id))
+            : Promise.resolve(null);
+          
+          Promise.all([
+            getDoc(doc(db, 'articles', id, 'userReactions', userId)),
+            bookmarkPromise
+          ]).then(([userLikeDoc, bookmarkDoc]) => {
+            if (userLikeDoc.exists()) {
+              setUserReaction(userLikeDoc.data().type);
+            } else if (!auth.currentUser) {
+              // Check localStorage for anonymous users
+              const localReaction = localStorage.getItem(`article_${id}_reaction`);
+              if (localReaction) {
+                setUserReaction(localReaction as 'like' | 'dislike');
               }
-              setIsBookmarked(bookmarkDoc.exists());
-            }).catch(err => {
-              console.warn('Unable to load user reaction/bookmark state:', err);
-            });
-          }
+            }
+            setIsBookmarked(bookmarkDoc?.exists() || false);
+          }).catch(err => {
+            console.warn('Unable to load user reaction/bookmark state:', err);
+          });
 
           // Fetch related articles from the same category (optimized query)
           if (articleData.category) {
@@ -195,7 +205,11 @@ export default function ArticlePage() {
 
   // Handler functions
   const handleBookmark = async () => {
-    if (!auth.currentUser || !id) return;
+    if (!auth.currentUser) {
+      alert('ބުކްމާރކް ކުރުމަށް ލޮގްއިން ކުރޭ');
+      return;
+    }
+    if (!id) return;
     
     try {
       if (isBookmarked) {
@@ -210,6 +224,7 @@ export default function ArticlePage() {
       }
     } catch (error) {
       console.error('Error toggling bookmark:', error);
+      alert('ބުކްމާރކް ކުރުމުގައި މައްސަލާތެއް ޖެހިއްޖެ');
     }
   };
 
@@ -234,10 +249,12 @@ export default function ArticlePage() {
   };
 
   const handleReaction = async (type: 'like' | 'dislike') => {
-    if (!auth.currentUser || !id) return;
+    if (!id) return;
 
     try {
-      const userReactionRef = doc(db, 'articles', id, 'userReactions', auth.currentUser.uid);
+      // Use localStorage for anonymous users
+      const userId = auth.currentUser?.uid || 'anonymous';
+      const userReactionRef = doc(db, 'articles', id, 'userReactions', userId);
       const userReactionDoc = await getDoc(userReactionRef);
       
       if (userReactionDoc.exists()) {
@@ -248,21 +265,34 @@ export default function ArticlePage() {
           await deleteDoc(userReactionRef);
           await updateReactionCount(type, -1);
           setUserReaction(null);
+          // Update localStorage for anonymous users
+          if (!auth.currentUser) {
+            localStorage.removeItem(`article_${id}_reaction`);
+          }
         } else {
           // Change reaction
           await setDoc(userReactionRef, { type, createdAt: new Date().toISOString() });
           await updateReactionCount(currentType, -1);
           await updateReactionCount(type, 1);
           setUserReaction(type);
+          // Update localStorage for anonymous users
+          if (!auth.currentUser) {
+            localStorage.setItem(`article_${id}_reaction`, type);
+          }
         }
       } else {
         // Add new reaction
         await setDoc(userReactionRef, { type, createdAt: new Date().toISOString() });
         await updateReactionCount(type, 1);
         setUserReaction(type);
+        // Update localStorage for anonymous users
+        if (!auth.currentUser) {
+          localStorage.setItem(`article_${id}_reaction`, type);
+        }
       }
     } catch (error) {
       console.error('Error handling reaction:', error);
+      alert('ލައިކް/ޑިސްލައިކް ކުރުމުގައި މައްސަލާތެއް ޖެހިއްޖެ');
     }
   };
 
@@ -281,16 +311,24 @@ export default function ArticlePage() {
   };
 
   const handleAddComment = async () => {
-    if (!auth.currentUser || !id || !newComment.trim()) return;
+    if (!id || !newComment.trim()) return;
+    if (!auth.currentUser && !commentName.trim()) {
+      alert('ނަން ލިޔުން ބޭންޖެއެވެ');
+      return;
+    }
 
     try {
+      const userId = auth.currentUser?.uid || 'anonymous';
+      const userName = auth.currentUser?.displayName || commentName.trim() || 'އަންނަނިވި އަހަރުމެން';
+      
       await addDoc(collection(db, 'articles', id, 'comments'), {
-        userId: auth.currentUser.uid,
-        userName: auth.currentUser.displayName || 'Anonymous',
+        userId: userId,
+        userName: userName,
         text: newComment,
         createdAt: new Date().toISOString()
       });
       setNewComment('');
+      setCommentName('');
 
       // Refresh comments
       const commentsQuery = query(collection(db, 'articles', id, 'comments'), orderBy('createdAt', 'desc'));
@@ -299,14 +337,16 @@ export default function ArticlePage() {
       setComments(commentsData);
     } catch (error) {
       console.error('Error adding comment:', error);
+      alert('ކޮމެންޓް ލިޔުމުގައި މައްސަލާތެއް ޖެހިއްޖެ');
     }
   };
 
   const handleCommentReaction = async (commentId: string, type: 'like' | 'dislike') => {
-    if (!auth.currentUser || !id) return;
+    if (!id) return;
 
     try {
-      const userReactionRef = doc(db, 'articles', id, 'comments', commentId, 'userReactions', auth.currentUser.uid);
+      const userId = auth.currentUser?.uid || 'anonymous';
+      const userReactionRef = doc(db, 'articles', id, 'comments', commentId, 'userReactions', userId);
       const userReactionDoc = await getDoc(userReactionRef);
 
       if (userReactionDoc.exists()) {
@@ -517,7 +557,16 @@ export default function ArticlePage() {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-slate-900">ކޮމެންޓްތައް</h3>
                 
-                {auth.currentUser ? (
+                <div className="space-y-3">
+                  {!auth.currentUser && (
+                    <input
+                      type="text"
+                      value={commentName}
+                      onChange={(e) => setCommentName(e.target.value)}
+                      placeholder="ނަން..."
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 focus:border-sky-500 focus:outline-none"
+                    />
+                  )}
                   <div className="flex gap-3">
                     <textarea
                       value={newComment}
@@ -533,9 +582,7 @@ export default function ArticlePage() {
                       ފޮނުވާ
                     </button>
                   </div>
-                ) : (
-                  <p className="text-sm text-slate-500">ކޮމެންޓް ލިޔުމަށް ލޮގްއިން ކުރޭ</p>
-                )}
+                </div>
 
                 <div className="space-y-3">
                   {comments.map((comment) => (
