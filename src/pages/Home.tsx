@@ -1,15 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, getDocs, getDoc, doc, orderBy, query, limit, onSnapshot } from 'firebase/firestore';
-import ArticleCard from '../components/ArticleCard';
-import PromoBanner from '../components/PromoBanner';
-import JobsPromoSlide from '../components/JobsPromoSlide';
-import RecipeSlider from '../components/RecipeSlider';
-import { getCompanyLogo } from '../data/companyLogos';
+import { db } from '../firebase';
+import { collection, getDocs, query, orderBy, limit, getDocsFromCache, onSnapshot } from 'firebase/firestore';
 import { Article, categories } from '../data/mockData';
 import { Recipe } from '../data/recipes';
-import { db } from '../firebase';
+import ArticleCard from '../components/ArticleCard';
+import PromoBanner from '../components/PromoBanner';
+import RecipeSlider from '../components/RecipeSlider';
+import SiteStats from '../components/SiteStats';
+import JobsPromoSlide from '../components/JobsPromoSlide';
+import { getCompanyLogo } from '../data/companyLogos';
 
 export default function Home() {
   const [articlesState, setArticlesState] = useState<Article[]>([]);
@@ -340,6 +341,9 @@ export default function Home() {
           </div>
         )}
       </section>
+
+      {/* Site Stats */}
+      <SiteStats />
 
       {/* Bottom Promo Banner */}
       <PromoBanner location="home" position="bottom" />
