@@ -555,6 +555,7 @@ export default function AdminDashboard() {
   const [savingAllRecipes, setSavingAllRecipes] = useState(false);
   const [importingHedhikaa, setImportingHedhikaa] = useState(false);
   const [importingNadiyasKitchen, setImportingNadiyasKitchen] = useState(false);
+  const [importingLonumedhu, setImportingLonumedhu] = useState(false);
 
   // Live preview update
   useEffect(() => {
@@ -2060,6 +2061,37 @@ export default function AdminDashboard() {
       setMessage('Error importing nadiyaskitchen recipes. Please try again.');
     } finally {
       setImportingNadiyasKitchen(false);
+    }
+  };
+
+  const handleImportLonumedhuRecipes = async () => {
+    if (!confirm('Are you sure you want to import lonumedhu recipes? This will update existing recipes with new titles (brand names removed).')) {
+      return;
+    }
+
+    setImportingLonumedhu(true);
+    setMessage('Importing lonumedhu recipes with updated titles...');
+
+    try {
+      const response = await fetch('/src/data/lonumedhu-recipes.json');
+      const lonumedhuRecipes = await response.json();
+      
+      // Update existing recipes with new titles
+      const updatedRecipes = recipesList.map(r => {
+        const updated = lonumedhuRecipes.find((lr: any) => lr.id === r.id);
+        if (updated) {
+          return { ...r, titleDv: updated.titleDv, titleEn: updated.titleEn };
+        }
+        return r;
+      });
+      
+      setRecipesList(updatedRecipes);
+      setMessage(`Successfully updated ${lonumedhuRecipes.length} lonumedhu recipe titles. Click "Save All Recipes to Firebase" to update Firestore.`);
+    } catch (error) {
+      console.error('Error importing lonumedhu recipes:', error);
+      setMessage('Error importing lonumedhu recipes. Please try again.');
+    } finally {
+      setImportingLonumedhu(false);
     }
   };
 
@@ -4189,6 +4221,13 @@ export default function AdminDashboard() {
                 <p className="mt-2 text-sm text-gray-600">{t.recipesDesc}</p>
               </div>
               <div className="flex gap-2">
+                <button
+                  onClick={handleImportLonumedhuRecipes}
+                  disabled={importingLonumedhu}
+                  className="rounded-full bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600 disabled:opacity-50"
+                >
+                  {importingLonumedhu ? 'Importing...' : 'Update Lonumedhu Titles'}
+                </button>
                 <button
                   onClick={handleImportHedhikaaRecipes}
                   disabled={importingHedhikaa}

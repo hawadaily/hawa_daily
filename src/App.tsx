@@ -28,6 +28,21 @@ import { Home as HomeIcon, FolderOpen, ChefHat, Briefcase, Cloud, Video, User } 
 
 function App() {
   const [language, setLanguage] = useState<'en' | 'dv'>('dv');
+
+  // Redirect app store users to hawadaily.com
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+    
+    // Check if user is coming from App Store or Google Play in-app browser
+    if (/FBAN|FBAV|Twitter|Instagram|WhatsApp|Line|WeChat|MicroMessenger/i.test(userAgent) ||
+        /GSA|Android.*Version\/[0-9]\.[0-9]/i.test(userAgent) ||
+        /iPhone|iPad|iPod/i.test(userAgent) && /Safari/i.test(userAgent) === false) {
+      // Check if already on hawadaily.com to prevent redirect loop
+      if (window.location.hostname !== 'www.hawadaily.com' && window.location.hostname !== 'hawadaily.com') {
+        window.location.href = 'https://www.hawadaily.com/';
+      }
+    }
+  }, []);
   const location = useLocation();
 
   // Set text direction based on language

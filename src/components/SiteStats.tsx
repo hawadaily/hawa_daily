@@ -19,28 +19,40 @@ export default function SiteStats() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Fetch all articles
+        // Fetch all articles in parallel with their stats
         const articlesSnapshot = await getDocs(collection(db, 'articles'));
         
         let totalViews = 0;
         let totalLikes = 0;
         let totalComments = 0;
 
-        // Aggregate stats from all articles
-        for (const articleDoc of articlesSnapshot.docs) {
+        // Aggregate views from article documents (fast)
+        articlesSnapshot.forEach((articleDoc) => {
           const articleData = articleDoc.data();
-          
-          // Sum views (stored as 'views' field in each article)
           totalViews += articleData.views || 0;
-          
-          // Fetch likes from subcollection (articles/{articleId}/likes/count)
-          const likesCountDoc = await getDoc(doc(db, 'articles', articleDoc.id, 'likes', 'count'));
-          totalLikes += likesCountDoc.exists() ? likesCountDoc.data().count || 0 : 0;
+        });
 
-          // Count comments for this article
-          const commentsSnapshot = await getDocs(collection(db, 'articles', articleDoc.id, 'comments'));
+        // Fetch likes and comments in parallel (faster than sequential)
+        const articleIds = articlesSnapshot.docs.map(doc => doc.id);
+        
+        const [likesPromises, commentsPromises] = articleIds.reduce((acc, articleId) => {
+          acc[0].push(getDoc(doc(db, 'articles', articleId, 'likes', 'count')));
+          acc[1].push(getDocs(collection(db, 'articles', articleId, 'comments')));
+          return acc;
+        }, [[], []] as [Promise<any>[], Promise<any>[]]);
+
+        const likesResults = await Promise.all(likesPromises);
+        const commentsResults = await Promise.all(commentsPromises);
+
+        // Aggregate likes
+        likesResults.forEach((likesDoc) => {
+          totalLikes += likesDoc.exists() ? likesDoc.data().count || 0 : 0;
+        });
+
+        // Aggregate comments
+        commentsResults.forEach((commentsSnapshot) => {
           totalComments += commentsSnapshot.size;
-        }
+        });
 
         setStats({
           visitors: totalViews,
