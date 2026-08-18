@@ -24,6 +24,7 @@ import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 import AdBanner from './components/AdBanner';
 import NewsTicker from './components/NewsTicker';
+import { Home as HomeIcon, FolderOpen, ChefHat, Briefcase, Cloud, Video, User } from 'lucide-react';
 
 function App() {
   const [language, setLanguage] = useState<'en' | 'dv'>('dv');
@@ -132,13 +133,13 @@ function App() {
       <MobileNav language={language} setLanguage={setLanguage} />
       <BottomNav
         links={[
-          { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: '🏠' },
-          { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: '📂' },
-          { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: '🍳' },
-          { label: language === 'en' ? 'Jobs' : 'ވަޒީފާ', path: '/jobs', icon: '💼' },
-          { label: language === 'en' ? 'Weather' : 'މޫސުން', path: '/weather', icon: '🌤️' },
-          { label: language === 'en' ? 'Videos' : 'ވީޑިއޯތައް', path: '/videos', icon: '🎬' },
-          { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: '👤' },
+          { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
+          { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: FolderOpen },
+          { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
+          { label: language === 'en' ? 'Jobs' : 'ވަޒީފާ', path: '/jobs', icon: Briefcase },
+          { label: language === 'en' ? 'Weather' : 'މޫސުން', path: '/weather', icon: Cloud },
+          { label: language === 'en' ? 'Videos' : 'ވީޑިއޯތައް', path: '/videos', icon: Video },
+          { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
         ]}
         activePath={location.pathname}
       />
@@ -149,7 +150,7 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="mx-auto max-w-[1600px] px-4 pb-24 pt-0 lg:px-6"
+          className="mx-auto max-w-[1600px] px-4 pb-24 pt-0 lg:px-6 lg:mt-0"
         >
           <Routes location={location}>
             <Route path="/" element={<Home />} />

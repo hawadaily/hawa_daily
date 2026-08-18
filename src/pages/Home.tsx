@@ -5,8 +5,10 @@ import { collection, getDocs, getDoc, doc, orderBy, query, limit, onSnapshot } f
 import ArticleCard from '../components/ArticleCard';
 import PromoBanner from '../components/PromoBanner';
 import JobsPromoSlide from '../components/JobsPromoSlide';
+import RecipeSlider from '../components/RecipeSlider';
 import { getCompanyLogo } from '../data/companyLogos';
 import { Article, categories } from '../data/mockData';
+import { Recipe } from '../data/recipes';
 import { db } from '../firebase';
 
 export default function Home() {
@@ -18,6 +20,8 @@ export default function Home() {
   const [jobs, setJobs] = useState<any[]>([]);
   const [jobIndex, setJobIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [language, setLanguage] = useState<'dv' | 'en'>('dv');
 
   useEffect(() => {
     const articlesQuery = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
@@ -61,6 +65,21 @@ export default function Home() {
     fetchJobs();
     const interval = setInterval(fetchJobs, 2 * 60 * 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const recipesQuery = query(collection(db, 'recipes'), orderBy('id'));
+        const snapshot = await getDocs(recipesQuery);
+        const recipesData = snapshot.docs.map(doc => doc.data() as Recipe);
+        setRecipes(recipesData);
+      } catch (error) {
+        console.error('Error fetching recipes:', error);
+      }
+    };
+
+    fetchRecipes();
   }, []);
 
   useEffect(() => {
@@ -140,7 +159,7 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-8 pt-12 text-right lg:space-y-12 lg:pt-16">
+    <div className="space-y-8 pt-0 text-right lg:space-y-12 lg:pt-16">
       {/* Top Promo Banner */}
       <PromoBanner location="home" position="top" />
 
@@ -177,105 +196,119 @@ export default function Home() {
             ))}
           </div>
         </div>
-        {/* Sidebar - Latest Jobs Slider */}
+        {/* Sidebar - Jobs and Recipe Sliders */}
         <aside className="hidden lg:block lg:h-[512px]">
-          <div className="rounded-2xl border border-[#90e0ef] bg-white p-5 shadow-lg h-full overflow-hidden">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-[#0077b6]">ފަހުގެ ވަޒީފާ</h3>
-              <Link to="/jobs" className="text-sm text-[#00b4d8] hover:text-[#0077b6] transition">
-                އިތުރަށް ބަލާ →
-              </Link>
+          <div className="rounded-2xl border border-[#90e0ef] bg-white p-5 shadow-lg h-full overflow-hidden flex flex-col">
+            {/* Recipe Slider */}
+            <div className="mb-4">
+              <RecipeSlider 
+                recipes={recipes} 
+                language={language}
+                onViewDetails={(recipe) => {
+                  window.location.href = `/recipes`;
+                }}
+              />
             </div>
             
-            {jobs.length > 0 ? (
-              <div 
-                className="relative h-[420px]"
-                onMouseEnter={() => setIsPaused(true)}
-                onMouseLeave={() => setIsPaused(false)}
-              >
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={jobIndex}
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.5 }}
-                    className="absolute inset-0"
-                  >
-                    <Link to="/jobs" className="block h-full">
-                      <div className="h-full flex flex-col">
-                        {jobs.slice(jobIndex, jobIndex + 3).map((job, idx) => {
-                          const companyLogo = getCompanyLogo(job.company);
-                          return (
-                            <div 
-                              key={`${job.id}-${idx}`}
-                              className="flex items-center gap-3 p-3 rounded-xl border border-[#90e0ef] bg-[#caf0f8]/50 hover:bg-[#caf0f8] transition mb-2 last:mb-0"
-                            >
-                              {companyLogo && (
-                                <div className="flex-shrink-0">
-                                  <img 
-                                    src={companyLogo} 
-                                    alt={job.company}
-                                    className="w-10 h-10 object-contain bg-white rounded-lg p-1.5 shadow"
-                                  />
+            {/* Jobs Slider */}
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-[#0077b6]">ފަހުގެ ވަޒީފާ</h3>
+                <Link to="/jobs" className="text-sm text-[#00b4d8] hover:text-[#0077b6] transition">
+                  އިތުރަށް ބަލާ →
+                </Link>
+              </div>
+              
+              {jobs.length > 0 ? (
+                <div 
+                  className="relative h-[200px]"
+                  onMouseEnter={() => setIsPaused(true)}
+                  onMouseLeave={() => setIsPaused(false)}
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={jobIndex}
+                      initial={{ opacity: 0, x: 50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -50 }}
+                      transition={{ duration: 0.5 }}
+                      className="absolute inset-0"
+                    >
+                      <Link to="/jobs" className="block h-full">
+                        <div className="h-full flex flex-col">
+                          {jobs.slice(jobIndex, jobIndex + 2).map((job, idx) => {
+                            const companyLogo = getCompanyLogo(job.company);
+                            return (
+                              <div 
+                                key={`${job.id}-${idx}`}
+                                className="flex items-center gap-3 p-3 rounded-xl border border-[#90e0ef] bg-[#caf0f8]/50 hover:bg-[#caf0f8] transition mb-2 last:mb-0"
+                              >
+                                {companyLogo && (
+                                  <div className="flex-shrink-0">
+                                    <img 
+                                      src={companyLogo} 
+                                      alt={job.company}
+                                      className="w-10 h-10 object-contain bg-white rounded-lg p-1.5 shadow"
+                                    />
+                                  </div>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-bold text-[#0077b6] line-clamp-1">
+                                    {job.title}
+                                  </h4>
+                                  <p className="text-xs text-[#00b4d8]">{job.company}</p>
+                                  <span className="text-[10px] text-[#0077b6]/70">
+                                    {getRelativeTime(job.postedDate)}
+                                  </span>
                                 </div>
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <h4 className="text-sm font-bold text-[#0077b6] line-clamp-1">
-                                  {job.title}
-                                </h4>
-                                <p className="text-xs text-[#00b4d8]">{job.company}</p>
-                                <span className="text-[10px] text-[#0077b6]/70">
-                                  {getRelativeTime(job.postedDate)}
-                                </span>
+                                <svg className="w-5 h-5 text-[#00b4d8] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
                               </div>
-                              <svg className="w-5 h-5 text-[#00b4d8] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                              </svg>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </Link>
-                  </motion.div>
-                </AnimatePresence>
+                            );
+                          })}
+                        </div>
+                      </Link>
+                    </motion.div>
+                  </AnimatePresence>
 
-                {/* Navigation dots */}
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex gap-2">
-                  {Array.from({ length: Math.ceil(jobs.length / 3) }).map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setJobIndex(index * 3)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        Math.floor(jobIndex / 3) === index ? 'bg-[#0077b6] w-6' : 'bg-[#90e0ef]'
-                      }`}
-                      aria-label={`Go to slide ${index + 1}`}
-                    />
-                  ))}
+                  {/* Navigation dots */}
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex gap-2">
+                    {Array.from({ length: Math.ceil(jobs.length / 2) }).map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setJobIndex(index * 2)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          Math.floor(jobIndex / 2) === index ? 'bg-[#0077b6] w-6' : 'bg-[#90e0ef]'
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Arrow navigation */}
+                  <button
+                    onClick={() => setJobIndex((prev) => (prev - 2 + jobs.length) % jobs.length)}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-[#caf0f8] hover:bg-[#00b4d8] hover:text-white rounded-full flex items-center justify-center text-[#0077b6] transition shadow"
+                    aria-label="Previous slide"
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={() => setJobIndex((prev) => (prev + 2) % jobs.length)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-[#caf0f8] hover:bg-[#00b4d8] hover:text-white rounded-full flex items-center justify-center text-[#0077b6] transition shadow"
+                    aria-label="Next slide"
+                  >
+                    →
+                  </button>
                 </div>
-
-                {/* Arrow navigation */}
-                <button
-                  onClick={() => setJobIndex((prev) => (prev - 3 + jobs.length) % jobs.length)}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-[#caf0f8] hover:bg-[#00b4d8] hover:text-white rounded-full flex items-center justify-center text-[#0077b6] transition shadow"
-                  aria-label="Previous slide"
-                >
-                  ←
-                </button>
-                <button
-                  onClick={() => setJobIndex((prev) => (prev + 3) % jobs.length)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-[#caf0f8] hover:bg-[#00b4d8] hover:text-white rounded-full flex items-center justify-center text-[#0077b6] transition shadow"
-                  aria-label="Next slide"
-                >
-                  →
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-[420px] text-center">
-                <div className="text-4xl mb-2">💼</div>
-                <p className="text-sm text-[#00b4d8]">ވަޒީފާ ލޯޑް ވަނީ...</p>
-              </div>
-            )}
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[200px] text-center">
+                  <div className="text-4xl mb-2">💼</div>
+                  <p className="text-sm text-[#00b4d8]">ވަޒީފާ ލޯޑް ވަނީ...</p>
+                </div>
+              )}
+            </div>
           </div>
         </aside>
       </section>

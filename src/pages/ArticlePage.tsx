@@ -7,6 +7,9 @@ import { db } from '../firebase';
 import { doc, getDoc, collection, getDocs, query, where, orderBy, limit, addDoc, deleteDoc, setDoc, updateDoc, getDocsFromCache } from 'firebase/firestore';
 import { auth } from '../firebase';
 import PromoBanner from '../components/PromoBanner';
+import JobsPromoSlide from '../components/JobsPromoSlide';
+import RecipeSlider from '../components/RecipeSlider';
+import PromoBannerSlider from '../components/PromoBannerSlider';
 
 const getRelativeTime = (dateValue: any) => {
   let date: Date;
@@ -51,6 +54,8 @@ export default function ArticlePage() {
   const [commentName, setCommentName] = useState('');
   const [showComments, setShowComments] = useState(false);
   const [commentReactions, setCommentReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const [language, setLanguage] = useState<'dv' | 'en'>('dv');
 
   useEffect(() => {
     if (!id) {
@@ -153,6 +158,22 @@ export default function ArticlePage() {
 
     fetchArticle();
   }, [id]);
+
+  // Fetch recipes for RecipeSlider
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const recipesQuery = query(collection(db, 'recipes'), orderBy('id'), limit(5));
+        const snapshot = await getDocs(recipesQuery);
+        const recipesData = snapshot.docs.map(doc => doc.data());
+        setRecipes(recipesData);
+      } catch (error) {
+        console.error('Error fetching recipes:', error);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
 
   // Load comments when comments section is opened
   useEffect(() => {
@@ -440,6 +461,25 @@ export default function ArticlePage() {
             <div className="rounded-2xl overflow-hidden bg-slate-100 shadow-soft">
               <img src={article.image} alt={article.title} className="h-[360px] w-full object-cover" />
             </div>
+
+            {/* Narrow Promotion Banner - Jobs & Recipes */}
+            <div className="rounded-2xl border border-[#90e0ef] bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 p-3 shadow-soft">
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <RecipeSlider
+                    recipes={recipes}
+                    language={language}
+                    onViewDetails={(recipe) => {
+                      window.location.href = `/recipes`;
+                    }}
+                  />
+                </div>
+                <div className="flex-1">
+                  <JobsPromoSlide />
+                </div>
+              </div>
+            </div>
+
             {article.video && (
               <div className="rounded-2xl overflow-hidden bg-slate-900 shadow-soft">
                 <video controls className="w-full" poster={article.image}>
@@ -466,8 +506,8 @@ export default function ArticlePage() {
                 <span className="font-medium text-slate-700">ލިޔުއްވީ: {article.author || 'Admin'}</span>
                 <span>{article.readingTime}</span>
               </div>
-              <h1 className="mt-4 mb-6 text-2xl font-bold leading-[2.5] text-white lg:text-slate-900 sm:text-3xl">{article.title}</h1>
-              <p className="text-sm leading-7 text-white lg:text-slate-600">{article.excerpt}</p>
+              <h1 className="mt-4 mb-6 text-2xl font-bold leading-[2.5] text-[#0077b6] sm:text-3xl">{article.title}</h1>
+              <p className="text-sm leading-7 text-[#00b4d8]">{article.excerpt}</p>
             </div>
             <div className="space-y-6 rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-soft">
               {(() => {
@@ -504,6 +544,9 @@ export default function ArticlePage() {
                   )
                 ));
               })()}
+            </div>
+            <div className="mt-6">
+              <PromoBannerSlider />
             </div>
             <div className="flex flex-col gap-3 lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-5 lg:shadow-soft sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap items-center gap-3">
@@ -602,6 +645,51 @@ export default function ArticlePage() {
                 </div>
               </div>
             )}
+
+            {/* Promotion Slide Banner */}
+            <div className="mt-6">
+              <JobsPromoSlide />
+            </div>
+
+            {/* Home Button */}
+            <div className="mt-6 rounded-2xl border border-[#90e0ef] bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 p-6 text-center shadow-soft">
+              <p className="text-sm text-[#0077b6] mb-3">އިތުރު ޚަބަރު ބަލާން ބޭންނެވޭތޯ؟</p>
+              <button
+                onClick={() => navigate('/')}
+                className="inline-flex items-center gap-2 rounded-full bg-[#0077b6] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#005f8c] shadow-md"
+              >
+                🏠 މައި ޞަފްޙާއަށް ގޮސްދޭ
+              </button>
+            </div>
+
+            {/* Engagement CTA */}
+            <div className="mt-6 rounded-2xl border border-[#90e0ef] bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 p-6 text-center shadow-soft">
+              <p className="text-sm text-[#0077b6] mb-3">މި ޚަބަރާމަށް ކިޔާންތެއް ދޭން ބޭންނެވޭތޯ؟</p>
+              <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                <button
+                  onClick={() => handleReaction('like')}
+                  className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition shadow-md ${
+                    userReaction === 'like' 
+                      ? 'bg-sky-600 text-white' 
+                      : 'bg-[#0077b6] text-white hover:bg-[#005f8c]'
+                  }`}
+                >
+                  👍 ލައިކް ކުރޭ
+                </button>
+                <button
+                  onClick={() => {
+                    setShowComments(true);
+                    setTimeout(() => {
+                      const textarea = document.querySelector('textarea');
+                      if (textarea) textarea.focus();
+                    }, 100);
+                  }}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#0077b6] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#005f8c] shadow-md"
+                >
+                  💬 ކޮމެންޓް ލިޔޭ
+                </button>
+              </div>
+            </div>
           </div>
           <aside className="space-y-5">
             <div>

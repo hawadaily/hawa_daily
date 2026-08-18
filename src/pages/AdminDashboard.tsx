@@ -1021,7 +1021,7 @@ export default function AdminDashboard() {
         setGeneratedImage(dataUrl);
       };
 
-      logo.src = '/logo.png';
+      logo.src = '/HAWA LOGO.jpg';
     };
 
     img.src = uploadedImage;
@@ -2226,7 +2226,7 @@ export default function AdminDashboard() {
         logo.onerror = () => {
           // Logo failed to load, continue without it
         };
-        logo.src = '/logo.png';
+        logo.src = '/HAWA LOGO.jpg';
 
       };
       img.src = quotePhotoUrl;

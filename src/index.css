@@ -46,7 +46,9 @@ body.dark {
 }
 
 .animate-marquee {
-  animation: marquee 40s linear infinite;
+  animation: marquee 60s linear infinite;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 body.light {

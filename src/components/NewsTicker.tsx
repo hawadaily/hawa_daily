@@ -35,20 +35,26 @@ export default function NewsTicker() {
   }, []);
 
   return (
-    <div className="w-full bg-sky-600 text-white py-1 px-4 overflow-hidden flex items-center mt-24" dir="rtl">
+    <div className="w-full bg-sky-600 text-white py-1 px-4 overflow-hidden flex items-center mt-0 lg:mt-24" dir="rtl">
       <span className="font-bold ml-4">ފަހުގެ ޚަބަރު:</span>
       <div className="flex-1 whitespace-nowrap overflow-hidden">
         <div 
           className="inline-block animate-marquee"
-          style={{
-            animationDuration: `${Math.max(20, newsItems.length * 4)}s`
-          }}
         >
           {newsItems.length > 0 ? (
             newsItems.map((item, idx) => (
-              <span key={idx} className="mx-8">
-                {item}
-              </span>
+              <React.Fragment key={idx}>
+                <span className="mx-8">
+                  {item}
+                </span>
+                {idx < newsItems.length - 1 && (
+                  <img 
+                    src="/HAWA LOGO.jpg" 
+                    alt="Hawa Daily" 
+                    className="inline-block w-6 h-6 mx-4"
+                  />
+                )}
+              </React.Fragment>
             ))
           ) : (
             <span className="mx-8">ލޯޑް ވަނީ...</span>

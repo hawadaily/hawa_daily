@@ -25,7 +25,7 @@ export default function MobileNav({ language, setLanguage }: MobileNavProps) {
 
   return (
     <nav className="lg:hidden sticky top-0 z-50 bg-white shadow-sm">
-      <div className="flex items-center justify-between px-4 py-4">
+      <div className="flex items-center justify-between px-4 py-1">
         <Link to="/" className="flex items-center gap-3">
           <div className="relative">
             <img src="/HAWA LOGO.jpg" alt="Hawa Daily" className="relative h-10 w-10 object-contain rounded-xl bg-white p-1.5 shadow-md" />

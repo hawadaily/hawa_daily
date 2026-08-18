@@ -50,7 +50,7 @@ const ImageGenerator = () => {
       // Draw the uploaded image
       ctx.drawImage(img, 0, 0);
 
-      // Add logo (assuming logo is at /logo.png)
+      // Add logo (assuming logo is at /HAWA LOGO.jpg)
       const logo = new Image();
       logo.onload = () => {
         // Draw logo at top-right corner with some padding
@@ -130,7 +130,7 @@ const ImageGenerator = () => {
         setIsGenerating(false);
       };
 
-      logo.src = '/logo.png';
+      logo.src = '/HAWA LOGO.jpg';
     };
 
     img.src = uploadedImage;

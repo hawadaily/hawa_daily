@@ -54,7 +54,35 @@ export default function JobsPromoSlide() {
     return () => clearInterval(interval);
   }, [jobs.length, isPaused]);
 
-  if (loading || jobs.length === 0) return null;
+  if (loading) {
+    return (
+      <Link to="/jobs" className="block">
+        <div className="relative w-full h-32 md:h-40 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow">
+          <div className="absolute top-2 left-3 text-white text-[10px] md:text-xs font-bold">
+            ވަޒީފާ
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center text-white">
+            <div className="text-sm">Loading jobs...</div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
+  if (jobs.length === 0) {
+    return (
+      <Link to="/jobs" className="block">
+        <div className="relative w-full h-32 md:h-40 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow">
+          <div className="absolute top-2 left-3 text-white text-[10px] md:text-xs font-bold">
+            ވަޒީފާ
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center text-white">
+            <div className="text-sm">No jobs available</div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
 
   const currentJobs = [
     jobs[currentIndex],
@@ -88,6 +116,11 @@ export default function JobsPromoSlide() {
         transition={{ duration: 0.2 }}
         dir="ltr"
       >
+        {/* Heading */}
+        <div className="absolute top-2 left-3 text-white text-[10px] md:text-xs font-bold">
+          ވަޒީފާ
+        </div>
+
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -101,31 +134,20 @@ export default function JobsPromoSlide() {
               {currentJobs.map((job, idx) => {
                 const companyLogo = getCompanyLogo(job.company);
                 return (
-                  <div key={`${job.id}-${idx}`} className="flex items-center gap-3 flex-1">
+                  <div key={`${job.id}-${idx}`} className="flex flex-col items-center gap-2 flex-1">
                     {companyLogo && (
                       <div className="flex-shrink-0">
                         <img 
                           src={companyLogo} 
                           alt={job.company}
-                          className="w-12 h-12 md:w-14 md:h-14 object-contain bg-white rounded-lg p-1.5 shadow-lg"
+                          className="w-10 h-10 md:w-12 md:h-12 object-contain bg-white rounded-lg p-1.5 shadow-lg"
                         />
                       </div>
                     )}
-                    <div className="flex-1 text-white">
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider bg-white/20 px-1.5 py-0.5 rounded-full">
-                          New Job
-                        </span>
-                        <span className="text-[9px] md:text-[10px] text-emerald-100">
-                          {getRelativeTime(job.postedDate)}
-                        </span>
-                      </div>
-                      <h3 className="text-xs md:text-base font-bold mb-0.5 line-clamp-1">
+                    <div className="text-white text-center">
+                      <h3 className="text-[10px] md:text-xs font-bold line-clamp-1">
                         {job.title}
                       </h3>
-                      <p className="text-[10px] md:text-xs text-emerald-100">
-                        {job.company}
-                      </p>
                     </div>
                   </div>
                 );

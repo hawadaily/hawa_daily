@@ -27,10 +27,13 @@ export default function Recipes() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [language, setLanguage] = useState<'dv' | 'en'>('dv');
   const [filter, setFilter] = useState<string>('all');
+  const [selectedIngredient, setSelectedIngredient] = useState<string>('all');
+  const [search, setSearch] = useState<string>('');
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
 
   const categories = ['all', 'ހެދުނުގެ ނާސްތާ', 'ކުޅިކާ ތަކެތި', 'ފޮނިކާ ތަކެތި', 'ކުދި ކެއުންތަށް'];
+  const ingredients = ['all', 'ބޯވަ', 'ބީފް', 'މަސް', 'ކުކުޅު', 'މައިސް', 'ކައްކައުން', 'ފެން', 'ތެޔޮ', 'ހަކުރު', 'ލޮނު', 'ބިސް', 'ލުނބޯ ހުތް', 'މުގުރި އަސޭމިރުސް', 'ރާނބާފަތް', 'ކިރު', 'ޗީޒް'];
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -49,9 +52,16 @@ export default function Recipes() {
     fetchRecipes();
   }, []);
 
-  const filteredRecipes = filter === 'all'
-    ? recipes
-    : recipes.filter((recipe: Recipe) => recipe.category === filter);
+  const filteredRecipes = recipes.filter((recipe: Recipe) => {
+    const matchesCategory = filter === 'all' || recipe.category === filter;
+    const matchesSearch = search === '' || 
+      recipe.titleDv.toLowerCase().includes(search.toLowerCase()) ||
+      recipe.titleEn.toLowerCase().includes(search.toLowerCase());
+    const matchesIngredient = selectedIngredient === 'all' || 
+      recipe.ingredients.dv.some(ing => ing.toLowerCase().includes(selectedIngredient.toLowerCase())) ||
+      recipe.ingredients.en.some(ing => ing.toLowerCase().includes(selectedIngredient.toLowerCase()));
+    return matchesCategory && matchesSearch && matchesIngredient;
+  });
 
   const translations = {
     dv: {
@@ -68,7 +78,25 @@ export default function Recipes() {
       cookTime: 'ފިއްޓުވަގުތު',
       servings: 'ބައިތައް',
       close: 'ނިއްމާލާ',
-      noRecipes: 'ރެސިޕީތައް ނެތް'
+      noRecipes: 'ރެސިޕީތައް ނެތް',
+      searchPlaceholder: 'ރެސިޕީ ހޯދާ...',
+      allIngredients: 'ހުރިހާ ތަކެތި',
+      'ބޯވަ': 'ބޯވަ',
+      'ބީފް': 'ބީފް',
+      'މަސް': 'މަސް',
+      'ކުކުޅު': 'ކުކުޅު',
+      'މައިސް': 'މައިސް',
+      'ކައްކައުން': 'ކައްކައުން',
+      'ފެން': 'ފެން',
+      'ތެޔޮ': 'ތެޔޮ',
+      'ހަކުރު': 'ހަކުރު',
+      'ލޮނު': 'ލޮނު',
+      'ބިސް': 'ބިސް',
+      'ލުނބޯ ހުތް': 'ލުނބޯ ހުތް',
+      'މުގުރި އަސޭމިރުސް': 'މުގުރި އަސޭމިރުސް',
+      'ރާނބާފަތް': 'ރާނބާފަތް',
+      'ކިރު': 'ކިރު',
+      'ޗީޒް': 'ޗީޒް'
     },
     en: {
       title: 'Recipe Secrets',
@@ -84,7 +112,25 @@ export default function Recipes() {
       cookTime: 'Cook Time',
       servings: 'Servings',
       close: 'Close',
-      noRecipes: 'No recipes found'
+      noRecipes: 'No recipes found',
+      searchPlaceholder: 'Search recipes...',
+      allIngredients: 'All Ingredients',
+      'ބޯވަ': 'Beef',
+      'ބީފް': 'Fish',
+      'މަސް': 'Egg',
+      'ކުކުޅު': 'Onion',
+      'މައިސް': 'Rice',
+      'ކައްކައުން': 'Coconut',
+      'ފެން': 'Water',
+      'ތެޔޮ': 'Oil',
+      'ހަކުރު': 'Sugar',
+      'ލޮނު': 'Salt',
+      'ބިސް': 'Biscuit',
+      'ލުނބޯ ހުތް': 'Lemon Juice',
+      'މުގުރި އަސޭމިރުސް': 'Mustard Seeds',
+      'ރާނބާފަތް': 'Pandan Leaf',
+      'ކިރު': 'Milk',
+      'ޗީޒް': 'Cheese'
     }
   };
 
@@ -118,21 +164,52 @@ export default function Recipes() {
           </div>
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          {categories.map(category => (
-            <button
-              key={category}
-              onClick={() => setFilter(category)}
-              className={`px-4 py-2 rounded-full text-sm font-bold transition ${
-                filter === category
-                  ? 'bg-[#0077b6] text-white'
-                  : 'bg-[#0077b6]/10 text-[#0077b6] hover:bg-[#0077b6]/20'
-              }`}
-            >
-              {t[category as keyof typeof t]}
-            </button>
-          ))}
+        {/* Search, Ingredient Filter and Category Filter */}
+        <div className="flex flex-col gap-4 mt-4">
+          {/* Search Input */}
+          <div>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t.searchPlaceholder}
+              className="w-full rounded-full border-2 border-[#0077b6] bg-white px-4 py-2 text-sm text-[#005f73] focus:border-[#005f73] focus:outline-none"
+            />
+          </div>
+          
+          {/* Category Filter */}
+          <div className="flex flex-wrap gap-2">
+            {categories.map(category => (
+              <button
+                key={category}
+                onClick={() => setFilter(category)}
+                className={`px-4 py-2 rounded-full text-sm font-bold transition ${
+                  filter === category
+                    ? 'bg-[#0077b6] text-white'
+                    : 'bg-[#0077b6]/10 text-[#0077b6] hover:bg-[#0077b6]/20'
+                }`}
+              >
+                {t[category as keyof typeof t]}
+              </button>
+            ))}
+          </div>
+
+          {/* Ingredient Filter */}
+          <div className="flex flex-wrap gap-2">
+            {ingredients.map(ingredient => (
+              <button
+                key={ingredient}
+                onClick={() => setSelectedIngredient(ingredient)}
+                className={`px-4 py-2 rounded-full text-sm font-bold transition ${
+                  selectedIngredient === ingredient
+                    ? 'bg-[#00b4d8] text-white'
+                    : 'bg-[#00b4d8]/10 text-[#00b4d8] hover:bg-[#00b4d8]/20'
+                }`}
+              >
+                {ingredient === 'all' ? t.allIngredients : t[ingredient as keyof typeof t]}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -192,7 +269,7 @@ export default function Recipes() {
                 {/* Logo */}
                 <div className="absolute top-4 left-4">
                   <img
-                    src="/logo.png"
+                    src="/HAWA LOGO.jpg"
                     alt="Hawa Daily"
                     className="h-12 w-auto"
                   />
