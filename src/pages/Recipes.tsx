@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import { db } from '../firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, updateDoc, increment, setDoc, serverTimestamp } from 'firebase/firestore';
 
 interface Recipe {
   id: string;
@@ -50,6 +50,19 @@ export default function Recipes() {
     };
 
     fetchRecipes();
+
+    // Track page visit
+    const trackPageVisit = async () => {
+      try {
+        const pageStatsRef = doc(db, 'page-stats', 'recipes');
+        const countRef = doc(pageStatsRef, 'visits', 'count');
+        await setDoc(countRef, { count: increment(1) }, { merge: true });
+      } catch (error) {
+        console.error('Error tracking page visit:', error);
+      }
+    };
+
+    trackPageVisit();
   }, []);
 
   const filteredRecipes = recipes.filter((recipe: Recipe) => {

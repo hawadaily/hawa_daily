@@ -6,6 +6,8 @@ import ResortsGrid from '../components/ResortsGrid';
 import { getCompanyLogo } from '../data/companyLogos';
 import companyLogos from '../data/companyLogos';
 import { fallbackJobs } from '../data/fallbackJobs';
+import { db } from '../firebase';
+import { doc, setDoc, increment } from 'firebase/firestore';
 
 interface Job {
   id: string;
@@ -101,6 +103,19 @@ export default function Jobs() {
     }, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
+
+    // Track page visit
+    const trackPageVisit = async () => {
+      try {
+        const pageStatsRef = doc(db, 'page-stats', 'jobs');
+        const countRef = doc(pageStatsRef, 'visits', 'count');
+        await setDoc(countRef, { count: increment(1) }, { merge: true });
+      } catch (error) {
+        console.error('Error tracking page visit:', error);
+      }
+    };
+
+    trackPageVisit();
   }, []);
 
   const handleRefresh = () => {

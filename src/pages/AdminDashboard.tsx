@@ -29,6 +29,9 @@ export default function AdminDashboard() {
   const [filteredVisitorCount, setFilteredVisitorCount] = useState(0);
   const [facebookInsights, setFacebookInsights] = useState<any>(null);
   const [loadingInsights, setLoadingInsights] = useState(false);
+  const [recipesVisits, setRecipesVisits] = useState(0);
+  const [jobsVisits, setJobsVisits] = useState(0);
+  const [weatherVisits, setWeatherVisits] = useState(0);
   const [activeTab, setActiveTab] = useState<AdminTab>('articles');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [language, setLanguage] = useState<'en' | 'dv'>('dv');
@@ -614,6 +617,38 @@ export default function AdminDashboard() {
     };
 
     fetchRecipes();
+  }, []);
+
+  // Fetch page visit stats
+  useEffect(() => {
+    const fetchPageStats = async () => {
+      try {
+        const pages = ['recipes', 'jobs', 'weather'];
+        const stats = await Promise.all(
+          pages.map(async (page) => {
+            try {
+              const countRef = doc(db, 'page-stats', page, 'visits', 'count');
+              const countSnap = await getDocs(collection(db, `page-stats/${page}/visits`));
+              const countDoc = countSnap.docs.find(d => d.id === 'count');
+              return { page, count: countDoc?.data()?.count || 0 };
+            } catch (error) {
+              console.error(`Error fetching ${page} stats:`, error);
+              return { page, count: 0 };
+            }
+          })
+        );
+
+        stats.forEach(({ page, count }) => {
+          if (page === 'recipes') setRecipesVisits(count);
+          if (page === 'jobs') setJobsVisits(count);
+          if (page === 'weather') setWeatherVisits(count);
+        });
+      } catch (error) {
+        console.error('Error fetching page stats:', error);
+      }
+    };
+
+    fetchPageStats();
   }, []);
 
   // Real-time preview regeneration
@@ -3475,6 +3510,18 @@ export default function AdminDashboard() {
                 <div className="rounded-2xl bg-gray-100 p-4">
                   <p className="text-sm text-gray-600">{t.uniqueVisitors}</p>
                   <p className="mt-2 text-3xl font-bold text-gray-900">{uniqueVisitors}</p>
+                </div>
+                <div className="rounded-2xl bg-orange-50 p-4 border border-orange-200">
+                  <p className="text-sm text-orange-700">ރެސިޕީ ޒިޔާރަތްތައް (Recipes Visits)</p>
+                  <p className="mt-2 text-3xl font-bold text-orange-900">{recipesVisits}</p>
+                </div>
+                <div className="rounded-2xl bg-blue-50 p-4 border border-blue-200">
+                  <p className="text-sm text-blue-700">ވަޒީފާ ޒިޔާރަތްތައް (Jobs Visits)</p>
+                  <p className="mt-2 text-3xl font-bold text-blue-900">{jobsVisits}</p>
+                </div>
+                <div className="rounded-2xl bg-green-50 p-4 border border-green-200">
+                  <p className="text-sm text-green-700">ވެތަރ ޒިޔާރަތްތައް (Weather Visits)</p>
+                  <p className="mt-2 text-3xl font-bold text-green-900">{weatherVisits}</p>
                 </div>
               </div>
             </div>

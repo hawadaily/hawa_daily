@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Cloud, CloudRain, CloudLightning, Sun, CloudFog, Waves, Wind, Droplets, Thermometer, Moon, Sunrise, Sunset } from 'lucide-react';
 import translations from '../data/translation.json';
+import { db } from '../firebase';
+import { doc, setDoc, increment } from 'firebase/firestore';
 
 interface WeatherData {
   location: string;
@@ -134,6 +136,19 @@ export default function Weather() {
     fetchWeatherData();
     const interval = setInterval(fetchWeatherData, 5 * 60 * 1000); // Refresh every 5 minutes
     return () => clearInterval(interval);
+
+    // Track page visit
+    const trackPageVisit = async () => {
+      try {
+        const pageStatsRef = doc(db, 'page-stats', 'weather');
+        const countRef = doc(pageStatsRef, 'visits', 'count');
+        await setDoc(countRef, { count: increment(1) }, { merge: true });
+      } catch (error) {
+        console.error('Error tracking page visit:', error);
+      }
+    };
+
+    trackPageVisit();
   }, []);
 
   useEffect(() => {
