@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
@@ -628,9 +628,8 @@ export default function AdminDashboard() {
           pages.map(async (page) => {
             try {
               const countRef = doc(db, 'page-stats', page, 'visits', 'count');
-              const countSnap = await getDocs(collection(db, `page-stats/${page}/visits`));
-              const countDoc = countSnap.docs.find(d => d.id === 'count');
-              return { page, count: countDoc?.data()?.count || 0 };
+              const countSnap = await getDoc(countRef);
+              return { page, count: countSnap.data()?.count || 0 };
             } catch (error) {
               console.error(`Error fetching ${page} stats:`, error);
               return { page, count: 0 };
