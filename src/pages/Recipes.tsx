@@ -31,6 +31,7 @@ export default function Recipes() {
   const [search, setSearch] = useState<string>('');
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
 
   const categories = ['all', 'ހެދުނުގެ ނާސްތާ', 'ކުޅިކާ ތަކެތި', 'ފޮނިކާ ތަކެތި', 'ކުދި ކެއުންތަށް'];
   const ingredients = ['all', 'ބޯވަ', 'ބީފް', 'މަސް', 'ކުކުޅު', 'މައިސް', 'ކައްކައުން', 'ފެން', 'ތެޔޮ', 'ހަކުރު', 'ލޮނު', 'ބިސް', 'ލުނބޯ ހުތް', 'މުގުރި އަސޭމިރުސް', 'ރާނބާފަތް', 'ކިރު', 'ޗީޒް'];
@@ -158,19 +159,24 @@ export default function Recipes() {
       dir={language === 'dv' ? 'rtl' : 'ltr'}
     >
       {/* Header */}
-      <div className="sticky top-20 z-40 bg-[#caf0f8]/95 backdrop-blur-sm border-b-2 border-[#0077b6] pb-4 mb-6 shadow-md px-6">
-        <div className="flex items-center justify-between gap-4 max-w-[1600px] mx-auto">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-[#0077b6] font-bold">
+      <div className="sticky top-20 z-40 bg-[#caf0f8]/95 backdrop-blur-sm border-b-2 border-[#0077b6] shadow-md px-4">
+        <div className="flex items-center justify-between gap-2 max-w-[1600px] mx-auto py-3">
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#0077b6] font-bold hidden sm:block">
               {language === 'dv' ? 'ރަހަ' : 'Recipes'}
             </p>
-            <h2 className="mt-1 text-3xl font-extrabold text-[#0077b6]">{t.title}</h2>
-            <p className="mt-1 text-sm text-[#005f73]">{t.subtitle}</p>
+            <h2 className="text-xl sm:text-3xl font-extrabold text-[#0077b6] truncate">{t.title}</h2>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="inline-flex items-center gap-2 rounded-lg border-2 border-[#0077b6] bg-[#0077b6]/10 px-3 py-2 text-sm font-bold text-[#0077b6] transition hover:bg-[#0077b6]/20 lg:hidden"
+            >
+              {showFilters ? '▼' : '▲'}
+            </button>
             <button
               onClick={() => setLanguage(language === 'dv' ? 'en' : 'dv')}
-              className="inline-flex items-center gap-2 rounded-lg border-2 border-[#0077b6] bg-[#0077b6] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#005f73]"
+              className="inline-flex items-center gap-2 rounded-lg border-2 border-[#0077b6] bg-[#0077b6] px-3 py-2 text-sm font-bold text-white transition hover:bg-[#005f73]"
             >
               {language === 'dv' ? 'EN' : 'ދިވެހި'}
             </button>
@@ -178,7 +184,7 @@ export default function Recipes() {
         </div>
 
         {/* Search, Ingredient Filter and Category Filter */}
-        <div className="flex flex-col gap-4 mt-4">
+        <div className={`flex flex-col gap-3 pb-4 ${showFilters ? 'block' : 'hidden lg:block'}`}>
           {/* Search Input */}
           <div>
             <input
@@ -186,7 +192,7 @@ export default function Recipes() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t.searchPlaceholder}
-              className="w-full rounded-full border-2 border-[#0077b6] bg-white px-4 py-2 text-sm text-[#005f73] focus:border-[#005f73] focus:outline-none"
+              className="w-full rounded-full border-2 border-[#0077b6] bg-white px-4 py-2.5 text-sm text-[#005f73] focus:border-[#005f73] focus:outline-none"
             />
           </div>
           
@@ -196,7 +202,7 @@ export default function Recipes() {
               <button
                 key={category}
                 onClick={() => setFilter(category)}
-                className={`px-4 py-2 rounded-full text-sm font-bold transition ${
+                className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold transition ${
                   filter === category
                     ? 'bg-[#0077b6] text-white'
                     : 'bg-[#0077b6]/10 text-[#0077b6] hover:bg-[#0077b6]/20'
@@ -213,7 +219,7 @@ export default function Recipes() {
               <button
                 key={ingredient}
                 onClick={() => setSelectedIngredient(ingredient)}
-                className={`px-4 py-2 rounded-full text-sm font-bold transition ${
+                className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold transition ${
                   selectedIngredient === ingredient
                     ? 'bg-[#00b4d8] text-white'
                     : 'bg-[#00b4d8]/10 text-[#00b4d8] hover:bg-[#00b4d8]/20'
@@ -227,7 +233,7 @@ export default function Recipes() {
       </div>
 
       {/* Recipe Grid */}
-      <div className="max-w-[1600px] mx-auto px-6 pb-8">
+      <div className="max-w-[1600px] mx-auto px-4 pb-8">
         {loading ? (
           <div className="text-center py-12">
             <p className="text-xl text-[#005f73]">{language === 'dv' ? 'ލޯޑް ކުރަމުން...' : 'Loading...'}</p>
@@ -237,7 +243,7 @@ export default function Recipes() {
             <p className="text-xl text-[#005f73]">{t.noRecipes}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredRecipes.map((recipe: Recipe) => (
               <RecipeCard
                 key={recipe.id}
