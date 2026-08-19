@@ -50,6 +50,7 @@ interface MarineForecast {
   winds: string;
   seas: string;
   waveHeight: string;
+  advisory: string | null;
 }
 
 interface PrecipitationImages {
