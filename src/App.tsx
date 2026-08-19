@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, Briefcase, Cloud, BookOpen, User } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import Home from './pages/Home';
@@ -25,10 +26,11 @@ import Footer from './components/Footer';
 import AdBanner from './components/AdBanner';
 import NewsTicker from './components/NewsTicker';
 import QuranVerseSlider from './components/QuranVerseSlider';
-import { Home as HomeIcon, FolderOpen, ChefHat, Briefcase, Cloud, BookOpen, User } from 'lucide-react';
 
 function App() {
   const [language, setLanguage] = useState<'en' | 'dv'>('dv');
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
   const location = useLocation();
 
@@ -37,6 +39,41 @@ function App() {
     document.documentElement.dir = language === 'dv' ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
   }, [language]);
+
+  // PWA Install Prompt
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Check if app is already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setShowInstallPrompt(false);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setShowInstallPrompt(false);
+      }
+      setDeferredPrompt(null);
+    }
+  };
+
+  const dismissInstallPrompt = () => {
+    setShowInstallPrompt(false);
+  };
 
   // Track visitor - only once per session
   useEffect(() => {
@@ -129,6 +166,44 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#caf0f8] text-slate-800">
+      {/* PWA Install Prompt */}
+      {showInstallPrompt && (
+        <motion.div
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -100, opacity: 0 }}
+          className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-sky-500 to-blue-600 text-white p-4 shadow-lg"
+        >
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Download className="w-6 h-6" />
+              <div>
+                <p className="font-bold text-sm">
+                  {language === 'en' ? 'Install Hawa Daily' : 'ހަވާ ޑެއިލީ އިންސްޓޯލް ކުރޭ'}
+                </p>
+                <p className="text-xs opacity-90">
+                  {language === 'en' ? 'Add to home screen for better experience' : 'ބޭނުން ހެޔް އިތުރު ހެޔް ތައްޔާރުކުރުމަށް'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleInstallClick}
+                className="bg-white text-blue-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-50 transition-colors"
+              >
+                {language === 'en' ? 'Install' : 'އިންސްޓޯލް'}
+              </button>
+              <button
+                onClick={dismissInstallPrompt}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+      
       <AdBanner />
       <NewsTicker />
       <QuranVerseSlider />
