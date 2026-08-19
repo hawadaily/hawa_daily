@@ -8,7 +8,7 @@ import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
 import { postToFacebook, deleteFromFacebook, getFacebookPageInsights } from '../utils/facebook';
-import { uploadImage, uploadVideo, uploadToGitHub } from '../utils/cloudinary';
+import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur } from '../utils/cloudinary';
 
 type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'recipes';
 
@@ -429,6 +429,7 @@ export default function AdminDashboard() {
   const [videoUrl, setVideoUrl] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUploadOption, setVideoUploadOption] = useState<'cloudinary' | 'github'>('cloudinary');
+  const [imageUploadOption, setImageUploadOption] = useState<'cloudinary' | 'imgur'>('imgur');
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [readingTime, setReadingTime] = useState(language === 'en' ? '5 min' : '5މިނިޓް');
   const [body, setBody] = useState('');
@@ -450,6 +451,7 @@ export default function AdminDashboard() {
   const [editVideoUrl, setEditVideoUrl] = useState('');
   const [editVideoFile, setEditVideoFile] = useState<File | null>(null);
   const [editVideoUploadOption, setEditVideoUploadOption] = useState<'cloudinary' | 'github'>('cloudinary');
+  const [editImageUploadOption, setEditImageUploadOption] = useState<'cloudinary' | 'imgur'>('imgur');
   const [uploadingEditVideo, setUploadingEditVideo] = useState(false);
   const [editBody, setEditBody] = useState('');
   const [editBodyEn, setEditBodyEn] = useState('');
@@ -1327,7 +1329,11 @@ export default function AdminDashboard() {
       if (articleFile) {
         setUploadingArticle(true);
         try {
-          finalImageUrl = await uploadImage(articleFile, 'articles');
+          if (imageUploadOption === 'imgur') {
+            finalImageUrl = await uploadToImgur(articleFile);
+          } else {
+            finalImageUrl = await uploadImage(articleFile, 'articles');
+          }
         } catch (uploadError) {
           setMessage(t.newsError + ': Failed to upload image');
           setSubmitting(false);
@@ -1523,7 +1529,11 @@ export default function AdminDashboard() {
       if (editArticleFile) {
         setUploadingEditArticle(true);
         try {
-          finalImageUrl = await uploadImage(editArticleFile, 'articles');
+          if (editImageUploadOption === 'imgur') {
+            finalImageUrl = await uploadToImgur(editArticleFile);
+          } else {
+            finalImageUrl = await uploadImage(editArticleFile, 'articles');
+          }
         } catch (uploadError) {
           setMessage(t.newsUpdateError + ': Failed to upload image');
           setUploadingEditArticle(false);
@@ -2523,14 +2533,25 @@ export default function AdminDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700">Upload Image</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setArticleFile(e.target.files?.[0] || null)}
+                  <label className="block text-sm font-semibold text-gray-700">Image Upload Service</label>
+                  <select
+                    value={imageUploadOption}
+                    onChange={(e) => setImageUploadOption(e.target.value as 'cloudinary' | 'imgur')}
                     className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                  />
+                  >
+                    <option value="imgur">Imgur (Free, No Credit Card)</option>
+                    <option value="cloudinary">Cloudinary (Existing Images)</option>
+                  </select>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">Upload Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setArticleFile(e.target.files?.[0] || null)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                />
               </div>
 
               {/* Image Generator Section */}
@@ -3298,6 +3319,17 @@ export default function AdminDashboard() {
                     className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
                     placeholder="https://example.com/image.jpg"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700">Image Upload Service</label>
+                  <select
+                    value={editImageUploadOption}
+                    onChange={(e) => setEditImageUploadOption(e.target.value as 'cloudinary' | 'imgur')}
+                    className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  >
+                    <option value="imgur">Imgur (Free, No Credit Card)</option>
+                    <option value="cloudinary">Cloudinary (Existing Images)</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700">Upload Image</label>
