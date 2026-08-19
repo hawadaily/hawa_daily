@@ -1,0 +1,241 @@
+import { useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import quranData from '../data/quran-full.json';
+import { Search, BookOpen, ChevronRight } from 'lucide-react';
+
+interface Verse {
+  arabic: string | null;
+  dhivehi: string | null;
+}
+
+interface Surah {
+  number: number;
+  nameArabic: string;
+  nameEnglish: string;
+  pdfUrl: string;
+  verses: Verse[];
+}
+
+const quranSurahs: Surah[] = quranData as Surah[];
+
+export default function Quran() {
+  const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredSurahs: { surah: Surah; verseIndex: number; verse: Verse }[] = useMemo(() => {
+    if (!searchQuery) return [];
+    
+    const query = searchQuery.toLowerCase();
+    const results: { surah: Surah; verseIndex: number; verse: Verse }[] = [];
+    
+    quranSurahs.forEach((surah) => {
+      surah.verses.forEach((verse, index) => {
+        if (verse.arabic && verse.dhivehi) {
+          const arabicMatch = verse.arabic.toLowerCase().includes(query);
+          const dhivehiMatch = verse.dhivehi.toLowerCase().includes(query);
+          const nameMatch = surah.nameArabic.toLowerCase().includes(query) || 
+                          surah.nameEnglish.toLowerCase().includes(query);
+          
+          if (arabicMatch || dhivehiMatch || nameMatch) {
+            results.push({ surah, verseIndex: index, verse });
+          }
+        }
+      });
+    });
+    
+    return results;
+  }, [searchQuery]);
+
+  const handleSurahSelect = (surah: Surah) => {
+    setSelectedSurah(surah);
+    setSearchQuery('');
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setSelectedSurah(null);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-5xl font-bold text-slate-800 mb-3" dir="rtl">الْقُرْآنا ترجمة</h1>
+          <p className="text-2xl text-slate-600 font-medium">ތައުލީންގެ ކިތާބު</p>
+        </motion.div>
+
+        {/* Search Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-8 max-w-2xl mx-auto"
+        >
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-6 h-6" />
+            <input
+              type="text"
+              placeholder="ސޫރާ ނުވަތަ އާޔަތް ހޯދާ..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full pl-14 pr-6 py-5 rounded-2xl bg-white border-2 border-slate-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right text-lg shadow-sm"
+              dir="rtl"
+            />
+          </div>
+        </motion.div>
+
+        {/* Content */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Surah List */}
+          {!searchQuery && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="lg:col-span-1"
+            >
+              <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 max-h-[700px] overflow-y-auto">
+                <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center pb-4 border-b border-slate-200">ސޫރާތައް</h2>
+                <div className="space-y-2">
+                  {quranSurahs.map((surah) => (
+                    <button
+                      key={surah.number}
+                      onClick={() => handleSurahSelect(surah)}
+                      className={`w-full p-4 rounded-2xl text-right transition-all ${
+                        selectedSurah?.number === surah.number
+                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
+                          : 'bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-blue-700'
+                      }`}
+                      dir="rtl"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-base font-bold">{surah.nameArabic}</span>
+                        <span className={`text-sm font-semibold px-2 py-1 rounded-lg ${
+                          selectedSurah?.number === surah.number
+                            ? 'bg-white/20 text-white'
+                            : 'bg-slate-200 text-slate-600'
+                        }`}>{surah.number}</span>
+                      </div>
+                      <div className={`text-sm mt-1 ${
+                        selectedSurah?.number === surah.number
+                          ? 'text-white/80'
+                          : 'text-slate-500'
+                      }`}>{surah.nameEnglish}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Verses Display */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className={searchQuery ? 'lg:col-span-3' : 'lg:col-span-2'}
+          >
+            <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-8 max-h-[700px] overflow-y-auto">
+              {searchQuery ? (
+                /* Search Results */
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center pb-4 border-b border-slate-200">
+                    ނަތީޖާ: {filteredSurahs.length}
+                  </h2>
+                  <div className="space-y-6">
+                    {filteredSurahs.map((result, index) => (
+                      <motion.div
+                        key={`${result.surah.number}-${result.verseIndex}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.03 }}
+                        className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl p-6 border border-slate-200 shadow-sm"
+                      >
+                        <div className="text-sm text-slate-500 mb-4 text-center font-medium">
+                          {result.surah.nameArabic} - {result.surah.nameEnglish} ({result.surah.number}:{result.verseIndex})
+                        </div>
+                        <div className="text-2xl font-bold text-slate-800 text-right mb-4 leading-loose" dir="rtl" style={{ fontFamily: 'Traditional Arabic, Scheherazade New, Arial' }}>
+                          {result.verse.arabic}
+                        </div>
+                        <div className="text-lg text-slate-700 text-right leading-relaxed" dir="rtl">
+                          {result.verse.dhivehi}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                  {filteredSurahs.length === 0 && (
+                    <div className="text-center text-slate-500 py-16">
+                      <Search className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                      <p className="text-xl">ނަތީޖާ ނެތް</p>
+                    </div>
+                  )}
+                </div>
+              ) : selectedSurah ? (
+                /* Selected Surah Verses */
+                <div>
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
+                    <button
+                      onClick={() => setSelectedSurah(null)}
+                      className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition font-medium"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                      <span>އަނބުރާ</span>
+                    </button>
+                    <h2 className="text-2xl font-bold text-slate-800" dir="rtl">
+                      {selectedSurah.nameArabic}
+                    </h2>
+                    <a
+                      href={selectedSurah.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition font-medium"
+                    >
+                      <span>PDF</span>
+                      <BookOpen className="w-5 h-5" />
+                    </a>
+                  </div>
+                  <div className="space-y-6">
+                    {selectedSurah.verses.map((verse, index) => {
+                      if (!verse.arabic || !verse.dhivehi) return null;
+                      return (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.01 }}
+                          className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl p-6 border border-slate-200 shadow-sm"
+                        >
+                          <div className="text-sm text-slate-500 mb-4 text-center font-medium">
+                            {selectedSurah.nameArabic} ({selectedSurah.number}:{index})
+                          </div>
+                          <div className="text-2xl font-bold text-slate-800 text-right mb-4 leading-loose" dir="rtl" style={{ fontFamily: 'Traditional Arabic, Scheherazade New, Arial' }}>
+                            {verse.arabic}
+                          </div>
+                          <div className="text-lg text-slate-700 text-right leading-relaxed" dir="rtl">
+                            {verse.dhivehi}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                /* Initial State */
+                <div className="text-center text-slate-500 py-20">
+                  <BookOpen className="w-24 h-24 mx-auto mb-6 opacity-20" />
+                  <p className="text-xl font-medium">ސޫރާއެއް އިޚްތިޔާރު ކުރާ ނުވަތަ ހޯދިގެން ބަލާ</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+}

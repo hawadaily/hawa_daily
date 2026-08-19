@@ -1,0 +1,686 @@
+[
+  {
+    "number": 1,
+    "nameArabic": "الفَاتِحَة",
+    "nameEnglish": "Al-Fatihah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/1.pdf"
+  },
+  {
+    "number": 2,
+    "nameArabic": "البَقَرَة",
+    "nameEnglish": "Al-Baqarah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/2.pdf"
+  },
+  {
+    "number": 3,
+    "nameArabic": "آل عِمرَان",
+    "nameEnglish": "Al 'Imran",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/3.pdf"
+  },
+  {
+    "number": 4,
+    "nameArabic": "النِّسَاء",
+    "nameEnglish": "An-Nisa'",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/4.pdf"
+  },
+  {
+    "number": 5,
+    "nameArabic": "المَائدة",
+    "nameEnglish": "Al-Ma'idah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/5.pdf"
+  },
+  {
+    "number": 6,
+    "nameArabic": "الاٴنعَام",
+    "nameEnglish": "Al-An'am",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/6.pdf"
+  },
+  {
+    "number": 7,
+    "nameArabic": "الاٴعرَاف",
+    "nameEnglish": "Al-A'raf",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/7.pdf"
+  },
+  {
+    "number": 8,
+    "nameArabic": "الاٴنفَال",
+    "nameEnglish": "Al-Anfal",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/8.pdf"
+  },
+  {
+    "number": 9,
+    "nameArabic": "التّوبَة",
+    "nameEnglish": "Al-Taubah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/9.pdf"
+  },
+  {
+    "number": 10,
+    "nameArabic": "یُونس",
+    "nameEnglish": "Yunus",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/10.pdf"
+  },
+  {
+    "number": 11,
+    "nameArabic": "هُود",
+    "nameEnglish": "Hud",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/11.pdf"
+  },
+  {
+    "number": 12,
+    "nameArabic": "یُوسُف",
+    "nameEnglish": "Yusuf",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/12.pdf"
+  },
+  {
+    "number": 13,
+    "nameArabic": "الرّعد",
+    "nameEnglish": "Ar-Ra'd",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/13.pdf"
+  },
+  {
+    "number": 14,
+    "nameArabic": "إبراهیم",
+    "nameEnglish": "Ibrahim",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/14.pdf"
+  },
+  {
+    "number": 15,
+    "nameArabic": "الحِجر",
+    "nameEnglish": "Al-Hijr",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/15.pdf"
+  },
+  {
+    "number": 16,
+    "nameArabic": "النّحل",
+    "nameEnglish": "An-Nahl",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/16.pdf"
+  },
+  {
+    "number": 17,
+    "nameArabic": "بنیٓ اسرآئیل / الإسرَاء",
+    "nameEnglish": "Al-Isra'",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/17.pdf"
+  },
+  {
+    "number": 18,
+    "nameArabic": "الکهف",
+    "nameEnglish": "Al-Kahf",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/18.pdf"
+  },
+  {
+    "number": 19,
+    "nameArabic": "مَریَم",
+    "nameEnglish": "Maryam",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/19.pdf"
+  },
+  {
+    "number": 20,
+    "nameArabic": "طٰه",
+    "nameEnglish": "Ta-Ha",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/20.pdf"
+  },
+  {
+    "number": 21,
+    "nameArabic": "الاٴنبیَاء",
+    "nameEnglish": "Al-Anbiya'",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/21.pdf"
+  },
+  {
+    "number": 22,
+    "nameArabic": "الحَجّ",
+    "nameEnglish": "Al-Hajj",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/22.pdf"
+  },
+  {
+    "number": 23,
+    "nameArabic": "المؤمنون",
+    "nameEnglish": "Al-Mu'minun",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/23.pdf"
+  },
+  {
+    "number": 24,
+    "nameArabic": "النُّور",
+    "nameEnglish": "An-Nur",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/24.pdf"
+  },
+  {
+    "number": 25,
+    "nameArabic": "الفُرقان",
+    "nameEnglish": "Al-Furqan",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/25.pdf"
+  },
+  {
+    "number": 26,
+    "nameArabic": "الشُّعَرَاء",
+    "nameEnglish": "Ashl-Shu'ara'",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/26.pdf"
+  },
+  {
+    "number": 27,
+    "nameArabic": "النَّمل",
+    "nameEnglish": "Al-Naml",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/27.pdf"
+  },
+  {
+    "number": 28,
+    "nameArabic": "القَصَص",
+    "nameEnglish": "Al-Qasas",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/28.pdf"
+  },
+  {
+    "number": 29,
+    "nameArabic": "العَنکبوت",
+    "nameEnglish": "Al-'Ankabut",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/29.pdf"
+  },
+  {
+    "number": 30,
+    "nameArabic": "الرُّوم",
+    "nameEnglish": "Ar-Rum",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/30.pdf"
+  },
+  {
+    "number": 31,
+    "nameArabic": "لقمَان",
+    "nameEnglish": "Luqman",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/31.pdf"
+  },
+  {
+    "number": 32,
+    "nameArabic": "السَّجدَة",
+    "nameEnglish": "As-Sajdah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/32.pdf"
+  },
+  {
+    "number": 33,
+    "nameArabic": "الاٴحزَاب",
+    "nameEnglish": "Al-Ahzab",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/33.pdf"
+  },
+  {
+    "number": 34,
+    "nameArabic": "سَبَإ",
+    "nameEnglish": "Saba'",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/34.pdf"
+  },
+  {
+    "number": 35,
+    "nameArabic": "فَاطِر",
+    "nameEnglish": "Fatir",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/35.pdf"
+  },
+  {
+    "number": 36,
+    "nameArabic": "یسٓ",
+    "nameEnglish": "Ya-Sin",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/36.pdf"
+  },
+  {
+    "number": 37,
+    "nameArabic": "الصَّافات",
+    "nameEnglish": "As-Saffat",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/37.pdf"
+  },
+  {
+    "number": 38,
+    "nameArabic": "صٓ",
+    "nameEnglish": "Sad",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/38.pdf"
+  },
+  {
+    "number": 39,
+    "nameArabic": "الزُّمَر",
+    "nameEnglish": "Az-Zumar",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/39.pdf"
+  },
+  {
+    "number": 40,
+    "nameArabic": "مؤمن / غَافر",
+    "nameEnglish": "Ghafir",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/40.pdf"
+  },
+  {
+    "number": 41,
+    "nameArabic": "حٰمٓ السجدة / فُصّلَت",
+    "nameEnglish": "Fussilat",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/41.pdf"
+  },
+  {
+    "number": 42,
+    "nameArabic": "الشّوریٰ",
+    "nameEnglish": "Ash-Shura",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/42.pdf"
+  },
+  {
+    "number": 43,
+    "nameArabic": "الزّخرُف",
+    "nameEnglish": "Az-Zukhruf",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/43.pdf"
+  },
+  {
+    "number": 44,
+    "nameArabic": "الدّخان",
+    "nameEnglish": "Ad-Dukhan",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/44.pdf"
+  },
+  {
+    "number": 45,
+    "nameArabic": "الجَاثیَة",
+    "nameEnglish": "Al-Jathiyah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/45.pdf"
+  },
+  {
+    "number": 46,
+    "nameArabic": "الاٴحقاف",
+    "nameEnglish": "Al-Ahqaf",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/46.pdf"
+  },
+  {
+    "number": 47,
+    "nameArabic": "محَمَّد",
+    "nameEnglish": "Muhammad",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/47.pdf"
+  },
+  {
+    "number": 48,
+    "nameArabic": "الفَتْح",
+    "nameEnglish": "Al-Fath",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/48.pdf"
+  },
+  {
+    "number": 49,
+    "nameArabic": "الحُجرَات",
+    "nameEnglish": "Al-Hujurat",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/49.pdf"
+  },
+  {
+    "number": 50,
+    "nameArabic": "قٓ",
+    "nameEnglish": "Qaf",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/50.pdf"
+  },
+  {
+    "number": 51,
+    "nameArabic": "الذّاریَات",
+    "nameEnglish": "Adh-Dhariyat",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/51.pdf"
+  },
+  {
+    "number": 52,
+    "nameArabic": "الطُّور",
+    "nameEnglish": "At-Tur",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/52.pdf"
+  },
+  {
+    "number": 53,
+    "nameArabic": "النّجْم",
+    "nameEnglish": "An-Najm",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/53.pdf"
+  },
+  {
+    "number": 54,
+    "nameArabic": "القَمَر",
+    "nameEnglish": "Al-Qamar",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/54.pdf"
+  },
+  {
+    "number": 55,
+    "nameArabic": "الرَّحمٰن",
+    "nameEnglish": "Ar-Rahman",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/55.pdf"
+  },
+  {
+    "number": 56,
+    "nameArabic": "الواقِعَة",
+    "nameEnglish": "Al-Waqi'ah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/56.pdf"
+  },
+  {
+    "number": 57,
+    "nameArabic": "الحَدید",
+    "nameEnglish": "Al-Hadid",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/57.pdf"
+  },
+  {
+    "number": 58,
+    "nameArabic": "المجَادلة",
+    "nameEnglish": "Al-Mujadilah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/58.pdf"
+  },
+  {
+    "number": 59,
+    "nameArabic": "الحَشر",
+    "nameEnglish": "Al-Hashr",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/59.pdf"
+  },
+  {
+    "number": 60,
+    "nameArabic": "المُمتَحنَة",
+    "nameEnglish": "Al-Mumtahanah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/60.pdf"
+  },
+  {
+    "number": 61,
+    "nameArabic": "الصَّف",
+    "nameEnglish": "As-Saff",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/61.pdf"
+  },
+  {
+    "number": 62,
+    "nameArabic": "الجُمُعَة",
+    "nameEnglish": "Al-Jumu'ah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/62.pdf"
+  },
+  {
+    "number": 63,
+    "nameArabic": "المنَافِقون",
+    "nameEnglish": "Al-Munafiqun",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/63.pdf"
+  },
+  {
+    "number": 64,
+    "nameArabic": "التّغَابُن",
+    "nameEnglish": "At-Taghabun",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/64.pdf"
+  },
+  {
+    "number": 65,
+    "nameArabic": "الطّلاَق",
+    "nameEnglish": "At-Talaq",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/65.pdf"
+  },
+  {
+    "number": 66,
+    "nameArabic": "التّحْریم",
+    "nameEnglish": "At-Tahrim",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/66.pdf"
+  },
+  {
+    "number": 67,
+    "nameArabic": "المُلک",
+    "nameEnglish": "Al-Mulk",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/67.pdf"
+  },
+  {
+    "number": 68,
+    "nameArabic": "القَلَم",
+    "nameEnglish": "Al-Qalam",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/68.pdf"
+  },
+  {
+    "number": 69,
+    "nameArabic": "الحَاقَّة",
+    "nameEnglish": "Al-Haqqah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/69.pdf"
+  },
+  {
+    "number": 70,
+    "nameArabic": "المعَارج",
+    "nameEnglish": "Al-Ma'arij",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/70.pdf"
+  },
+  {
+    "number": 71,
+    "nameArabic": "نُوح",
+    "nameEnglish": "Nuh",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/71.pdf"
+  },
+  {
+    "number": 72,
+    "nameArabic": "الجنّ",
+    "nameEnglish": "Al-Jinn",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/72.pdf"
+  },
+  {
+    "number": 73,
+    "nameArabic": "المُزمّل",
+    "nameEnglish": "Al-Muzzammil",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/73.pdf"
+  },
+  {
+    "number": 74,
+    "nameArabic": "المدَّثِّر",
+    "nameEnglish": "Al-Muddaththir",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/74.pdf"
+  },
+  {
+    "number": 75,
+    "nameArabic": "القِیَامَة",
+    "nameEnglish": "Al-Qiyamah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/75.pdf"
+  },
+  {
+    "number": 76,
+    "nameArabic": "دهر / الإنسَان",
+    "nameEnglish": "Al-Insan",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/76.pdf"
+  },
+  {
+    "number": 77,
+    "nameArabic": "المُرسَلات",
+    "nameEnglish": "Al-Mursalat",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/77.pdf"
+  },
+  {
+    "number": 78,
+    "nameArabic": "النّبَإِ",
+    "nameEnglish": "An-Naba",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/78.pdf"
+  },
+  {
+    "number": 79,
+    "nameArabic": "النَّازعَات",
+    "nameEnglish": "An-Nazi'at",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/79.pdf"
+  },
+  {
+    "number": 80,
+    "nameArabic": "عَبَسَ",
+    "nameEnglish": "'Abasa",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/80.pdf"
+  },
+  {
+    "number": 81,
+    "nameArabic": "التّکویر",
+    "nameEnglish": "At-Takwir",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/81.pdf"
+  },
+  {
+    "number": 82,
+    "nameArabic": "الانفِطار",
+    "nameEnglish": "Al-Infitar",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/82.pdf"
+  },
+  {
+    "number": 83,
+    "nameArabic": "المطفّفِین",
+    "nameEnglish": "Al-Mutaffifin",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/83.pdf"
+  },
+  {
+    "number": 84,
+    "nameArabic": "الانشقاق",
+    "nameEnglish": "Al-Inshiqaq",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/84.pdf"
+  },
+  {
+    "number": 85,
+    "nameArabic": "البُرُوج",
+    "nameEnglish": "Al-Buruj",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/85.pdf"
+  },
+  {
+    "number": 86,
+    "nameArabic": "الطّارق",
+    "nameEnglish": "At-Tariq",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/86.pdf"
+  },
+  {
+    "number": 87,
+    "nameArabic": "الاٴعلی",
+    "nameEnglish": "Al-A'la",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/87.pdf"
+  },
+  {
+    "number": 88,
+    "nameArabic": "الغَاشِیَة",
+    "nameEnglish": "Al-Ghashiyah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/88.pdf"
+  },
+  {
+    "number": 89,
+    "nameArabic": "الفَجر",
+    "nameEnglish": "Al-Fajr",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/89.pdf"
+  },
+  {
+    "number": 90,
+    "nameArabic": "البَلَد",
+    "nameEnglish": "Al-Balad",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/90.pdf"
+  },
+  {
+    "number": 91,
+    "nameArabic": "الشّمس",
+    "nameEnglish": "Ash-Shams",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/91.pdf"
+  },
+  {
+    "number": 92,
+    "nameArabic": "اللیْل",
+    "nameEnglish": "Al-Lail",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/92.pdf"
+  },
+  {
+    "number": 93,
+    "nameArabic": "الضّحیٰ",
+    "nameEnglish": "Ad-Duha",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/93.pdf"
+  },
+  {
+    "number": 94,
+    "nameArabic": "الشَّرح",
+    "nameEnglish": "Ash-Sharh",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/94.pdf"
+  },
+  {
+    "number": 95,
+    "nameArabic": "التِّین",
+    "nameEnglish": "At-Tin",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/95.pdf"
+  },
+  {
+    "number": 96,
+    "nameArabic": "العَلق",
+    "nameEnglish": "Al-'Alaq",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/96.pdf"
+  },
+  {
+    "number": 97,
+    "nameArabic": "القَدر",
+    "nameEnglish": "Al-Qadr",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/97.pdf"
+  },
+  {
+    "number": 98,
+    "nameArabic": "البَیّنَة",
+    "nameEnglish": "Al-Baiyinah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/98.pdf"
+  },
+  {
+    "number": 99,
+    "nameArabic": "الزّلزَلة",
+    "nameEnglish": "Az-Zalzalah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/99.pdf"
+  },
+  {
+    "number": 100,
+    "nameArabic": "العَادیَات",
+    "nameEnglish": "Al-'Adiyat",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/100.pdf"
+  },
+  {
+    "number": 101,
+    "nameArabic": "القَارعَة",
+    "nameEnglish": "Al-Qari'ah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/101.pdf"
+  },
+  {
+    "number": 102,
+    "nameArabic": "التّکاثُر",
+    "nameEnglish": "At-Takathur",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/102.pdf"
+  },
+  {
+    "number": 103,
+    "nameArabic": "العَصر",
+    "nameEnglish": "Al-'Asr",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/103.pdf"
+  },
+  {
+    "number": 104,
+    "nameArabic": "الهُمَزة",
+    "nameEnglish": "Al-Humazah",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/104.pdf"
+  },
+  {
+    "number": 105,
+    "nameArabic": "الفِیل",
+    "nameEnglish": "Al-Fil",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/105.pdf"
+  },
+  {
+    "number": 106,
+    "nameArabic": "القُرَیش",
+    "nameEnglish": "Quraish",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/106.pdf"
+  },
+  {
+    "number": 107,
+    "nameArabic": "المَاعون",
+    "nameEnglish": "Al-Ma'un",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/107.pdf"
+  },
+  {
+    "number": 108,
+    "nameArabic": "الکَوثَر",
+    "nameEnglish": "Al-Kauthar",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/108.pdf"
+  },
+  {
+    "number": 109,
+    "nameArabic": "الکافِرون",
+    "nameEnglish": "Al-Kafirun",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/109.pdf"
+  },
+  {
+    "number": 110,
+    "nameArabic": "النّصر",
+    "nameEnglish": "An-Nasr",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/110.pdf"
+  },
+  {
+    "number": 111,
+    "nameArabic": "لهب / المَسَد",
+    "nameEnglish": "Al-Masad",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/111.pdf"
+  },
+  {
+    "number": 112,
+    "nameArabic": "الإخلاص",
+    "nameEnglish": "Al-Ikhlas",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/112.pdf"
+  },
+  {
+    "number": 113,
+    "nameArabic": "الفَلَق",
+    "nameEnglish": "Al-Falaq",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/113.pdf"
+  },
+  {
+    "number": 114,
+    "nameArabic": "النّاس",
+    "nameEnglish": "An-Nas",
+    "pdfUrl": "https://presidency.gov.mv/quran/sura/114.pdf"
+  }
+]

@@ -6,7 +6,7 @@ import { db } from './firebase';
 import Home from './pages/Home';
 import Categories from './pages/Categories';
 import Videos from './pages/Videos';
-import Notifications from './pages/Notifications';
+import Quran from './pages/Quran';
 import Profile from './pages/Profile';
 import ArticlePage from './pages/ArticlePage';
 import AdminLogin from './pages/AdminLogin';
@@ -24,7 +24,8 @@ import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
 import AdBanner from './components/AdBanner';
 import NewsTicker from './components/NewsTicker';
-import { Home as HomeIcon, FolderOpen, ChefHat, Briefcase, Cloud, Video, User } from 'lucide-react';
+import QuranVerseSlider from './components/QuranVerseSlider';
+import { Home as HomeIcon, FolderOpen, ChefHat, Briefcase, Cloud, BookOpen, User } from 'lucide-react';
 
 function App() {
   const [language, setLanguage] = useState<'en' | 'dv'>('dv');
@@ -144,6 +145,7 @@ function App() {
     <div className="min-h-screen bg-[#caf0f8] text-slate-800">
       <AdBanner />
       <NewsTicker />
+      <QuranVerseSlider />
       <DesktopNav language={language} setLanguage={setLanguage} />
       <MobileNav language={language} setLanguage={setLanguage} />
       <BottomNav
@@ -153,7 +155,7 @@ function App() {
           { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
           { label: language === 'en' ? 'Jobs' : 'ވަޒީފާ', path: '/jobs', icon: Briefcase },
           { label: language === 'en' ? 'Weather' : 'މޫސުން', path: '/weather', icon: Cloud },
-          { label: language === 'en' ? 'Videos' : 'ވީޑިއޯތައް', path: '/videos', icon: Video },
+          { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
           { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
         ]}
         activePath={location.pathname}
@@ -172,7 +174,7 @@ function App() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/categories/:categoryId" element={<Categories />} />
             <Route path="/videos" element={<Videos />} />
-            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/quran" element={<Quran />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/article/:id" element={<ArticlePage />} />
             <Route path="/jobs" element={<Jobs />} />

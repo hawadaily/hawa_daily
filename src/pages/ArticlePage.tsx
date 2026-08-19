@@ -9,7 +9,7 @@ import { auth } from '../firebase';
 import PromoBanner from '../components/PromoBanner';
 import JobsPromoSlide from '../components/JobsPromoSlide';
 import RecipeSlider from '../components/RecipeSlider';
-import PromoBannerSlider from '../components/PromoBannerSlider';
+import QuranVerseSlider from '../components/QuranVerseSlider';
 
 const getRelativeTime = (dateValue: any) => {
   let date: Date;
@@ -546,7 +546,7 @@ export default function ArticlePage() {
               })()}
             </div>
             <div className="mt-6">
-              <PromoBannerSlider />
+              <QuranVerseSlider />
             </div>
             <div className="flex flex-col gap-3 lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-5 lg:shadow-soft sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap items-center gap-3">
