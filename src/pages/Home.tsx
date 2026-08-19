@@ -48,16 +48,9 @@ export default function Home() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || '/api/jobs';
-        const response = await fetch(apiUrl, {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
-        });
-        const data = await response.json();
-        
-        if (data.success && data.jobs.length > 0) {
-          setJobs(data.jobs.slice(0, 8));
-        }
+        // Use fallback jobs data instead of API call for production
+        const { fallbackJobs } = await import('../data/fallbackJobs');
+        setJobs(fallbackJobs.slice(0, 8));
       } catch (error) {
         console.error('Error fetching jobs:', error);
       }
