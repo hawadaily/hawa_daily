@@ -182,3 +182,30 @@ export async function uploadToImgur(file: File): Promise<string> {
     throw error;
   }
 }
+
+export async function uploadVideoToImgur(file: File): Promise<string> {
+  try {
+    const formData = new FormData();
+    formData.append('video', file);
+    formData.append('type', 'file');
+
+    const response = await fetch('https://api.imgur.com/3/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Client-ID ${import.meta.env.VITE_IMGUR_CLIENT_ID}`,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    
+    if (data.success === false) {
+      throw new Error(data.data.error || 'Failed to upload video to Imgur');
+    }
+
+    return data.data.link;
+  } catch (error) {
+    console.error('Error uploading video to Imgur:', error);
+    throw error;
+  }
+}

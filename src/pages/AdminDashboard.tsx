@@ -8,7 +8,7 @@ import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
 import { postToFacebook, deleteFromFacebook, getFacebookPageInsights } from '../utils/facebook';
-import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur } from '../utils/cloudinary';
+import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur } from '../utils/cloudinary';
 
 type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'recipes';
 
@@ -428,7 +428,7 @@ export default function AdminDashboard() {
   const [imageUrl, setImageUrl] = useState('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80');
   const [videoUrl, setVideoUrl] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [videoUploadOption, setVideoUploadOption] = useState<'cloudinary' | 'github'>('cloudinary');
+  const [videoUploadOption, setVideoUploadOption] = useState<'cloudinary' | 'github' | 'imgur'>('imgur');
   const [imageUploadOption, setImageUploadOption] = useState<'cloudinary' | 'imgur'>('imgur');
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [readingTime, setReadingTime] = useState(language === 'en' ? '5 min' : '5މިނިޓް');
@@ -450,7 +450,7 @@ export default function AdminDashboard() {
   const [editAuthor, setEditAuthor] = useState('');
   const [editVideoUrl, setEditVideoUrl] = useState('');
   const [editVideoFile, setEditVideoFile] = useState<File | null>(null);
-  const [editVideoUploadOption, setEditVideoUploadOption] = useState<'cloudinary' | 'github'>('cloudinary');
+  const [editVideoUploadOption, setEditVideoUploadOption] = useState<'cloudinary' | 'github' | 'imgur'>('imgur');
   const [editImageUploadOption, setEditImageUploadOption] = useState<'cloudinary' | 'imgur'>('imgur');
   const [uploadingEditVideo, setUploadingEditVideo] = useState(false);
   const [editBody, setEditBody] = useState('');
@@ -1350,6 +1350,8 @@ export default function AdminDashboard() {
         try {
           if (videoUploadOption === 'cloudinary') {
             finalVideoUrl = await uploadVideo(videoFile, 'videos');
+          } else if (videoUploadOption === 'imgur') {
+            finalVideoUrl = await uploadVideoToImgur(videoFile);
           } else {
             finalVideoUrl = await uploadToGitHub(videoFile, videoFile.name);
           }
@@ -1549,6 +1551,8 @@ export default function AdminDashboard() {
         try {
           if (editVideoUploadOption === 'cloudinary') {
             finalVideoUrl = await uploadVideo(editVideoFile, 'videos');
+          } else if (editVideoUploadOption === 'imgur') {
+            finalVideoUrl = await uploadVideoToImgur(editVideoFile);
           } else {
             finalVideoUrl = await uploadToGitHub(editVideoFile, editVideoFile.name);
           }
@@ -2923,9 +2927,10 @@ export default function AdminDashboard() {
                 <div className="mt-2 space-y-2">
                   <select
                     value={videoUploadOption}
-                    onChange={(e) => setVideoUploadOption(e.target.value as 'cloudinary' | 'github')}
+                    onChange={(e) => setVideoUploadOption(e.target.value as 'cloudinary' | 'github' | 'imgur')}
                     className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
                   >
+                    <option value="imgur">Imgur (Recommended)</option>
                     <option value="cloudinary">Cloudinary (100GB Free)</option>
                     <option value="github">GitHub (Save Storage)</option>
                   </select>
@@ -3354,9 +3359,10 @@ export default function AdminDashboard() {
                   <div className="mt-2 space-y-2">
                     <select
                       value={editVideoUploadOption}
-                      onChange={(e) => setEditVideoUploadOption(e.target.value as 'cloudinary' | 'github')}
+                      onChange={(e) => setEditVideoUploadOption(e.target.value as 'cloudinary' | 'github' | 'imgur')}
                       className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
                     >
+                      <option value="imgur">Imgur (Recommended)</option>
                       <option value="cloudinary">Cloudinary (100GB Free)</option>
                       <option value="github">GitHub (Save Storage)</option>
                     </select>
