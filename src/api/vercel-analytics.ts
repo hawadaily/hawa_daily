@@ -1,8 +1,8 @@
 import { collection, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const VERCEL_API_TOKEN = process.env.VITE_VERCEL_API_TOKEN || process.env.VERCEL_API_TOKEN;
-const VERCEL_PROJECT_ID = process.env.VITE_VERCEL_PROJECT_ID || process.env.VERCEL_PROJECT_ID;
+const VERCEL_API_TOKEN = import.meta.env.VITE_VERCEL_API_TOKEN || import.meta.env.VERCEL_API_TOKEN;
+const VERCEL_PROJECT_ID = import.meta.env.VITE_VERCEL_PROJECT_ID || import.meta.env.VERCEL_PROJECT_ID;
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 
 interface AnalyticsData {
