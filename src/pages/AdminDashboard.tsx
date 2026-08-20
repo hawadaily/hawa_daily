@@ -2370,7 +2370,7 @@ export default function AdminDashboard() {
 
   if (user === undefined) {
     return (
-      <div className="rounded-[32px] border border-gray-200 bg-white p-8 shadow-soft text-right">
+      <div className={`rounded-[32px] border border-gray-200 bg-white p-8 shadow-soft ${language === 'dv' ? 'text-right' : 'text-left'}`} dir={language === 'dv' ? 'rtl' : 'ltr'}>
         <h2 className="text-2xl font-semibold text-gray-900">{t.loading}</h2>
       </div>
     );
@@ -2378,7 +2378,7 @@ export default function AdminDashboard() {
 
   if (user === null) {
     return (
-      <div className="rounded-[32px] border border-gray-200 bg-white p-8 shadow-soft text-right">
+      <div className={`rounded-[32px] border border-gray-200 bg-white p-8 shadow-soft ${language === 'dv' ? 'text-right' : 'text-left'}`} dir={language === 'dv' ? 'rtl' : 'ltr'}>
         <h2 className="text-2xl font-semibold text-gray-900">{t.notLoggedIn}</h2>
         <p className="mt-4 text-gray-600">{t.pleaseLogin}</p>
       </div>
@@ -2386,7 +2386,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <motion.div className="space-y-8 text-right" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+    <motion.div className={`space-y-8 ${language === 'dv' ? 'text-right' : 'text-left'}`} dir={language === 'dv' ? 'rtl' : 'ltr'} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
       {/* Header */}
       <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
