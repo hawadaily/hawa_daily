@@ -1228,12 +1228,8 @@ export default function AdminDashboard() {
     if (loadingInsights) return;
     setLoadingInsights(true);
     try {
-      const result = await getFacebookPageInsights();
-      if (result.success) {
-        setFacebookInsights(result.insights);
-      } else {
-        console.error('Failed to load Facebook insights:', result.error);
-      }
+      // Facebook insights removed
+      setFacebookInsights(null);
     } catch (error) {
       console.error('Error loading Facebook insights:', error);
     } finally {
@@ -1464,14 +1460,6 @@ export default function AdminDashboard() {
     }
 
     try {
-      // Delete from Facebook if post ID exists
-      if (facebookPostId) {
-        const fbResult = await deleteFromFacebook(facebookPostId);
-        if (!fbResult.success) {
-          console.error('Failed to delete from Facebook:', fbResult.error);
-        }
-      }
-
       // Delete from Firebase
       await deleteDoc(doc(db, 'articles', articleId));
       
@@ -4792,14 +4780,15 @@ export default function AdminDashboard() {
                   try {
                     console.log('Starting Quran data upload...');
                     const quranData = await import('../data/quran-full.json');
-                    console.log('Loaded Quran data:', quranData.default.length, 'surahs');
+                    const quranArray = Array.isArray(quranData.default) ? quranData.default : [];
+                    console.log('Loaded Quran data:', quranArray.length, 'surahs');
                     
                     const { collection, addDoc, getFirestore } = await import('firebase/firestore');
                     const db = getFirestore();
                     const quranCollection = collection(db, 'quran');
                     
                     let count = 0;
-                    for (const surah of quranData.default) {
+                    for (const surah of quranArray) {
                       await addDoc(quranCollection, surah);
                       count++;
                       if (count % 10 === 0) {
