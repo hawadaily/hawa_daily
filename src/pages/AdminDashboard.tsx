@@ -1303,11 +1303,13 @@ export default function AdminDashboard() {
       setUser(firebaseUser);
       if (firebaseUser) {
         loadDashboard();
+      } else {
+        navigate('/login');
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const handleTranslate = async () => {
     if (!englishText.trim()) {

@@ -474,9 +474,6 @@ export default function ArticlePage() {
                     }}
                   />
                 </div>
-                <div className="flex-1">
-                  <JobsPromoSlide />
-                </div>
               </div>
             </div>
 

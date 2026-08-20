@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, Briefcase, BookOpen, User } from 'lucide-react';
+import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, BookOpen, User } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import { Analytics } from '@vercel/analytics/react';
@@ -11,7 +11,6 @@ import Videos from './pages/Videos';
 import Quran from './pages/Quran';
 import Profile from './pages/Profile';
 import ArticlePage from './pages/ArticlePage';
-import Jobs from './pages/Jobs';
 import Recipes from './pages/Recipes';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -212,7 +211,6 @@ function App() {
           { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
           { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: FolderOpen },
           { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
-          { label: language === 'en' ? 'Jobs' : 'ވަޒީފާ', path: '/jobs', icon: Briefcase },
           { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
           { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
         ]}
@@ -237,7 +235,6 @@ function App() {
             <Route path="/recipes/facebook-post" element={<RecipeFacebookPost />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/article/:id" element={<ArticlePage />} />
-            <Route path="/jobs" element={<Jobs />} />
             <Route path="/recipes" element={<Recipes />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />

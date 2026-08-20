@@ -17,7 +17,7 @@ export default function AdminLogin() {
       setUser(firebaseUser);
       setLoading(false);
       if (firebaseUser) {
-        navigate('/admin/dashboard');
+        navigate('/dashboard');
       }
     });
 
@@ -30,7 +30,7 @@ export default function AdminLogin() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/admin/dashboard');
+      navigate('/dashboard');
     } catch (error) {
       setMessage('އެއްޗާ ހިތާ އައްޔާ ބުރި ނުވާ.');
     }

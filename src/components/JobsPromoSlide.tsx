@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getCompanyLogo } from '../data/companyLogos';
+import { useJobs } from '../context/JobsContext';
 
 interface Job {
   id: string;
@@ -12,29 +13,9 @@ interface Job {
 }
 
 export default function JobsPromoSlide() {
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const { jobs, loading } = useJobs();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        // Use fallback jobs data instead of API call for production
-        const { fallbackJobs } = await import('../data/fallbackJobs');
-        setJobs(fallbackJobs.slice(0, 10));
-      } catch (error) {
-        console.error('Error fetching jobs for promo:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchJobs();
-    
-    const interval = setInterval(fetchJobs, 2 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Auto-advance slides (show 2 jobs at a time, so increment by 2)
   useEffect(() => {
