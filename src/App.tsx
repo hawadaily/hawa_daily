@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, Briefcase, Cloud, BookOpen, User } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
@@ -11,9 +11,6 @@ import Videos from './pages/Videos';
 import Quran from './pages/Quran';
 import Profile from './pages/Profile';
 import ArticlePage from './pages/ArticlePage';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
-import ImageGenerator from './pages/ImageGenerator';
 import Jobs from './pages/Jobs';
 import Weather from './pages/Weather';
 import Recipes from './pages/Recipes';
@@ -21,7 +18,6 @@ import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import QuranFacebookPost from './pages/QuranFacebookPost';
 import RecipeFacebookPost from './pages/RecipeFacebookPost';
-import AdminRoute from './components/AdminRoute';
 import DesktopNav from './components/DesktopNav';
 import MobileNav from './components/MobileNav';
 import BottomNav from './components/BottomNav';
@@ -208,8 +204,8 @@ function App() {
       )}
       
       <AdBanner />
-      <NewsTicker />
-      <QuranVerseSlider />
+      {!location.pathname.includes('/facebook-post') && <NewsTicker />}
+      {!location.pathname.includes('/facebook-post') && <QuranVerseSlider />}
       <DesktopNav language={language} setLanguage={setLanguage} />
       <MobileNav language={language} setLanguage={setLanguage} />
       <BottomNav
@@ -248,9 +244,6 @@ function App() {
             <Route path="/weather" element={<Weather />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-            <Route path="/admin/image-generator" element={<AdminRoute><ImageGenerator /></AdminRoute>} />
           </Routes>
         </motion.main>
       </AnimatePresence>
