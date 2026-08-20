@@ -11,7 +11,7 @@
   ],
   "headers": [
     {
-      "source": "/api/(weather|jobs)",
+      "source": "/api/jobs",
       "headers": [
         {
           "key": "Cache-Control",
@@ -42,10 +42,6 @@
     {
       "path": "/api/jobs",
       "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/weather",
-      "schedule": "0 12 * * *"
     }
   ],
   "buildCommand": "npm run build",
