@@ -4,6 +4,7 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, Briefcase, Cloud, BookOpen, User } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
+import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import Categories from './pages/Categories';
 import Videos from './pages/Videos';
@@ -252,6 +253,7 @@ function App() {
         </motion.main>
       </AnimatePresence>
       <Footer />
+      <Analytics />
     </div>
   );
 }
