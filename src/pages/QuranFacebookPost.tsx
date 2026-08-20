@@ -346,8 +346,17 @@ export default function QuranFacebookPost() {
                     </div>
 
                     {/* Footer */}
-                    <div className="border-t border-white/30 pt-4">
+                    <div className="border-t border-white/30 pt-4 space-y-2">
                       <p className="text-sm" style={{ color: textColor }}>ހަވާ ޑެއިލީ | Hawa Daily</p>
+                      <p className="text-xs" style={{ color: textColor }}>الْقُرْآنا ގެ ترجمة އެއްކޮން ކިޔާލެއްވުމަށް</p>
+                      <p className="text-xs" style={{ color: textColor }}>www.hawadaily.com</p>
+                      <div className="flex justify-center gap-2 text-xs" style={{ color: textColor }}>
+                        <span>Facebook: Hawa Daily</span>
+                        <span>|</span>
+                        <span>Instagram: @hawadailymv</span>
+                        <span>|</span>
+                        <span>TikTok: @hawadailymv</span>
+                      </div>
                     </div>
                   </div>
                 </div>
