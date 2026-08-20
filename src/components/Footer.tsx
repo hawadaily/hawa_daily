@@ -83,12 +83,6 @@ export default function Footer() {
                 </svg>
                 ވަޒީފާ
               </Link>
-              <Link to="/weather" className="flex items-center gap-2 text-[#00b4d8] transition hover:text-[#0077b6] hover:translate-x-1">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                </svg>
-                މޫސުން
-              </Link>
               <Link to="/videos" className="flex items-center gap-2 text-[#00b4d8] transition hover:text-[#0077b6] hover:translate-x-1">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />

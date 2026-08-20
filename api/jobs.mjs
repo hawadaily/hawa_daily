@@ -5,6 +5,13 @@ import fs from 'fs';
 
 const execFileAsync = promisify(execFile);
 
+// In-memory cache for jobs data
+let jobsCache = {
+  data: null,
+  timestamp: 0,
+  ttl: 3600000, // 1 hour in milliseconds
+};
+
 const handleCors = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
@@ -254,6 +261,34 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Check cache first
+    const now = Date.now();
+    if (jobsCache.data && (now - jobsCache.timestamp) < jobsCache.ttl) {
+      console.log('Using cached jobs data');
+      res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+      return res.status(200).json({
+        success: true,
+        jobs: jobsCache.data,
+        count: jobsCache.data.length,
+        cached: true,
+      });
+    }
+
+    // In production (Vercel), use fallback data only
+    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+      const fallbackJobs = loadFallbackJobs();
+      jobsCache.data = fallbackJobs;
+      jobsCache.timestamp = now;
+      
+      res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+      return res.status(200).json({
+        success: true,
+        jobs: fallbackJobs,
+        count: fallbackJobs.length,
+      });
+    }
+
+    // Development: fetch from external sources
     const [jobMaldivesJobs, jobCenterJobs, jobsicleJobs] = await Promise.all([
       fetchJobMaldives(),
       fetchJobCenter(),
@@ -261,10 +296,12 @@ export default async function handler(req, res) {
     ]);
 
     const mergedJobs = mergeJobs(jobMaldivesJobs, jobCenterJobs, jobsicleJobs);
+    
+    // Cache the result
+    jobsCache.data = mergedJobs;
+    jobsCache.timestamp = now;
 
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
+    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
 
     return res.status(200).json({
       success: true,
@@ -273,10 +310,21 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Jobs API error:', error);
+    // Fallback to cached data on error
+    if (jobsCache.data) {
+      return res.status(200).json({
+        success: true,
+        jobs: jobsCache.data,
+        count: jobsCache.data.length,
+        fallback: true,
+      });
+    }
+    const fallbackJobs = loadFallbackJobs();
     const message = error instanceof Error ? error.message : 'Failed to fetch jobs';
     return res.status(500).json({
       success: false,
       error: message,
+      jobs: fallbackJobs,
     });
   }
 }

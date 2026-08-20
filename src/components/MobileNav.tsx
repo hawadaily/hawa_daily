@@ -76,7 +76,6 @@ export default function MobileNav({ language, setLanguage }: MobileNavProps) {
                     { to: '/', label: 'މައި ޞަފްޙާ' },
                     { to: '/categories', label: 'ބައިތައް' },
                     { to: '/jobs', label: 'ވަޒީފާ' },
-                    { to: '/weather', label: 'މޫސުން' },
                     { to: '/quran', label: 'الْقُرْآنا ترجمة' },
                     { to: '/profile', label: 'ޕްރޮފައިލް' },
                   ].map((item) => (

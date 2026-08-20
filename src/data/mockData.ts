@@ -36,7 +36,6 @@ export const categories: Category[] = [
   { id: 'education', title: 'ތަޢުލީމް', titleEn: 'Education', color: 'bg-orange-500' },
   { id: 'children', title: 'ކުޑަ ކުދީން', titleEn: 'Children', color: 'bg-pink-500' },
   { id: 'human-rights', title: 'ޙަޤީޤީ ހާދިސާ', titleEn: 'Human Rights', color: 'bg-red-500' },
-  { id: 'weather', title: 'މޫސުމް', titleEn: 'Weather', color: 'bg-blue-400' },
   { id: 'religion', title: 'ދީން', titleEn: 'Religion', color: 'bg-purple-600' },
   { id: 'tourism', title: 'ފަތުރުވެރިކަން', titleEn: 'Tourism', color: 'bg-green-500' },
 ];

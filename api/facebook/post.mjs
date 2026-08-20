@@ -1,4 +1,11 @@
-// Helper to get or refresh Facebook access token
+// Token cache to avoid refreshing on every request
+let tokenCache = {
+  token: null,
+  timestamp: 0,
+  ttl: 3600000, // 1 hour in milliseconds
+};
+
+// Helper to get or refresh Facebook access token (with caching)
 const getValidPageAccessToken = async (currentToken) => {
   const token = currentToken || process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
   const appId = process.env.FACEBOOK_APP_ID;
@@ -6,6 +13,12 @@ const getValidPageAccessToken = async (currentToken) => {
 
   if (!token || !appId || !appSecret) {
     return token || '';
+  }
+
+  // Check cache first - only refresh if cache expired
+  const now = Date.now();
+  if (tokenCache.token && (now - tokenCache.timestamp) < tokenCache.ttl) {
+    return tokenCache.token;
   }
 
   try {
@@ -18,11 +31,13 @@ const getValidPageAccessToken = async (currentToken) => {
     const response = await fetch(url.toString());
     const data = await response.json().catch(() => ({}));
 
-    if (data.access_token) {
-      return data.access_token;
-    }
-
-    return token;
+    const refreshedToken = data.access_token || token;
+    
+    // Update cache
+    tokenCache.token = refreshedToken;
+    tokenCache.timestamp = now;
+    
+    return refreshedToken;
   } catch (error) {
     console.warn('Facebook token refresh failed; using the current token.', error);
     return token;

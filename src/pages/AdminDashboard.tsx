@@ -7,7 +7,7 @@ import { auth, db } from '../firebase';
 import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
-import { postToFacebook, deleteFromFacebook, getFacebookPageInsights } from '../utils/facebook';
+
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB } from '../utils/cloudinary';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
@@ -32,7 +32,6 @@ export default function AdminDashboard() {
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [recipesVisits, setRecipesVisits] = useState(0);
   const [jobsVisits, setJobsVisits] = useState(0);
-  const [weatherVisits, setWeatherVisits] = useState(0);
   const [vercelAnalytics, setVercelAnalytics] = useState<any>(null);
   const [loadingVercelAnalytics, setLoadingVercelAnalytics] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminTab>('articles');
@@ -630,7 +629,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchPageStats = async () => {
       try {
-        const pages = ['recipes', 'jobs', 'weather'];
+        const pages = ['recipes', 'jobs'];
         const stats = await Promise.all(
           pages.map(async (page) => {
             try {
@@ -647,7 +646,6 @@ export default function AdminDashboard() {
         stats.forEach(({ page, count }) => {
           if (page === 'recipes') setRecipesVisits(count);
           if (page === 'jobs') setJobsVisits(count);
-          if (page === 'weather') setWeatherVisits(count);
         });
       } catch (error) {
         console.error('Error fetching page stats:', error);
@@ -1479,52 +1477,6 @@ export default function AdminDashboard() {
       loadDashboard();
     } catch (error) {
       setMessage(t.newsDeleteError);
-      console.error(error);
-    }
-  };
-
-  const shareArticleToFacebook = async (article: any) => {
-    const appUrl = import.meta.env.VITE_APP_URL || window.location.origin;
-    const articleUrl = `${appUrl}/article/${article.id}`;
-    const fbTitle = article.title || article.titleEn || '';
-    const fbExcerpt = article.excerpt || article.excerptEn || '';
-    const fbImage = article.image || '';
-    const message = [fbTitle, fbExcerpt].filter(Boolean).join('\n\n').trim();
-
-    // Use Facebook JavaScript SDK feed dialog with explicit content
-    if ((window as any).FB) {
-      (window as any).FB.ui({
-        method: 'feed',
-        link: articleUrl,
-        picture: fbImage,
-        name: fbTitle,
-        caption: 'ހަވާއިން ޙަބަރު',
-        description: fbExcerpt,
-      }, (response: any) => {
-        if (response && !response.error_message) {
-          updateDoc(doc(db, 'articles', article.id), { facebookPostId: 'manual-share' });
-        }
-      });
-    } else {
-      // Fallback to URL-based sharing with quote parameter
-      const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}&quote=${encodeURIComponent(message)}`;
-      window.open(facebookShareUrl, '_blank', 'width=600,height=400');
-    }
-
-    // Mark as posted (user will complete the post manually)
-    await updateDoc(doc(db, 'articles', article.id), { facebookPostId: 'manual-share' });
-    setMessage(t.postedToFb);
-  };
-
-  const handlePostToFacebook = async (article: any, event?: React.MouseEvent) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    try {
-      await shareArticleToFacebook(article);
-    } catch (error) {
-      setMessage(t.postToFbError);
       console.error(error);
     }
   };
@@ -3150,13 +3102,6 @@ export default function AdminDashboard() {
                           </button>
                         )}
                         <button
-                          type="button"
-                          onClick={(e) => handlePostToFacebook(article, e)}
-                          className="rounded-xl border border-blue-600 px-3 py-1.5 text-sm text-blue-600 transition hover:bg-blue-600/20"
-                        >
-                          {t.postToFb}
-                        </button>
-                        <button
                           onClick={() => handleEditArticle(article)}
                           className="rounded-xl border border-emerald-600 px-3 py-1.5 text-sm text-emerald-600 transition hover:bg-emerald-600/20"
                         >
@@ -3640,10 +3585,6 @@ export default function AdminDashboard() {
                 <div className="rounded-2xl bg-blue-50 p-4 border border-blue-200">
                   <p className="text-sm text-blue-700">ވަޒީފާ ޒިޔާރަތްތައް (Jobs Visits)</p>
                   <p className="mt-2 text-3xl font-bold text-blue-900">{jobsVisits}</p>
-                </div>
-                <div className="rounded-2xl bg-green-50 p-4 border border-green-200">
-                  <p className="text-sm text-green-700">ވެތަރ ޒިޔާރަތްތައް (Weather Visits)</p>
-                  <p className="mt-2 text-3xl font-bold text-green-900">{weatherVisits}</p>
                 </div>
               </div>
             </div>
