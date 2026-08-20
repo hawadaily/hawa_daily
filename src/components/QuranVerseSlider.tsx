@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import quranData from '../data/quran-full.json';
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
 
 interface Verse {
   arabic: string | null;
@@ -15,32 +15,71 @@ interface Surah {
   verses: Verse[];
 }
 
-const quranSurahs: Surah[] = quranData as Surah[];
-
 export default function QuranVerseSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [allVerses, setAllVerses] = useState<{ surah: Surah; verseIndex: number; verse: Verse }[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Flatten all verses into a single array
-    const verses: { surah: Surah; verseIndex: number; verse: Verse }[] = [];
-    quranSurahs.forEach((surah: Surah) => {
-      surah.verses.forEach((verse: Verse, index: number) => {
-        if (verse.arabic && verse.dhivehi) {
-          verses.push({ surah, verseIndex: index, verse });
-        }
-      });
-    });
-    setAllVerses(verses);
+    const fetchQuranData = async () => {
+      try {
+        const db = getFirestore();
+        const quranCollection = collection(db, 'quran');
+        const querySnapshot = await getDocs(quranCollection);
+        const quranSurahs: Surah[] = [];
+        querySnapshot.forEach((doc) => {
+          quranSurahs.push(doc.data() as Surah);
+        });
 
-    // Calculate which verse to show based on day of year
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const diff = now.getTime() - start.getTime();
-    const oneDay = 1000 * 60 * 60 * 24;
-    const dayOfYear = Math.floor(diff / oneDay);
-    setCurrentIndex(dayOfYear % verses.length);
+        // Flatten all verses into a single array
+        const verses: { surah: Surah; verseIndex: number; verse: Verse }[] = [];
+        quranSurahs.forEach((surah: Surah) => {
+          surah.verses.forEach((verse: Verse, index: number) => {
+            if (verse.arabic && verse.dhivehi) {
+              verses.push({ surah, verseIndex: index, verse });
+            }
+          });
+        });
+        setAllVerses(verses);
+
+        // Calculate which verse to show based on day of year
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = now.getTime() - start.getTime();
+        const oneDay = 1000 * 60 * 60 * 24;
+        const dayOfYear = Math.floor(diff / oneDay);
+        setCurrentIndex(dayOfYear % verses.length);
+      } catch (error) {
+        console.error('Error fetching Quran data:', error);
+        // Fallback to JSON if Firebase fails
+        try {
+          const quranData = await import('../data/quran-full.json');
+          const quranSurahs = quranData.default as Surah[];
+          const verses: { surah: Surah; verseIndex: number; verse: Verse }[] = [];
+          quranSurahs.forEach((surah: Surah) => {
+            surah.verses.forEach((verse: Verse, index: number) => {
+              if (verse.arabic && verse.dhivehi) {
+                verses.push({ surah, verseIndex: index, verse });
+              }
+            });
+          });
+          setAllVerses(verses);
+          const now = new Date();
+          const start = new Date(now.getFullYear(), 0, 0);
+          const diff = now.getTime() - start.getTime();
+          const oneDay = 1000 * 60 * 60 * 24;
+          const dayOfYear = Math.floor(diff / oneDay);
+          setCurrentIndex(dayOfYear % verses.length);
+        } catch (fallbackError) {
+          console.error('Error loading fallback Quran data:', fallbackError);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuranData();
   }, []);
 
   useEffect(() => {
@@ -53,10 +92,16 @@ export default function QuranVerseSlider() {
     return () => clearInterval(interval);
   }, [isPaused, allVerses.length]);
 
-  if (allVerses.length === 0) {
+  if (loading || allVerses.length === 0) {
     return (
       <div className="relative w-full h-32 overflow-hidden bg-gradient-to-r from-[#0077b6] to-[#00b4d8] flex items-center justify-center">
-        <div className="text-white text-center">ތައުލީން...</div>
+        <div className="text-white text-center">
+          {loading ? (
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto mb-2"></div>
+          ) : (
+            <div>ތައުލީން...</div>
+          )}
+        </div>
       </div>
     );
   }

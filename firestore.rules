@@ -74,5 +74,10 @@ service cloud.firestore {
       allow read: if true;
       allow write: if true;
     }
+
+    match /quran/{surahId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }

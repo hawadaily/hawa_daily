@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import quranData from '../data/quran-full.json';
-import { Search, BookOpen, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import { Search, BookOpen, ChevronRight, Share2 } from 'lucide-react';
 
 interface Verse {
   arabic: string | null;
@@ -16,11 +17,40 @@ interface Surah {
   verses: Verse[];
 }
 
-const quranSurahs: Surah[] = quranData as Surah[];
-
 export default function Quran() {
+  const navigate = useNavigate();
   const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [quranSurahs, setQuranSurahs] = useState<Surah[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchQuranData = async () => {
+      try {
+        const db = getFirestore();
+        const quranCollection = collection(db, 'quran');
+        const querySnapshot = await getDocs(quranCollection);
+        const surahs: Surah[] = [];
+        querySnapshot.forEach((doc) => {
+          surahs.push(doc.data() as Surah);
+        });
+        setQuranSurahs(surahs);
+      } catch (error) {
+        console.error('Error fetching Quran data:', error);
+        // Fallback to JSON if Firebase fails
+        try {
+          const quranData = await import('../data/quran-full.json');
+          setQuranSurahs(quranData.default as Surah[]);
+        } catch (fallbackError) {
+          console.error('Error loading fallback Quran data:', fallbackError);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuranData();
+  }, []);
 
   const filteredSurahs: { surah: Surah; verseIndex: number; verse: Verse }[] = useMemo(() => {
     if (!searchQuery) return [];
@@ -56,6 +86,17 @@ export default function Quran() {
     setSearchQuery(query);
     setSelectedSurah(null);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-sky-500 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading Quran data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4">
@@ -190,15 +231,24 @@ export default function Quran() {
                     <h2 className="text-2xl font-bold text-slate-800" dir="rtl">
                       {selectedSurah.nameArabic}
                     </h2>
-                    <a
-                      href={selectedSurah.pdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition font-medium"
-                    >
-                      <span>PDF</span>
-                      <BookOpen className="w-5 h-5" />
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => navigate('/quran/facebook-post')}
+                        className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition font-medium"
+                      >
+                        <span>Facebook Post</span>
+                        <Share2 className="w-5 h-5" />
+                      </button>
+                      <a
+                        href={selectedSurah.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition font-medium"
+                      >
+                        <span>PDF</span>
+                        <BookOpen className="w-5 h-5" />
+                      </a>
+                    </div>
                   </div>
                   <div className="space-y-6">
                     {selectedSurah.verses.map((verse, index) => {

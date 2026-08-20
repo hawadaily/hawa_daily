@@ -18,6 +18,7 @@ import Weather from './pages/Weather';
 import Recipes from './pages/Recipes';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import QuranFacebookPost from './pages/QuranFacebookPost';
 import AdminRoute from './components/AdminRoute';
 import DesktopNav from './components/DesktopNav';
 import MobileNav from './components/MobileNav';
@@ -236,6 +237,7 @@ function App() {
             <Route path="/categories/:categoryId" element={<Categories />} />
             <Route path="/videos" element={<Videos />} />
             <Route path="/quran" element={<Quran />} />
+            <Route path="/quran/facebook-post" element={<QuranFacebookPost />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/article/:id" element={<ArticlePage />} />
             <Route path="/jobs" element={<Jobs />} />

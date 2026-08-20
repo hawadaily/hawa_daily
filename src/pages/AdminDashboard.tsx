@@ -10,7 +10,7 @@ import { getCompanyLogo } from '../data/companyLogos';
 import { postToFacebook, deleteFromFacebook, getFacebookPageInsights } from '../utils/facebook';
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB } from '../utils/cloudinary';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'recipes';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'recipes' | 'quran';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -561,6 +561,8 @@ export default function AdminDashboard() {
   const [importingHedhikaa, setImportingHedhikaa] = useState(false);
   const [importingNadiyasKitchen, setImportingNadiyasKitchen] = useState(false);
   const [importingLonumedhu, setImportingLonumedhu] = useState(false);
+  const [bulkUploadingImages, setBulkUploadingImages] = useState(false);
+  const [bulkImageFiles, setBulkImageFiles] = useState<File[]>([]);
 
   // Live preview update
   useEffect(() => {
@@ -1957,6 +1959,20 @@ export default function AdminDashboard() {
     setSubmittingRecipe(true);
 
     try {
+      let imageUrl = recipeImageUrl || '/images/placeholder.jpg';
+      
+      // Upload image to ImgBB if a file is selected
+      if (recipeImage && !recipeImageUrl.startsWith('http')) {
+        try {
+          setMessage('Uploading image to CDN...');
+          imageUrl = await uploadToImgBB(recipeImage);
+          setRecipeImageUrl(imageUrl);
+        } catch (uploadError) {
+          console.error('Error uploading image to ImgBB:', uploadError);
+          setMessage('Failed to upload image. Using local preview.');
+        }
+      }
+
       const ingredientsDv = recipeIngredientsDv.split('\n').filter(i => i.trim());
       const ingredientsEn = recipeIngredientsEn.split('\n').filter(i => i.trim());
 
@@ -1964,7 +1980,7 @@ export default function AdminDashboard() {
         id: editingRecipe ? editingRecipe.id : `recipe-${Date.now()}`,
         titleDv: recipeTitleDv,
         titleEn: recipeTitleEn,
-        image: recipeImageUrl || '/images/placeholder.jpg',
+        image: imageUrl,
         category: recipeCategory,
         prepTime: recipePrepTime,
         cookTime: recipeCookTime,
@@ -2105,6 +2121,54 @@ export default function AdminDashboard() {
       setMessage('Error importing nadiyaskitchen recipes. Please try again.');
     } finally {
       setImportingNadiyasKitchen(false);
+    }
+  };
+
+  const handleBulkImageUpload = async () => {
+    if (bulkImageFiles.length === 0) {
+      setMessage('Please select images to upload.');
+      return;
+    }
+
+    setBulkUploadingImages(true);
+    setMessage(`Uploading ${bulkImageFiles.length} images to CDN...`);
+
+    try {
+      const uploadResults = [];
+      
+      for (let i = 0; i < bulkImageFiles.length; i++) {
+        const file = bulkImageFiles[i];
+        try {
+          const cdnUrl = await uploadToImgBB(file);
+          uploadResults.push({
+            fileName: file.name,
+            cdnUrl: cdnUrl,
+            success: true
+          });
+          setMessage(`Uploaded ${i + 1}/${bulkImageFiles.length} images...`);
+        } catch (error) {
+          console.error(`Error uploading ${file.name}:`, error);
+          uploadResults.push({
+            fileName: file.name,
+            cdnUrl: null,
+            success: false
+          });
+        }
+      }
+
+      const successCount = uploadResults.filter(r => r.success).length;
+      const failCount = uploadResults.filter(r => !r.success).length;
+      
+      setMessage(`Successfully uploaded ${successCount} images. ${failCount > 0 ? `${failCount} failed.` : ''}`);
+      
+      // Save upload results to console for reference
+      console.log('Bulk upload results:', uploadResults);
+    } catch (error) {
+      console.error('Error in bulk upload:', error);
+      setMessage('Error uploading images. Please try again.');
+    } finally {
+      setBulkUploadingImages(false);
+      setBulkImageFiles([]);
     }
   };
 
@@ -2405,7 +2469,7 @@ export default function AdminDashboard() {
       <>
         {/* Tabs */}
         <div className="flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'recipes'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'recipes', 'quran'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -2425,6 +2489,7 @@ export default function AdminDashboard() {
               {tab === 'flyers' && t.jobFlyers}
               {tab === 'quotes' && t.quotePosters}
               {tab === 'recipes' && t.recipes}
+              {tab === 'quran' && 'ޤުރްއާން (Quran)'}
             </button>
           ))}
         </div>
@@ -4298,7 +4363,7 @@ export default function AdminDashboard() {
                 <h3 className="text-2xl font-bold text-gray-900">{t.recipes}</h3>
                 <p className="mt-2 text-sm text-gray-600">{t.recipesDesc}</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <button
                   onClick={handleImportLonumedhuRecipes}
                   disabled={importingLonumedhu}
@@ -4509,6 +4574,41 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              {/* Bulk Image Upload Section */}
+              <div className="border border-gray-200 rounded-2xl p-4 bg-gradient-to-br from-blue-50 to-indigo-50">
+                <h4 className="text-sm font-semibold text-gray-700 mb-4">Bulk Image Upload to CDN</h4>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">Select multiple recipe images to upload to ImgBB CDN</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        setBulkImageFiles(files);
+                      }}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    />
+                  </div>
+                  {bulkImageFiles.length > 0 && (
+                    <div className="text-sm text-gray-600">
+                      Selected {bulkImageFiles.length} image{bulkImageFiles.length !== 1 ? 's' : ''}
+                    </div>
+                  )}
+                  <button
+                    onClick={handleBulkImageUpload}
+                    disabled={bulkUploadingImages || bulkImageFiles.length === 0}
+                    className="w-full rounded-full bg-indigo-500 px-6 py-3 font-semibold text-white transition hover:bg-indigo-600 disabled:opacity-50"
+                  >
+                    {bulkUploadingImages ? 'Uploading...' : `Upload ${bulkImageFiles.length} Images to CDN`}
+                  </button>
+                  <p className="text-xs text-gray-500">
+                    Images will be uploaded to ImgBB CDN. Check console for upload results with CDN URLs.
+                  </p>
+                </div>
+              </div>
+
               {/* Recipes List */}
               <div className="border border-gray-200 rounded-2xl p-4 bg-gray-50">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4">Existing Recipes</h4>
@@ -4540,6 +4640,88 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Quran Tab */}
+        {activeTab === 'quran' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">ޤުރްއާން (Quran)</h3>
+                <p className="mt-2 text-sm text-gray-600">Generate Facebook posts with Arabic and Dhivehi translations</p>
+              </div>
+              <button
+                onClick={() => window.open('/quran/facebook-post', '_blank')}
+                className="rounded-full bg-sky-500 px-6 py-3 font-semibold text-white transition hover:bg-sky-600"
+              >
+                Open Quran Post Generator
+              </button>
+            </div>
+
+            <div className="mt-6 border border-gray-200 rounded-2xl p-6 bg-gradient-to-br from-slate-50 to-blue-50">
+              <h4 className="text-lg font-semibold text-gray-800 mb-4">Features:</h4>
+              <ul className="space-y-2 text-gray-700">
+                <li className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-sky-500 rounded-full"></span>
+                  Select any Surah from the Quran
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-sky-500 rounded-full"></span>
+                  Choose specific verses to create posts
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-sky-500 rounded-full"></span>
+                  Download each verse as an image
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-sky-500 rounded-full"></span>
+                  Arabic text with Dhivehi translation
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-sky-500 rounded-full"></span>
+                  Perfect for Facebook sharing
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-6 border border-gray-200 rounded-2xl p-6 bg-gradient-to-br from-amber-50 to-orange-50">
+              <h4 className="text-lg font-semibold text-gray-800 mb-4">Data Management</h4>
+              <button
+                onClick={async () => {
+                  try {
+                    console.log('Starting Quran data upload...');
+                    const quranData = await import('../data/quran-full.json');
+                    console.log('Loaded Quran data:', quranData.default.length, 'surahs');
+                    
+                    const { collection, addDoc, getFirestore } = await import('firebase/firestore');
+                    const db = getFirestore();
+                    const quranCollection = collection(db, 'quran');
+                    
+                    let count = 0;
+                    for (const surah of quranData.default) {
+                      await addDoc(quranCollection, surah);
+                      count++;
+                      if (count % 10 === 0) {
+                        console.log(`Uploaded ${count} surahs...`);
+                      }
+                    }
+                    
+                    console.log(`Successfully uploaded all ${count} surahs to Firebase Firestore`);
+                    alert(`Successfully uploaded ${count} surahs to Firebase Firestore`);
+                  } catch (error) {
+                    console.error('Error uploading Quran data:', error);
+                    alert('Error uploading Quran data. Check console for details.');
+                  }
+                }}
+                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 px-6 py-3 rounded-xl font-semibold text-white transition-all"
+              >
+                Upload Quran Data to Firebase
+              </button>
+              <p className="mt-2 text-xs text-gray-600">
+                Uploads quran-full.json to Firebase Firestore collection 'quran' to reduce bundle size
+              </p>
             </div>
           </div>
         )}
