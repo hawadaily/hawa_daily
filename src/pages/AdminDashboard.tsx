@@ -9,6 +9,7 @@ import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
 import { postToFacebook, deleteFromFacebook, getFacebookPageInsights } from '../utils/facebook';
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB } from '../utils/cloudinary';
+import { getVercelAnalytics } from '../api/vercel-analytics';
 
 type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'recipes' | 'quran';
 
@@ -32,6 +33,8 @@ export default function AdminDashboard() {
   const [recipesVisits, setRecipesVisits] = useState(0);
   const [jobsVisits, setJobsVisits] = useState(0);
   const [weatherVisits, setWeatherVisits] = useState(0);
+  const [vercelAnalytics, setVercelAnalytics] = useState<any>(null);
+  const [loadingVercelAnalytics, setLoadingVercelAnalytics] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminTab>('articles');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [language, setLanguage] = useState<'en' | 'dv'>('dv');
@@ -1239,6 +1242,29 @@ export default function AdminDashboard() {
       setLoadingInsights(false);
     }
     return false;
+  };
+
+  // Load Vercel Analytics
+  const loadVercelAnalytics = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+    }
+    if (loadingVercelAnalytics) return;
+    setLoadingVercelAnalytics(true);
+    try {
+      const result = await getVercelAnalytics();
+      if (result) {
+        setVercelAnalytics(result);
+      } else {
+        console.error('Failed to load Vercel Analytics');
+      }
+    } catch (error) {
+      console.error('Error loading Vercel Analytics:', error);
+    } finally {
+      setLoadingVercelAnalytics(false);
+    }
   };
 
   // Helper function to parse user agent for old records
@@ -3525,7 +3551,7 @@ export default function AdminDashboard() {
 
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-4">
             <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
               <h3 className="text-xl font-semibold text-gray-900">{t.analytics}</h3>
               
@@ -3665,6 +3691,123 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="rounded-2xl bg-gray-100 p-4">
                     <p className="text-sm text-gray-600">{loadingInsights ? t.loadingInsights : 'Click refresh to load insights'}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-gray-900">Vercel Analytics</h3>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.nativeEvent.stopImmediatePropagation();
+                    loadVercelAnalytics();
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      e.nativeEvent.stopImmediatePropagation();
+                      loadVercelAnalytics();
+                    }
+                  }}
+                  className={`rounded-2xl border border-gray-300 bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-gray-200 cursor-pointer select-none ${loadingVercelAnalytics ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {loadingVercelAnalytics ? 'Loading...' : 'Refresh'}
+                </div>
+              </div>
+              <div className="mt-6 space-y-4">
+                {vercelAnalytics ? (
+                  <>
+                    <div className="rounded-2xl bg-sky-50 p-4 border border-sky-200">
+                      <p className="text-sm text-sky-700">Visitors</p>
+                      <p className="mt-2 text-3xl font-bold text-sky-900">{vercelAnalytics.visitors}</p>
+                    </div>
+                    <div className="rounded-2xl bg-gray-100 p-4">
+                      <p className="text-sm text-gray-600">Page Views</p>
+                      <p className="mt-2 text-3xl font-bold text-gray-900">{vercelAnalytics.pageViews}</p>
+                    </div>
+                    <div className="rounded-2xl bg-gray-100 p-4">
+                      <p className="text-sm text-gray-600">Bounce Rate</p>
+                      <p className="mt-2 text-3xl font-bold text-gray-900">{vercelAnalytics.bounceRate}%</p>
+                    </div>
+                    
+                    {/* Top Pages */}
+                    <div className="rounded-2xl bg-gray-100 p-4">
+                      <p className="text-sm text-gray-600 mb-3">Top Pages</p>
+                      <div className="space-y-2">
+                        {vercelAnalytics.topPages.slice(0, 5).map((page: any, index: number) => (
+                          <div key={index} className="flex justify-between items-center text-sm">
+                            <span className="text-gray-700 truncate flex-1">{page.path}</span>
+                            <span className="font-semibold text-gray-900 ml-2">{page.visitors}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Referrers */}
+                    <div className="rounded-2xl bg-gray-100 p-4">
+                      <p className="text-sm text-gray-600 mb-3">Referrers</p>
+                      <div className="space-y-2">
+                        {vercelAnalytics.referrers.slice(0, 5).map((ref: any, index: number) => (
+                          <div key={index} className="flex justify-between items-center text-sm">
+                            <span className="text-gray-700 truncate flex-1">{ref.referrer}</span>
+                            <span className="font-semibold text-gray-900 ml-2">{ref.visitors}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Countries */}
+                    <div className="rounded-2xl bg-gray-100 p-4">
+                      <p className="text-sm text-gray-600 mb-3">Countries</p>
+                      <div className="space-y-2">
+                        {vercelAnalytics.countries.slice(0, 5).map((country: any, index: number) => (
+                          <div key={index} className="flex justify-between items-center text-sm">
+                            <span className="text-gray-700 truncate flex-1">{country.country}</span>
+                            <span className="font-semibold text-gray-900 ml-2">{country.percentage}%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Devices */}
+                    <div className="rounded-2xl bg-gray-100 p-4">
+                      <p className="text-sm text-gray-600 mb-3">Devices</p>
+                      <div className="space-y-2">
+                        {vercelAnalytics.devices.map((device: any, index: number) => (
+                          <div key={index} className="flex justify-between items-center text-sm">
+                            <span className="text-gray-700 truncate flex-1">{device.device}</span>
+                            <span className="font-semibold text-gray-900 ml-2">{device.percentage}%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Operating Systems */}
+                    <div className="rounded-2xl bg-gray-100 p-4">
+                      <p className="text-sm text-gray-600 mb-3">Operating Systems</p>
+                      <div className="space-y-2">
+                        {vercelAnalytics.operatingSystems.map((os: any, index: number) => (
+                          <div key={index} className="flex justify-between items-center text-sm">
+                            <span className="text-gray-700 truncate flex-1">{os.os}</span>
+                            <span className="font-semibold text-gray-900 ml-2">{os.percentage}%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-gray-500 mt-2">
+                      Last updated: {new Date(vercelAnalytics.lastUpdated).toLocaleString()}
+                    </p>
+                  </>
+                ) : (
+                  <div className="rounded-2xl bg-gray-100 p-4">
+                    <p className="text-sm text-gray-600">{loadingVercelAnalytics ? 'Loading Vercel Analytics...' : 'Click refresh to load Vercel Analytics'}</p>
                   </div>
                 )}
               </div>
@@ -4657,6 +4800,19 @@ export default function AdminDashboard() {
                 className="rounded-full bg-sky-500 px-6 py-3 font-semibold text-white transition hover:bg-sky-600"
               >
                 Open Quran Post Generator
+              </button>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-6">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">ރަހަ ފޭސްބުކް ޕޯސްޓް (Recipe Facebook Post)</h3>
+                <p className="mt-2 text-sm text-gray-600">Generate Facebook posts for recipes with images and details</p>
+              </div>
+              <button
+                onClick={() => window.open('/recipes/facebook-post', '_blank')}
+                className="rounded-full bg-emerald-500 px-6 py-3 font-semibold text-white transition hover:bg-emerald-600"
+              >
+                Open Recipe Post Generator
               </button>
             </div>
 
