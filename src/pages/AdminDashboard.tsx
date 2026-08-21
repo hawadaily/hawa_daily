@@ -431,7 +431,7 @@ export default function AdminDashboard() {
   const [videoUrl, setVideoUrl] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUploadOption, setVideoUploadOption] = useState<'cloudinary' | 'github'>('github');
-  const [imageUploadOption, setImageUploadOption] = useState<'imgbb'>('imgbb');
+  const [imageUploadOption, setImageUploadOption] = useState<'imgbb' | 'cloudinary'>('imgbb');
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [readingTime, setReadingTime] = useState(language === 'en' ? '5 min' : '5މިނިޓް');
   const [body, setBody] = useState('');
@@ -453,7 +453,7 @@ export default function AdminDashboard() {
   const [editVideoUrl, setEditVideoUrl] = useState('');
   const [editVideoFile, setEditVideoFile] = useState<File | null>(null);
   const [editVideoUploadOption, setEditVideoUploadOption] = useState<'cloudinary' | 'github'>('github');
-  const [editImageUploadOption, setEditImageUploadOption] = useState<'imgbb'>('imgbb');
+  const [editImageUploadOption, setEditImageUploadOption] = useState<'imgbb' | 'cloudinary'>('imgbb');
   const [uploadingEditVideo, setUploadingEditVideo] = useState(false);
   const [editBody, setEditBody] = useState('');
   const [editBodyEn, setEditBodyEn] = useState('');
@@ -1353,7 +1353,16 @@ export default function AdminDashboard() {
       if (articleFile) {
         setUploadingArticle(true);
         try {
-          finalImageUrl = await uploadToImgBB(articleFile);
+          if (imageUploadOption === 'imgbb') {
+            try {
+              finalImageUrl = await uploadToImgBB(articleFile);
+            } catch (imgbbError) {
+              console.error('ImgBB upload failed, trying Cloudinary:', imgbbError);
+              finalImageUrl = await uploadImage(articleFile, 'articles');
+            }
+          } else {
+            finalImageUrl = await uploadImage(articleFile, 'articles');
+          }
         } catch (uploadError) {
           setMessage(t.newsError + ': Failed to upload image');
           setSubmitting(false);
@@ -1495,7 +1504,16 @@ export default function AdminDashboard() {
       if (editArticleFile) {
         setUploadingEditArticle(true);
         try {
-          finalImageUrl = await uploadToImgBB(editArticleFile);
+          if (editImageUploadOption === 'imgbb') {
+            try {
+              finalImageUrl = await uploadToImgBB(editArticleFile);
+            } catch (imgbbError) {
+              console.error('ImgBB upload failed, trying Cloudinary:', imgbbError);
+              finalImageUrl = await uploadImage(editArticleFile, 'articles');
+            }
+          } else {
+            finalImageUrl = await uploadImage(editArticleFile, 'articles');
+          }
         } catch (uploadError) {
           setMessage(t.newsUpdateError + ': Failed to upload image');
           setUploadingEditArticle(false);
@@ -2558,14 +2576,25 @@ export default function AdminDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700">Upload Image</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setArticleFile(e.target.files?.[0] || null)}
+                  <label className="block text-sm font-semibold text-gray-700">Image Upload Service</label>
+                  <select
+                    value={imageUploadOption}
+                    onChange={(e) => setImageUploadOption(e.target.value as 'imgbb' | 'cloudinary')}
                     className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                  />
+                  >
+                    <option value="imgbb">ImgBB (Free, Unlimited)</option>
+                    <option value="cloudinary">Cloudinary (New Account)</option>
+                  </select>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">Upload Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setArticleFile(e.target.files?.[0] || null)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                />
               </div>
 
               {/* Image Generator Section */}
