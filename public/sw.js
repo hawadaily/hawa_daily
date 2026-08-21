@@ -27,37 +27,28 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  const isApiRequest = requestURL.pathname.startsWith('/api/') || requestURL.pathname === '/jobs-fallback.json';
+  const isApiRequest = requestURL.pathname.startsWith('/api/');
   const isNavigationRequest = event.request.mode === 'navigate' || requestURL.pathname === '/';
   const isStaticAsset = /\.(?:js|css|png|jpg|jpeg|svg|webp|ico|json|ttf|woff2?)$/i.test(requestURL.pathname);
 
-  event.respondWith(
-    (isApiRequest || isNavigationRequest || isStaticAsset
-      ? fetch(event.request)
-          .then((networkResponse) => {
-            if (networkResponse.ok && (isApiRequest || isNavigationRequest || isStaticAsset)) {
-              const responseToCache = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-            }
-            return networkResponse;
-          })
-          .catch(() => caches.match(event.request).then((cachedResponse) => cachedResponse || caches.match('/favicon.svg')))
-      : caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          return fetch(event.request)
-            .then((networkResponse) => {
-              return caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, networkResponse.clone());
-                return networkResponse;
-              });
-            })
-            .catch(() => caches.match('/favicon.svg'));
-        }))
-  );
+  event.respondWith((async () => {
+    const cachedResponse = await caches.match(event.request);
+
+    if (isStaticAsset && cachedResponse) {
+      return cachedResponse;
+    }
+
+    try {
+      const networkResponse = await fetch(event.request);
+      if (networkResponse.ok && (isApiRequest || isNavigationRequest || isStaticAsset)) {
+        const cache = await caches.open(CACHE_NAME);
+        await cache.put(event.request, networkResponse.clone());
+      }
+      return networkResponse;
+    } catch {
+      return cachedResponse || caches.match('/favicon.svg');
+    }
+  })());
 });
 
 self.addEventListener('activate', (event) => {

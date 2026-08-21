@@ -33,7 +33,7 @@ root.render(
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').then((registration) => {
-      registration.update();
+      console.info('Service worker registered:', registration.scope);
     }).catch(console.error);
   });
 }

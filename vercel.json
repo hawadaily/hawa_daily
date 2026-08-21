@@ -19,7 +19,7 @@
       "status": 404
     },
     {
-      "src": "/api/(?!jobs).*",
+      "src": "/api/(?!jobs(?:/|$)|facebook(?:/|$)|visitors(?:/|$)).*",
       "status": 404
     },
     {
