@@ -4,10 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { db } from '../firebase';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { Article, categories } from '../data/mockData';
-import { Recipe } from '../data/recipes';
 import ArticleCard from '../components/ArticleCard';
 import PromoBanner from '../components/PromoBanner';
-import RecipeSlider from '../components/RecipeSlider';
 import SiteStats from '../components/SiteStats';
 
 export default function Home() {
@@ -16,8 +14,6 @@ export default function Home() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(8);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [language, setLanguage] = useState<'dv' | 'en'>('dv');
 
   // Fetch articles with periodic updates instead of real-time listeners
   useEffect(() => {
@@ -48,21 +44,6 @@ export default function Home() {
     const interval = setInterval(fetchArticles, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const recipesQuery = query(collection(db, 'recipes'), orderBy('id'));
-        const snapshot = await getDocs(recipesQuery);
-        const recipesData = snapshot.docs.map(doc => doc.data() as Recipe);
-        setRecipes(recipesData);
-      } catch (error) {
-        console.error('Error fetching recipes:', error);
-      }
-    };
-
-    fetchRecipes();
   }, []);
 
   const featuredArticles = useMemo(() => articlesState.filter((article) => article.featured), [articlesState]);
@@ -168,18 +149,6 @@ export default function Home() {
             ))}
           </div>
         </div>
-        {/* Sidebar - Recipe Slider */}
-        <aside className="hidden lg:block lg:h-[512px]">
-          <div className="rounded-2xl border border-[#90e0ef] bg-white p-5 shadow-lg h-full overflow-hidden flex flex-col">
-            <RecipeSlider 
-              recipes={recipes} 
-              language={language}
-              onViewDetails={(recipe) => {
-                window.location.href = `/recipes`;
-              }}
-            />
-          </div>
-        </aside>
       </section>
 
       {/* Middle Promo Banner */}

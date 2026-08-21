@@ -8,7 +8,6 @@ import { doc, getDoc, collection, getDocs, query, where, orderBy, limit, addDoc,
 import { auth } from '../firebase';
 import PromoBanner from '../components/PromoBanner';
 import JobsPromoSlide from '../components/JobsPromoSlide';
-import RecipeSlider from '../components/RecipeSlider';
 import QuranVerseSlider from '../components/QuranVerseSlider';
 
 const getRelativeTime = (dateValue: any) => {
@@ -54,8 +53,6 @@ export default function ArticlePage() {
   const [commentName, setCommentName] = useState('');
   const [showComments, setShowComments] = useState(false);
   const [commentReactions, setCommentReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
-  const [recipes, setRecipes] = useState<any[]>([]);
-  const [language, setLanguage] = useState<'dv' | 'en'>('dv');
 
   useEffect(() => {
     if (!id) {
@@ -158,22 +155,6 @@ export default function ArticlePage() {
 
     fetchArticle();
   }, [id]);
-
-  // Fetch recipes for RecipeSlider
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const recipesQuery = query(collection(db, 'recipes'), orderBy('id'), limit(5));
-        const snapshot = await getDocs(recipesQuery);
-        const recipesData = snapshot.docs.map(doc => doc.data());
-        setRecipes(recipesData);
-      } catch (error) {
-        console.error('Error fetching recipes:', error);
-      }
-    };
-
-    fetchRecipes();
-  }, []);
 
   // Load comments when comments section is opened
   useEffect(() => {
@@ -460,21 +441,6 @@ export default function ArticlePage() {
           <div className="space-y-4">
             <div className="rounded-2xl overflow-hidden bg-slate-100 shadow-soft">
               <img src={article.image} alt={article.title} className="h-[360px] w-full object-cover" />
-            </div>
-
-            {/* Narrow Promotion Banner - Jobs & Recipes */}
-            <div className="rounded-2xl border border-[#90e0ef] bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 p-3 shadow-soft">
-              <div className="flex gap-3">
-                <div className="flex-1">
-                  <RecipeSlider
-                    recipes={recipes}
-                    language={language}
-                    onViewDetails={(recipe) => {
-                      window.location.href = `/recipes`;
-                    }}
-                  />
-                </div>
-              </div>
             </div>
 
             {article.video && (
