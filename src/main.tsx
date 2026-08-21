@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
-import { JobsProvider } from './context/JobsContext';
 import './index.css';
 
 // Set appropriate manifest based on current path
@@ -24,11 +23,9 @@ const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
   <React.StrictMode>
     <HelmetProvider>
-      <JobsProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </JobsProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </HelmetProvider>
   </React.StrictMode>
 );
