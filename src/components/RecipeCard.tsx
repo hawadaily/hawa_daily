@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Recipe } from '../data/recipes';
+import { IMAGE_FALLBACK } from '../utils/imageFallback';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -60,7 +61,8 @@ export default function RecipeCard({ recipe, onClick, language }: RecipeCardProp
           alt={title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           onError={(e) => {
-            e.currentTarget.src = '/images/placeholder.jpg';
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = IMAGE_FALLBACK;
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

@@ -1927,7 +1927,7 @@ export default function AdminDashboard() {
     setSubmittingRecipe(true);
 
     try {
-      let imageUrl = recipeImageUrl || '/images/placeholder.jpg';
+      let imageUrl = recipeImageUrl || '';
       
       // Upload image to ImgBB if a file is selected
       if (recipeImage && !recipeImageUrl.startsWith('http')) {

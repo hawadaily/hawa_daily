@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import RecipeCard from '../components/RecipeCard';
+import { IMAGE_FALLBACK } from '../utils/imageFallback';
 import { db } from '../firebase';
 import { collection, getDocs, query, orderBy, doc, updateDoc, increment, setDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -281,7 +282,8 @@ export default function Recipes() {
                   alt={language === 'dv' ? selectedRecipe.titleDv : selectedRecipe.titleEn}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.currentTarget.src = '/images/placeholder.jpg';
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = IMAGE_FALLBACK;
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />

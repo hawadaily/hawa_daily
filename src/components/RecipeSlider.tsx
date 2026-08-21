@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Recipe } from '../data/recipes';
+import { IMAGE_FALLBACK } from '../utils/imageFallback';
 
 interface RecipeSliderProps {
   recipes: Recipe[];
@@ -75,7 +76,8 @@ export default function RecipeSlider({ recipes, onViewDetails, language = 'dv' }
                 alt={title}
                 className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg shadow-lg"
                 onError={(e) => {
-                  e.currentTarget.src = '/images/placeholder.jpg';
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = IMAGE_FALLBACK;
                 }}
               />
             </div>
