@@ -222,8 +222,15 @@ export async function uploadToImgBB(file: File): Promise<string> {
 
     const data = await response.json();
     
-    if (data.success === false) {
-      throw new Error(data.error?.message || 'Failed to upload to ImgBB');
+    console.log('ImgBB response:', data);
+    
+    if (!response.ok || data.success === false) {
+      const errorMessage = data.error?.message || data.error || 'Failed to upload to ImgBB';
+      throw new Error(errorMessage);
+    }
+
+    if (!data.data || !data.data.url) {
+      throw new Error('Invalid response from ImgBB: missing URL');
     }
 
     return data.data.url;

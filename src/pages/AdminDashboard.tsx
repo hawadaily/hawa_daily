@@ -431,7 +431,7 @@ export default function AdminDashboard() {
   const [videoUrl, setVideoUrl] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUploadOption, setVideoUploadOption] = useState<'cloudinary' | 'github'>('github');
-  const [imageUploadOption, setImageUploadOption] = useState<'cloudinary' | 'imgbb'>('imgbb');
+  const [imageUploadOption, setImageUploadOption] = useState<'imgbb'>('imgbb');
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [readingTime, setReadingTime] = useState(language === 'en' ? '5 min' : '5މިނިޓް');
   const [body, setBody] = useState('');
@@ -453,7 +453,7 @@ export default function AdminDashboard() {
   const [editVideoUrl, setEditVideoUrl] = useState('');
   const [editVideoFile, setEditVideoFile] = useState<File | null>(null);
   const [editVideoUploadOption, setEditVideoUploadOption] = useState<'cloudinary' | 'github'>('github');
-  const [editImageUploadOption, setEditImageUploadOption] = useState<'cloudinary' | 'imgbb'>('imgbb');
+  const [editImageUploadOption, setEditImageUploadOption] = useState<'imgbb'>('imgbb');
   const [uploadingEditVideo, setUploadingEditVideo] = useState(false);
   const [editBody, setEditBody] = useState('');
   const [editBodyEn, setEditBodyEn] = useState('');
@@ -1353,11 +1353,7 @@ export default function AdminDashboard() {
       if (articleFile) {
         setUploadingArticle(true);
         try {
-          if (imageUploadOption === 'imgbb') {
-            finalImageUrl = await uploadToImgBB(articleFile);
-          } else {
-            finalImageUrl = await uploadImage(articleFile, 'articles');
-          }
+          finalImageUrl = await uploadToImgBB(articleFile);
         } catch (uploadError) {
           setMessage(t.newsError + ': Failed to upload image');
           setSubmitting(false);
@@ -1499,11 +1495,7 @@ export default function AdminDashboard() {
       if (editArticleFile) {
         setUploadingEditArticle(true);
         try {
-          if (editImageUploadOption === 'imgbb') {
-            finalImageUrl = await uploadToImgBB(editArticleFile);
-          } else {
-            finalImageUrl = await uploadImage(editArticleFile, 'articles');
-          }
+          finalImageUrl = await uploadToImgBB(editArticleFile);
         } catch (uploadError) {
           setMessage(t.newsUpdateError + ': Failed to upload image');
           setUploadingEditArticle(false);
@@ -2565,18 +2557,6 @@ export default function AdminDashboard() {
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700">Image Upload Service</label>
-                  <select
-                    value={imageUploadOption}
-                    onChange={(e) => setImageUploadOption(e.target.value as 'cloudinary' | 'imgbb')}
-                    className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                  >
-                    <option value="imgbb">ImgBB (Free, Unlimited)</option>
-                    <option value="cloudinary">Cloudinary (Over Limit)</option>
-                  </select>
-                </div>
-              </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700">Upload Image</label>
                 <input
