@@ -7,7 +7,6 @@ import { db } from '../firebase';
 import { doc, getDoc, collection, getDocs, query, where, orderBy, limit, addDoc, deleteDoc, setDoc, updateDoc, getDocsFromCache } from 'firebase/firestore';
 import { auth } from '../firebase';
 import PromoBanner from '../components/PromoBanner';
-import JobsPromoSlide from '../components/JobsPromoSlide';
 import QuranVerseSlider from '../components/QuranVerseSlider';
 
 const getRelativeTime = (dateValue: any) => {
@@ -608,11 +607,6 @@ export default function ArticlePage() {
                 </div>
               </div>
             )}
-
-            {/* Promotion Slide Banner */}
-            <div className="mt-6">
-              <JobsPromoSlide />
-            </div>
 
             {/* Home Button */}
             <div className="mt-6 rounded-2xl border border-[#90e0ef] bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 p-6 text-center shadow-soft">
