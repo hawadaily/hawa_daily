@@ -5,6 +5,36 @@
       "destination": "/index.html"
     }
   ],
+  "routes": [
+    {
+      "src": "/contact",
+      "status": 404
+    },
+    {
+      "src": "/about",
+      "status": 404
+    },
+    {
+      "src": "/home",
+      "status": 404
+    },
+    {
+      "src": "/api/(?!jobs).*",
+      "status": 404
+    },
+    {
+      "src": "/blog/.*",
+      "status": 404
+    },
+    {
+      "src": "/api/demo",
+      "status": 404
+    },
+    {
+      "src": "/api/generate",
+      "status": 404
+    }
+  ],
   "headers": [
     {
       "source": "/api/jobs",
