@@ -2557,14 +2557,15 @@ export default function AdminDashboard() {
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700">Upload Image</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setArticleFile(e.target.files?.[0] || null)}
-                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                />
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700">Upload Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setArticleFile(e.target.files?.[0] || null)}
+                    className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  />
+                </div>
               </div>
 
               {/* Image Generator Section */}
