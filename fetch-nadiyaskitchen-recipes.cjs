@@ -37,7 +37,7 @@ function parseRecipe(html, url) {
   const imageMatch4 = html.match(/<img[^>]+src="([^"]+\/wp-content\/uploads\/[^"]+)"/);
   const imageMatch5 = html.match(/<img[^>]+src="([^"]+)"[^>]*class="[^"]*attachment-full[^"]*"/);
   
-  let image = '/images/placeholder.jpg';
+  let image = '';
   if (imageMatch && !imageMatch[1].includes('logo')) {
     image = imageMatch[1];
   } else if (imageMatch2 && !imageMatch2[1].includes('logo')) {

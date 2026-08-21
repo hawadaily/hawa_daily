@@ -46,7 +46,7 @@ function parseRecipe(html, url) {
   const titleEn = titleEnMatch ? titleEnMatch[1].trim() : titleDv;
   
   const imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
-  const image = imageMatch ? imageMatch[1] : '/images/placeholder.jpg';
+  const image = imageMatch ? imageMatch[1] : '';
   
   // Extract cook time - try multiple patterns
   let cookTime = '30 މިނިޓް';
