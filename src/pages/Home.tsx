@@ -31,24 +31,31 @@ export default function Home() {
           } as Article;
         });
         setArticlesState(articles);
+        setLoading(false);
         
-        // Fetch reactions for each article
+        // Fetch reactions for each article in parallel
         const reactionsData: Record<string, { likes: number; dislikes: number }> = {};
-        for (const article of articles) {
+        const reactionPromises = articles.map(async (article) => {
           try {
-            const likesDoc = await getDoc(doc(db, 'articles', article.id, 'likes', 'count'));
-            const dislikesDoc = await getDoc(doc(db, 'articles', article.id, 'dislikes', 'count'));
-            reactionsData[article.id] = {
+            const [likesDoc, dislikesDoc] = await Promise.all([
+              getDoc(doc(db, 'articles', article.id, 'likes', 'count')),
+              getDoc(doc(db, 'articles', article.id, 'dislikes', 'count'))
+            ]);
+            return {
+              id: article.id,
               likes: likesDoc.exists() ? likesDoc.data().count || 0 : 0,
               dislikes: dislikesDoc.exists() ? dislikesDoc.data().count || 0 : 0
             };
           } catch (e) {
-            reactionsData[article.id] = { likes: 0, dislikes: 0 };
+            return { id: article.id, likes: 0, dislikes: 0 };
           }
-        }
-        setArticleReactions(reactionsData);
+        });
         
-        setLoading(false);
+        const reactionResults = await Promise.all(reactionPromises);
+        reactionResults.forEach(result => {
+          reactionsData[result.id] = { likes: result.likes, dislikes: result.dislikes };
+        });
+        setArticleReactions(reactionsData);
       } catch (error) {
         console.error('Error fetching articles:', error);
         setLoading(false);
