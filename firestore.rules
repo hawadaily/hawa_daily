@@ -21,6 +21,11 @@ service cloud.firestore {
       allow write: if true; // Allow anonymous users to dislike
     }
 
+    match /articles/{articleId}/reactions/{reactionId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to write reactions
+    }
+
     match /articles/{articleId}/userReactions/{userId} {
       allow read: if true; // Allow reading reactions for everyone
       allow write: if true; // Allow anonymous users to write reactions

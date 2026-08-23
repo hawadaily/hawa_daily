@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { db } from '../firebase';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, doc, getDoc } from 'firebase/firestore';
 import { Article, categories } from '../data/mockData';
 import ArticleCard from '../components/ArticleCard';
 import PromoBanner from '../components/PromoBanner';
@@ -14,6 +14,7 @@ export default function Home() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(8);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [articleReactions, setArticleReactions] = useState<Record<string, { likes: number; dislikes: number }>>({});
 
   // Fetch articles with periodic updates instead of real-time listeners
   useEffect(() => {
@@ -30,6 +31,26 @@ export default function Home() {
           } as Article;
         });
         setArticlesState(articles);
+        
+        // Fetch reactions for each article
+        const reactionsData: Record<string, { likes: number; dislikes: number }> = {};
+        for (const article of articles) {
+          try {
+            const reactionDoc = await getDoc(doc(db, 'articles', article.id, 'reactions', 'counts'));
+            if (reactionDoc.exists()) {
+              reactionsData[article.id] = {
+                likes: reactionDoc.data().likes || 0,
+                dislikes: reactionDoc.data().dislikes || 0
+              };
+            } else {
+              reactionsData[article.id] = { likes: 0, dislikes: 0 };
+            }
+          } catch (e) {
+            reactionsData[article.id] = { likes: 0, dislikes: 0 };
+          }
+        }
+        setArticleReactions(reactionsData);
+        
         setLoading(false);
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -145,7 +166,12 @@ export default function Home() {
           {/* Trending/featured below main story */}
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             {trending.map((article) => (
-              <ArticleCard key={article.id} article={article} />
+              <ArticleCard 
+                key={article.id} 
+                article={article} 
+                likes={articleReactions[article.id]?.likes || 0}
+                dislikes={articleReactions[article.id]?.dislikes || 0}
+              />
             ))}
           </div>
         </div>
@@ -164,7 +190,12 @@ export default function Home() {
         </div>
         <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {latest.map((article) => (
-            <ArticleCard key={article.id} article={article} />
+            <ArticleCard 
+              key={article.id} 
+              article={article} 
+              likes={articleReactions[article.id]?.likes || 0}
+              dislikes={articleReactions[article.id]?.dislikes || 0}
+            />
           ))}
         </div>
         {hasMore && (

@@ -30,7 +30,7 @@ const getRelativeTime = (dateValue: any) => {
   return date.toLocaleDateString('dv-MV');
 };
 
-export default function ArticleCard({ article }: { article: Article }) {
+export default function ArticleCard({ article, likes = 0, dislikes = 0 }: { article: Article; likes?: number; dislikes?: number }) {
   const getCategoryTitle = (categoryId: string) => {
     const cat = categories.find(c => c.id === categoryId);
     return cat ? cat.title : categoryId;
@@ -61,7 +61,11 @@ export default function ArticleCard({ article }: { article: Article }) {
         </Link>
         <div className="flex items-center justify-between text-xs text-slate-400 mt-2">
           <span>ލިޔެފައިވާ ފަރާތް: {article.author || 'Admin'}</span>
-          <span>👁️ {article.views}</span>
+          <div className="flex items-center gap-3">
+            <span>👁️ {article.views}</span>
+            <span>😊 {likes}</span>
+            <span>😢 {dislikes}</span>
+          </div>
         </div>
       </div>
     </motion.article>
