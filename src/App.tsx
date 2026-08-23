@@ -17,6 +17,7 @@ import Privacy from './pages/Privacy';
 import QuranFacebookPost from './pages/QuranFacebookPost';
 import RecipeFacebookPost from './pages/RecipeFacebookPost';
 import RecipeDetail from './pages/RecipeDetail';
+import AdminDashboard from './pages/AdminDashboard';
 import DesktopNav from './components/DesktopNav';
 import MobileNav from './components/MobileNav';
 import BottomNav from './components/BottomNav';
@@ -240,6 +241,7 @@ function App() {
             <Route path="/recipes" element={<Recipes />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/admin/*" element={<AdminDashboard />} />
           </Routes>
         </motion.main>
       </AnimatePresence>

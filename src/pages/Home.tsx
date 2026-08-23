@@ -15,6 +15,7 @@ export default function Home() {
   const [visibleCount, setVisibleCount] = useState(8);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [articleReactions, setArticleReactions] = useState<Record<string, { likes: number; dislikes: number }>>({});
+  const [sidebarPromotions, setSidebarPromotions] = useState<any[]>([]);
 
   // Fetch articles with periodic updates instead of real-time listeners
   useEffect(() => {
@@ -56,6 +57,16 @@ export default function Home() {
           reactionsData[result.id] = { likes: result.likes, dislikes: result.dislikes };
         });
         setArticleReactions(reactionsData);
+        
+        // Fetch sidebar promotions
+        try {
+          const promotionsQuery = query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc'), limit(2));
+          const promotionsSnapshot = await getDocs(promotionsQuery);
+          const promotionsData = promotionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setSidebarPromotions(promotionsData);
+        } catch (e) {
+          console.error('Error fetching sidebar promotions:', e);
+        }
       } catch (error) {
         console.error('Error fetching articles:', error);
         setLoading(false);
@@ -178,6 +189,41 @@ export default function Home() {
               />
             ))}
           </div>
+        </div>
+
+        {/* Promotion Sidebar */}
+        <div className="lg:col-span-1 flex flex-col gap-6">
+          {sidebarPromotions.length > 0 ? (
+            sidebarPromotions.map((promotion) => (
+              <div key={promotion.id} className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden">
+                <img 
+                  src={promotion.image} 
+                  alt={promotion.title || 'Promotion'} 
+                  className="w-full h-auto"
+                  style={{ aspectRatio: '1/1.5' }}
+                />
+              </div>
+            ))
+          ) : (
+            <>
+              <div className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden">
+                <img 
+                  src="/promotions/desktop_1200x300/portrait1.png" 
+                  alt="Promotion 1" 
+                  className="w-full h-auto"
+                  style={{ aspectRatio: '1/1.5' }}
+                />
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden">
+                <img 
+                  src="/promotions/desktop_1200x300/portrait2.png" 
+                  alt="Promotion 2" 
+                  className="w-full h-auto"
+                  style={{ aspectRatio: '1/1.5' }}
+                />
+              </div>
+            </>
+          )}
         </div>
       </section>
 

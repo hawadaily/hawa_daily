@@ -379,7 +379,7 @@ export default function AdminDashboard() {
       quotePostersDesc: 'ފޮޓޯ އަދި ލިޔުން އާއި އެއްކޮށައިގައި ކޮޓް ޕޯސްޓަރުތައް ހަދާ',
       uploadPhoto: 'ފޮޓޯ އަޕްލޯޑް ކުރޭ',
       quoteText: 'ކޮޓް ލިޔުން',
-      authorText: 'ލިޔެކިއްވާ (އިޚްތިޔާރީ)',
+      authorText: 'ލިޔެކިއްވާ',
       generatePoster: 'ޕޯސްޓަރު ހަދާ',
       downloadPoster: 'ޕޯސްޓަރު ޑައުންލޯޑް ކުރޭ',
       platformSize: 'ޕްލެޓްފޯމް ސައިޒް',
@@ -398,6 +398,17 @@ export default function AdminDashboard() {
       textTransparency: 'ލިޔުން ޝައްޕާރަންސީ',
       textBackgroundColor: 'ލިޔުން ބެކްގްރައުންޑް ކައުލަރ',
       textBackgroundTransparency: 'ލިޔުން ބެކްގްރައުންޑް ޝައްޕާރަންސީ',
+      facebookReels: 'ފޭސްބުކް ރީލްސް',
+      facebookReelsDesc: 'ފޮޓޯ އާއި ވީޑިއޯ އާއި އެއްކޮށައިގައި ރީލްސް ހަދާ',
+      uploadImages: 'ފޮޓޯ އަޕްލޯޑް ކުރޭ',
+      reelText: 'ރީލްސް ލިޔުން',
+      duration: 'ދުވަސްވެށެ (ސިކުންސް)',
+      transition: 'ޓްރާންޒިޝަން',
+      transitionFade: 'ފޭޑް',
+      transitionSlide: 'ސްލައިޑް',
+      transitionZoom: 'ޒޫމް',
+      generateReel: 'ރީލްސް ހަދާ',
+      downloadReel: 'ރީލްސް ޑައުންލޯޑް ކުރޭ',
       recipes: 'ރެސިޕީތައް',
       recipesDesc: 'ރެސިޕީތައް މެނޭޖް ކުރާއި އުފައްދާ',
       recipeTitleDv: 'ރެސިޕީގެ ސުރުޚީ (ދިވެހި)',
@@ -524,6 +535,7 @@ export default function AdminDashboard() {
   // Quote Posters state
   const [quotePhoto, setQuotePhoto] = useState<File | null>(null);
   const [quotePhotoUrl, setQuotePhotoUrl] = useState<string>('');
+  const [quoteHeading, setQuoteHeading] = useState('');
   const [quoteText, setQuoteText] = useState('');
   const [quoteAuthor, setQuoteAuthor] = useState('');
   const [quoteCanvas, setQuoteCanvas] = useState<HTMLCanvasElement | null>(null);
@@ -535,12 +547,27 @@ export default function AdminDashboard() {
   const [imageX, setImageX] = useState(0);
   const [imageY, setImageY] = useState(0);
   const [textSize, setTextSize] = useState(49);
+  const [headingSize, setHeadingSize] = useState(48);
+  const [lineHeight, setLineHeight] = useState(1.25);
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('center');
+  const [headingX, setHeadingX] = useState(50);
+  const [headingY, setHeadingY] = useState(50);
   const [textX, setTextX] = useState(50);
   const [textY, setTextY] = useState(50);
   const [textColor, setTextColor] = useState('#ffffff');
   const [textTransparency, setTextTransparency] = useState(100);
   const [textBackgroundColor, setTextBackgroundColor] = useState('#000000');
   const [textBackgroundTransparency, setTextBackgroundTransparency] = useState(50);
+
+  // Facebook Reels state
+  const [reelImages, setReelImages] = useState<File[]>([]);
+  const [reelImageUrls, setReelImageUrls] = useState<string[]>([]);
+  const [reelText, setReelText] = useState('');
+  const [reelDuration, setReelDuration] = useState(5);
+  const [reelTransition, setReelTransition] = useState<'fade' | 'slide' | 'zoom'>('fade');
+  const [reelCanvas, setReelCanvas] = useState<HTMLCanvasElement | null>(null);
+  const [generatingReel, setGeneratingReel] = useState(false);
+  const [reelVideoUrl, setReelVideoUrl] = useState<string>('');
 
   // Recipes state
   const [recipesList, setRecipesList] = useState<any[]>([]);
@@ -571,7 +598,7 @@ export default function AdminDashboard() {
     if (quotePhotoUrl && quoteCanvas) {
       generateQuotePoster();
     }
-  }, [imageZoom, imageX, imageY, textSize, textX, textY, textColor, textTransparency, textBackgroundColor, textBackgroundTransparency, quotePlatform]);
+  }, [imageZoom, imageX, imageY, textSize, headingSize, lineHeight, textAlign, headingX, headingY, textX, textY, textColor, textTransparency, textBackgroundColor, textBackgroundTransparency, quotePlatform, quoteHeading, quoteText]);
 
   // Load Dhivehi font
   useEffect(() => {
@@ -1084,6 +1111,14 @@ export default function AdminDashboard() {
   const [uploadingBanner, setUploadingBanner] = useState(false);
   const [bannerError, setBannerError] = useState('');
 
+  // Sidebar promotion management state
+  const [sidebarPromotions, setSidebarPromotions] = useState<any[]>([]);
+  const [sidebarPromotionFile, setSidebarPromotionFile] = useState<File | null>(null);
+  const [sidebarPromotionTitle, setSidebarPromotionTitle] = useState('');
+  const [sidebarPromotionLink, setSidebarPromotionLink] = useState('');
+  const [uploadingSidebarPromotion, setUploadingSidebarPromotion] = useState(false);
+  const [sidebarPromotionError, setSidebarPromotionError] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -1106,6 +1141,11 @@ export default function AdminDashboard() {
       const bannerSnapshot = await getDocs(query(collection(db, 'banners'), orderBy('createdAt', 'desc')));
       const bannersData = bannerSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setBanners(bannersData);
+
+      // Load sidebar promotions
+      const promotionSnapshot = await getDocs(query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc')));
+      const promotionsData = promotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setSidebarPromotions(promotionsData);
     } catch (error) {
       console.warn('Unable to load dashboard data', error);
     }
@@ -1698,6 +1738,54 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleSidebarPromotionUpload = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!sidebarPromotionFile) {
+      setSidebarPromotionError('Please select an image');
+      return;
+    }
+
+    setUploadingSidebarPromotion(true);
+    setSidebarPromotionError('');
+
+    try {
+      const imageUrl = await uploadToImgBB(sidebarPromotionFile);
+      
+      await addDoc(collection(db, 'sidebar-promotions'), {
+        title: sidebarPromotionTitle,
+        link: sidebarPromotionLink,
+        image: imageUrl,
+        createdAt: serverTimestamp(),
+      });
+
+      setMessage('Sidebar promotion uploaded successfully!');
+      setSidebarPromotionFile(null);
+      setSidebarPromotionTitle('');
+      setSidebarPromotionLink('');
+      loadDashboard();
+    } catch (error) {
+      setSidebarPromotionError('Failed to upload sidebar promotion');
+      console.error(error);
+    } finally {
+      setUploadingSidebarPromotion(false);
+    }
+  };
+
+  const handleDeleteSidebarPromotion = async (promotionId: string) => {
+    if (!confirm('Are you sure you want to delete this sidebar promotion?')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'sidebar-promotions', promotionId));
+      setMessage('Sidebar promotion deleted successfully!');
+      loadDashboard();
+    } catch (error) {
+      setMessage('Failed to delete sidebar promotion');
+      console.error(error);
+    }
+  };
+
   const visitorCount = visitorDetails?.length ?? 0;
   const topVisitors = Array.isArray(visitorDetails) ? visitorDetails.slice(0, 8) : [];
 
@@ -2194,12 +2282,200 @@ export default function AdminDashboard() {
     }
   };
 
-  // Generate quote poster function
-  const generateQuotePoster = async () => {
+  // Generate Facebook Reel
+  const generateFacebookReel = async () => {
+    if (!reelCanvas || reelImageUrls.length === 0) return;
+
+    setGeneratingReel(true);
+    try {
+      const canvas = reelCanvas;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Set canvas size for Facebook Reels (1080x1920 for portrait)
+      canvas.width = 1080;
+      canvas.height = 1920;
+
+      // Preload logo
+      const logo = new Image();
+      logo.src = '/HAWA LOGO.jpg';
+      await new Promise<void>((resolve) => {
+        logo.onload = () => resolve();
+        logo.onerror = () => resolve(); // Continue even if logo fails to load
+      });
+
+      const images = await Promise.all(
+        reelImageUrls.map(url => {
+          return new Promise<HTMLImageElement>((resolve) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => resolve(img);
+            img.onerror = () => {
+              // Create a placeholder if image fails to load
+              const placeholder = new Image();
+              placeholder.width = 1080;
+              placeholder.height = 1920;
+              resolve(placeholder);
+            };
+            img.src = url;
+          });
+        })
+      );
+
+      // Calculate duration per image
+      const durationPerImage = reelDuration; // Each image gets the full duration
+      const fps = 30;
+      const totalFrames = (durationPerImage * images.length * fps);
+
+      // Create MediaRecorder
+      const stream = canvas.captureStream(fps);
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'video/webm;codecs=vp9',
+        videoBitsPerSecond: 5000000
+      });
+
+      const chunks: Blob[] = [];
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunks.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        setReelVideoUrl(url);
+        setGeneratingReel(false);
+      };
+
+      mediaRecorder.start();
+
+      // Animation loop
+      let currentFrame = 0;
+      const framesPerImage = durationPerImage * fps;
+      const animate = () => {
+        if (currentFrame >= totalFrames) {
+          mediaRecorder.stop();
+          return;
+        }
+
+        const imageIndex = Math.floor(currentFrame / framesPerImage);
+        const nextImageIndex = Math.min(imageIndex + 1, images.length - 1);
+        const progress = (currentFrame % framesPerImage) / framesPerImage;
+
+        const currentImage = images[imageIndex];
+        const nextImage = images[nextImageIndex];
+
+        // Clear canvas
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Apply transition effect
+        ctx.globalAlpha = 1;
+
+        if (reelTransition === 'fade') {
+          // Fade transition
+          ctx.globalAlpha = 1 - progress;
+          drawImageCover(ctx, currentImage, canvas.width, canvas.height);
+          ctx.globalAlpha = progress;
+          drawImageCover(ctx, nextImage, canvas.width, canvas.height);
+        } else if (reelTransition === 'slide') {
+          // Slide transition - sudden cut (no gradual slide)
+          if (progress < 0.1) {
+            // Show current image for most of the duration
+            drawImageCover(ctx, currentImage, canvas.width, canvas.height);
+          } else {
+            // Sudden cut to next image
+            drawImageCover(ctx, nextImage, canvas.width, canvas.height);
+          }
+        } else if (reelTransition === 'zoom') {
+          // Zoom transition
+          const scale = 1 + progress * 0.5;
+          ctx.save();
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.scale(scale, scale);
+          ctx.translate(-canvas.width / 2, -canvas.height / 2);
+          drawImageCover(ctx, currentImage, canvas.width, canvas.height);
+          ctx.restore();
+        }
+
+        // Draw text overlay if provided
+        if (reelText) {
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 48px Arial';
+          ctx.textAlign = 'center';
+          ctx.shadowColor = 'rgba(0,0,0,0.5)';
+          ctx.shadowBlur = 10;
+          ctx.fillText(reelText, canvas.width / 2, canvas.height - 100);
+          ctx.shadowBlur = 0;
+        }
+
+        // Draw logo
+        ctx.globalAlpha = 0.9;
+        const logoSize = 80;
+        const logoPadding = 20;
+        ctx.drawImage(logo, canvas.width - logoSize - logoPadding, canvas.height - logoSize - logoPadding, logoSize, logoSize);
+        ctx.globalAlpha = 1;
+
+        currentFrame++;
+        requestAnimationFrame(animate);
+      };
+
+      animate();
+    } catch (error) {
+      console.error('Error generating reel:', error);
+      setGeneratingReel(false);
+    }
+  };
+
+  // Helper function to draw image with cover fit
+  const drawImageCover = (
+    ctx: CanvasRenderingContext2D,
+    img: HTMLImageElement,
+    canvasWidth: number,
+    canvasHeight: number,
+    offsetX: number = 0,
+    offsetY: number = 0
+  ) => {
+    const imgRatio = img.width / img.height;
+    const canvasRatio = canvasWidth / canvasHeight;
+    let drawWidth, drawHeight, drawX, drawY;
+
+    if (imgRatio > canvasRatio) {
+      // Image is wider than canvas - fit to height, crop sides
+      drawHeight = canvasHeight;
+      drawWidth = drawHeight * imgRatio;
+      drawX = (canvasWidth - drawWidth) / 2 + offsetX;
+      drawY = offsetY;
+    } else {
+      // Image is taller than canvas - fit to width, crop top/bottom
+      drawWidth = canvasWidth;
+      drawHeight = drawWidth / imgRatio;
+      drawX = offsetX;
+      drawY = (canvasHeight - drawHeight) / 2 + offsetY;
+    }
+
+    ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+  };
+
+  // Download Facebook Reel
+  const downloadFacebookReel = () => {
+    if (!reelVideoUrl) return;
+
+    const a = document.createElement('a');
+    a.href = reelVideoUrl;
+    a.download = 'facebook-reel.webm';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  // Generate Quote Poster
+  const generateQuotePoster = () => {
     if (!quoteCanvas || !quotePhotoUrl) return;
-    
+
     setGeneratingPoster(true);
-    
     try {
       const canvas = quoteCanvas;
       const ctx = canvas.getContext('2d');
@@ -2257,7 +2533,7 @@ export default function AdminDashboard() {
         const alphaValue = textTransparency / 100;
         ctx.fillStyle = textColor;
         ctx.globalAlpha = alphaValue;
-        ctx.textAlign = 'center';
+        ctx.textAlign = textAlign;
         ctx.textBaseline = 'middle';
 
         // Calculate scale factor based on height
@@ -2269,32 +2545,45 @@ export default function AdminDashboard() {
         ctx.font = `bold ${customTextSize}px ${fontName}`;
 
         // Calculate text position based on controls
-        const textPosX = (textX / 100) * canvas.width;
+        let textPosX;
+        if (textAlign === 'center') {
+          textPosX = (textX / 100) * canvas.width;
+        } else if (textAlign === 'right') {
+          textPosX = canvas.width - Math.round(100 * scaleFactor);
+        } else {
+          textPosX = Math.round(100 * scaleFactor);
+        }
         const textPosY = (textY / 100) * canvas.height;
 
-        // Auto-calculate line gap based on font size (1.25x font size)
-        const autoLineGap = Math.round(customTextSize * 1.25);
+        // Auto-calculate line gap based on font size and line height
+        const autoLineGap = Math.round(customTextSize * lineHeight);
 
-        // Wrap text if too long
+        // Wrap text if too long - respect newlines
         const maxTextWidth = canvas.width - Math.round(135 * scaleFactor);
-        const words = quoteText.split(' ');
-        let line = '';
-        let y = textPosY;
-
-        // Store lines for background calculation
         const lines = [];
-        for (let i = 0; i < words.length; i++) {
-          const testLine = line + words[i] + ' ';
-          const metrics = ctx.measureText(testLine);
-          if (metrics.width > maxTextWidth && i > 0) {
-            lines.push({ text: line, y: y });
-            line = words[i] + ' ';
-            y += autoLineGap;
-          } else {
-            line = testLine;
+        
+        // Split by newlines first
+        const paragraphs = quoteText.split('\n');
+        let currentY = textPosY;
+        
+        for (const paragraph of paragraphs) {
+          const words = paragraph.split(' ');
+          let line = '';
+          
+          for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            const metrics = ctx.measureText(testLine);
+            if (metrics.width > maxTextWidth && i > 0) {
+              lines.push({ text: line, y: currentY });
+              line = words[i] + ' ';
+              currentY += autoLineGap;
+            } else {
+              line = testLine;
+            }
           }
+          lines.push({ text: line, y: currentY });
+          currentY += autoLineGap; // Extra gap between paragraphs
         }
-        lines.push({ text: line, y: y });
 
         // Draw text background
         const bgAlphaValue = textBackgroundTransparency / 100;
@@ -2318,16 +2607,31 @@ export default function AdminDashboard() {
         ctx.globalAlpha = alphaValue;
         ctx.fillStyle = textColor;
 
+        // Draw heading if provided
+        if (quoteHeading) {
+          ctx.font = `bold ${Math.round(headingSize * scaleFactor)}px ${fontName}`;
+          ctx.fillStyle = textColor;
+          ctx.globalAlpha = alphaValue;
+          // Calculate heading position based on controls
+          let headingPosX;
+          if (textAlign === 'center') {
+            headingPosX = (headingX / 100) * canvas.width;
+          } else if (textAlign === 'right') {
+            headingPosX = canvas.width - Math.round(100 * scaleFactor);
+          } else {
+            headingPosX = Math.round(100 * scaleFactor);
+          }
+          const headingPosY = (headingY / 100) * canvas.height;
+          ctx.fillText(quoteHeading, headingPosX, headingPosY);
+        }
+
+        // Reset font to main text size
+        ctx.font = `bold ${customTextSize}px ${fontName}`;
+
         // Draw text lines
         lines.forEach((lineData) => {
           ctx.fillText(lineData.text, textPosX, lineData.y);
         });
-
-        // Draw author if provided
-        if (quoteAuthor) {
-          ctx.font = `italic ${Math.round(32 * scaleFactor)}px ${fontName}`;
-          ctx.fillText(`— ${quoteAuthor}`, textPosX, y + Math.round(81 * scaleFactor));
-        }
 
         // Reset alpha
         ctx.globalAlpha = 1;
@@ -2447,7 +2751,7 @@ export default function AdminDashboard() {
       <>
         {/* Tabs */}
         <div className="flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'recipes', 'quran'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'reels', 'recipes', 'quran'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -2460,12 +2764,14 @@ export default function AdminDashboard() {
               {tab === 'articles' && t.createNews}
               {tab === 'manage' && t.manageNews}
               {tab === 'banners' && t.manageBanners}
+              {tab === 'sidebar-promotions' && 'Sidebar Promotions'}
               {tab === 'analytics' && t.analytics}
               {tab === 'settings' && t.settings}
               {tab === 'rephrase' && 'ޚަބަރު ރީފްރޭޒް (Rephrase)'}
               {tab === 'checklist' && t.postLaunchChecklist}
               {tab === 'flyers' && t.jobFlyers}
               {tab === 'quotes' && t.quotePosters}
+              {tab === 'reels' && t.facebookReels}
               {tab === 'recipes' && t.recipes}
               {tab === 'quran' && 'ޤުރްއާން (Quran)'}
             </button>
@@ -3222,32 +3528,104 @@ export default function AdminDashboard() {
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {banners.length > 0 ? (
                   banners.map((banner) => (
-                    <div key={banner.id} className="rounded-2xl border border-gray-300 bg-white p-4">
+                    <div key={banner.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-soft">
                       <img src={banner.image} alt={banner.title} className="w-full h-32 object-cover rounded-lg mb-3" />
-                      <h4 className="font-semibold text-gray-900 text-sm">{banner.title}</h4>
-                      <div className="mt-2 flex flex-wrap gap-2 text-xs">
-                        <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700">
-                          {banner.location === 'home' ? t.locationHome : banner.location === 'article' ? t.locationArticle : t.locationCategory}
-                        </span>
-                        <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700">
-                          {banner.position === 'top' ? t.positionTop : t.positionBottom}
-                        </span>
-                        <span className="px-2 py-1 rounded-full bg-gray-200 text-gray-700">
-                          {banner.size === 'mobile' ? t.sizeMobile : banner.size === 'desktop' ? t.sizeDesktop : t.sizeBoth}
-                        </span>
+                      <h5 className="font-semibold text-gray-900 text-sm">{banner.title}</h5>
+                      <p className="text-xs text-gray-600 mt-1">{banner.subtitle}</p>
+                      <div className="mt-2 flex gap-2">
+                        <span className="text-xs bg-gray-100 px-2 py-1 rounded">{banner.location}</span>
+                        <span className="text-xs bg-gray-100 px-2 py-1 rounded">{banner.position}</span>
+                        <span className="text-xs bg-gray-100 px-2 py-1 rounded">{banner.size}</span>
                       </div>
-                      <div className="mt-3 flex gap-2 relative z-10">
-                        <button
-                          onClick={() => handleDeleteBanner(banner.id)}
-                          className="w-full rounded-xl border border-rose-600 px-3 py-1.5 text-xs text-rose-600 transition hover:bg-rose-600/20 cursor-pointer"
-                        >
-                          {t.deleteBanner}
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => handleDeleteBanner(banner.id)}
+                        className="mt-3 w-full rounded-2xl border border-rose-600 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-600/20"
+                      >
+                        {t.deleteBanner}
+                      </button>
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-600 col-span-full">No banners uploaded yet</p>
+                  <p className="text-gray-600 col-span-full">{t.noBanners}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Sidebar Promotions Tab */}
+        {activeTab === 'sidebar-promotions' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">Sidebar Promotions</h3>
+            <p className="mt-2 text-sm text-gray-600">Manage promotional banners displayed in the home page sidebar</p>
+            
+            {/* Upload Form */}
+            <form onSubmit={handleSidebarPromotionUpload} className="mt-6 space-y-4">
+              {sidebarPromotionError && (
+                <div className="rounded-2xl border border-rose-600 bg-rose-600/10 p-4 text-rose-400">
+                  {sidebarPromotionError}
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">Title</label>
+                <input
+                  value={sidebarPromotionTitle}
+                  onChange={(e) => setSidebarPromotionTitle(e.target.value)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  placeholder="Promotion title"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">Link URL</label>
+                <input
+                  value={sidebarPromotionLink}
+                  onChange={(e) => setSidebarPromotionLink(e.target.value)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  placeholder="https://example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setSidebarPromotionFile(e.target.files?.[0] || null)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  required
+                />
+              </div>
+              <button
+                disabled={uploadingSidebarPromotion}
+                className="w-full rounded-3xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {uploadingSidebarPromotion ? 'Uploading...' : 'Upload Promotion'}
+              </button>
+            </form>
+
+            {/* Promotions List */}
+            <div className="mt-8">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">Current Promotions</h4>
+              
+              <div className="grid gap-4 md:grid-cols-2">
+                {sidebarPromotions.length > 0 ? (
+                  sidebarPromotions.map((promotion) => (
+                    <div key={promotion.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-soft">
+                      <img src={promotion.image} alt={promotion.title} className="w-full h-40 object-cover rounded-lg mb-3" style={{ aspectRatio: '1/1.5' }} />
+                      <h5 className="font-semibold text-gray-900 text-sm">{promotion.title}</h5>
+                      {promotion.link && (
+                        <p className="text-xs text-gray-600 mt-1 truncate">{promotion.link}</p>
+                      )}
+                      <button
+                        onClick={() => handleDeleteSidebarPromotion(promotion.id)}
+                        className="mt-3 w-full rounded-2xl border border-rose-600 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-600/20"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-600 col-span-full">No sidebar promotions yet</p>
                 )}
               </div>
             </div>
@@ -4235,206 +4613,423 @@ export default function AdminDashboard() {
             <h3 className="text-2xl font-bold text-gray-900">{t.quotePosters}</h3>
             <p className="mt-2 text-sm text-gray-600">{t.quotePostersDesc}</p>
             
-            <div className="mt-6 space-y-6">
-              {/* Photo Upload */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.uploadPhoto}</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleQuotePhotoUpload}
-                  className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                />
-              </div>
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Column - Inputs and Controls */}
+              <div className="space-y-4">
+                {/* Photo Upload */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.uploadPhoto}</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleQuotePhotoUpload}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                  />
+                </div>
 
-              {/* Quote Text */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.quoteText}</label>
-                <textarea
-                  value={quoteText}
-                  onChange={(e) => setQuoteText(e.target.value)}
-                  className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500 min-h-[100px]"
-                  placeholder="Enter your quote..."
-                />
-              </div>
-
-              {/* Author (Optional) */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.authorText}</label>
-                <input
-                  type="text"
-                  value={quoteAuthor}
-                  onChange={(e) => setQuoteAuthor(e.target.value)}
-                  className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                  placeholder="Author name (optional)"
-                />
-              </div>
-
-              {/* Platform Size Selector */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">{t.platformSize}</label>
-                <select
-                  value={quotePlatform}
-                  onChange={(e) => setQuotePlatform(e.target.value as 'facebook' | 'instagram-square' | 'instagram-portrait')}
-                  className="w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                >
-                  <option value="facebook">{t.facebook}</option>
-                  <option value="instagram-square">{t.instagramSquare}</option>
-                  <option value="instagram-portrait">{t.instagramPortrait}</option>
-                </select>
-              </div>
-
-              {/* Image Controls */}
-              <div className="border border-gray-200 rounded-2xl p-4 bg-gray-50">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">{t.imageControls}</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.zoom} ({imageZoom}%)</label>
-                    <input
-                      type="range"
-                      min="50"
-                      max="200"
-                      value={imageZoom}
-                      onChange={(e) => setImageZoom(Number(e.target.value))}
-                      className="w-full"
-                    />
+                {/* Quote Heading (Optional) */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">ހެޑްލައިން (Heading)</label>
+                  <input
+                    type="text"
+                    value={quoteHeading}
+                    onChange={(e) => setQuoteHeading(e.target.value)}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                    placeholder="Enter heading..."
+                  />
+                  {/* Heading Controls */}
+                  <div className="mt-2 grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">ސައިޒް ({headingSize}px)</label>
+                      <input
+                        type="range"
+                        min="20"
+                        max="100"
+                        value={headingSize}
+                        onChange={(e) => setHeadingSize(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">ޕޮޒިޝަން X ({headingX}%)</label>
+                      <input
+                        type="range"
+                        min="10"
+                        max="90"
+                        value={headingX}
+                        onChange={(e) => setHeadingX(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">ޕޮޒިޝަން Y ({headingY}%)</label>
+                      <input
+                        type="range"
+                        min="10"
+                        max="90"
+                        value={headingY}
+                        onChange={(e) => setHeadingY(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.positionX} ({imageX}%)</label>
-                    <input
-                      type="range"
-                      min="-50"
-                      max="50"
-                      value={imageX}
-                      onChange={(e) => setImageX(Number(e.target.value))}
-                      className="w-full"
-                    />
+                </div>
+
+                {/* Quote Text */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.quoteText}</label>
+                  <textarea
+                    value={quoteText}
+                    onChange={(e) => setQuoteText(e.target.value)}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 min-h-[80px] text-sm"
+                    placeholder="Enter your quote... (Press Enter for new line)"
+                  />
+                  {/* Text Style Controls */}
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">{t.fontSize} ({textSize}px)</label>
+                      <input
+                        type="range"
+                        min="20"
+                        max="100"
+                        value={textSize}
+                        onChange={(e) => setTextSize(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">ލައިން ހައިޓް ({lineHeight}x)</label>
+                      <input
+                        type="range"
+                        min="1"
+                        max="3"
+                        step="0.1"
+                        value={lineHeight}
+                        onChange={(e) => setLineHeight(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.positionY} ({imageY}%)</label>
-                    <input
-                      type="range"
-                      min="-50"
-                      max="50"
-                      value={imageY}
-                      onChange={(e) => setImageY(Number(e.target.value))}
-                      className="w-full"
-                    />
+                </div>
+
+                {/* Text Position and Alignment */}
+                <div className="border border-gray-200 rounded-xl p-3 bg-gray-50">
+                  <h4 className="text-xs font-semibold text-gray-700 mb-2">ކޮޓް ލިޔުން އެޑްޖަސްޓްމެންޓް (Text Adjustments)</h4>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-medium text-gray-600 mb-1">{t.textPositionX} ({textX}%)</label>
+                      <input
+                        type="range"
+                        min="10"
+                        max="90"
+                        value={textX}
+                        onChange={(e) => setTextX(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-medium text-gray-600 mb-1">{t.textPositionY} ({textY}%)</label>
+                      <input
+                        type="range"
+                        min="10"
+                        max="90"
+                        value={textY}
+                        onChange={(e) => setTextY(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-medium text-gray-600 mb-1">އެލައިންމެންޓް</label>
+                      <select
+                        value={textAlign}
+                        onChange={(e) => setTextAlign(e.target.value as 'left' | 'center' | 'right')}
+                        className="w-full rounded border border-gray-300 bg-white px-1 py-1 text-[10px] text-gray-900 outline-none focus:border-brand-500"
+                      >
+                        <option value="center">މެދު</option>
+                        <option value="left">ކަނާ</option>
+                        <option value="right">ކަންތި</option>
+                      </select>
+                    </div>
                   </div>
+                </div>
+
+                {/* Color Controls */}
+                <div className="border border-gray-200 rounded-xl p-3 bg-gray-50">
+                  <h4 className="text-xs font-semibold text-gray-700 mb-2">ކަލަރ އެޑްޖަސްޓްމެންޓް (Color Adjustments)</h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-medium text-gray-600 mb-1">ކަލަރ</label>
+                      <input
+                        type="color"
+                        value={textColor}
+                        onChange={(e) => setTextColor(e.target.value)}
+                        className="w-full h-6 rounded cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-medium text-gray-600 mb-1">{t.textTransparency} ({textTransparency}%)</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={textTransparency}
+                        onChange={(e) => setTextTransparency(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-medium text-gray-600 mb-1">{t.textBackgroundColor}</label>
+                      <input
+                        type="color"
+                        value={textBackgroundColor}
+                        onChange={(e) => setTextBackgroundColor(e.target.value)}
+                        className="w-full h-6 rounded cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-medium text-gray-600 mb-1">{t.textBackgroundTransparency} ({textBackgroundTransparency}%)</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={textBackgroundTransparency}
+                        onChange={(e) => setTextBackgroundTransparency(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={generateQuotePoster}
+                    disabled={generatingPoster || !quotePhotoUrl}
+                    className="flex-1 rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
+                  >
+                    {generatingPoster ? t.generating : t.generatePoster}
+                  </button>
+                  <button
+                    onClick={downloadQuotePoster}
+                    disabled={!quoteCanvas || generatingPoster}
+                    className="flex-1 rounded-full border-2 border-brand-500 px-4 py-2 text-sm font-semibold text-brand-500 transition hover:bg-brand-50 disabled:opacity-50"
+                  >
+                    {t.downloadPoster}
+                  </button>
                 </div>
               </div>
 
-              {/* Text Controls */}
-              <div className="border border-gray-200 rounded-2xl p-4 bg-gray-50">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">{t.textControls}</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.fontSize} ({textSize}px)</label>
-                    <input
-                      type="range"
-                      min="20"
-                      max="100"
-                      value={textSize}
-                      onChange={(e) => setTextSize(Number(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textPositionX} ({textX}%)</label>
-                    <input
-                      type="range"
-                      min="10"
-                      max="90"
-                      value={textX}
-                      onChange={(e) => setTextX(Number(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textPositionY} ({textY}%)</label>
-                    <input
-                      type="range"
-                      min="10"
-                      max="90"
-                      value={textY}
-                      onChange={(e) => setTextY(Number(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.fontColor}</label>
-                    <input
-                      type="color"
-                      value={textColor}
-                      onChange={(e) => setTextColor(e.target.value)}
-                      className="w-full h-8 rounded cursor-pointer"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textTransparency} ({textTransparency}%)</label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={textTransparency}
-                      onChange={(e) => setTextTransparency(Number(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textBackgroundColor}</label>
-                    <input
-                      type="color"
-                      value={textBackgroundColor}
-                      onChange={(e) => setTextBackgroundColor(e.target.value)}
-                      className="w-full h-8 rounded cursor-pointer"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">{t.textBackgroundTransparency} ({textBackgroundTransparency}%)</label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={textBackgroundTransparency}
-                      onChange={(e) => setTextBackgroundTransparency(Number(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Poster Preview */}
-              {quotePhotoUrl && (
-                <div className="space-y-4">
-                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-4 bg-gray-50">
+              {/* Right Column - Poster Preview */}
+              <div className="flex flex-col items-center justify-center gap-4">
+                {quotePhotoUrl && (
+                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-4 bg-gray-50 w-full max-w-sm">
                     <canvas
                       ref={(canvas) => setQuoteCanvas(canvas)}
                       width={1080}
                       height={1350}
-                      className="w-64 h-auto rounded-lg shadow-md mx-auto"
+                      className="w-full h-auto rounded-lg shadow-md"
                     />
                   </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-3">
-                    <button
-                      onClick={generateQuotePoster}
-                      disabled={generatingPoster || !quotePhotoUrl}
-                      className="flex-1 rounded-full bg-brand-500 px-6 py-3 font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
-                    >
-                      {generatingPoster ? t.generating : t.generatePoster}
-                    </button>
-                    <button
-                      onClick={downloadQuotePoster}
-                      disabled={!quoteCanvas || generatingPoster}
-                      className="flex-1 rounded-full border-2 border-brand-500 px-6 py-3 font-semibold text-brand-500 transition hover:bg-brand-50 disabled:opacity-50"
-                    >
-                      {t.downloadPoster}
-                    </button>
+                )}
+                {!quotePhotoUrl && (
+                  <div className="text-center py-12 text-gray-400">
+                    <p>ތައްޔާރު ކުރުމަށް ފައިލް އާލޯޑް ކުރައްވާ</p>
+                    <p className="text-sm mt-1">Upload a photo to preview</p>
                   </div>
+                )}
+
+                {/* Platform Size Selector */}
+                <div className="w-full max-w-sm">
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.platformSize}</label>
+                  <select
+                    value={quotePlatform}
+                    onChange={(e) => setQuotePlatform(e.target.value as 'facebook' | 'instagram-square' | 'instagram-portrait')}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                  >
+                    <option value="facebook">{t.facebook}</option>
+                    <option value="instagram-square">{t.instagramSquare}</option>
+                    <option value="instagram-portrait">{t.instagramPortrait}</option>
+                  </select>
                 </div>
-              )}
+
+                {/* Image Controls - Under Preview */}
+                {quotePhotoUrl && (
+                  <div className="border border-gray-200 rounded-xl p-3 bg-gray-50 w-full max-w-sm">
+                    <h4 className="text-xs font-semibold text-gray-700 mb-2">ފައިލް އެޑްޖަސްޓްމެންޓް (Image Adjustments)</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <label className="block text-[10px] font-medium text-gray-600 mb-1">{t.zoom} ({imageZoom}%)</label>
+                        <input
+                          type="range"
+                          min="50"
+                          max="200"
+                          value={imageZoom}
+                          onChange={(e) => setImageZoom(Number(e.target.value))}
+                          className="w-full h-5"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-medium text-gray-600 mb-1">{t.positionX} ({imageX}%)</label>
+                        <input
+                          type="range"
+                          min="-50"
+                          max="50"
+                          value={imageX}
+                          onChange={(e) => setImageX(Number(e.target.value))}
+                          className="w-full h-5"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-medium text-gray-600 mb-1">{t.positionY} ({imageY}%)</label>
+                        <input
+                          type="range"
+                          min="-50"
+                          max="50"
+                          value={imageY}
+                          onChange={(e) => setImageY(Number(e.target.value))}
+                          className="w-full h-5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Facebook Reels Tab */}
+        {activeTab === 'reels' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">{t.facebookReels}</h3>
+            <p className="mt-2 text-sm text-gray-600">{t.facebookReelsDesc}</p>
+
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Column - Inputs and Controls */}
+              <div className="space-y-4">
+                {/* Image Upload */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.uploadImages}</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files || []);
+                      setReelImages(files);
+                      const urls = files.map(file => URL.createObjectURL(file));
+                      setReelImageUrls(urls);
+                    }}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                  />
+                  {reelImageUrls.length > 0 && (
+                    <div className="mt-2 text-xs text-gray-500">
+                      {reelImageUrls.length} image(s) selected
+                    </div>
+                  )}
+                </div>
+
+                {/* Reel Text */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.reelText}</label>
+                  <textarea
+                    value={reelText}
+                    onChange={(e) => setReelText(e.target.value)}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 min-h-[80px] text-sm"
+                    placeholder="Enter text for reel..."
+                  />
+                </div>
+
+                {/* Duration */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.duration} ({reelDuration}s)</label>
+                  <input
+                    type="range"
+                    min="3"
+                    max="30"
+                    value={reelDuration}
+                    onChange={(e) => setReelDuration(Number(e.target.value))}
+                    className="w-full h-5"
+                  />
+                </div>
+
+                {/* Transition */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.transition}</label>
+                  <select
+                    value={reelTransition}
+                    onChange={(e) => setReelTransition(e.target.value as 'fade' | 'slide' | 'zoom')}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                  >
+                    <option value="fade">{t.transitionFade}</option>
+                    <option value="slide">{t.transitionSlide}</option>
+                    <option value="zoom">{t.transitionZoom}</option>
+                  </select>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={generateFacebookReel}
+                    disabled={generatingReel || reelImageUrls.length === 0}
+                    className="flex-1 rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
+                  >
+                    {generatingReel ? t.generating : t.generateReel}
+                  </button>
+                  <button
+                    onClick={downloadFacebookReel}
+                    disabled={!reelVideoUrl || generatingReel}
+                    className="flex-1 rounded-full border-2 border-brand-500 px-4 py-2 text-sm font-semibold text-brand-500 transition hover:bg-brand-50 disabled:opacity-50"
+                  >
+                    {t.downloadReel}
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column - Preview */}
+              <div className="flex flex-col items-center justify-center gap-4">
+                {reelImageUrls.length > 0 && (
+                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-4 bg-gray-50 w-full max-w-sm">
+                    <canvas
+                      ref={(canvas) => setReelCanvas(canvas)}
+                      width={1080}
+                      height={1920}
+                      className="w-full h-auto rounded-lg shadow-md"
+                      style={{ display: reelVideoUrl ? 'none' : 'block' }}
+                    />
+                    {reelVideoUrl && (
+                      <video
+                        src={reelVideoUrl}
+                        controls
+                        className="w-full h-auto rounded-lg shadow-md"
+                      />
+                    )}
+                  </div>
+                )}
+                {reelImageUrls.length === 0 && (
+                  <div className="text-center py-12 text-gray-400">
+                    <p>ތައްޔާރު ކުރުމަށް ފޮޓޯ އާލޯޑް ކުރައްވާ</p>
+                    <p className="text-sm mt-1">Upload images to preview</p>
+                  </div>
+                )}
+
+                {/* Image Grid Preview */}
+                {reelImageUrls.length > 0 && (
+                  <div className="border border-gray-200 rounded-xl p-3 bg-gray-50 w-full max-w-sm">
+                    <h4 className="text-xs font-semibold text-gray-700 mb-2">އިމޭޖް ޕްރިވިއު (Image Preview)</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {reelImageUrls.map((url, index) => (
+                        <img
+                          key={index}
+                          src={url}
+                          alt={`Reel image ${index + 1}`}
+                          className="w-full h-24 object-cover rounded-lg"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
