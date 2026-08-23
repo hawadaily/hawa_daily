@@ -36,15 +36,12 @@ export default function Home() {
         const reactionsData: Record<string, { likes: number; dislikes: number }> = {};
         for (const article of articles) {
           try {
-            const reactionDoc = await getDoc(doc(db, 'articles', article.id, 'reactions', 'counts'));
-            if (reactionDoc.exists()) {
-              reactionsData[article.id] = {
-                likes: reactionDoc.data().likes || 0,
-                dislikes: reactionDoc.data().dislikes || 0
-              };
-            } else {
-              reactionsData[article.id] = { likes: 0, dislikes: 0 };
-            }
+            const likesDoc = await getDoc(doc(db, 'articles', article.id, 'likes', 'count'));
+            const dislikesDoc = await getDoc(doc(db, 'articles', article.id, 'dislikes', 'count'));
+            reactionsData[article.id] = {
+              likes: likesDoc.exists() ? likesDoc.data().count || 0 : 0,
+              dislikes: dislikesDoc.exists() ? dislikesDoc.data().count || 0 : 0
+            };
           } catch (e) {
             reactionsData[article.id] = { likes: 0, dislikes: 0 };
           }
