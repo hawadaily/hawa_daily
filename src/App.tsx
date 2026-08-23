@@ -16,6 +16,7 @@ import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import QuranFacebookPost from './pages/QuranFacebookPost';
 import RecipeFacebookPost from './pages/RecipeFacebookPost';
+import RecipeDetail from './pages/RecipeDetail';
 import DesktopNav from './components/DesktopNav';
 import MobileNav from './components/MobileNav';
 import BottomNav from './components/BottomNav';
@@ -233,6 +234,7 @@ function App() {
             <Route path="/quran" element={<Quran />} />
             <Route path="/quran/facebook-post" element={<QuranFacebookPost />} />
             <Route path="/recipes/facebook-post" element={<RecipeFacebookPost />} />
+            <Route path="/recipes/:id" element={<RecipeDetail />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/article/:id" element={<ArticlePage />} />
             <Route path="/recipes" element={<Recipes />} />

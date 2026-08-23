@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Recipe } from '../data/recipes';
 import { IMAGE_FALLBACK } from '../utils/imageFallback';
+import { useNavigate } from 'react-router-dom';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -9,6 +10,7 @@ interface RecipeCardProps {
 }
 
 export default function RecipeCard({ recipe, onClick, language }: RecipeCardProps) {
+  const navigate = useNavigate();
   const title = language === 'dv' ? recipe.titleDv : recipe.titleEn;
   const instructions = language === 'dv' ? recipe.instructions.dv : recipe.instructions.en;
   const ingredients = language === 'dv' ? recipe.ingredients.dv : recipe.ingredients.en;
@@ -43,12 +45,19 @@ export default function RecipeCard({ recipe, onClick, language }: RecipeCardProp
     window.open(shareUrlFinal, '_blank', 'width=600,height=400');
   };
 
+  const handleCopyLink = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const recipeUrl = `https://www.hawadaily.com/recipes/${recipe.id}`;
+    navigator.clipboard.writeText(recipeUrl);
+    alert(language === 'dv' ? 'ރެސިޕީ ލިންކް ކޮޕީ ކުރެވިއްޖެ!' : 'Recipe link copied!');
+  };
+
   return (
     <motion.article
       whileHover={{ y: -6, scale: 1.02 }}
       transition={{ duration: 0.3 }}
       className="group relative overflow-hidden rounded-2xl border-2 border-[#0077b6] bg-white shadow-xl cursor-pointer"
-      onClick={onClick}
+      onClick={() => navigate(`/recipes/${recipe.id}`)}
       dir="rtl"
     >
       {/* Top accent line */}
@@ -139,6 +148,15 @@ export default function RecipeCard({ recipe, onClick, language }: RecipeCardProp
                 {recipe.servings}
               </div>
               <div className="flex gap-1.5">
+                <button
+                  onClick={handleCopyLink}
+                  className="p-1.5 rounded-full bg-[#6b7280] text-white hover:bg-[#6b7280]/80 transition"
+                  title={language === 'dv' ? 'ލިންކް ކޮޕީ ކުރޭ' : 'Copy Link'}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
                 <button
                   onClick={(e) => handleShare('facebook', e)}
                   className="p-1.5 rounded-full bg-[#1877f2] text-white hover:bg-[#1877f2]/80 transition"
