@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { IMAGE_FALLBACK } from '../utils/imageFallback';
+import { db } from '../firebase';
+import { doc, getDoc, setDoc, getDocs, collection, query, orderBy, addDoc, serverTimestamp, increment } from 'firebase/firestore';
 
 interface Recipe {
   id: string;
@@ -22,12 +24,25 @@ interface Recipe {
   };
 }
 
+interface Comment {
+  id: string;
+  recipeId: string;
+  text: string;
+  timestamp: any;
+}
+
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [language, setLanguage] = useState<'dv' | 'en'>('dv');
   const [loading, setLoading] = useState(true);
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
+  const [userReaction, setUserReaction] = useState<'like' | 'dislike' | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [commentLoading, setCommentLoading] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -57,8 +72,6 @@ export default function RecipeDetail() {
         }
         
         // If not found in JSON files, try Firebase
-        const { db } = await import('../firebase');
-        const { doc, getDoc } = await import('firebase/firestore');
         const recipeDoc = await getDoc(doc(db, 'recipes', id));
         if (recipeDoc.exists()) {
           setRecipe(recipeDoc.data() as Recipe);
@@ -70,8 +83,140 @@ export default function RecipeDetail() {
       }
     };
 
+    const fetchReactions = async () => {
+      if (!id) return;
+      try {
+        const reactionsDoc = await getDoc(doc(db, 'recipe-reactions', id));
+        if (reactionsDoc.exists()) {
+          const data = reactionsDoc.data();
+          setLikes(data.likes || 0);
+          setDislikes(data.dislikes || 0);
+        }
+        
+        // Check user's reaction
+        const userId = localStorage.getItem('visitorId');
+        if (userId) {
+          const userReactionDoc = await getDoc(doc(db, 'recipe-user-reactions', `${id}_${userId}`));
+          if (userReactionDoc.exists()) {
+            setUserReaction(userReactionDoc.data().reaction);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching reactions:', error);
+      }
+    };
+
+    const fetchComments = async () => {
+      if (!id) return;
+      try {
+        const commentsQuery = query(
+          collection(db, 'recipe-comments'),
+          orderBy('timestamp', 'desc')
+        );
+        const querySnapshot = await getDocs(commentsQuery);
+        const commentsData = querySnapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() } as Comment))
+          .filter(comment => comment.recipeId === id);
+        setComments(commentsData);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
+
     fetchRecipe();
+    fetchReactions();
+    fetchComments();
   }, [id]);
+
+  const handleReaction = async (reaction: 'like' | 'dislike') => {
+    if (!id) return;
+    const userId = localStorage.getItem('visitorId');
+    if (!userId) {
+      alert(language === 'dv' ? 'ކުރެއްވުމަށް ލޮގިން ކުރައްވާ' : 'Please login to react');
+      return;
+    }
+
+    try {
+      // Update user's reaction
+      await setDoc(doc(db, 'recipe-user-reactions', `${id}_${userId}`), {
+        recipeId: id,
+        userId,
+        reaction,
+        timestamp: serverTimestamp()
+      });
+
+      // Update counts
+      const reactionsRef = doc(db, 'recipe-reactions', id);
+      if (userReaction === reaction) {
+        // Remove reaction
+        await setDoc(reactionsRef, {
+          likes: increment(-1),
+          dislikes: increment(-1)
+        }, { merge: true });
+        setUserReaction(null);
+        setLikes(prev => prev - 1);
+        setDislikes(prev => prev - 1);
+      } else if (userReaction) {
+        // Change reaction
+        const incrementValue = reaction === 'like' ? 1 : -1;
+        await setDoc(reactionsRef, {
+          likes: increment(incrementValue),
+          dislikes: increment(-incrementValue)
+        }, { merge: true });
+        setUserReaction(reaction);
+        if (reaction === 'like') {
+          setLikes(prev => prev + 1);
+          setDislikes(prev => prev - 1);
+        } else {
+          setLikes(prev => prev - 1);
+          setDislikes(prev => prev + 1);
+        }
+      } else {
+        // New reaction
+        if (reaction === 'like') {
+          await setDoc(reactionsRef, {
+            likes: increment(1)
+          }, { merge: true });
+          setLikes(prev => prev + 1);
+        } else {
+          await setDoc(reactionsRef, {
+            dislikes: increment(1)
+          }, { merge: true });
+          setDislikes(prev => prev + 1);
+        }
+        setUserReaction(reaction);
+      }
+    } catch (error) {
+      console.error('Error handling reaction:', error);
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!id || !newComment.trim()) return;
+    setCommentLoading(true);
+    try {
+      await addDoc(collection(db, 'recipe-comments'), {
+        recipeId: id,
+        text: newComment.trim(),
+        timestamp: serverTimestamp()
+      });
+      setNewComment('');
+      // Refresh comments
+      const commentsQuery = query(
+        collection(db, 'recipe-comments'),
+        orderBy('timestamp', 'desc')
+      );
+      const querySnapshot = await getDocs(commentsQuery);
+      const commentsData = querySnapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() } as Comment))
+        .filter(comment => comment.recipeId === id);
+      setComments(commentsData);
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    } finally {
+      setCommentLoading(false);
+    }
+  };
 
   const handleShare = (platform: string) => {
     if (!recipe) return;
@@ -160,7 +305,11 @@ export default function RecipeDetail() {
       cookTime: 'ފިއްޓުވަގުތު',
       servings: 'ބައިތައް',
       back: 'އެހެން ރެސިޕީތައް ބައްލަވާ',
-      share: 'ޝެއާރު ކުރޭ'
+      share: 'ޝެއާރު ކުރޭ',
+      comments: 'ކޮމެންޓްތައް',
+      addComment: 'ކޮމެންޓް އަހައްދަވާ',
+      writeComment: 'ކޮމެންޓް ލިޔުމަށް...',
+      noComments: 'ކޮމެންޓް ނެތް'
     },
     en: {
       ingredients: 'Ingredients',
@@ -169,7 +318,11 @@ export default function RecipeDetail() {
       cookTime: 'Cook Time',
       servings: 'Servings',
       back: 'Back to Recipes',
-      share: 'Share'
+      share: 'Share',
+      comments: 'Comments',
+      addComment: 'Add Comment',
+      writeComment: 'Write a comment...',
+      noComments: 'No comments yet'
     }
   };
 
@@ -245,6 +398,32 @@ export default function RecipeDetail() {
           </span>
         </div>
 
+        {/* Like/Dislike Buttons */}
+        <div className="flex gap-4 mb-6">
+          <button
+            onClick={() => handleReaction('like')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition ${
+              userReaction === 'like' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-white text-[#0077b6] border-2 border-[#0077b6] hover:bg-[#0077b6]/10'
+            }`}
+          >
+            <span className="text-2xl">😊</span>
+            <span>{likes}</span>
+          </button>
+          <button
+            onClick={() => handleReaction('dislike')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition ${
+              userReaction === 'dislike' 
+                ? 'bg-red-500 text-white' 
+                : 'bg-white text-[#0077b6] border-2 border-[#0077b6] hover:bg-[#0077b6]/10'
+            }`}
+          >
+            <span className="text-2xl">😢</span>
+            <span>{dislikes}</span>
+          </button>
+        </div>
+
         {/* Share Buttons */}
         <div className="flex gap-2 mb-6">
           <button
@@ -308,11 +487,50 @@ export default function RecipeDetail() {
         </div>
 
         {/* Instructions */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg">
+        <div className="bg-white rounded-2xl p-6 shadow-lg mb-6">
           <h2 className="text-2xl font-bold text-[#0077b6] mb-4">{t.instructions}</h2>
           <p className="text-[#005f73] leading-relaxed whitespace-pre-line text-lg">
             {instructions}
           </p>
+        </div>
+
+        {/* Comments Section */}
+        <div className="bg-white rounded-2xl p-6 shadow-lg">
+          <h2 className="text-2xl font-bold text-[#0077b6] mb-4">{t.comments} ({comments.length})</h2>
+          
+          {/* Add Comment Form */}
+          <div className="mb-6">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder={t.writeComment}
+              className="w-full rounded-lg border-2 border-[#0077b6] bg-[#caf0f8] p-3 text-[#005f73] focus:border-[#005f73] focus:outline-none resize-none"
+              rows={3}
+            />
+            <button
+              onClick={handleAddComment}
+              disabled={commentLoading || !newComment.trim()}
+              className="mt-2 bg-[#0077b6] text-white px-6 py-2 rounded-lg font-bold hover:bg-[#005f73] transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {commentLoading ? (language === 'dv' ? 'ލޯޑް ކުރަމުން...' : 'Loading...') : t.addComment}
+            </button>
+          </div>
+
+          {/* Comments List */}
+          {comments.length === 0 ? (
+            <p className="text-[#005f73] text-center py-4">{t.noComments}</p>
+          ) : (
+            <div className="space-y-4">
+              {comments.map((comment) => (
+                <div key={comment.id} className="border-b border-[#0077b6]/20 pb-4">
+                  <p className="text-[#005f73]">{comment.text}</p>
+                  <p className="text-xs text-[#0077b6] mt-2">
+                    {comment.timestamp ? new Date(comment.timestamp.seconds * 1000).toLocaleDateString() : ''}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </motion.section>
