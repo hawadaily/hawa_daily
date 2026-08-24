@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { Article, categories } from '../data/mockData';
 import { db } from '../firebase';
@@ -52,6 +52,11 @@ export default function ArticlePage() {
   const [commentName, setCommentName] = useState('');
   const [showComments, setShowComments] = useState(false);
   const [commentReactions, setCommentReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
+  const [sidebarPromotions, setSidebarPromotions] = useState<any[]>([]);
+  const [slot1Index, setSlot1Index] = useState(0);
+  const [slot2Index, setSlot2Index] = useState(0);
+  const [midArticlePromotions, setMidArticlePromotions] = useState<any[]>([]);
+  const [midArticlePromotionIndex, setMidArticlePromotionIndex] = useState(0);
 
   useEffect(() => {
     if (!id) {
@@ -168,6 +173,69 @@ export default function ArticlePage() {
         });
     }
   }, [showComments, id]);
+
+  // Fetch sidebar promotions
+  useEffect(() => {
+    const fetchSidebarPromotions = async () => {
+      try {
+        const promotionsQuery = query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc'));
+        const promotionsSnapshot = await getDocs(promotionsQuery);
+        const promotionsData = promotionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setSidebarPromotions(promotionsData);
+      } catch (e) {
+        console.error('Error fetching sidebar promotions:', e);
+      }
+    };
+    fetchSidebarPromotions();
+
+    // Auto-rotate sidebar promotions every 5 seconds
+    const slot1Interval = setInterval(() => {
+      setSlot1Index(prev => {
+        const slot1Promotions = sidebarPromotions.filter(p => p.slot === 'slot1');
+        return slot1Promotions.length > 0 ? (prev + 1) % slot1Promotions.length : 0;
+      });
+    }, 5000);
+
+    const slot2Interval = setInterval(() => {
+      setSlot2Index(prev => {
+        const slot2Promotions = sidebarPromotions.filter(p => p.slot === 'slot2');
+        return slot2Promotions.length > 0 ? (prev + 1) % slot2Promotions.length : 0;
+      });
+    }, 5000);
+
+    return () => {
+      clearInterval(slot1Interval);
+      clearInterval(slot2Interval);
+    };
+  }, [sidebarPromotions]);
+
+  // Fetch mid-article promotions
+  useEffect(() => {
+    const fetchMidArticlePromotions = async () => {
+      try {
+        const promotionsQuery = query(collection(db, 'mid-article-promotions'), orderBy('createdAt', 'desc'));
+        const promotionsSnapshot = await getDocs(promotionsQuery);
+        const promotionsData = promotionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setMidArticlePromotions(promotionsData);
+      } catch (e) {
+        console.error('Error fetching mid-article promotions:', e);
+      }
+    };
+    fetchMidArticlePromotions();
+  }, []);
+
+  // Auto-rotate mid-article promotions every 5 seconds
+  useEffect(() => {
+    const midArticleInterval = setInterval(() => {
+      setMidArticlePromotionIndex(prev => {
+        return midArticlePromotions.length > 0 ? (prev + 1) % midArticlePromotions.length : 0;
+      });
+    }, 5000);
+
+    return () => {
+      clearInterval(midArticleInterval);
+    };
+  }, [midArticlePromotions]);
 
   if (loading || article === undefined) {
     return (
@@ -500,11 +568,51 @@ export default function ArticlePage() {
                   paragraphs.push(currentParagraph.trim());
                 }
 
-                return paragraphs.map((paragraph: string, index: number) => (
-                  paragraph && (
-                    <p key={index} className="text-base leading-8 text-slate-700">{paragraph}</p>
-                  )
-                ));
+                // Split paragraphs into 2 halves
+                const midPoint = Math.ceil(paragraphs.length / 2);
+                const firstHalf = paragraphs.slice(0, midPoint);
+                const secondHalf = paragraphs.slice(midPoint);
+
+                return (
+                  <>
+                    {/* First half of article body */}
+                    {firstHalf.map((paragraph: string, index: number) => (
+                      paragraph && (
+                        <p key={`first-${index}`} className="text-base leading-8 text-slate-700">{paragraph}</p>
+                      )
+                    ))}
+
+                    {/* Mid-Article Promotion */}
+                    {midArticlePromotions.length > 0 && (
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={midArticlePromotions[midArticlePromotionIndex].id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.5 }}
+                          className="my-6 rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden"
+                        >
+                          <a href={midArticlePromotions[midArticlePromotionIndex].link || '#'} target={midArticlePromotions[midArticlePromotionIndex].link ? '_blank' : '_self'}>
+                            <img
+                              src={midArticlePromotions[midArticlePromotionIndex].image}
+                              alt={midArticlePromotions[midArticlePromotionIndex].title || 'Promotion'}
+                              className="w-auto h-auto mx-auto"
+                              style={{ maxHeight: '200px' }}
+                            />
+                          </a>
+                        </motion.div>
+                      </AnimatePresence>
+                    )}
+
+                    {/* Second half of article body */}
+                    {secondHalf.map((paragraph: string, index: number) => (
+                      paragraph && (
+                        <p key={`second-${index}`} className="text-base leading-8 text-slate-700">{paragraph}</p>
+                      )
+                    ))}
+                  </>
+                );
               })()}
             </div>
             <div className="mt-6">
@@ -664,6 +772,67 @@ export default function ArticlePage() {
                 ))}
               </div>
             </div>
+
+            {/* Sidebar Promotions */}
+            {sidebarPromotions.length > 0 && (
+              <div className="flex flex-col gap-4">
+                {/* Slot 1 */}
+                {(() => {
+                  const slot1Promotions = sidebarPromotions.filter(p => p.slot === 'slot1');
+                  if (slot1Promotions.length === 0) return null;
+                  const currentPromotion = slot1Promotions[slot1Index];
+                  return (
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentPromotion.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden"
+                      >
+                        <a href={currentPromotion.link || '#'} target={currentPromotion.link ? '_blank' : '_self'}>
+                          <img
+                            src={currentPromotion.image}
+                            alt={currentPromotion.title || 'Promotion'}
+                            className="w-full h-auto"
+                            style={{ aspectRatio: '1/1.5' }}
+                          />
+                        </a>
+                      </motion.div>
+                    </AnimatePresence>
+                  );
+                })()}
+                
+                {/* Slot 2 */}
+                {(() => {
+                  const slot2Promotions = sidebarPromotions.filter(p => p.slot === 'slot2');
+                  if (slot2Promotions.length === 0) return null;
+                  const currentPromotion = slot2Promotions[slot2Index];
+                  return (
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentPromotion.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden"
+                      >
+                        <a href={currentPromotion.link || '#'} target={currentPromotion.link ? '_blank' : '_self'}>
+                          <img
+                            src={currentPromotion.image}
+                            alt={currentPromotion.title || 'Promotion'}
+                            className="w-full h-auto"
+                            style={{ aspectRatio: '1/1.5' }}
+                          />
+                        </a>
+                      </motion.div>
+                    </AnimatePresence>
+                  );
+                })()}
+              </div>
+            )}
           </aside>
         </div>
       </motion.section>

@@ -11,7 +11,7 @@ import { getCompanyLogo } from '../data/companyLogos';
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB } from '../utils/cloudinary';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'reels' | 'recipes' | 'quran';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'reels' | 'recipes' | 'quran';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -574,6 +574,9 @@ export default function AdminDashboard() {
   const [headingTextColor, setHeadingTextColor] = useState('#ffffff');
   const [headingBackgroundColor, setHeadingBackgroundColor] = useState('#000000');
   const [headingBackgroundTransparency, setHeadingBackgroundTransparency] = useState(50);
+  const [quoteLogos, setQuoteLogos] = useState([
+    { id: 1, x: 85, y: 85, opacity: 90, image: '/HAWA LOGO.jpg' }
+  ]);
 
   // Facebook Reels state
   const [reelImages, setReelImages] = useState<File[]>([]);
@@ -614,7 +617,7 @@ export default function AdminDashboard() {
     if (quotePhotoUrl && quoteCanvas) {
       generateQuotePoster();
     }
-  }, [imageZoom, imageX, imageY, textSize, headingSize, lineHeight, textAlign, headingX, headingY, textX, textY, textColor, textTransparency, textBackgroundColor, textBackgroundTransparency, headingTextColor, headingBackgroundColor, headingBackgroundTransparency, quotePlatform, quoteHeading, quoteText]);
+  }, [imageZoom, imageX, imageY, textSize, headingSize, lineHeight, textAlign, headingX, headingY, textX, textY, textColor, textTransparency, textBackgroundColor, textBackgroundTransparency, headingTextColor, headingBackgroundColor, headingBackgroundTransparency, quoteLogos, quotePlatform, quoteHeading, quoteText]);
 
   // Load Dhivehi font
   useEffect(() => {
@@ -1136,6 +1139,14 @@ export default function AdminDashboard() {
   const [uploadingSidebarPromotion, setUploadingSidebarPromotion] = useState(false);
   const [sidebarPromotionError, setSidebarPromotionError] = useState('');
 
+  // Mid-article promotion management state
+  const [midArticlePromotions, setMidArticlePromotions] = useState<any[]>([]);
+  const [midArticlePromotionFile, setMidArticlePromotionFile] = useState<File | null>(null);
+  const [midArticlePromotionTitle, setMidArticlePromotionTitle] = useState('');
+  const [midArticlePromotionLink, setMidArticlePromotionLink] = useState('');
+  const [uploadingMidArticlePromotion, setUploadingMidArticlePromotion] = useState(false);
+  const [midArticlePromotionError, setMidArticlePromotionError] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -1163,6 +1174,11 @@ export default function AdminDashboard() {
       const promotionSnapshot = await getDocs(query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc')));
       const promotionsData = promotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setSidebarPromotions(promotionsData);
+
+      // Load mid-article promotions
+      const midArticlePromotionSnapshot = await getDocs(query(collection(db, 'mid-article-promotions'), orderBy('createdAt', 'desc')));
+      const midArticlePromotionsData = midArticlePromotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setMidArticlePromotions(midArticlePromotionsData);
     } catch (error) {
       console.warn('Unable to load dashboard data', error);
     }
@@ -1801,6 +1817,54 @@ export default function AdminDashboard() {
       loadDashboard();
     } catch (error) {
       setMessage('Failed to delete sidebar promotion');
+      console.error(error);
+    }
+  };
+
+  const handleMidArticlePromotionUpload = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!midArticlePromotionFile) {
+      setMidArticlePromotionError('Please select an image');
+      return;
+    }
+
+    setUploadingMidArticlePromotion(true);
+    setMidArticlePromotionError('');
+
+    try {
+      const imageUrl = await uploadToImgBB(midArticlePromotionFile);
+      
+      await addDoc(collection(db, 'mid-article-promotions'), {
+        title: midArticlePromotionTitle,
+        link: midArticlePromotionLink,
+        image: imageUrl,
+        createdAt: serverTimestamp(),
+      });
+
+      setMessage('Mid-article promotion uploaded successfully!');
+      setMidArticlePromotionFile(null);
+      setMidArticlePromotionTitle('');
+      setMidArticlePromotionLink('');
+      loadDashboard();
+    } catch (error) {
+      setMidArticlePromotionError('Failed to upload mid-article promotion');
+      console.error(error);
+    } finally {
+      setUploadingMidArticlePromotion(false);
+    }
+  };
+
+  const handleDeleteMidArticlePromotion = async (promotionId: string) => {
+    if (!confirm('Are you sure you want to delete this mid-article promotion?')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'mid-article-promotions', promotionId));
+      setMessage('Mid-article promotion deleted successfully!');
+      loadDashboard();
+    } catch (error) {
+      setMessage('Failed to delete mid-article promotion');
       console.error(error);
     }
   };
@@ -2674,19 +2738,23 @@ export default function AdminDashboard() {
         // Reset alpha
         ctx.globalAlpha = 1;
 
-        // Draw logo
-        const logo = new Image();
-        logo.onload = () => {
-          const logoSize = Math.round(108 * scaleFactor);
-          const logoPadding = Math.round(27 * scaleFactor);
-          ctx.globalAlpha = 0.9;
-          ctx.drawImage(logo, canvas.width - logoSize - logoPadding, canvas.height - logoSize - logoPadding, logoSize, logoSize);
-          ctx.globalAlpha = 1;
-        };
-        logo.onerror = () => {
-          // Logo failed to load, continue without it
-        };
-        logo.src = '/HAWA LOGO.jpg';
+        // Draw logos
+        quoteLogos.forEach((logoConfig) => {
+          const logo = new Image();
+          logo.onload = () => {
+            const logoSize = Math.round(108 * scaleFactor);
+            const logoPadding = Math.round(27 * scaleFactor);
+            ctx.globalAlpha = logoConfig.opacity / 100;
+            const logoPosX = (logoConfig.x / 100) * (canvas.width - logoSize);
+            const logoPosY = (logoConfig.y / 100) * (canvas.height - logoSize);
+            ctx.drawImage(logo, logoPosX, logoPosY, logoSize, logoSize);
+            ctx.globalAlpha = 1;
+          };
+          logo.onerror = () => {
+            // Logo failed to load, continue without it
+          };
+          logo.src = logoConfig.image;
+        });
 
       };
       img.src = quotePhotoUrl;
@@ -2789,7 +2857,7 @@ export default function AdminDashboard() {
       <>
         {/* Tabs */}
         <div className="flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'reels', 'recipes', 'quran'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'reels', 'recipes', 'quran'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -2803,6 +2871,7 @@ export default function AdminDashboard() {
               {tab === 'manage' && t.manageNews}
               {tab === 'banners' && t.manageBanners}
               {tab === 'sidebar-promotions' && 'Sidebar Promotions'}
+              {tab === 'mid-article-promotions' && 'Mid-Article Promotions'}
               {tab === 'analytics' && t.analytics}
               {tab === 'settings' && t.settings}
               {tab === 'rephrase' && 'ޚަބަރު ރީފްރޭޒް (Rephrase)'}
@@ -3677,6 +3746,87 @@ export default function AdminDashboard() {
                   ))
                 ) : (
                   <p className="text-gray-600 col-span-full">No sidebar promotions yet</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Mid-Article Promotions Tab */}
+        {activeTab === 'mid-article-promotions' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">Mid-Article Promotions</h3>
+            <p className="mt-2 text-sm text-gray-600">Manage promotional banners displayed between article body sections (max height: 200px)</p>
+            
+            {/* Upload Form */}
+            <form onSubmit={handleMidArticlePromotionUpload} className="mt-6 space-y-4">
+              {midArticlePromotionError && (
+                <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                  {midArticlePromotionError}
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">Title</label>
+                <input
+                  type="text"
+                  value={midArticlePromotionTitle}
+                  onChange={(e) => setMidArticlePromotionTitle(e.target.value)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  placeholder="Promotion title..."
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">Link</label>
+                <input
+                  type="url"
+                  value={midArticlePromotionLink}
+                  onChange={(e) => setMidArticlePromotionLink(e.target.value)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  placeholder="https://example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setMidArticlePromotionFile(e.target.files?.[0] || null)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  required
+                />
+              </div>
+              <button
+                disabled={uploadingMidArticlePromotion}
+                className="w-full rounded-3xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {uploadingMidArticlePromotion ? 'Uploading...' : 'Upload Promotion'}
+              </button>
+            </form>
+
+            {/* Promotions List */}
+            <div className="mt-8">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">Current Promotions</h4>
+              
+              <div className="grid gap-4 md:grid-cols-2">
+                {midArticlePromotions.length > 0 ? (
+                  midArticlePromotions.map((promotion) => (
+                    <div key={promotion.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-soft">
+                      <img src={promotion.image} alt={promotion.title} className="w-full h-auto object-cover rounded-lg mb-3" style={{ maxHeight: '200px' }} />
+                      <h5 className="font-semibold text-gray-900 text-sm">{promotion.title}</h5>
+                      {promotion.link && (
+                        <p className="text-xs text-gray-600 mt-1 truncate">{promotion.link}</p>
+                      )}
+                      <button
+                        onClick={() => handleDeleteMidArticlePromotion(promotion.id)}
+                        className="mt-3 w-full rounded-2xl border border-rose-600 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-600/20"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-600 col-span-full">No mid-article promotions yet</p>
                 )}
               </div>
             </div>
@@ -4882,6 +5032,103 @@ export default function AdminDashboard() {
                       />
                     </div>
                   </div>
+                </div>
+
+                {/* Logo Controls */}
+                <div className="border border-gray-200 rounded-xl p-3 bg-gray-50">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xs font-semibold text-gray-700">ލޯގޯ ކޮންޓްރޯލް (Logo Controls)</h4>
+                    <button
+                      type="button"
+                      onClick={() => setQuoteLogos([...quoteLogos, { id: Date.now(), x: 50, y: 50, opacity: 90, image: '/HAWA LOGO.jpg' }])}
+                      className="text-[10px] bg-brand-500 text-white px-2 py-1 rounded hover:bg-brand-600"
+                    >
+                      + Add Logo
+                    </button>
+                  </div>
+                  {quoteLogos.map((logo, index) => (
+                    <div key={logo.id} className="mb-3 p-2 border border-gray-200 rounded bg-white">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-medium text-gray-600">Logo {index + 1}</span>
+                        {quoteLogos.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => setQuoteLogos(quoteLogos.filter(l => l.id !== logo.id))}
+                            className="text-[10px] text-rose-600 hover:text-rose-700"
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="block text-[10px] font-medium text-gray-600 mb-1">X ({logo.x}%)</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={logo.x}
+                            onChange={(e) => {
+                              const newLogos = [...quoteLogos];
+                              newLogos[index].x = Number(e.target.value);
+                              setQuoteLogos(newLogos);
+                            }}
+                            className="w-full h-5"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-medium text-gray-600 mb-1">Y ({logo.y}%)</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={logo.y}
+                            onChange={(e) => {
+                              const newLogos = [...quoteLogos];
+                              newLogos[index].y = Number(e.target.value);
+                              setQuoteLogos(newLogos);
+                            }}
+                            className="w-full h-5"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-medium text-gray-600 mb-1">Opacity ({logo.opacity}%)</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={logo.opacity}
+                            onChange={(e) => {
+                              const newLogos = [...quoteLogos];
+                              newLogos[index].opacity = Number(e.target.value);
+                              setQuoteLogos(newLogos);
+                            }}
+                            className="w-full h-5"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <label className="block text-[10px] font-medium text-gray-600 mb-1">Logo Image</label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const newLogos = [...quoteLogos];
+                                newLogos[index].image = event.target?.result as string;
+                                setQuoteLogos(newLogos);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="w-full text-[10px]"
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Action Buttons */}

@@ -8,6 +8,15 @@ interface SiteStats {
   comments: number;
 }
 
+const formatNumber = (num: number): string => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(0) + 'k';
+  }
+  return num.toString();
+};
+
 export default function SiteStats() {
   const [stats, setStats] = useState<SiteStats>({
     visitors: 0,
@@ -89,15 +98,15 @@ export default function SiteStats() {
       <div className="grid grid-cols-3 gap-4">
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.24em] text-sky-600 mb-2">ވިސިޓަރުން</p>
-          <p className="text-2xl font-bold text-slate-900">{stats.visitors.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-slate-900">{formatNumber(stats.visitors)}</p>
         </div>
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.24em] text-sky-600 mb-2">ލައިކްތައް</p>
-          <p className="text-2xl font-bold text-slate-900">{stats.likes.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-slate-900">{formatNumber(stats.likes)}</p>
         </div>
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.24em] text-sky-600 mb-2">ކޮމެންޓްތައް</p>
-          <p className="text-2xl font-bold text-slate-900">{stats.comments.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-slate-900">{formatNumber(stats.comments)}</p>
         </div>
       </div>
     </div>
