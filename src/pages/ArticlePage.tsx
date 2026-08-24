@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { Article, categories } from '../data/mockData';
 import { db } from '../firebase';
-import { doc, getDoc, collection, getDocs, query, where, orderBy, limit, addDoc, deleteDoc, setDoc, updateDoc, getDocsFromCache } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, where, orderBy, limit, addDoc, deleteDoc, setDoc, updateDoc, getDocsFromCache, increment } from 'firebase/firestore';
 import { auth } from '../firebase';
 import PromoBanner from '../components/PromoBanner';
 import QuranVerseSlider from '../components/QuranVerseSlider';
@@ -368,9 +368,9 @@ export default function ArticlePage() {
   const updateReactionCount = async (type: 'like' | 'dislike', delta: number) => {
     if (!id) return;
     const countRef = doc(db, 'articles', id, type === 'like' ? 'likes' : 'dislikes', 'count');
-    const countDoc = await getDoc(countRef);
-    const currentCount = countDoc.exists() ? countDoc.data().count : 0;
-    await setDoc(countRef, { count: currentCount + delta });
+    
+    // Use atomic increment to prevent race conditions
+    await setDoc(countRef, { count: increment(delta) }, { merge: true });
     
     if (type === 'like') {
       setLikes(prev => prev + delta);
