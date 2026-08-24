@@ -11,7 +11,7 @@ import { getCompanyLogo } from '../data/companyLogos';
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB } from '../utils/cloudinary';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'recipes' | 'quran';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'reels' | 'recipes' | 'quran';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -163,6 +163,7 @@ export default function AdminDashboard() {
       sizeMobile: 'Mobile Only',
       sizeDesktop: 'Desktop Only',
       sizeBoth: 'Both Mobile & Desktop',
+      noBanners: 'No banners yet',
       gradientLocation: 'Gradient Location',
       gradientTop: 'Top',
       gradientMiddle: 'Middle',
@@ -228,6 +229,17 @@ export default function AdminDashboard() {
       editRecipe: 'Edit Recipe',
       deleteRecipe: 'Delete Recipe',
       saveRecipe: 'Save Recipe',
+      facebookReels: 'Facebook Reels',
+      facebookReelsDesc: 'Create Facebook Reels from images',
+      uploadImages: 'Upload Images',
+      reelText: 'Reel Text',
+      duration: 'Duration (seconds)',
+      transition: 'Transition Effect',
+      transitionFade: 'Fade',
+      transitionSlide: 'Slide',
+      transitionZoom: 'Zoom',
+      generateReel: 'Generate Reel',
+      downloadReel: 'Download Reel',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -351,6 +363,7 @@ export default function AdminDashboard() {
       sizeMobile: 'މޮބައިލް',
       sizeDesktop: 'ޑެސްކްޓޮޕް',
       sizeBoth: 'ދެވަނަ (މޮބައިލް + ޑެސްކްޓޮޕް)',
+      noBanners: 'ބެނަރުތައް ނެތް',
       gradientLocation: 'ގްރޭޑިއެންޓް ހުސްކަން',
       gradientTop: 'މައްޗު',
       gradientMiddle: 'މެދު',
