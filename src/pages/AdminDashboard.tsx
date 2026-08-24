@@ -571,6 +571,9 @@ export default function AdminDashboard() {
   const [textTransparency, setTextTransparency] = useState(100);
   const [textBackgroundColor, setTextBackgroundColor] = useState('#000000');
   const [textBackgroundTransparency, setTextBackgroundTransparency] = useState(50);
+  const [headingTextColor, setHeadingTextColor] = useState('#ffffff');
+  const [headingBackgroundColor, setHeadingBackgroundColor] = useState('#000000');
+  const [headingBackgroundTransparency, setHeadingBackgroundTransparency] = useState(50);
 
   // Facebook Reels state
   const [reelImages, setReelImages] = useState<File[]>([]);
@@ -611,7 +614,7 @@ export default function AdminDashboard() {
     if (quotePhotoUrl && quoteCanvas) {
       generateQuotePoster();
     }
-  }, [imageZoom, imageX, imageY, textSize, headingSize, lineHeight, textAlign, headingX, headingY, textX, textY, textColor, textTransparency, textBackgroundColor, textBackgroundTransparency, quotePlatform, quoteHeading, quoteText]);
+  }, [imageZoom, imageX, imageY, textSize, headingSize, lineHeight, textAlign, headingX, headingY, textX, textY, textColor, textTransparency, textBackgroundColor, textBackgroundTransparency, headingTextColor, headingBackgroundColor, headingBackgroundTransparency, quotePlatform, quoteHeading, quoteText]);
 
   // Load Dhivehi font
   useEffect(() => {
@@ -2622,9 +2625,6 @@ export default function AdminDashboard() {
 
         // Draw heading if provided
         if (quoteHeading) {
-          ctx.font = `bold ${Math.round(headingSize * scaleFactor)}px ${fontName}`;
-          ctx.fillStyle = textColor;
-          ctx.globalAlpha = alphaValue;
           // Calculate heading position based on controls
           let headingPosX;
           if (textAlign === 'center') {
@@ -2635,6 +2635,28 @@ export default function AdminDashboard() {
             headingPosX = Math.round(100 * scaleFactor);
           }
           const headingPosY = (headingY / 100) * canvas.height;
+
+          // Draw heading background
+          const headingBgAlphaValue = headingBackgroundTransparency / 100;
+          ctx.globalAlpha = headingBgAlphaValue;
+          ctx.fillStyle = headingBackgroundColor;
+          
+          ctx.font = `bold ${Math.round(headingSize * scaleFactor)}px ${fontName}`;
+          const headingMetrics = ctx.measureText(quoteHeading);
+          const headingPadding = Math.round(15 * scaleFactor);
+          const headingBgWidth = headingMetrics.width + headingPadding * 2;
+          const headingBgHeight = Math.round(headingSize * scaleFactor) + headingPadding * 2;
+          
+          ctx.fillRect(
+            headingPosX - headingBgWidth / 2,
+            headingPosY - headingBgHeight / 2,
+            headingBgWidth,
+            headingBgHeight
+          );
+
+          // Draw heading text
+          ctx.globalAlpha = alphaValue;
+          ctx.fillStyle = headingTextColor;
           ctx.fillText(quoteHeading, headingPosX, headingPosY);
         }
 
@@ -4685,6 +4707,39 @@ export default function AdminDashboard() {
                         className="w-full h-5"
                       />
                     </div>
+                  </div>
+                  {/* Heading Background Color Controls */}
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">ހެޑްލައިން ބެކްގްރައުންޑް ކަލަރ</label>
+                      <input
+                        type="color"
+                        value={headingBackgroundColor}
+                        onChange={(e) => setHeadingBackgroundColor(e.target.value)}
+                        className="w-full h-6 rounded cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">ހެޑްލައިން ބެކްގްރައުންޑް ޝައްޕާރަންސީ ({headingBackgroundTransparency}%)</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={headingBackgroundTransparency}
+                        onChange={(e) => setHeadingBackgroundTransparency(Number(e.target.value))}
+                        className="w-full h-5"
+                      />
+                    </div>
+                  </div>
+                  {/* Heading Text Color Control */}
+                  <div className="mt-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">ހެޑްލައިން ޓެކްސްޓް ކަލަރ</label>
+                    <input
+                      type="color"
+                      value={headingTextColor}
+                      onChange={(e) => setHeadingTextColor(e.target.value)}
+                      className="w-full h-6 rounded cursor-pointer"
+                    />
                   </div>
                 </div>
 
