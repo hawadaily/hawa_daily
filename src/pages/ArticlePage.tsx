@@ -90,8 +90,15 @@ export default function ArticlePage() {
             getDoc(doc(db, 'articles', id, 'likes', 'count')),
             getDoc(doc(db, 'articles', id, 'dislikes', 'count'))
           ]).then(([likesDoc, dislikesDoc]) => {
-            setLikes(likesDoc.exists() ? Math.max(0, likesDoc.data().count) : 0);
-            setDislikes(dislikesDoc.exists() ? Math.max(0, dislikesDoc.data().count) : 0);
+            const likeCount = likesDoc.exists() ? likesDoc.data().count : 0;
+            const dislikeCount = dislikesDoc.exists() ? dislikesDoc.data().count : 0;
+            console.log('Fetched counts - likes:', likeCount, 'dislikes:', dislikeCount);
+            // Convert to number and strip any non-numeric characters
+            const cleanLikeCount = parseInt(String(likeCount).replace(/[^0-9]/g, '')) || 0;
+            const cleanDislikeCount = parseInt(String(dislikeCount).replace(/[^0-9]/g, '')) || 0;
+            console.log('Cleaned counts - likes:', cleanLikeCount, 'dislikes:', cleanDislikeCount);
+            setLikes(cleanLikeCount);
+            setDislikes(cleanDislikeCount);
           }).catch(err => {
             console.warn('Unable to load like/dislike counts:', err);
           });
@@ -374,7 +381,10 @@ export default function ArticlePage() {
     
     // Fetch the updated count to ensure accuracy
     const countDoc = await getDoc(countRef);
-    const newCount = countDoc.exists() ? Math.max(0, countDoc.data().count) : 0;
+    const rawCount = countDoc.exists() ? countDoc.data().count : 0;
+    // Strip any non-numeric characters to handle corrupted data
+    const newCount = parseInt(String(rawCount).replace(/[^0-9]/g, '')) || 0;
+    console.log('Updated count - type:', type, 'delta:', delta, 'rawCount:', rawCount, 'newCount:', newCount);
     
     if (type === 'like') {
       setLikes(newCount);
