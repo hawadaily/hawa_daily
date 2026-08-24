@@ -16,6 +16,8 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [articleReactions, setArticleReactions] = useState<Record<string, { likes: number; dislikes: number }>>({});
   const [sidebarPromotions, setSidebarPromotions] = useState<any[]>([]);
+  const [slot1Index, setSlot1Index] = useState(0);
+  const [slot2Index, setSlot2Index] = useState(0);
 
   // Fetch articles with periodic updates instead of real-time listeners
   useEffect(() => {
@@ -60,7 +62,7 @@ export default function Home() {
         
         // Fetch sidebar promotions
         try {
-          const promotionsQuery = query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc'), limit(2));
+          const promotionsQuery = query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc'));
           const promotionsSnapshot = await getDocs(promotionsQuery);
           const promotionsData = promotionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           setSidebarPromotions(promotionsData);
@@ -79,8 +81,27 @@ export default function Home() {
     // Refresh articles every 5 minutes (instead of real-time)
     const interval = setInterval(fetchArticles, 5 * 60 * 1000);
 
-    return () => clearInterval(interval);
-  }, []);
+    // Auto-rotate sidebar promotions every 5 seconds
+    const slot1Interval = setInterval(() => {
+      setSlot1Index(prev => {
+        const slot1Promotions = sidebarPromotions.filter(p => p.slot === 'slot1');
+        return slot1Promotions.length > 0 ? (prev + 1) % slot1Promotions.length : 0;
+      });
+    }, 5000);
+
+    const slot2Interval = setInterval(() => {
+      setSlot2Index(prev => {
+        const slot2Promotions = sidebarPromotions.filter(p => p.slot === 'slot2');
+        return slot2Promotions.length > 0 ? (prev + 1) % slot2Promotions.length : 0;
+      });
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(slot1Interval);
+      clearInterval(slot2Interval);
+    };
+  }, [sidebarPromotions]);
 
   const featuredArticles = useMemo(() => articlesState.filter((article) => article.featured), [articlesState]);
   const breakingArticles = useMemo(() => articlesState.filter((article) => article.breakingNews), [articlesState]);
@@ -194,16 +215,63 @@ export default function Home() {
         {/* Promotion Sidebar */}
         <div className="lg:col-span-1 flex flex-col gap-6">
           {sidebarPromotions.length > 0 ? (
-            sidebarPromotions.map((promotion) => (
-              <div key={promotion.id} className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden">
-                <img 
-                  src={promotion.image} 
-                  alt={promotion.title || 'Promotion'} 
-                  className="w-full h-auto"
-                  style={{ aspectRatio: '1/1.5' }}
-                />
-              </div>
-            ))
+            <>
+              {/* Slot 1 */}
+              {(() => {
+                const slot1Promotions = sidebarPromotions.filter(p => p.slot === 'slot1');
+                if (slot1Promotions.length === 0) return null;
+                const currentPromotion = slot1Promotions[slot1Index];
+                return (
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentPromotion.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden"
+                    >
+                      <a href={currentPromotion.link || '#'} target={currentPromotion.link ? '_blank' : '_self'}>
+                        <img
+                          src={currentPromotion.image}
+                          alt={currentPromotion.title || 'Promotion'}
+                          className="w-full h-auto"
+                          style={{ aspectRatio: '1/1.5' }}
+                        />
+                      </a>
+                    </motion.div>
+                  </AnimatePresence>
+                );
+              })()}
+              
+              {/* Slot 2 */}
+              {(() => {
+                const slot2Promotions = sidebarPromotions.filter(p => p.slot === 'slot2');
+                if (slot2Promotions.length === 0) return null;
+                const currentPromotion = slot2Promotions[slot2Index];
+                return (
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentPromotion.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden"
+                    >
+                      <a href={currentPromotion.link || '#'} target={currentPromotion.link ? '_blank' : '_self'}>
+                        <img
+                          src={currentPromotion.image}
+                          alt={currentPromotion.title || 'Promotion'}
+                          className="w-full h-auto"
+                          style={{ aspectRatio: '1/1.5' }}
+                        />
+                      </a>
+                    </motion.div>
+                  </AnimatePresence>
+                );
+              })()}
+            </>
           ) : (
             <>
               <div className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden">

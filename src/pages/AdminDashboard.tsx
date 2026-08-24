@@ -1132,6 +1132,7 @@ export default function AdminDashboard() {
   const [sidebarPromotionFile, setSidebarPromotionFile] = useState<File | null>(null);
   const [sidebarPromotionTitle, setSidebarPromotionTitle] = useState('');
   const [sidebarPromotionLink, setSidebarPromotionLink] = useState('');
+  const [sidebarPromotionSlot, setSidebarPromotionSlot] = useState<'slot1' | 'slot2'>('slot1');
   const [uploadingSidebarPromotion, setUploadingSidebarPromotion] = useState(false);
   const [sidebarPromotionError, setSidebarPromotionError] = useState('');
 
@@ -1771,6 +1772,7 @@ export default function AdminDashboard() {
         title: sidebarPromotionTitle,
         link: sidebarPromotionLink,
         image: imageUrl,
+        slot: sidebarPromotionSlot,
         createdAt: serverTimestamp(),
       });
 
@@ -1778,6 +1780,7 @@ export default function AdminDashboard() {
       setSidebarPromotionFile(null);
       setSidebarPromotionTitle('');
       setSidebarPromotionLink('');
+      setSidebarPromotionSlot('slot1');
       loadDashboard();
     } catch (error) {
       setSidebarPromotionError('Failed to upload sidebar promotion');
@@ -3621,6 +3624,18 @@ export default function AdminDashboard() {
                 />
               </div>
               <div>
+                <label className="block text-sm font-semibold text-gray-700">Slot</label>
+                <select
+                  value={sidebarPromotionSlot}
+                  onChange={(e) => setSidebarPromotionSlot(e.target.value as 'slot1' | 'slot2')}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  required
+                >
+                  <option value="slot1">Slot 1 (Top)</option>
+                  <option value="slot2">Slot 2 (Bottom)</option>
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-semibold text-gray-700">Image</label>
                 <input
                   type="file"
@@ -3648,6 +3663,7 @@ export default function AdminDashboard() {
                     <div key={promotion.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-soft">
                       <img src={promotion.image} alt={promotion.title} className="w-full h-40 object-cover rounded-lg mb-3" style={{ aspectRatio: '1/1.5' }} />
                       <h5 className="font-semibold text-gray-900 text-sm">{promotion.title}</h5>
+                      <p className="text-xs text-gray-600 mt-1">Slot: {promotion.slot === 'slot1' ? 'Slot 1 (Top)' : 'Slot 2 (Bottom)'}</p>
                       {promotion.link && (
                         <p className="text-xs text-gray-600 mt-1 truncate">{promotion.link}</p>
                       )}
