@@ -90,8 +90,8 @@ export default function ArticlePage() {
             getDoc(doc(db, 'articles', id, 'likes', 'count')),
             getDoc(doc(db, 'articles', id, 'dislikes', 'count'))
           ]).then(([likesDoc, dislikesDoc]) => {
-            setLikes(likesDoc.exists() ? likesDoc.data().count : 0);
-            setDislikes(dislikesDoc.exists() ? dislikesDoc.data().count : 0);
+            setLikes(likesDoc.exists() ? Math.max(0, likesDoc.data().count) : 0);
+            setDislikes(dislikesDoc.exists() ? Math.max(0, dislikesDoc.data().count) : 0);
           }).catch(err => {
             console.warn('Unable to load like/dislike counts:', err);
           });
@@ -372,10 +372,14 @@ export default function ArticlePage() {
     // Use atomic increment to prevent race conditions
     await setDoc(countRef, { count: increment(delta) }, { merge: true });
     
+    // Fetch the updated count to ensure accuracy
+    const countDoc = await getDoc(countRef);
+    const newCount = countDoc.exists() ? Math.max(0, countDoc.data().count) : 0;
+    
     if (type === 'like') {
-      setLikes(prev => prev + delta);
+      setLikes(newCount);
     } else {
-      setDislikes(prev => prev + delta);
+      setDislikes(newCount);
     }
   };
 
