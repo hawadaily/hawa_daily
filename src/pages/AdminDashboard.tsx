@@ -1869,6 +1869,41 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleFixNegativeCounts = async () => {
+    if (!confirm('This will reset all negative like/dislike counts to 0. Continue?')) {
+      return;
+    }
+
+    try {
+      setMessage('Fixing negative counts...');
+      const articlesSnapshot = await getDocs(collection(db, 'articles'));
+      let fixedCount = 0;
+
+      for (const articleDoc of articlesSnapshot.docs) {
+        const articleId = articleDoc.id;
+        
+        // Fix likes
+        const likesDoc = await getDoc(doc(db, 'articles', articleId, 'likes', 'count'));
+        if (likesDoc.exists() && likesDoc.data().count < 0) {
+          await setDoc(doc(db, 'articles', articleId, 'likes', 'count'), { count: 0 });
+          fixedCount++;
+        }
+        
+        // Fix dislikes
+        const dislikesDoc = await getDoc(doc(db, 'articles', articleId, 'dislikes', 'count'));
+        if (dislikesDoc.exists() && dislikesDoc.data().count < 0) {
+          await setDoc(doc(db, 'articles', articleId, 'dislikes', 'count'), { count: 0 });
+          fixedCount++;
+        }
+      }
+
+      setMessage(`Fixed ${fixedCount} negative counts to 0`);
+    } catch (error) {
+      setMessage('Failed to fix negative counts');
+      console.error(error);
+    }
+  };
+
   const visitorCount = visitorDetails?.length ?? 0;
   const topVisitors = Array.isArray(visitorDetails) ? visitorDetails.slice(0, 8) : [];
 
@@ -4380,6 +4415,18 @@ export default function AdminDashboard() {
           <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
             <h3 className="text-2xl font-bold text-gray-900">{t.settings}</h3>
             <div className="mt-6 space-y-6">
+              {/* Fix Negative Counts Button */}
+              <div className="rounded-2xl border border-rose-300 bg-rose-50 p-4">
+                <h4 className="font-semibold text-gray-900">Fix Negative Like/Dislike Counts</h4>
+                <p className="mt-2 text-sm text-gray-600">Reset all negative like/dislike counts in the database to 0</p>
+                <button
+                  onClick={handleFixNegativeCounts}
+                  className="mt-3 w-full rounded-2xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-500"
+                >
+                  Fix Negative Counts
+                </button>
+              </div>
+
               <div className="rounded-2xl border border-gray-300 bg-gray-100 p-4">
                 <h4 className="font-semibold text-gray-900">{t.translateTitle}</h4>
                 <p className="mt-2 text-sm text-gray-600">{t.translateDesc}</p>
