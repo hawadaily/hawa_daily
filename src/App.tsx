@@ -204,21 +204,23 @@ function App() {
         </motion.div>
       )}
       
-      <AdBanner />
-      {!location.pathname.includes('/facebook-post') && <NewsTicker />}
-      {!location.pathname.includes('/facebook-post') && <QuranVerseSlider />}
-      <DesktopNav language={language} setLanguage={setLanguage} />
-      <MobileNav language={language} setLanguage={setLanguage} />
-      <BottomNav
-        links={[
-          { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
-          { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: FolderOpen },
-          { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
-          { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
-          { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
-        ]}
-        activePath={location.pathname}
-      />
+      {!location.pathname.includes('/admin') && !location.pathname.includes('/dashboard') && !location.pathname.includes('/login') && <AdBanner />}
+      {!location.pathname.includes('/admin') && !location.pathname.includes('/dashboard') && !location.pathname.includes('/login') && !location.pathname.includes('/facebook-post') && <NewsTicker />}
+      {!location.pathname.includes('/admin') && !location.pathname.includes('/dashboard') && !location.pathname.includes('/login') && !location.pathname.includes('/facebook-post') && <QuranVerseSlider />}
+      {!location.pathname.includes('/admin') && !location.pathname.includes('/dashboard') && !location.pathname.includes('/login') && <DesktopNav language={language} setLanguage={setLanguage} />}
+      {!location.pathname.includes('/admin') && !location.pathname.includes('/dashboard') && !location.pathname.includes('/login') && <MobileNav language={language} setLanguage={setLanguage} />}
+      {!location.pathname.includes('/admin') && !location.pathname.includes('/dashboard') && !location.pathname.includes('/login') && (
+        <BottomNav
+          links={[
+            { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
+            { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: FolderOpen },
+            { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
+            { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
+            { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
+          ]}
+          activePath={location.pathname}
+        />
+      )}
       <AnimatePresence mode="wait">
         <motion.main
           key={location.pathname}
@@ -244,6 +246,7 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/*" element={<AdminDashboard />} />
           </Routes>
         </motion.main>
