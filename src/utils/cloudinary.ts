@@ -215,11 +215,10 @@ export async function uploadToImgBB(file: File): Promise<string> {
     // Convert file to base64
     const base64 = await fileToBase64(file);
     
-    // Use codetabs proxy with base64 in POST body
+    // Use ImgBB API with base64 data
     const apiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;
-    const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apiUrl)}`;
     
-    const response = await fetch(proxyUrl, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -242,7 +241,9 @@ export async function uploadToImgBB(file: File): Promise<string> {
 
     return data.data.url;
   } catch (error) {
-    console.error('Error uploading to ImgBB:', error);
-    throw new Error('ImgBB upload failed due to CORS restrictions. Consider using a server-side proxy or a different image hosting service.');
+    console.error('ImgBB upload failed due to CORS:', error);
+    console.log('Falling back to Imgur...');
+    // Fallback to Imgur since ImgBB doesn't support CORS
+    return uploadToImgur(file);
   }
 }
