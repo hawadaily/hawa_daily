@@ -212,14 +212,15 @@ export async function uploadVideoToImgur(file: File): Promise<string> {
 
 export async function uploadToImgBB(file: File): Promise<string> {
   try {
-    // Convert file to base64
-    const base64 = await fileToBase64(file);
-    
-    // Use GET request with base64 data (ImgBB supports this)
-    const apiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}&image=${encodeURIComponent(base64)}`;
+    const formData = new FormData();
+    formData.append('image', file);
+
+    // Try direct upload first (may work if ImgBB has updated CORS)
+    const apiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;
     
     const response = await fetch(apiUrl, {
-      method: 'GET',
+      method: 'POST',
+      body: formData,
     });
 
     const data = await response.json();
@@ -238,6 +239,8 @@ export async function uploadToImgBB(file: File): Promise<string> {
     return data.data.url;
   } catch (error) {
     console.error('Error uploading to ImgBB:', error);
-    throw error;
+    // Fallback to Imgur if ImgBB fails
+    console.log('Falling back to Imgur...');
+    return uploadToImgur(file);
   }
 }
