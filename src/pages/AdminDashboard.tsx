@@ -11,7 +11,7 @@ import { getCompanyLogo } from '../data/companyLogos';
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB } from '../utils/cloudinary';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'reels' | 'recipes' | 'quran';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'reels' | 'recipes' | 'quran' | 'stories';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -1147,6 +1147,24 @@ export default function AdminDashboard() {
   const [uploadingMidArticlePromotion, setUploadingMidArticlePromotion] = useState(false);
   const [midArticlePromotionError, setMidArticlePromotionError] = useState('');
 
+  // Stories management state
+  const [stories, setStories] = useState<any[]>([]);
+  const [selectedStory, setSelectedStory] = useState<any | null>(null);
+  const [storyTitle, setStoryTitle] = useState('');
+  const [storyDescription, setStoryDescription] = useState('');
+  const [storyCoverImage, setStoryCoverImage] = useState<File | null>(null);
+  const [storyStatus, setStoryStatus] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
+  const [uploadingStory, setUploadingStory] = useState(false);
+  const [storyError, setStoryError] = useState('');
+
+  // Episodes management state
+  const [episodes, setEpisodes] = useState<any[]>([]);
+  const [episodeTitle, setEpisodeTitle] = useState('');
+  const [episodeContent, setEpisodeContent] = useState('');
+  const [episodeNumber, setEpisodeNumber] = useState(1);
+  const [uploadingEpisode, setUploadingEpisode] = useState(false);
+  const [episodeError, setEpisodeError] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -1179,6 +1197,11 @@ export default function AdminDashboard() {
       const midArticlePromotionSnapshot = await getDocs(query(collection(db, 'mid-article-promotions'), orderBy('createdAt', 'desc')));
       const midArticlePromotionsData = midArticlePromotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setMidArticlePromotions(midArticlePromotionsData);
+
+      // Load stories
+      const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
+      const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setStories(storiesData);
     } catch (error) {
       console.warn('Unable to load dashboard data', error);
     }
@@ -1900,6 +1923,144 @@ export default function AdminDashboard() {
       setMessage(`Fixed ${fixedCount} negative counts to 0`);
     } catch (error) {
       setMessage('Failed to fix negative counts');
+      console.error(error);
+    }
+  };
+
+  // Story management handlers
+  const handleCreateStory = async () => {
+    if (!storyTitle.trim() || !storyCoverImage) {
+      setStoryError('Please provide title and cover image');
+      return;
+    }
+
+    try {
+      setUploadingStory(true);
+      setStoryError('');
+
+      const coverImageUrl = await uploadImage(storyCoverImage);
+
+      await addDoc(collection(db, 'stories'), {
+        title: storyTitle,
+        description: storyDescription,
+        coverImage: coverImageUrl,
+        status: storyStatus,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+
+      setStoryTitle('');
+      setStoryDescription('');
+      setStoryCoverImage(null);
+      setStoryStatus('upcoming');
+      setMessage('Story created successfully');
+
+      // Reload stories
+      const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
+      const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setStories(storiesData);
+    } catch (error) {
+      setStoryError('Failed to create story');
+      console.error(error);
+    } finally {
+      setUploadingStory(false);
+    }
+  };
+
+  const handleDeleteStory = async (storyId: string) => {
+    if (!confirm('Are you sure you want to delete this story and all its episodes?')) {
+      return;
+    }
+
+    try {
+      // Delete all episodes
+      const episodesSnapshot = await getDocs(collection(db, 'stories', storyId, 'episodes'));
+      for (const episodeDoc of episodesSnapshot.docs) {
+        await deleteDoc(doc(db, 'stories', storyId, 'episodes', episodeDoc.id));
+      }
+
+      // Delete story
+      await deleteDoc(doc(db, 'stories', storyId));
+      setMessage('Story deleted successfully');
+
+      // Reload stories
+      const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
+      const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setStories(storiesData);
+
+      if (selectedStory?.id === storyId) {
+        setSelectedStory(null);
+        setEpisodes([]);
+      }
+    } catch (error) {
+      setMessage('Failed to delete story');
+      console.error(error);
+    }
+  };
+
+  const handleSelectStory = async (story: any) => {
+    setSelectedStory(story);
+    try {
+      const episodesSnapshot = await getDocs(query(collection(db, 'stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setEpisodes(episodesData);
+      setEpisodeNumber(episodesData.length + 1);
+    } catch (error) {
+      console.error('Failed to load episodes', error);
+    }
+  };
+
+  // Episode management handlers
+  const handleCreateEpisode = async () => {
+    if (!selectedStory || !episodeTitle.trim() || !episodeContent.trim()) {
+      setEpisodeError('Please select a story and provide title and content');
+      return;
+    }
+
+    try {
+      setUploadingEpisode(true);
+      setEpisodeError('');
+
+      await addDoc(collection(db, 'stories', selectedStory.id, 'episodes'), {
+        title: episodeTitle,
+        content: episodeContent,
+        episodeNumber: episodeNumber,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+
+      setEpisodeTitle('');
+      setEpisodeContent('');
+      setEpisodeNumber(episodeNumber + 1);
+      setMessage('Episode created successfully');
+
+      // Reload episodes
+      const episodesSnapshot = await getDocs(query(collection(db, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setEpisodes(episodesData);
+    } catch (error) {
+      setEpisodeError('Failed to create episode');
+      console.error(error);
+    } finally {
+      setUploadingEpisode(false);
+    }
+  };
+
+  const handleDeleteEpisode = async (episodeId: string) => {
+    if (!selectedStory || !confirm('Are you sure you want to delete this episode?')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'stories', selectedStory.id, 'episodes', episodeId));
+      setMessage('Episode deleted successfully');
+
+      // Reload episodes
+      const episodesSnapshot = await getDocs(query(collection(db, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setEpisodes(episodesData);
+    } catch (error) {
+      setMessage('Failed to delete episode');
       console.error(error);
     }
   };
@@ -2892,7 +3053,7 @@ export default function AdminDashboard() {
       <>
         {/* Tabs */}
         <div className="flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'reels', 'recipes', 'quran'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'reels', 'recipes', 'quran', 'stories'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -2916,6 +3077,7 @@ export default function AdminDashboard() {
               {tab === 'reels' && t.facebookReels}
               {tab === 'recipes' && t.recipes}
               {tab === 'quran' && 'ޤުރްއާން (Quran)'}
+              {tab === 'stories' && 'ސްޓޯރީތައް (Stories)'}
             </button>
           ))}
         </div>
@@ -5794,6 +5956,231 @@ export default function AdminDashboard() {
                 Uploads quran-full.json to Firebase Firestore collection 'quran' to reduce bundle size
               </p>
             </div>
+          </div>
+        )}
+
+        {/* Stories Tab */}
+        {activeTab === 'stories' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">ސްޓޯރީތައް (Stories)</h3>
+            <p className="mt-2 text-sm text-gray-600">Create and manage stories with multiple episodes</p>
+
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              {/* Create Story Form */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">Create New Story</h4>
+                {storyError && (
+                  <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                    {storyError}
+                  </div>
+                )}
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Title</label>
+                    <input
+                      type="text"
+                      value={storyTitle}
+                      onChange={(e) => setStoryTitle(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Story title..."
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Description</label>
+                    <textarea
+                      value={storyDescription}
+                      onChange={(e) => setStoryDescription(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Story description..."
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Status</label>
+                    <select
+                      value={storyStatus}
+                      onChange={(e) => setStoryStatus(e.target.value as 'upcoming' | 'ongoing' | 'completed')}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    >
+                      <option value="upcoming">Upcoming</option>
+                      <option value="ongoing">Ongoing</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Cover Image</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setStoryCoverImage(e.target.files?.[0] || null)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      required
+                    />
+                  </div>
+                  <button
+                    onClick={handleCreateStory}
+                    disabled={uploadingStory}
+                    className="w-full rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {uploadingStory ? 'Creating...' : 'Create Story'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Stories List */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">Stories ({stories.length})</h4>
+                <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
+                  {stories.length === 0 ? (
+                    <p className="text-sm text-gray-500">No stories yet</p>
+                  ) : (
+                    stories.map((story) => (
+                      <div
+                        key={story.id}
+                        className={`rounded-xl border p-3 cursor-pointer transition ${
+                          selectedStory?.id === story.id
+                            ? 'border-brand-500 bg-brand-50'
+                            : 'border-gray-200 bg-white hover:border-gray-300'
+                        }`}
+                        onClick={() => handleSelectStory(story)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <img
+                            src={story.coverImage}
+                            alt={story.title}
+                            className="h-16 w-16 rounded-lg object-cover"
+                          />
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-gray-900">{story.title}</h5>
+                            <p className="mt-1 text-xs text-gray-600 line-clamp-2">{story.description}</p>
+                            <div className="mt-2 flex items-center gap-2">
+                              <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                                story.status === 'upcoming' ? 'bg-amber-100 text-amber-700' :
+                                story.status === 'ongoing' ? 'bg-emerald-100 text-emerald-700' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {story.status}
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteStory(story.id);
+                            }}
+                            className="text-rose-600 hover:text-rose-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Episodes Section */}
+            {selectedStory && (
+              <div className="mt-6 rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900">Episodes for: {selectedStory.title}</h4>
+                    <p className="mt-1 text-sm text-gray-600">{episodes.length} episodes</p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedStory(null)}
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                {/* Create Episode Form */}
+                <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4">
+                  {episodeError && (
+                    <div className="mb-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                      {episodeError}
+                    </div>
+                  )}
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Episode Number</label>
+                      <input
+                        type="number"
+                        value={episodeNumber}
+                        onChange={(e) => setEpisodeNumber(Number(e.target.value))}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        min="1"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Title</label>
+                      <input
+                        type="text"
+                        value={episodeTitle}
+                        onChange={(e) => setEpisodeTitle(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="Episode title..."
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Content</label>
+                      <textarea
+                        value={episodeContent}
+                        onChange={(e) => setEpisodeContent(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="Episode content..."
+                        rows={6}
+                        required
+                      />
+                    </div>
+                    <button
+                      onClick={handleCreateEpisode}
+                      disabled={uploadingEpisode}
+                      className="w-full rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {uploadingEpisode ? 'Creating...' : 'Add Episode'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Episodes List */}
+                <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
+                  {episodes.length === 0 ? (
+                    <p className="text-sm text-gray-500">No episodes yet</p>
+                  ) : (
+                    episodes.map((episode) => (
+                      <div
+                        key={episode.id}
+                        className="rounded-xl border border-gray-200 bg-white p-3"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-700">
+                                Ep. {episode.episodeNumber}
+                              </span>
+                              <h5 className="font-semibold text-gray-900">{episode.title}</h5>
+                            </div>
+                            <p className="mt-2 text-sm text-gray-600 line-clamp-3">{episode.content}</p>
+                          </div>
+                          <button
+                            onClick={() => handleDeleteEpisode(episode.id)}
+                            className="text-rose-600 hover:text-rose-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </>

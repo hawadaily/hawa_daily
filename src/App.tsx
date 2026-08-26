@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, BookOpen, User } from 'lucide-react';
+import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, BookOpen, User, Book as BookIcon } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import { Analytics } from '@vercel/analytics/react';
@@ -19,6 +19,8 @@ import RecipeFacebookPost from './pages/RecipeFacebookPost';
 import RecipeDetail from './pages/RecipeDetail';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
+import Stories from './pages/Stories';
+import StoryDetail from './pages/StoryDetail';
 import DesktopNav from './components/DesktopNav';
 import MobileNav from './components/MobileNav';
 import BottomNav from './components/BottomNav';
@@ -215,6 +217,7 @@ function App() {
             { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
             { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: FolderOpen },
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
+            { label: language === 'en' ? 'Stories' : 'ސްޓޯރީތައް', path: '/stories', icon: BookIcon },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
             { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
           ]}
@@ -244,6 +247,8 @@ function App() {
             <Route path="/recipes" element={<Recipes />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/stories" element={<Stories />} />
+            <Route path="/stories/:id" element={<StoryDetail />} />
             <Route path="/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
