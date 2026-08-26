@@ -1939,7 +1939,7 @@ export default function AdminDashboard() {
       setUploadingStory(true);
       setStoryError('');
 
-      const coverImageUrl = await uploadImage(storyCoverImage);
+      const coverImageUrl = await uploadToImgBB(storyCoverImage);
 
       await addDoc(collection(db, 'stories'), {
         title: storyTitle,
