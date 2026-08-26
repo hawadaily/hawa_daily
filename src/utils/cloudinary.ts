@@ -212,19 +212,14 @@ export async function uploadVideoToImgur(file: File): Promise<string> {
 
 export async function uploadToImgBB(file: File): Promise<string> {
   try {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    // Use a CORS proxy to bypass CORS restrictions
-    const proxyUrl = 'https://corsproxy.io/?';
-    const apiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;
+    // Convert file to base64
+    const base64 = await fileToBase64(file);
     
-    const response = await fetch(proxyUrl + encodeURIComponent(apiUrl), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams(formData as any),
+    // Use GET request with base64 data (ImgBB supports this)
+    const apiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}&image=${encodeURIComponent(base64)}`;
+    
+    const response = await fetch(apiUrl, {
+      method: 'GET',
     });
 
     const data = await response.json();
