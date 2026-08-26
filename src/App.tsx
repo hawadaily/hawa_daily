@@ -217,7 +217,7 @@ function App() {
             { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
             { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: FolderOpen },
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
-            { label: language === 'en' ? 'Stories' : 'ސްޓޯރީތައް', path: '/stories', icon: BookIcon },
+            { label: language === 'en' ? 'Stories' : 'ވާހަކަ', path: '/stories', icon: BookIcon },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
             { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
           ]}
