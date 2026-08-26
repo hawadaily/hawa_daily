@@ -16,6 +16,7 @@ interface Story {
   id: string;
   title: string;
   description: string;
+  author?: string;
   coverImage: string;
   status: 'upcoming' | 'ongoing' | 'completed';
   createdAt: any;
@@ -109,6 +110,9 @@ export default function StoryDetail() {
           </div>
           <div className="p-6">
             <h1 className="text-3xl font-bold text-gray-900">{story.title}</h1>
+            {story.author && (
+              <p className="mt-2 text-sm text-gray-500">by {story.author}</p>
+            )}
             <p className="mt-3 text-gray-600">{story.description}</p>
             <div className="mt-4 flex items-center gap-2 text-sm text-gray-500">
               <BookOpen className="h-4 w-4" />

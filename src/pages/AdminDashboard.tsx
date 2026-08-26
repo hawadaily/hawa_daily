@@ -1152,6 +1152,7 @@ export default function AdminDashboard() {
   const [selectedStory, setSelectedStory] = useState<any | null>(null);
   const [storyTitle, setStoryTitle] = useState('');
   const [storyDescription, setStoryDescription] = useState('');
+  const [storyAuthor, setStoryAuthor] = useState('');
   const [storyCoverImage, setStoryCoverImage] = useState<File | null>(null);
   const [storyStatus, setStoryStatus] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
   const [uploadingStory, setUploadingStory] = useState(false);
@@ -1943,6 +1944,7 @@ export default function AdminDashboard() {
       await addDoc(collection(db, 'stories'), {
         title: storyTitle,
         description: storyDescription,
+        author: storyAuthor,
         coverImage: coverImageUrl,
         status: storyStatus,
         createdAt: serverTimestamp(),
@@ -1951,6 +1953,7 @@ export default function AdminDashboard() {
 
       setStoryTitle('');
       setStoryDescription('');
+      setStoryAuthor('');
       setStoryCoverImage(null);
       setStoryStatus('upcoming');
       setMessage('Story created successfully');
@@ -5997,6 +6000,16 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-semibold text-gray-700">Author</label>
+                    <input
+                      type="text"
+                      value={storyAuthor}
+                      onChange={(e) => setStoryAuthor(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Author name..."
+                    />
+                  </div>
+                  <div>
                     <label className="block text-sm font-semibold text-gray-700">Status</label>
                     <select
                       value={storyStatus}
@@ -6053,6 +6066,9 @@ export default function AdminDashboard() {
                           />
                           <div className="flex-1">
                             <h5 className="font-semibold text-gray-900">{story.title}</h5>
+                            {story.author && (
+                              <p className="mt-1 text-xs text-gray-500">by {story.author}</p>
+                            )}
                             <p className="mt-1 text-xs text-gray-600 line-clamp-2">{story.description}</p>
                             <div className="mt-2 flex items-center gap-2">
                               <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${

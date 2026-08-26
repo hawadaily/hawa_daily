@@ -7,6 +7,7 @@ interface Story {
   id: string;
   title: string;
   description: string;
+  author?: string;
   coverImage: string;
   status: 'upcoming' | 'ongoing' | 'completed';
   createdAt: any;
@@ -84,6 +85,9 @@ export default function Stories() {
                   <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand-600 transition">
                     {story.title}
                   </h3>
+                  {story.author && (
+                    <p className="mt-1 text-sm text-gray-500">by {story.author}</p>
+                  )}
                   <p className="mt-2 text-sm text-gray-600 line-clamp-2">{story.description}</p>
                   <div className="mt-4 flex items-center text-sm text-brand-600 font-semibold">
                     <span>Read Episodes</span>
