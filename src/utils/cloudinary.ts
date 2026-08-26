@@ -212,15 +212,19 @@ export async function uploadVideoToImgur(file: File): Promise<string> {
 
 export async function uploadToImgBB(file: File): Promise<string> {
   try {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    // Try direct upload first (may work if ImgBB has updated CORS)
-    const apiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;
+    // Convert file to base64
+    const base64 = await fileToBase64(file);
     
-    const response = await fetch(apiUrl, {
+    // Use codetabs proxy with base64 in POST body
+    const apiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;
+    const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apiUrl)}`;
+    
+    const response = await fetch(proxyUrl, {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `image=${encodeURIComponent(base64)}`,
     });
 
     const data = await response.json();
@@ -239,8 +243,6 @@ export async function uploadToImgBB(file: File): Promise<string> {
     return data.data.url;
   } catch (error) {
     console.error('Error uploading to ImgBB:', error);
-    // Fallback to Imgur if ImgBB fails
-    console.log('Falling back to Imgur...');
-    return uploadToImgur(file);
+    throw new Error('ImgBB upload failed due to CORS restrictions. Consider using a server-side proxy or a different image hosting service.');
   }
 }
