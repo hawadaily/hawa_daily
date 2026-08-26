@@ -215,9 +215,16 @@ export async function uploadToImgBB(file: File): Promise<string> {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`, {
+    // Use a CORS proxy to bypass CORS restrictions
+    const proxyUrl = 'https://corsproxy.io/?';
+    const apiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;
+    
+    const response = await fetch(proxyUrl + encodeURIComponent(apiUrl), {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(formData as any),
     });
 
     const data = await response.json();
