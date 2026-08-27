@@ -21,7 +21,43 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   </head>
   <body class="bg-slate-950 text-slate-100 min-h-screen">
+    <!-- Facebook In-App Browser Prompt -->
+    <div id="fb-prompt" style="display: none; position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); padding: 16px; z-index: 9999; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+      <p style="margin: 0 0 12px 0; font-size: 14px; color: white;">
+        މި ލިންކް ބްރައުޒަރުގައި ހުޅުވާލައި އެޕް އެކްސްޕީރިއެންސް ހޯދާ
+      </p>
+      <button onclick="openInBrowser()" style="background: white; color: #0ea5e9; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer;">
+        Open in Browser
+      </button>
+      <button onclick="document.getElementById('fb-prompt').style.display='none'" style="background: transparent; color: white; border: 1px solid white; padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; margin-right: 8px;">
+        ✕
+      </button>
+    </div>
+    
     <div id="root"></div>
+    <script>
+      // Detect Facebook in-app browser and show prompt
+      (function() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        const isFbApp = ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1 || ua.indexOf('Instagram') > -1;
+        
+        if (isFbApp) {
+          document.getElementById('fb-prompt').style.display = 'block';
+        }
+      })();
+      
+      function openInBrowser() {
+        const url = window.location.href;
+        // Try to open in default browser
+        if (navigator.userAgent.match(/Android/i)) {
+          window.location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end';
+        } else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+          window.location.href = url;
+        } else {
+          window.open(url, '_blank');
+        }
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
     <script type="module">
       // Load Facebook SDK
