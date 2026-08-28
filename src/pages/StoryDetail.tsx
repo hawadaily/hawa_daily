@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs, query, orderBy, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import { ArrowLeft, BookOpen, ThumbsUp, ThumbsDown, Send } from 'lucide-react';
+import { ArrowLeft, BookOpen, ThumbsUp, ThumbsDown, Send, Share2 } from 'lucide-react';
 
 interface Episode {
   id: string;
@@ -34,12 +34,14 @@ interface Story {
 
 export default function StoryDetail() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [story, setStory] = useState<Story | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
   const [newComment, setNewComment] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [highlightedEpisode, setHighlightedEpisode] = useState<string | null>(null);
 
   useEffect(() => {
     const loadStoryData = async () => {
@@ -82,6 +84,37 @@ export default function StoryDetail() {
 
     return () => unsubscribe();
   }, [id]);
+
+  // Check for episode parameter in URL
+  useEffect(() => {
+    const episodeParam = searchParams.get('episode');
+    if (episodeParam) {
+      setHighlightedEpisode(episodeParam);
+      // Scroll to the episode after a short delay to ensure rendering
+      setTimeout(() => {
+        const element = document.getElementById(`episode-${episodeParam}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 500);
+    }
+  }, [searchParams]);
+
+  const handleShareEpisode = (episodeId: string) => {
+    const shareUrl = `${window.location.origin}/stories/${id}?episode=${episodeId}`;
+    if (navigator.share) {
+      navigator.share({
+        title: story?.title,
+        url: shareUrl,
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        alert('Link copied to clipboard!');
+      }).catch(() => {
+        alert('Failed to copy link');
+      });
+    }
+  };
 
   const handleAddComment = async (episodeId: string) => {
     if (!currentUser || !id) {
@@ -245,7 +278,10 @@ export default function StoryDetail() {
               {episodes.map((episode) => (
                 <div
                   key={episode.id}
-                  className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+                  id={`episode-${episode.id}`}
+                  className={`rounded-2xl border bg-white p-6 shadow-sm transition ${
+                    highlightedEpisode === episode.id ? 'border-brand-500 ring-2 ring-brand-200' : 'border-gray-200'
+                  }`}
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0">
@@ -254,7 +290,16 @@ export default function StoryDetail() {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900">{episode.title}</h3>
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="text-xl font-semibold text-gray-900">{episode.title}</h3>
+                        <button
+                          onClick={() => handleShareEpisode(episode.id)}
+                          className="flex-shrink-0 rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-brand-600"
+                          title="Share episode"
+                        >
+                          <Share2 className="h-5 w-5" />
+                        </button>
+                      </div>
                       <div className="mt-3 prose prose-sm max-w-none text-gray-700">
                         {episode.content.split('\n').map((paragraph, index) => (
                           <p key={index} className={index > 0 ? 'mt-2' : ''}>
