@@ -212,10 +212,7 @@ export default function StoryDetail() {
   };
 
   const handleAddComment = async (episodeId: string) => {
-    if (!currentUser || !id) {
-      alert('Please login to comment');
-      return;
-    }
+    if (!id) return;
 
     const commentText = newComment[episodeId];
     if (!commentText?.trim()) return;
@@ -223,8 +220,8 @@ export default function StoryDetail() {
     try {
       await addDoc(collection(db, 'stories', id, 'episodes', episodeId, 'comments'), {
         text: commentText,
-        userId: currentUser.uid,
-        userName: currentUser.displayName || 'Anonymous',
+        userId: currentUser?.uid || 'anonymous',
+        userName: currentUser?.displayName || 'Anonymous',
         likes: [],
         dislikes: [],
         createdAt: new Date(),
@@ -232,7 +229,6 @@ export default function StoryDetail() {
       setNewComment((prev) => ({ ...prev, [episodeId]: '' }));
     } catch (error) {
       console.error('Failed to add comment:', error);
-      alert('Failed to add comment');
     }
   };
 
@@ -441,14 +437,13 @@ export default function StoryDetail() {
                             type="text"
                             value={newComment[episode.id] || ''}
                             onChange={(e) => setNewComment((prev) => ({ ...prev, [episode.id]: e.target.value }))}
-                            placeholder={currentUser ? "Write a comment..." : "Login to comment"}
-                            disabled={!currentUser}
-                            className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            placeholder="Write a comment..."
+                            className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                             onKeyPress={(e) => e.key === 'Enter' && handleAddComment(episode.id)}
                           />
                           <button
                             onClick={() => handleAddComment(episode.id)}
-                            disabled={!currentUser || !newComment[episode.id]?.trim()}
+                            disabled={!newComment[episode.id]?.trim()}
                             className="rounded-xl bg-brand-500 px-4 py-2 text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
                           >
                             <Send className="h-5 w-5" />
@@ -480,7 +475,7 @@ export default function StoryDetail() {
                                       comment.likes?.includes(currentUser?.uid) || userReactions[comment.id] === 'like' ? 'text-brand-600' : 'text-gray-500 hover:text-brand-600'
                                     }`}
                                   >
-                                    <ThumbsUp className="h-4 w-4" />
+                                    <span className="text-lg">😊</span>
                                     <span>{comment.likes?.length || 0}</span>
                                   </button>
                                   <button
@@ -489,7 +484,7 @@ export default function StoryDetail() {
                                       comment.dislikes?.includes(currentUser?.uid) || userReactions[comment.id] === 'dislike' ? 'text-rose-600' : 'text-gray-500 hover:text-rose-600'
                                     }`}
                                   >
-                                    <ThumbsDown className="h-4 w-4" />
+                                    <span className="text-lg">😞</span>
                                     <span>{comment.dislikes?.length || 0}</span>
                                   </button>
                                 </div>
