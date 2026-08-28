@@ -42,6 +42,7 @@ export default function StoryDetail() {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [highlightedEpisode, setHighlightedEpisode] = useState<string | null>(null);
+  const [userReactions, setUserReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
 
   useEffect(() => {
     const loadStoryData = async () => {
@@ -100,6 +101,78 @@ export default function StoryDetail() {
     }
   }, [searchParams]);
 
+  // Load localStorage reactions for anonymous users
+  useEffect(() => {
+    const reactions: Record<string, 'like' | 'dislike' | null> = {};
+    Object.keys(comments).forEach((episodeId) => {
+      comments[episodeId]?.forEach((comment) => {
+        const localReaction = localStorage.getItem(`comment_${comment.id}_reaction`);
+        if (localReaction === 'like' || localReaction === 'dislike') {
+          reactions[comment.id] = localReaction;
+        }
+      });
+    });
+    setUserReactions(reactions);
+  }, [comments]);
+
+  // Update meta tags for social sharing
+  useEffect(() => {
+    if (!story) return;
+
+    const episodeParam = searchParams.get('episode');
+    const episode = episodes.find((e) => e.id === episodeParam);
+    
+    const title = episode 
+      ? `${story.title} - Episode ${episode.episodeNumber}: ${episode.title} | ހަވާ ޑެއިލީ`
+      : `${story.title} | ހަވާ ޑެއިލީ`;
+    
+    const description = episode
+      ? `${episode.content.substring(0, 150)}...`
+      : story.description;
+
+    // Update document title
+    document.title = title;
+
+    // Update or create meta tags
+    const updateMetaTag = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    const updateMetaTagName = (name: string, content: string) => {
+      let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    updateMetaTag('og:title', title);
+    updateMetaTag('og:description', description);
+    updateMetaTag('og:image', story.coverImage);
+    updateMetaTag('og:url', window.location.href);
+    updateMetaTag('og:type', 'article');
+    updateMetaTag('og:site_name', 'ހަވާ ޑެއިލީ');
+    
+    updateMetaTagName('twitter:card', 'summary_large_image');
+    updateMetaTagName('twitter:title', title);
+    updateMetaTagName('twitter:description', description);
+    updateMetaTagName('twitter:image', story.coverImage);
+
+    // Cleanup function to remove meta tags when component unmounts
+    return () => {
+      const metaTags = document.querySelectorAll('meta[property^="og:"], meta[name^="twitter:"]');
+      metaTags.forEach((tag) => tag.remove());
+    };
+  }, [story, episodes, searchParams]);
+
   const handleShareEpisode = (episodeId: string) => {
     const shareUrl = `${window.location.origin}/stories/${id}?episode=${episodeId}`;
     if (navigator.share) {
@@ -142,10 +215,7 @@ export default function StoryDetail() {
   };
 
   const handleLikeComment = async (episodeId: string, commentId: string) => {
-    if (!currentUser || !id) {
-      alert('Please login to like');
-      return;
-    }
+    if (!id) return;
 
     try {
       const commentRef = doc(db, 'stories', id, 'episodes', episodeId, 'comments', commentId);
@@ -153,17 +223,31 @@ export default function StoryDetail() {
       
       if (!comment) return;
 
-      if (comment.likes?.includes(currentUser.uid)) {
+      const userId = currentUser?.uid || 'anonymous';
+      const storageKey = `comment_${commentId}_reaction`;
+      const localReaction = localStorage.getItem(storageKey);
+
+      if (comment.likes?.includes(userId) || localReaction === 'like') {
         // Unlike
-        await updateDoc(commentRef, {
-          likes: arrayRemove(currentUser.uid),
-        });
+        if (currentUser) {
+          await updateDoc(commentRef, {
+            likes: arrayRemove(userId),
+          });
+        } else {
+          localStorage.removeItem(storageKey);
+          setUserReactions((prev) => ({ ...prev, [commentId]: null }));
+        }
       } else {
         // Like and remove from dislikes if present
-        await updateDoc(commentRef, {
-          likes: arrayUnion(currentUser.uid),
-          dislikes: arrayRemove(currentUser.uid),
-        });
+        if (currentUser) {
+          await updateDoc(commentRef, {
+            likes: arrayUnion(userId),
+            dislikes: arrayRemove(userId),
+          });
+        } else {
+          localStorage.setItem(storageKey, 'like');
+          setUserReactions((prev) => ({ ...prev, [commentId]: 'like' }));
+        }
       }
     } catch (error) {
       console.error('Failed to like comment:', error);
@@ -171,10 +255,7 @@ export default function StoryDetail() {
   };
 
   const handleDislikeComment = async (episodeId: string, commentId: string) => {
-    if (!currentUser || !id) {
-      alert('Please login to dislike');
-      return;
-    }
+    if (!id) return;
 
     try {
       const commentRef = doc(db, 'stories', id, 'episodes', episodeId, 'comments', commentId);
@@ -182,17 +263,31 @@ export default function StoryDetail() {
       
       if (!comment) return;
 
-      if (comment.dislikes?.includes(currentUser.uid)) {
+      const userId = currentUser?.uid || 'anonymous';
+      const storageKey = `comment_${commentId}_reaction`;
+      const localReaction = localStorage.getItem(storageKey);
+
+      if (comment.dislikes?.includes(userId) || localReaction === 'dislike') {
         // Remove dislike
-        await updateDoc(commentRef, {
-          dislikes: arrayRemove(currentUser.uid),
-        });
+        if (currentUser) {
+          await updateDoc(commentRef, {
+            dislikes: arrayRemove(userId),
+          });
+        } else {
+          localStorage.removeItem(storageKey);
+          setUserReactions((prev) => ({ ...prev, [commentId]: null }));
+        }
       } else {
         // Dislike and remove from likes if present
-        await updateDoc(commentRef, {
-          dislikes: arrayUnion(currentUser.uid),
-          likes: arrayRemove(currentUser.uid),
-        });
+        if (currentUser) {
+          await updateDoc(commentRef, {
+            dislikes: arrayUnion(userId),
+            likes: arrayRemove(userId),
+          });
+        } else {
+          localStorage.setItem(storageKey, 'dislike');
+          setUserReactions((prev) => ({ ...prev, [commentId]: 'dislike' }));
+        }
       }
     } catch (error) {
       console.error('Failed to dislike comment:', error);
@@ -353,20 +448,18 @@ export default function StoryDetail() {
                                 <div className="mt-3 flex items-center gap-4">
                                   <button
                                     onClick={() => handleLikeComment(episode.id, comment.id)}
-                                    disabled={!currentUser}
                                     className={`flex items-center gap-1 text-sm transition ${
-                                      comment.likes?.includes(currentUser?.uid) ? 'text-brand-600' : 'text-gray-500 hover:text-brand-600'
-                                    } disabled:cursor-not-allowed disabled:opacity-50`}
+                                      comment.likes?.includes(currentUser?.uid) || userReactions[comment.id] === 'like' ? 'text-brand-600' : 'text-gray-500 hover:text-brand-600'
+                                    }`}
                                   >
                                     <ThumbsUp className="h-4 w-4" />
                                     <span>{comment.likes?.length || 0}</span>
                                   </button>
                                   <button
                                     onClick={() => handleDislikeComment(episode.id, comment.id)}
-                                    disabled={!currentUser}
                                     className={`flex items-center gap-1 text-sm transition ${
-                                      comment.dislikes?.includes(currentUser?.uid) ? 'text-rose-600' : 'text-gray-500 hover:text-rose-600'
-                                    } disabled:cursor-not-allowed disabled:opacity-50`}
+                                      comment.dislikes?.includes(currentUser?.uid) || userReactions[comment.id] === 'dislike' ? 'text-rose-600' : 'text-gray-500 hover:text-rose-600'
+                                    }`}
                                   >
                                     <ThumbsDown className="h-4 w-4" />
                                     <span>{comment.dislikes?.length || 0}</span>

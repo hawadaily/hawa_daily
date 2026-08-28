@@ -36,6 +36,48 @@ export default function Stories() {
     loadStories();
   }, []);
 
+  // Update meta tags for social sharing
+  useEffect(() => {
+    document.title = 'ސްޓޯރީތައް | ހަވާ ޑެއިލީ';
+
+    const updateMetaTag = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    const updateMetaTagName = (name: string, content: string) => {
+      let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    updateMetaTag('og:title', 'ސްޓޯރީތައް | ހަވާ ޑެއިލީ');
+    updateMetaTag('og:description', 'ދިވެހި ބަހުން ލޯކަލް ސްޓޯރީތައް - Read local stories in Dhivehi');
+    updateMetaTag('og:image', 'https://www.hawadaily.com/og-image.jpg');
+    updateMetaTag('og:url', window.location.href);
+    updateMetaTag('og:type', 'website');
+    updateMetaTag('og:site_name', 'ހަވާ ޑެއިލީ');
+    
+    updateMetaTagName('twitter:card', 'summary_large_image');
+    updateMetaTagName('twitter:title', 'ސްޓޯރީތައް | ހަވާ ޑެއިލީ');
+    updateMetaTagName('twitter:description', 'ދިވެހި ބަހުން ލޯކަލް ސްޓޯރީތައް - Read local stories in Dhivehi');
+    updateMetaTagName('twitter:image', 'https://www.hawadaily.com/og-image.jpg');
+
+    return () => {
+      const metaTags = document.querySelectorAll('meta[property^="og:"], meta[name^="twitter:"]');
+      metaTags.forEach((tag) => tag.remove());
+    };
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
