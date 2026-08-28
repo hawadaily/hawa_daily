@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
-import { doc, getDoc, collection, getDocs, query, orderBy, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, orderBy, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot, increment, runTransaction } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import { ArrowLeft, BookOpen, ThumbsUp, ThumbsDown, Send, Share2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, ThumbsUp, ThumbsDown, Send, Share2, Eye } from 'lucide-react';
 
 interface Episode {
   id: string;
   title: string;
   content: string;
   episodeNumber: number;
+  viewCount?: number;
   createdAt: any;
 }
 
@@ -100,6 +101,27 @@ export default function StoryDetail() {
       }, 500);
     }
   }, [searchParams]);
+
+  // Track episode views
+  useEffect(() => {
+    if (!id || episodes.length === 0) return;
+
+    const viewedEpisodes = new Set(JSON.parse(localStorage.getItem(`viewed_episodes_${id}`) || '[]'));
+    
+    episodes.forEach(async (episode) => {
+      if (!viewedEpisodes.has(episode.id)) {
+        try {
+          await updateDoc(doc(db, 'stories', id, 'episodes', episode.id), {
+            viewCount: increment(1)
+          });
+          viewedEpisodes.add(episode.id);
+          localStorage.setItem(`viewed_episodes_${id}`, JSON.stringify([...viewedEpisodes]));
+        } catch (error) {
+          console.error('Failed to increment view count:', error);
+        }
+      }
+    });
+  }, [id, episodes]);
 
   // Load localStorage reactions for anonymous users
   useEffect(() => {
@@ -405,7 +427,13 @@ export default function StoryDetail() {
 
                       {/* Comments Section */}
                       <div className="mt-6 border-t border-gray-200 pt-6">
-                        <h4 className="text-lg font-semibold text-gray-900">Comments ({comments[episode.id]?.length || 0})</h4>
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="text-lg font-semibold text-gray-900">Comments ({comments[episode.id]?.length || 0})</h4>
+                          <div className="flex items-center gap-1 text-sm text-gray-500">
+                            <Eye className="h-4 w-4" />
+                            <span>{episode.viewCount || 0} views</span>
+                          </div>
+                        </div>
                         
                         {/* Add Comment */}
                         <div className="mt-4 flex gap-2">
