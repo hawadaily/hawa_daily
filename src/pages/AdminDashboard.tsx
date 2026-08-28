@@ -1155,6 +1155,9 @@ export default function AdminDashboard() {
   const [storyAuthor, setStoryAuthor] = useState('');
   const [storyCoverImage, setStoryCoverImage] = useState<File | null>(null);
   const [storyStatus, setStoryStatus] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
+  const [storyReleaseDate, setStoryReleaseDate] = useState('');
+  const [storyLocked, setStoryLocked] = useState(true);
+  const [editingStory, setEditingStory] = useState(false);
   const [uploadingStory, setUploadingStory] = useState(false);
   const [storyError, setStoryError] = useState('');
 
@@ -1947,15 +1950,13 @@ export default function AdminDashboard() {
         author: storyAuthor,
         coverImage: coverImageUrl,
         status: storyStatus,
+        releaseDate: storyReleaseDate || null,
+        locked: storyLocked,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
 
-      setStoryTitle('');
-      setStoryDescription('');
-      setStoryAuthor('');
-      setStoryCoverImage(null);
-      setStoryStatus('upcoming');
+      resetStoryForm();
       setMessage('Story created successfully');
 
       // Reload stories
@@ -1968,6 +1969,72 @@ export default function AdminDashboard() {
     } finally {
       setUploadingStory(false);
     }
+  };
+
+  const handleEditStory = (story: any) => {
+    setSelectedStory(story);
+    setStoryTitle(story.title);
+    setStoryDescription(story.description || '');
+    setStoryAuthor(story.author || '');
+    setStoryStatus(story.status || 'upcoming');
+    setStoryReleaseDate(story.releaseDate || '');
+    setStoryLocked(story.locked !== false);
+    setStoryCoverImage(null);
+    setEditingStory(true);
+  };
+
+  const handleUpdateStory = async () => {
+    if (!selectedStory || !storyTitle.trim()) {
+      setStoryError('Please provide title');
+      return;
+    }
+
+    try {
+      setUploadingStory(true);
+      setStoryError('');
+
+      const updateData: any = {
+        title: storyTitle,
+        description: storyDescription,
+        author: storyAuthor,
+        status: storyStatus,
+        releaseDate: storyReleaseDate || null,
+        locked: storyLocked,
+        updatedAt: serverTimestamp(),
+      };
+
+      if (storyCoverImage) {
+        const coverImageUrl = await uploadToImgBB(storyCoverImage);
+        updateData.coverImage = coverImageUrl;
+      }
+
+      await updateDoc(doc(db, 'stories', selectedStory.id), updateData);
+
+      resetStoryForm();
+      setMessage('Story updated successfully');
+
+      // Reload stories
+      const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
+      const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setStories(storiesData);
+    } catch (error) {
+      setStoryError('Failed to update story');
+      console.error(error);
+    } finally {
+      setUploadingStory(false);
+    }
+  };
+
+  const resetStoryForm = () => {
+    setStoryTitle('');
+    setStoryDescription('');
+    setStoryAuthor('');
+    setStoryCoverImage(null);
+    setStoryStatus('upcoming');
+    setStoryReleaseDate('');
+    setStoryLocked(true);
+    setEditingStory(false);
+    setSelectedStory(null);
   };
 
   const handleDeleteStory = async (storyId: string) => {
@@ -5971,7 +6038,9 @@ export default function AdminDashboard() {
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
               {/* Create Story Form */}
               <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-                <h4 className="text-lg font-semibold text-gray-900">Create New Story</h4>
+                <h4 className="text-lg font-semibold text-gray-900">
+                  {editingStory ? 'Edit Story' : 'Create New Story'}
+                </h4>
                 {storyError && (
                   <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
                     {storyError}
@@ -6022,22 +6091,55 @@ export default function AdminDashboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700">Cover Image</label>
+                    <label className="block text-sm font-semibold text-gray-700">Release Date</label>
+                    <input
+                      type="date"
+                      value={storyReleaseDate}
+                      onChange={(e) => setStoryReleaseDate(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="storyLocked"
+                      checked={storyLocked}
+                      onChange={(e) => setStoryLocked(e.target.checked)}
+                      className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                    />
+                    <label htmlFor="storyLocked" className="text-sm text-gray-700">
+                      Lock story (content hidden until unlocked by admin)
+                    </label>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Cover Image {editingStory ? '(leave empty to keep current)' : ''}
+                    </label>
                     <input
                       type="file"
                       accept="image/*"
                       onChange={(e) => setStoryCoverImage(e.target.files?.[0] || null)}
                       className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      required
+                      required={!editingStory}
                     />
                   </div>
-                  <button
-                    onClick={handleCreateStory}
-                    disabled={uploadingStory}
-                    className="w-full rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {uploadingStory ? 'Creating...' : 'Create Story'}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={editingStory ? handleUpdateStory : handleCreateStory}
+                      disabled={uploadingStory}
+                      className="flex-1 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {uploadingStory ? 'Saving...' : editingStory ? 'Update Story' : 'Create Story'}
+                    </button>
+                    {editingStory && (
+                      <button
+                        onClick={resetStoryForm}
+                        className="rounded-2xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -6080,15 +6182,26 @@ export default function AdminDashboard() {
                               </span>
                             </div>
                           </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteStory(story.id);
-                            }}
-                            className="text-rose-600 hover:text-rose-700"
-                          >
-                            Delete
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditStory(story);
+                              }}
+                              className="text-brand-600 hover:text-brand-700"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteStory(story.id);
+                              }}
+                              className="text-rose-600 hover:text-rose-700"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))

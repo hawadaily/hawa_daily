@@ -10,6 +10,8 @@ interface Story {
   author?: string;
   coverImage: string;
   status: 'upcoming' | 'ongoing' | 'completed';
+  releaseDate?: string;
+  locked?: boolean;
   createdAt: any;
 }
 
@@ -60,9 +62,8 @@ export default function Stories() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {stories.map((story) => (
-              <Link
+              <div
                 key={story.id}
-                to={`/stories/${story.id}`}
                 className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
               >
                 <div className="relative aspect-video overflow-hidden">
@@ -71,7 +72,12 @@ export default function Stories() {
                     alt={story.title}
                     className="h-full w-full object-cover transition group-hover:scale-105"
                   />
-                  <div className="absolute top-3 right-3">
+                  <div className="absolute top-3 right-3 flex gap-2">
+                    {story.locked && (
+                      <span className="rounded-full bg-rose-500 px-3 py-1 text-xs font-semibold text-white">
+                        🔒 Locked
+                      </span>
+                    )}
                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
                       story.status === 'upcoming' ? 'bg-amber-500 text-white' :
                       story.status === 'ongoing' ? 'bg-emerald-500 text-white' :
@@ -89,14 +95,31 @@ export default function Stories() {
                     <p className="mt-1 text-sm text-gray-500">by {story.author}</p>
                   )}
                   <p className="mt-2 text-sm text-gray-600 line-clamp-2">{story.description}</p>
-                  <div className="mt-4 flex items-center text-sm text-brand-600 font-semibold">
-                    <span>Read Episodes</span>
-                    <svg className="ml-1 h-4 w-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
+                  {story.releaseDate && (
+                    <p className="mt-2 text-sm text-gray-500">
+                      📅 Release: {new Date(story.releaseDate).toLocaleDateString()}
+                    </p>
+                  )}
+                  {story.locked ? (
+                    <div className="mt-4 flex items-center text-sm text-rose-600 font-semibold">
+                      <svg className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      <span>Coming Soon</span>
+                    </div>
+                  ) : (
+                    <Link
+                      to={`/stories/${story.id}`}
+                      className="mt-4 flex items-center text-sm text-brand-600 font-semibold"
+                    >
+                      <span>Read Episodes</span>
+                      <svg className="ml-1 h-4 w-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  )}
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}

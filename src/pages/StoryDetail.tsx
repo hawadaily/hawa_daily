@@ -1,14 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { doc, getDoc, collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { db } from '../firebase';
-import { ArrowLeft, BookOpen } from 'lucide-react';
+import { doc, getDoc, collection, getDocs, query, orderBy, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
+import { db, auth } from '../firebase';
+import { ArrowLeft, BookOpen, ThumbsUp, ThumbsDown, Send } from 'lucide-react';
 
 interface Episode {
   id: string;
   title: string;
   content: string;
   episodeNumber: number;
+  createdAt: any;
+}
+
+interface Comment {
+  id: string;
+  text: string;
+  userId: string;
+  userName: string;
+  likes: string[];
+  dislikes: string[];
   createdAt: any;
 }
 
@@ -26,7 +36,10 @@ export default function StoryDetail() {
   const { id } = useParams<{ id: string }>();
   const [story, setStory] = useState<Story | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [comments, setComments] = useState<Record<string, Comment[]>>({});
+  const [newComment, setNewComment] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     const loadStoryData = async () => {
@@ -44,6 +57,15 @@ export default function StoryDetail() {
         const episodesSnapshot = await getDocs(episodesQuery);
         const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setEpisodes(episodesData);
+
+        // Load comments for each episode
+        episodesData.forEach((episode) => {
+          const commentsQuery = query(collection(db, 'stories', id, 'episodes', episode.id, 'comments'), orderBy('createdAt', 'desc'));
+          onSnapshot(commentsQuery, (snapshot) => {
+            const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+            setComments((prev) => ({ ...prev, [episode.id]: commentsData }));
+          });
+        });
       } catch (error) {
         console.error('Failed to load story data:', error);
       } finally {
@@ -51,8 +73,98 @@ export default function StoryDetail() {
       }
     };
 
+    // Listen to auth state
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+
     loadStoryData();
+
+    return () => unsubscribe();
   }, [id]);
+
+  const handleAddComment = async (episodeId: string) => {
+    if (!currentUser || !id) {
+      alert('Please login to comment');
+      return;
+    }
+
+    const commentText = newComment[episodeId];
+    if (!commentText?.trim()) return;
+
+    try {
+      await addDoc(collection(db, 'stories', id, 'episodes', episodeId, 'comments'), {
+        text: commentText,
+        userId: currentUser.uid,
+        userName: currentUser.displayName || 'Anonymous',
+        likes: [],
+        dislikes: [],
+        createdAt: new Date(),
+      });
+      setNewComment((prev) => ({ ...prev, [episodeId]: '' }));
+    } catch (error) {
+      console.error('Failed to add comment:', error);
+      alert('Failed to add comment');
+    }
+  };
+
+  const handleLikeComment = async (episodeId: string, commentId: string) => {
+    if (!currentUser || !id) {
+      alert('Please login to like');
+      return;
+    }
+
+    try {
+      const commentRef = doc(db, 'stories', id, 'episodes', episodeId, 'comments', commentId);
+      const comment = comments[episodeId]?.find((c) => c.id === commentId);
+      
+      if (!comment) return;
+
+      if (comment.likes?.includes(currentUser.uid)) {
+        // Unlike
+        await updateDoc(commentRef, {
+          likes: arrayRemove(currentUser.uid),
+        });
+      } else {
+        // Like and remove from dislikes if present
+        await updateDoc(commentRef, {
+          likes: arrayUnion(currentUser.uid),
+          dislikes: arrayRemove(currentUser.uid),
+        });
+      }
+    } catch (error) {
+      console.error('Failed to like comment:', error);
+    }
+  };
+
+  const handleDislikeComment = async (episodeId: string, commentId: string) => {
+    if (!currentUser || !id) {
+      alert('Please login to dislike');
+      return;
+    }
+
+    try {
+      const commentRef = doc(db, 'stories', id, 'episodes', episodeId, 'comments', commentId);
+      const comment = comments[episodeId]?.find((c) => c.id === commentId);
+      
+      if (!comment) return;
+
+      if (comment.dislikes?.includes(currentUser.uid)) {
+        // Remove dislike
+        await updateDoc(commentRef, {
+          dislikes: arrayRemove(currentUser.uid),
+        });
+      } else {
+        // Dislike and remove from likes if present
+        await updateDoc(commentRef, {
+          dislikes: arrayUnion(currentUser.uid),
+          likes: arrayRemove(currentUser.uid),
+        });
+      }
+    } catch (error) {
+      console.error('Failed to dislike comment:', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -149,6 +261,76 @@ export default function StoryDetail() {
                             {paragraph}
                           </p>
                         ))}
+                      </div>
+
+                      {/* Comments Section */}
+                      <div className="mt-6 border-t border-gray-200 pt-6">
+                        <h4 className="text-lg font-semibold text-gray-900">Comments ({comments[episode.id]?.length || 0})</h4>
+                        
+                        {/* Add Comment */}
+                        <div className="mt-4 flex gap-2">
+                          <input
+                            type="text"
+                            value={newComment[episode.id] || ''}
+                            onChange={(e) => setNewComment((prev) => ({ ...prev, [episode.id]: e.target.value }))}
+                            placeholder={currentUser ? "Write a comment..." : "Login to comment"}
+                            disabled={!currentUser}
+                            className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            onKeyPress={(e) => e.key === 'Enter' && handleAddComment(episode.id)}
+                          />
+                          <button
+                            onClick={() => handleAddComment(episode.id)}
+                            disabled={!currentUser || !newComment[episode.id]?.trim()}
+                            className="rounded-xl bg-brand-500 px-4 py-2 text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            <Send className="h-5 w-5" />
+                          </button>
+                        </div>
+
+                        {/* Comments List */}
+                        <div className="mt-4 space-y-3">
+                          {comments[episode.id]?.length === 0 ? (
+                            <p className="text-sm text-gray-500">No comments yet. Be the first to comment!</p>
+                          ) : (
+                            comments[episode.id]?.map((comment) => (
+                              <div key={comment.id} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-semibold text-gray-900">{comment.userName}</span>
+                                      <span className="text-xs text-gray-500">
+                                        {new Date(comment.createdAt?.toDate?.() || comment.createdAt).toLocaleDateString()}
+                                      </span>
+                                    </div>
+                                    <p className="mt-1 text-gray-700">{comment.text}</p>
+                                  </div>
+                                </div>
+                                <div className="mt-3 flex items-center gap-4">
+                                  <button
+                                    onClick={() => handleLikeComment(episode.id, comment.id)}
+                                    disabled={!currentUser}
+                                    className={`flex items-center gap-1 text-sm transition ${
+                                      comment.likes?.includes(currentUser?.uid) ? 'text-brand-600' : 'text-gray-500 hover:text-brand-600'
+                                    } disabled:cursor-not-allowed disabled:opacity-50`}
+                                  >
+                                    <ThumbsUp className="h-4 w-4" />
+                                    <span>{comment.likes?.length || 0}</span>
+                                  </button>
+                                  <button
+                                    onClick={() => handleDislikeComment(episode.id, comment.id)}
+                                    disabled={!currentUser}
+                                    className={`flex items-center gap-1 text-sm transition ${
+                                      comment.dislikes?.includes(currentUser?.uid) ? 'text-rose-600' : 'text-gray-500 hover:text-rose-600'
+                                    } disabled:cursor-not-allowed disabled:opacity-50`}
+                                  >
+                                    <ThumbsDown className="h-4 w-4" />
+                                    <span>{comment.dislikes?.length || 0}</span>
+                                  </button>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
