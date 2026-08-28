@@ -10,6 +10,8 @@ interface Episode {
   content: string;
   episodeNumber: number;
   viewCount?: number;
+  likes?: string[];
+  dislikes?: string[];
   createdAt: any;
 }
 
@@ -44,6 +46,7 @@ export default function StoryDetail() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [highlightedEpisode, setHighlightedEpisode] = useState<string | null>(null);
   const [userReactions, setUserReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
+  const [episodeReactions, setEpisodeReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
 
   useEffect(() => {
     const loadStoryData = async () => {
@@ -136,6 +139,18 @@ export default function StoryDetail() {
     });
     setUserReactions(reactions);
   }, [comments]);
+
+  // Load localStorage reactions for episodes
+  useEffect(() => {
+    const reactions: Record<string, 'like' | 'dislike' | null> = {};
+    episodes.forEach((episode) => {
+      const localReaction = localStorage.getItem(`episode_${episode.id}_reaction`);
+      if (localReaction === 'like' || localReaction === 'dislike') {
+        reactions[episode.id] = localReaction;
+      }
+    });
+    setEpisodeReactions(reactions);
+  }, [episodes]);
 
   // Update meta tags for social sharing
   useEffect(() => {
@@ -312,6 +327,86 @@ export default function StoryDetail() {
     }
   };
 
+  const handleLikeEpisode = async (episodeId: string) => {
+    if (!id) return;
+
+    try {
+      const episodeRef = doc(db, 'stories', id, 'episodes', episodeId);
+      const episode = episodes.find((e) => e.id === episodeId);
+      
+      if (!episode) return;
+
+      const userId = currentUser?.uid || 'anonymous';
+      const storageKey = `episode_${episodeId}_reaction`;
+      const localReaction = localStorage.getItem(storageKey);
+
+      if (episode.likes?.includes(userId) || localReaction === 'like') {
+        // Unlike
+        if (currentUser) {
+          await updateDoc(episodeRef, {
+            likes: arrayRemove(userId),
+          });
+        } else {
+          localStorage.removeItem(storageKey);
+          setEpisodeReactions((prev) => ({ ...prev, [episodeId]: null }));
+        }
+      } else {
+        // Like and remove from dislikes if present
+        if (currentUser) {
+          await updateDoc(episodeRef, {
+            likes: arrayUnion(userId),
+            dislikes: arrayRemove(userId),
+          });
+        } else {
+          localStorage.setItem(storageKey, 'like');
+          setEpisodeReactions((prev) => ({ ...prev, [episodeId]: 'like' }));
+        }
+      }
+    } catch (error) {
+      console.error('Failed to like episode:', error);
+    }
+  };
+
+  const handleDislikeEpisode = async (episodeId: string) => {
+    if (!id) return;
+
+    try {
+      const episodeRef = doc(db, 'stories', id, 'episodes', episodeId);
+      const episode = episodes.find((e) => e.id === episodeId);
+      
+      if (!episode) return;
+
+      const userId = currentUser?.uid || 'anonymous';
+      const storageKey = `episode_${episodeId}_reaction`;
+      const localReaction = localStorage.getItem(storageKey);
+
+      if (episode.dislikes?.includes(userId) || localReaction === 'dislike') {
+        // Remove dislike
+        if (currentUser) {
+          await updateDoc(episodeRef, {
+            dislikes: arrayRemove(userId),
+          });
+        } else {
+          localStorage.removeItem(storageKey);
+          setEpisodeReactions((prev) => ({ ...prev, [episodeId]: null }));
+        }
+      } else {
+        // Dislike and remove from likes if present
+        if (currentUser) {
+          await updateDoc(episodeRef, {
+            dislikes: arrayUnion(userId),
+            likes: arrayRemove(userId),
+          });
+        } else {
+          localStorage.setItem(storageKey, 'dislike');
+          setEpisodeReactions((prev) => ({ ...prev, [episodeId]: 'dislike' }));
+        }
+      }
+    } catch (error) {
+      console.error('Failed to dislike episode:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
@@ -405,13 +500,35 @@ export default function StoryDetail() {
                     <div className="flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <h3 className="text-xl font-semibold text-gray-900">{episode.title}</h3>
-                        <button
-                          onClick={() => handleShareEpisode(episode.id)}
-                          className="flex-shrink-0 rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-brand-600"
-                          title="Share episode"
-                        >
-                          <Share2 className="h-5 w-5" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleLikeEpisode(episode.id)}
+                            className={`flex items-center gap-1 text-sm transition rounded-lg px-2 py-1 ${
+                              episode.likes?.includes(currentUser?.uid) || episodeReactions[episode.id] === 'like' ? 'bg-brand-100 text-brand-600' : 'text-gray-500 hover:bg-gray-100 hover:text-brand-600'
+                            }`}
+                            title="Like episode"
+                          >
+                            <span className="text-lg">😊</span>
+                            <span>{episode.likes?.length || 0}</span>
+                          </button>
+                          <button
+                            onClick={() => handleDislikeEpisode(episode.id)}
+                            className={`flex items-center gap-1 text-sm transition rounded-lg px-2 py-1 ${
+                              episode.dislikes?.includes(currentUser?.uid) || episodeReactions[episode.id] === 'dislike' ? 'bg-rose-100 text-rose-600' : 'text-gray-500 hover:bg-gray-100 hover:text-rose-600'
+                            }`}
+                            title="Dislike episode"
+                          >
+                            <span className="text-lg">😞</span>
+                            <span>{episode.dislikes?.length || 0}</span>
+                          </button>
+                          <button
+                            onClick={() => handleShareEpisode(episode.id)}
+                            className="flex-shrink-0 rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-brand-600"
+                            title="Share episode"
+                          >
+                            <Share2 className="h-5 w-5" />
+                          </button>
+                        </div>
                       </div>
                       <div className="mt-3 prose prose-sm max-w-none text-gray-700">
                         {episode.content.split('\n').map((paragraph, index) => (
