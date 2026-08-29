@@ -8,7 +8,7 @@ import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
 
-import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB } from '../utils/cloudinary';
+import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB, compressImage } from '../utils/cloudinary';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
 type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories';
@@ -1481,15 +1481,18 @@ export default function AdminDashboard() {
       if (articleFile) {
         setUploadingArticle(true);
         try {
+          // Compress image before upload
+          const compressedFile = await compressImage(articleFile, 1920, 0.8);
+          
           if (imageUploadOption === 'imgbb') {
             try {
-              finalImageUrl = await uploadToImgBB(articleFile);
+              finalImageUrl = await uploadToImgBB(compressedFile);
             } catch (imgbbError) {
               console.error('ImgBB upload failed, trying Cloudinary:', imgbbError);
-              finalImageUrl = await uploadImage(articleFile, 'articles');
+              finalImageUrl = await uploadImage(compressedFile, 'articles');
             }
           } else {
-            finalImageUrl = await uploadImage(articleFile, 'articles');
+            finalImageUrl = await uploadImage(compressedFile, 'articles');
           }
         } catch (uploadError) {
           setMessage(t.newsError + ': Failed to upload image');
@@ -1632,15 +1635,18 @@ export default function AdminDashboard() {
       if (editArticleFile) {
         setUploadingEditArticle(true);
         try {
+          // Compress image before upload
+          const compressedFile = await compressImage(editArticleFile, 1920, 0.8);
+          
           if (editImageUploadOption === 'imgbb') {
             try {
-              finalImageUrl = await uploadToImgBB(editArticleFile);
+              finalImageUrl = await uploadToImgBB(compressedFile);
             } catch (imgbbError) {
               console.error('ImgBB upload failed, trying Cloudinary:', imgbbError);
-              finalImageUrl = await uploadImage(editArticleFile, 'articles');
+              finalImageUrl = await uploadImage(compressedFile, 'articles');
             }
           } else {
-            finalImageUrl = await uploadImage(editArticleFile, 'articles');
+            finalImageUrl = await uploadImage(compressedFile, 'articles');
           }
         } catch (uploadError) {
           setMessage(t.newsUpdateError + ': Failed to upload image');
@@ -1837,7 +1843,9 @@ export default function AdminDashboard() {
     setSidebarPromotionError('');
 
     try {
-      const imageUrl = await uploadToImgBB(sidebarPromotionFile);
+      // Compress image before upload
+      const compressedFile = await compressImage(sidebarPromotionFile, 1920, 0.8);
+      const imageUrl = await uploadToImgBB(compressedFile);
       
       await addDoc(collection(db, 'sidebar-promotions'), {
         title: sidebarPromotionTitle,
@@ -1887,7 +1895,9 @@ export default function AdminDashboard() {
     setMidArticlePromotionError('');
 
     try {
-      const imageUrl = await uploadToImgBB(midArticlePromotionFile);
+      // Compress image before upload
+      const compressedFile = await compressImage(midArticlePromotionFile, 1920, 0.8);
+      const imageUrl = await uploadToImgBB(compressedFile);
       
       await addDoc(collection(db, 'mid-article-promotions'), {
         title: midArticlePromotionTitle,
@@ -1970,7 +1980,9 @@ export default function AdminDashboard() {
       setUploadingStory(true);
       setStoryError('');
 
-      const coverImageUrl = await uploadToImgBB(storyCoverImage);
+      // Compress image before upload
+      const compressedFile = await compressImage(storyCoverImage, 1920, 0.8);
+      const coverImageUrl = await uploadToImgBB(compressedFile);
 
       await addDoc(collection(db, 'stories'), {
         title: storyTitle,
@@ -2032,7 +2044,9 @@ export default function AdminDashboard() {
       };
 
       if (storyCoverImage) {
-        const coverImageUrl = await uploadToImgBB(storyCoverImage);
+        // Compress image before upload
+        const compressedFile = await compressImage(storyCoverImage, 1920, 0.8);
+        const coverImageUrl = await uploadToImgBB(compressedFile);
         updateData.coverImage = coverImageUrl;
       }
 
@@ -2371,13 +2385,25 @@ export default function AdminDashboard() {
   };
 
   // Download flyer function
-  const downloadFlyer = () => {
+  const downloadFlyer = async () => {
     if (!flyerCanvas) return;
 
-    const link = document.createElement('a');
-    link.download = `job-flyer-${selectedJob?.id || 'flyer'}.png`;
-    link.href = flyerCanvas.toDataURL('image/png');
-    link.click();
+    try {
+      const dataUrl = flyerCanvas.toDataURL('image/png');
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'job-flyer.png', { type: 'image/png' });
+      
+      // Compress image before download
+      const compressedFile = await compressImage(file, 1920, 0.8);
+      
+      const link = document.createElement('a');
+      link.download = `job-flyer-${selectedJob?.id || 'flyer'}.jpg`;
+      link.href = URL.createObjectURL(compressedFile);
+      link.click();
+    } catch (error) {
+      console.error('Error compressing/downloading flyer:', error);
+    }
   };
 
   // Recipe management functions
@@ -2408,7 +2434,9 @@ export default function AdminDashboard() {
       if (recipeImage && !recipeImageUrl.startsWith('http')) {
         try {
           setMessage('Uploading image to CDN...');
-          imageUrl = await uploadToImgBB(recipeImage);
+          // Compress image before upload
+          const compressedFile = await compressImage(recipeImage, 1920, 0.8);
+          imageUrl = await uploadToImgBB(compressedFile);
           setRecipeImageUrl(imageUrl);
         } catch (uploadError) {
           console.error('Error uploading image to ImgBB:', uploadError);
@@ -2582,7 +2610,9 @@ export default function AdminDashboard() {
       for (let i = 0; i < bulkImageFiles.length; i++) {
         const file = bulkImageFiles[i];
         try {
-          const cdnUrl = await uploadToImgBB(file);
+          // Compress image before upload
+          const compressedFile = await compressImage(file, 1920, 0.8);
+          const cdnUrl = await uploadToImgBB(compressedFile);
           uploadResults.push({
             fileName: file.name,
             cdnUrl: cdnUrl,
@@ -3106,13 +3136,25 @@ export default function AdminDashboard() {
   };
 
   // Download quote poster function
-  const downloadQuotePoster = () => {
+  const downloadQuotePoster = async () => {
     if (!quoteCanvas) return;
     
-    const link = document.createElement('a');
-    link.download = `quote-poster-${Date.now()}.png`;
-    link.href = quoteCanvas.toDataURL('image/png');
-    link.click();
+    try {
+      const dataUrl = quoteCanvas.toDataURL('image/png');
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'quote-poster.png', { type: 'image/png' });
+      
+      // Compress image before download
+      const compressedFile = await compressImage(file, 1920, 0.8);
+      
+      const link = document.createElement('a');
+      link.download = `quote-poster-${Date.now()}.jpg`;
+      link.href = URL.createObjectURL(compressedFile);
+      link.click();
+    } catch (error) {
+      console.error('Error compressing/downloading quote poster:', error);
+    }
   };
 
   if (user === undefined) {
@@ -3613,14 +3655,26 @@ export default function AdminDashboard() {
                           <h6 className="text-xs font-medium text-gray-600">އޮރިޖިނަލް އިމޭޖް</h6>
                           <button
                             type="button"
-                            onClick={() => {
+                            onClick={async () => {
                               if (!uploadedImage) return;
-                              const link = document.createElement('a');
-                              link.href = uploadedImage;
-                              link.download = `original-image-${Date.now()}.png`;
-                              document.body.appendChild(link);
-                              link.click();
-                              document.body.removeChild(link);
+                              try {
+                                // Convert data URL to blob
+                                const response = await fetch(uploadedImage);
+                                const blob = await response.blob();
+                                const file = new File([blob], 'original-image.png', { type: 'image/png' });
+                                
+                                // Compress image before download
+                                const compressedFile = await compressImage(file, 1920, 0.8);
+                                
+                                const link = document.createElement('a');
+                                link.href = URL.createObjectURL(compressedFile);
+                                link.download = `original-image-${Date.now()}.jpg`;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              } catch (error) {
+                                console.error('Error compressing/downloading image:', error);
+                              }
                             }}
                             className="text-xs text-purple-600 hover:text-purple-700 font-medium"
                           >
@@ -3639,18 +3693,30 @@ export default function AdminDashboard() {
                             <h6 className="text-xs font-medium text-gray-600">ޖެނެރޭޓް ކުރެވުނު އިމޭޖް</h6>
                             <button
                               type="button"
-                              onClick={() => {
+                              onClick={async () => {
                                 if (!generatedImage) return;
-                                const link = document.createElement('a');
-                                link.href = generatedImage;
-                                link.download = `generated-image-${Date.now()}.png`;
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
+                                try {
+                                  // Convert data URL to blob
+                                  const response = await fetch(generatedImage);
+                                  const blob = await response.blob();
+                                  const file = new File([blob], 'generated-image.png', { type: 'image/png' });
+                                  
+                                  // Compress image before download
+                                  const compressedFile = await compressImage(file, 1920, 0.8);
+                                  
+                                  const link = document.createElement('a');
+                                  link.href = URL.createObjectURL(compressedFile);
+                                  link.download = `generated-image-${Date.now()}.jpg`;
+                                  document.body.appendChild(link);
+                                  link.click();
+                                  document.body.removeChild(link);
+                                } catch (error) {
+                                  console.error('Error compressing/downloading image:', error);
+                                }
                               }}
                               className="text-xs text-purple-600 hover:text-purple-700 font-medium"
                             >
-                              ޑައުންލޯޑް
+                              ޑައުންލޯޑ෰
                             </button>
                           </div>
                           <img
