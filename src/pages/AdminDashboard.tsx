@@ -610,11 +610,17 @@ export default function AdminDashboard() {
   const [reelVideoUrl, setReelVideoUrl] = useState<string>('');
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioUrl, setAudioUrl] = useState<string>('');
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [hashtags, setHashtags] = useState<string>('');
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
   const [autoGenerate, setAutoGenerate] = useState(false);
   const [imageControls, setImageControls] = useState<{ [key: number]: { zoom: number; x: number; y: number } }>({});
   const [selectedImageControl, setSelectedImageControl] = useState<number | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string>('');
+  const [reelLogoPosition, setReelLogoPosition] = useState({ x: 50, y: 50 });
+  const [reelLogoOpacity, setReelLogoOpacity] = useState(80);
+  const [reelVideoFile, setReelVideoFile] = useState<File | null>(null);
 
   // Recipes state
   const [recipesList, setRecipesList] = useState<any[]>([]);
@@ -3157,6 +3163,50 @@ export default function AdminDashboard() {
     }
   };
 
+  // Tab groups for sidebar navigation
+  const tabGroups = [
+    {
+      title: 'Content',
+      tabs: [
+        { id: 'articles' as const, label: t.createNews, icon: '📝' },
+        { id: 'manage' as const, label: t.manageNews, icon: '📋' },
+        { id: 'recipes' as const, label: t.recipes, icon: '🍳' },
+        { id: 'stories' as const, label: 'ސްޓޯރީތައް', icon: '📖' },
+      ]
+    },
+    {
+      title: 'Promotions',
+      tabs: [
+        { id: 'banners' as const, label: t.manageBanners, icon: '🎨' },
+        { id: 'sidebar-promotions' as const, label: 'Sidebar', icon: '📱' },
+        { id: 'mid-article-promotions' as const, label: 'Mid-Article', icon: '📄' },
+      ]
+    },
+    {
+      title: 'Social Media',
+      tabs: [
+        { id: 'social-videos' as const, label: t.socialVideos, icon: '🎬' },
+        { id: 'flyers' as const, label: t.jobFlyers, icon: '📄' },
+        { id: 'quotes' as const, label: t.quotePosters, icon: '💬' },
+        { id: 'quran' as const, label: 'ޤުރްއާން', icon: '📿' },
+      ]
+    },
+    {
+      title: 'Tools',
+      tabs: [
+        { id: 'rephrase' as const, label: 'ޚަބަރު ރީފްރޭޒް', icon: '🔄' },
+        { id: 'checklist' as const, label: t.postLaunchChecklist, icon: '✅' },
+      ]
+    },
+    {
+      title: 'Analytics & Settings',
+      tabs: [
+        { id: 'analytics' as const, label: t.analytics, icon: '📊' },
+        { id: 'settings' as const, label: t.settings, icon: '⚙️' },
+      ]
+    }
+  ];
+
   if (user === undefined) {
     return (
       <div className={`rounded-[32px] border border-gray-200 bg-white p-8 shadow-soft ${language === 'dv' ? 'text-right' : 'text-left'}`} dir={language === 'dv' ? 'rtl' : 'ltr'}>
@@ -3175,69 +3225,96 @@ export default function AdminDashboard() {
   }
 
   return (
-    <motion.div className={`space-y-8 ${language === 'dv' ? 'text-right' : 'text-left'}`} dir={language === 'dv' ? 'rtl' : 'ltr'} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-      {/* Header */}
-      <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-emerald-600">{t.adminPanel}</p>
-            <h2 className="mt-2 text-2xl sm:text-3xl font-bold text-gray-900">{t.adminDashboard}</h2>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-            {showInstallButton && (
-              <button
-                type="button"
-                onClick={handleInstallClick}
-                className="inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-purple-500 bg-purple-500/20 text-purple-700 transition hover:bg-purple-500/30"
-                aria-label="Install app"
-                title="Install Admin Panel App"
-              >
-                📲
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => setLanguage(language === 'en' ? 'dv' : 'en')}
-              className="inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-gray-700 transition hover:border-gray-400 hover:text-gray-900"
-              aria-label="Toggle language"
-              title="Toggle language"
-            >
-              {language === 'en' ? '🇬🇧' : '🇲🇻'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-gray-700 transition hover:border-gray-400 hover:text-gray-900"
-              aria-label="Toggle theme"
-              title="Toggle theme"
-            >
-              {theme === 'dark' ? '🌙' : '☀️'}
-            </button>
-            {user && (
-            <div className="rounded-3xl bg-gray-100 p-3 sm:p-4 text-xs sm:text-sm text-gray-700 shadow-soft">
-              <p>{t.news}: {articlesCount}</p>
-              <p>{t.visits}: {visitorCount}</p>
-              <button
-                onClick={handleLogout}
-                className="mt-2 sm:mt-3 w-full rounded-2xl border border-rose-600 px-2 sm:px-3 py-2 text-rose-600 transition hover:bg-rose-600/20"
-              >
-                {t.logout}
-              </button>
+    <motion.div className={`flex gap-6 ${language === 'dv' ? 'text-right' : 'text-left'}`} dir={language === 'dv' ? 'rtl' : 'ltr'} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+      {/* Sidebar Navigation */}
+      <div className="hidden lg:block w-64 flex-shrink-0">
+        <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto space-y-4 py-4">
+          {tabGroups.map((group) => (
+            <div key={group.title} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-soft">
+              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{group.title}</h4>
+              <div className="space-y-1">
+                {group.tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                      activeTab === tab.id
+                        ? 'bg-brand-500 text-white'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span className="text-lg">{tab.icon}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          )}
-          </div>
+          ))}
         </div>
-        {message && (
-          <div className="mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-600 animate-in fade-in slide-in-from-top-2 duration-300">
-            {message}
-          </div>
-        )}
       </div>
 
-      {/* Admin Content */}
-      <>
-        {/* Tabs */}
-        <div className="flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+      {/* Main Content */}
+      <div className="flex-1 min-w-0 space-y-8">
+        {/* Header */}
+        <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.24em] text-emerald-600">{t.adminPanel}</p>
+              <h2 className="mt-2 text-2xl sm:text-3xl font-bold text-gray-900">{t.adminDashboard}</h2>
+            </div>
+            <div className="flex items-center gap-2 sm:gap-4">
+              {showInstallButton && (
+                <button
+                  type="button"
+                  onClick={handleInstallClick}
+                  className="inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-purple-500 bg-purple-500/20 text-purple-700 transition hover:bg-purple-500/30"
+                  aria-label="Install app"
+                  title="Install Admin Panel App"
+                >
+                  📲
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setLanguage(language === 'en' ? 'dv' : 'en')}
+                className="inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-gray-700 transition hover:border-gray-400 hover:text-gray-900"
+                aria-label="Toggle language"
+                title="Toggle language"
+              >
+                {language === 'en' ? '🇬🇧' : '🇲🇻'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-gray-700 transition hover:border-gray-400 hover:text-gray-900"
+                aria-label="Toggle theme"
+                title="Toggle theme"
+              >
+                {theme === 'dark' ? '🌙' : '☀️'}
+              </button>
+              {user && (
+              <div className="rounded-3xl bg-gray-100 p-3 sm:p-4 text-xs sm:text-sm text-gray-700 shadow-soft">
+                <p>{t.news}: {articlesCount}</p>
+                <p>{t.visits}: {visitorCount}</p>
+                <button
+                  onClick={handleLogout}
+                  className="mt-2 sm:mt-3 w-full rounded-2xl border border-rose-600 px-2 sm:px-3 py-2 text-rose-600 transition hover:bg-rose-600/20"
+                >
+                  {t.logout}
+                </button>
+              </div>
+            )}
+            </div>
+          </div>
+          {message && (
+            <div className="mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-600 animate-in fade-in slide-in-from-top-2 duration-300">
+              {message}
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Tabs */}
+        <div className="lg:hidden flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
           {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories'] as const).map((tab) => (
             <button
               key={tab}
@@ -3266,8 +3343,6 @@ export default function AdminDashboard() {
             </button>
           ))}
         </div>
-
-        {/* Articles Tab */}
         {activeTab === 'articles' && (
           <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
             <h3 className="text-2xl font-bold text-gray-900">{t.createNews}</h3>
@@ -5835,6 +5910,29 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
+                {/* Video Upload */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Upload Video</label>
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setReelVideoFile(file);
+                        setReelVideoUrl(URL.createObjectURL(file));
+                      }
+                    }}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                  />
+                  {reelVideoUrl && (
+                    <div className="mt-2">
+                      <video src={reelVideoUrl} controls className="w-full max-h-40 rounded" />
+                      <div className="mt-2 text-xs text-gray-500">Video loaded</div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Image Controls */}
                 {reelImageUrls.length > 0 && (
                   <div>
@@ -5943,16 +6041,101 @@ export default function AdminDashboard() {
                       if (file) {
                         setAudioFile(file);
                         setAudioUrl(URL.createObjectURL(file));
+                        setIsPlayingAudio(false);
                       }
                     }}
                     className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
                   />
                   {audioUrl && (
-                    <div className="mt-2 text-xs text-gray-500">
-                      Audio selected
+                    <div className="mt-2 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const audio = new Audio(audioUrl);
+                            if (isPlayingAudio) {
+                              audio.pause();
+                              setIsPlayingAudio(false);
+                            } else {
+                              audio.play();
+                              setIsPlayingAudio(true);
+                              audio.onended = () => setIsPlayingAudio(false);
+                            }
+                          }}
+                          className="rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-white hover:bg-brand-600"
+                        >
+                          {isPlayingAudio ? '⏸ Pause' : '▶ Play'}
+                        </button>
+                        <span className="text-xs text-gray-500">Audio loaded</span>
+                      </div>
                     </div>
                   )}
                 </div>
+
+                {/* Logo Upload */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Logo Upload</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setLogoFile(file);
+                        setLogoUrl(URL.createObjectURL(file));
+                      }
+                    }}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                  />
+                  {logoUrl && (
+                    <div className="mt-2">
+                      <img src={logoUrl} alt="Logo" className="h-12 w-auto rounded" />
+                      <div className="mt-2 text-xs text-gray-500">Logo loaded</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Logo Controls */}
+                {logoUrl && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Logo Controls</label>
+                    <div className="space-y-2">
+                      <div>
+                        <label className="text-xs text-gray-600">X Position: {reelLogoPosition.x}%</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={reelLogoPosition.x}
+                          onChange={(e) => setReelLogoPosition(prev => ({ ...prev, x: Number(e.target.value) }))}
+                          className="w-full h-2"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-600">Y Position: {reelLogoPosition.y}%</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={reelLogoPosition.y}
+                          onChange={(e) => setReelLogoPosition(prev => ({ ...prev, y: Number(e.target.value) }))}
+                          className="w-full h-2"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-600">Opacity: {reelLogoOpacity}%</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={reelLogoOpacity}
+                          onChange={(e) => setReelLogoOpacity(Number(e.target.value))}
+                          className="w-full h-2"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Video Text */}
                 <div>
@@ -6774,7 +6957,7 @@ export default function AdminDashboard() {
             )}
           </div>
         )}
-      </>
+      </div>
     </motion.div>
   );
 }
