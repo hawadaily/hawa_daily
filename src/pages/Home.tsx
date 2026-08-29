@@ -103,8 +103,57 @@ export default function Home() {
     };
   }, [sidebarPromotions]);
 
-  const featuredArticles = useMemo(() => articlesState.filter((article) => article.featured), [articlesState]);
-  const breakingArticles = useMemo(() => articlesState.filter((article) => article.breakingNews), [articlesState]);
+  const featuredArticles = useMemo(() => {
+    // Show articles from last 24 hours as featured
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    
+    const recentFeatured = articlesState.filter(article => {
+      let articleDate: Date;
+      if (article.publishedAt && typeof article.publishedAt === 'object' && 'toDate' in article.publishedAt) {
+        // Firebase Timestamp
+        articleDate = (article.publishedAt as any).toDate();
+      } else {
+        // String or other format
+        articleDate = new Date(article.publishedAt);
+      }
+      return articleDate >= twentyFourHoursAgo;
+    });
+    
+    // If there are articles from last 24 hours, show them as featured
+    if (recentFeatured.length > 0) {
+      return recentFeatured.slice(0, 4);
+    }
+    
+    // Otherwise fall back to articles marked as featured
+    return articlesState.filter((article) => article.featured);
+  }, [articlesState]);
+  
+  const breakingArticles = useMemo(() => {
+    // Show articles from last 24 hours as breaking news
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    
+    const recentBreaking = articlesState.filter(article => {
+      let articleDate: Date;
+      if (article.publishedAt && typeof article.publishedAt === 'object' && 'toDate' in article.publishedAt) {
+        // Firebase Timestamp
+        articleDate = (article.publishedAt as any).toDate();
+      } else {
+        // String or other format
+        articleDate = new Date(article.publishedAt);
+      }
+      return articleDate >= twentyFourHoursAgo;
+    });
+    
+    // If there are articles from last 24 hours, show them as breaking news
+    if (recentBreaking.length > 0) {
+      return recentBreaking.slice(0, 4);
+    }
+    
+    // Otherwise fall back to articles marked as breaking news
+    return articlesState.filter((article) => article.breakingNews);
+  }, [articlesState]);
   
   // Priority: Breaking news first, then featured, then regular articles
   const heroArticles = useMemo(() => {
@@ -115,55 +164,56 @@ export default function Home() {
       return uniquePriorityArticles.slice(0, 3);
     }
     
-    // Fill remaining slots with recent articles
-    const recentArticles = articlesState.filter(article => 
-      !uniquePriorityArticles.some(p => p.id === article.id)
-    ).slice(0, 3 - uniquePriorityArticles.length);
+    // Fill remaining slots with articles from last 24 hours first, then recent articles
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     
-    return [...uniquePriorityArticles, ...recentArticles];
+    const recentArticles24h = articlesState.filter(article => {
+      let articleDate: Date;
+      if (article.publishedAt && typeof article.publishedAt === 'object' && 'toDate' in article.publishedAt) {
+        // Firebase Timestamp
+        articleDate = (article.publishedAt as any).toDate();
+      } else {
+        // String or other format
+        articleDate = new Date(article.publishedAt);
+      }
+      return articleDate >= twentyFourHoursAgo && 
+             !uniquePriorityArticles.some(p => p.id === article.id);
+    });
+    
+    const olderArticles = articlesState.filter(article => 
+      !uniquePriorityArticles.some((p: any) => p.id === article.id) &&
+      !recentArticles24h.some((p: any) => p.id === article.id)
+    ).slice(0, 3 - uniquePriorityArticles.length - recentArticles24h.length);
+    
+    return [...uniquePriorityArticles, ...recentArticles24h.slice(0, 3 - uniquePriorityArticles.length), ...olderArticles];
   }, [breakingArticles, featuredArticles, articlesState]);
   
   const filteredArticles = selectedCategory 
     ? articlesState.filter(article => article.category === selectedCategory)
     : articlesState;
-  const trending = useMemo(() => filteredArticles.filter((article) => article.trending), [filteredArticles]);
+  
+  // Get current time for filtering last 24 hours
+  const now = new Date();
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  
+  // Show articles from last 24 hours in the trending section
+  const trending = useMemo(() => {
+    return filteredArticles.filter((article) => {
+      let articleDate: Date;
+      if (article.publishedAt && typeof article.publishedAt === 'object' && 'toDate' in article.publishedAt) {
+        // Firebase Timestamp
+        articleDate = (article.publishedAt as any).toDate();
+      } else {
+        // String or other format
+        articleDate = new Date(article.publishedAt);
+      }
+      return articleDate >= twentyFourHoursAgo;
+    }).slice(0, 4); // Show up to 4 articles from last 24 hours
+  }, [filteredArticles, twentyFourHoursAgo]);
+  
   const latest = useMemo(() => filteredArticles.slice(0, visibleCount), [filteredArticles, visibleCount]);
   const hasMore = filteredArticles.length > visibleCount;
-
-  // Group articles by date for the latest section
-  const groupedLatest = useMemo(() => {
-    const groups: { [date: string]: Article[] } = {};
-    
-    latest.forEach(article => {
-      const date = article.publishedAt;
-      if (!date) return;
-      
-      const articleDate = new Date(date);
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      
-      let dateKey: string;
-      if (articleDate.toDateString() === today.toDateString()) {
-        dateKey = 'އަންގާރަ';
-      } else if (articleDate.toDateString() === yesterday.toDateString()) {
-        dateKey = 'އަހަރުމެން';
-      } else {
-        dateKey = articleDate.toLocaleDateString('dv-MV', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        });
-      }
-      
-      if (!groups[dateKey]) {
-        groups[dateKey] = [];
-      }
-      groups[dateKey].push(article);
-    });
-    
-    return groups;
-  }, [latest]);
 
   if (loading) {
     return (
@@ -341,22 +391,17 @@ export default function Home() {
             <h2 className="mt-2 text-2xl font-bold text-slate-900">ފަހުގެ ޚަބަރު</h2>
           </div>
         </div>
-        <div className="mt-6 space-y-8">
-          {Object.entries(groupedLatest).map(([dateKey, articles]) => (
-            <div key={dateKey}>
-              <h3 className="mb-4 text-lg font-semibold text-slate-700 border-b border-slate-200 pb-2">{dateKey}</h3>
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                {articles.map((article) => (
-                  <ArticleCard 
-                    key={article.id} 
-                    article={article} 
-                    likes={articleReactions[article.id]?.likes || 0}
-                    dislikes={articleReactions[article.id]?.dislikes || 0}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="mt-6">
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {latest.map((article: any) => (
+              <ArticleCard 
+                key={article.id} 
+                article={article} 
+                likes={articleReactions[article.id]?.likes || 0}
+                dislikes={articleReactions[article.id]?.dislikes || 0}
+              />
+            ))}
+          </div>
         </div>
         {hasMore && (
           <div className="mt-6 text-center">
