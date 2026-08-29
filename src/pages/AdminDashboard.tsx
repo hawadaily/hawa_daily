@@ -11,7 +11,7 @@ import { getCompanyLogo } from '../data/companyLogos';
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB } from '../utils/cloudinary';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'reels' | 'recipes' | 'quran' | 'stories';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -229,17 +229,27 @@ export default function AdminDashboard() {
       editRecipe: 'Edit Recipe',
       deleteRecipe: 'Delete Recipe',
       saveRecipe: 'Save Recipe',
-      facebookReels: 'Facebook Reels',
-      facebookReelsDesc: 'Create Facebook Reels from images',
+      socialVideos: 'Social Media Videos',
+      socialVideosDesc: 'Create videos for Facebook Reels, TikTok, YouTube Shorts & YouTube',
       uploadImages: 'Upload Images',
-      reelText: 'Reel Text',
+      reelText: 'Video Text',
       duration: 'Duration (seconds)',
       transition: 'Transition Effect',
       transitionFade: 'Fade',
       transitionSlide: 'Slide',
       transitionZoom: 'Zoom',
-      generateReel: 'Generate Reel',
-      downloadReel: 'Download Reel',
+      generateReel: 'Generate Video',
+      downloadReel: 'Download Video',
+      selectPlatform: 'Select Platform',
+      facebookReels: 'Facebook Reels',
+      tiktok: 'TikTok',
+      youtubeShorts: 'YouTube Shorts',
+      youtubeVideo: 'YouTube Video',
+      uploadAudio: 'Upload Audio/Music',
+      hashtags: 'Hashtags',
+      suggestedHashtags: 'Suggested Hashtags',
+      selectArticle: 'Select Article',
+      autoGenerate: 'Auto-generate from Article',
     },
     dv: {
       adminPanel: 'އެޑްމިން ޕެނަލް',
@@ -411,17 +421,27 @@ export default function AdminDashboard() {
       textTransparency: 'ލިޔުން ޝައްޕާރަންސީ',
       textBackgroundColor: 'ލިޔުން ބެކްގްރައުންޑް ކައުލަރ',
       textBackgroundTransparency: 'ލިޔުން ބެކްގްރައުންޑް ޝައްޕާރަންސީ',
-      facebookReels: 'ފޭސްބުކް ރީލްސް',
-      facebookReelsDesc: 'ފޮޓޯ އާއި ވީޑިއޯ އާއި އެއްކޮށައިގައި ރީލްސް ހަދާ',
+      socialVideos: 'ސޯޝަލް މީޑިއާ ވީޑިއޯތައް',
+      socialVideosDesc: 'ފޭސްބުކް ރީލްސް، ޓިކްޓޮކް، ޔޫޓިއުބް ޝޯޓްސް އާއި ޔޫޓިއުބް ވީޑިއޯތައަށް ވީޑިއޯތައް ހަދާ',
       uploadImages: 'ފޮޓޯ އަޕްލޯޑް ކުރޭ',
-      reelText: 'ރީލްސް ލިޔުން',
+      reelText: 'ވީޑިއޯ ލިޔުން',
       duration: 'ދުވަސްވެށެ (ސިކުންސް)',
       transition: 'ޓްރާންޒިޝަން',
       transitionFade: 'ފޭޑް',
       transitionSlide: 'ސްލައިޑް',
       transitionZoom: 'ޒޫމް',
-      generateReel: 'ރީލްސް ހަދާ',
-      downloadReel: 'ރީލްސް ޑައުންލޯޑް ކުރޭ',
+      generateReel: 'ވީޑިއޯ ހަދާ',
+      downloadReel: 'ވީޑިއޯ ޑައުންލޯޑް ކުރޭ',
+      selectPlatform: 'ޕްލެޓްފޯމް އިޚިލާކުރޭ',
+      facebookReels: 'ފޭސްބުކް ރީލްސް',
+      tiktok: 'ޓިކްޓޮކް',
+      youtubeShorts: 'ޔޫޓިއުބް ޝޯޓްސް',
+      youtubeVideo: 'ޔޫޓިއުބް ވީެޑިއޯ',
+      uploadAudio: 'އޯޑިއޯ/މިއުޒިކް އަޕްލޯޑް ކުރޭ',
+      hashtags: 'ހޭޝްޓެގްތައް',
+      suggestedHashtags: 'ހެޔްދެއްކުރާ ހޭޝްޓެގްތައް',
+      selectArticle: 'ޚަބަރު އިޚިލާކުރޭ',
+      autoGenerate: 'ޚަބަރުން އޮޓޯ ޖެނެރޭޓް ކުރޭ',
       recipes: 'ރެސިޕީތައް',
       recipesDesc: 'ރެސިޕީތައް މެނޭޖް ކުރާއި އުފައްދާ',
       recipeTitleDv: 'ރެސިޕީގެ ސުރުޚީ (ދިވެހި)',
@@ -578,7 +598,8 @@ export default function AdminDashboard() {
     { id: 1, x: 85, y: 85, opacity: 90, image: '/HAWA LOGO.jpg' }
   ]);
 
-  // Facebook Reels state
+  // Social Media Videos state
+  const [videoPlatform, setVideoPlatform] = useState<'facebook-reels' | 'tiktok' | 'youtube-shorts' | 'youtube-video'>('facebook-reels');
   const [reelImages, setReelImages] = useState<File[]>([]);
   const [reelImageUrls, setReelImageUrls] = useState<string[]>([]);
   const [reelText, setReelText] = useState('');
@@ -587,6 +608,11 @@ export default function AdminDashboard() {
   const [reelCanvas, setReelCanvas] = useState<HTMLCanvasElement | null>(null);
   const [generatingReel, setGeneratingReel] = useState(false);
   const [reelVideoUrl, setReelVideoUrl] = useState<string>('');
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string>('');
+  const [hashtags, setHashtags] = useState<string>('');
+  const [selectedArticle, setSelectedArticle] = useState<any>(null);
+  const [autoGenerate, setAutoGenerate] = useState(false);
 
   // Recipes state
   const [recipesList, setRecipesList] = useState<any[]>([]);
@@ -2631,7 +2657,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // Generate Facebook Reel
+  // Generate Social Media Video
   const generateFacebookReel = async () => {
     if (!reelCanvas || reelImageUrls.length === 0) return;
 
@@ -2641,9 +2667,21 @@ export default function AdminDashboard() {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Set canvas size for Facebook Reels (1080x1920 for portrait)
-      canvas.width = 1080;
-      canvas.height = 1920;
+      // Set canvas size based on platform
+      let canvasWidth = 1080;
+      let canvasHeight = 1920;
+      
+      if (videoPlatform === 'youtube-video') {
+        canvasWidth = 1920;
+        canvasHeight = 1080;
+      } else {
+        // Facebook Reels, TikTok, YouTube Shorts all use 9:16 portrait
+        canvasWidth = 1080;
+        canvasHeight = 1920;
+      }
+      
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
 
       // Preload logo
       const logo = new Image();
@@ -3123,7 +3161,7 @@ export default function AdminDashboard() {
       <>
         {/* Tabs */}
         <div className="flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'reels', 'recipes', 'quran', 'stories'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -3144,7 +3182,7 @@ export default function AdminDashboard() {
               {tab === 'checklist' && t.postLaunchChecklist}
               {tab === 'flyers' && t.jobFlyers}
               {tab === 'quotes' && t.quotePosters}
-              {tab === 'reels' && t.facebookReels}
+              {tab === 'social-videos' && t.socialVideos}
               {tab === 'recipes' && t.recipes}
               {tab === 'quran' && 'ޤުރްއާން (Quran)'}
               {tab === 'stories' && 'ސްޓޯރީތައް (Stories)'}
@@ -5608,15 +5646,66 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Facebook Reels Tab */}
-        {activeTab === 'reels' && (
+        {/* Social Media Videos Tab */}
+        {activeTab === 'social-videos' && (
           <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
-            <h3 className="text-2xl font-bold text-gray-900">{t.facebookReels}</h3>
-            <p className="mt-2 text-sm text-gray-600">{t.facebookReelsDesc}</p>
+            <h3 className="text-2xl font-bold text-gray-900">{t.socialVideos}</h3>
+            <p className="mt-2 text-sm text-gray-600">{t.socialVideosDesc}</p>
 
             <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left Column - Inputs and Controls */}
               <div className="space-y-4">
+                {/* Platform Selector */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.selectPlatform}</label>
+                  <select
+                    value={videoPlatform}
+                    onChange={(e) => setVideoPlatform(e.target.value as 'facebook-reels' | 'tiktok' | 'youtube-shorts' | 'youtube-video')}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                  >
+                    <option value="facebook-reels">{t.facebookReels}</option>
+                    <option value="tiktok">{t.tiktok}</option>
+                    <option value="youtube-shorts">{t.youtubeShorts}</option>
+                    <option value="youtube-video">{t.youtubeVideo}</option>
+                  </select>
+                </div>
+
+                {/* Article Selector for Auto-generate */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.selectArticle}</label>
+                  <select
+                    value={selectedArticle?.id || ''}
+                    onChange={(e) => {
+                      const article = articles.find(a => a.id === e.target.value);
+                      setSelectedArticle(article || null);
+                      if (article && autoGenerate) {
+                        setReelText(article.title || '');
+                        setHashtags(`#${article.category || 'news'} #${language === 'dv' ? 'ހަވާދަވެރިން' : 'HawaDaily'} #${language === 'dv' ? 'ދިވެހިބަސް' : 'Maldives'}`);
+                      }
+                    }}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                  >
+                    <option value="">Select an article...</option>
+                    {articles.map(article => (
+                      <option key={article.id} value={article.id}>
+                        {article.title || article.titleEn || 'Untitled'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Auto-generate Toggle */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="autoGenerate"
+                    checked={autoGenerate}
+                    onChange={(e) => setAutoGenerate(e.target.checked)}
+                    className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                  />
+                  <label htmlFor="autoGenerate" className="text-sm text-gray-700">{t.autoGenerate}</label>
+                </div>
+
                 {/* Image Upload */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">{t.uploadImages}</label>
@@ -5639,15 +5728,84 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
-                {/* Reel Text */}
+                {/* Audio Upload */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.uploadAudio}</label>
+                  <input
+                    type="file"
+                    accept="audio/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setAudioFile(file);
+                        setAudioUrl(URL.createObjectURL(file));
+                      }
+                    }}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                  />
+                  {audioUrl && (
+                    <div className="mt-2 text-xs text-gray-500">
+                      Audio selected
+                    </div>
+                  )}
+                </div>
+
+                {/* Video Text */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">{t.reelText}</label>
                   <textarea
                     value={reelText}
                     onChange={(e) => setReelText(e.target.value)}
                     className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 min-h-[80px] text-sm"
-                    placeholder="Enter text for reel..."
+                    placeholder="Enter text for..."
                   />
+                </div>
+
+                {/* Hashtags */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t.hashtags}</label>
+                  <textarea
+                    value={hashtags}
+                    onChange={(e) => setHashtags(e.target.value)}
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 min-h-[60px] text-sm"
+                    placeholder="#hashtag1 #hashtag2"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const platformHashtags = {
+                        'facebook-reels': ['#HawaDaily', '#Maldives', '#News', '#Dhivehi', '#LocalNews', '#FacebookReels'],
+                        'tiktok': ['#HawaDaily', '#Maldives', '#News', '#Dhivehi', '#FYP', '#ForYou', '#Trending'],
+                        'youtube-shorts': ['#HawaDaily', '#Maldives', '#News', '#Dhivehi', '#Shorts', '#YouTubeShorts'],
+                        'youtube-video': ['#HawaDaily', '#Maldives', '#News', '#Dhivehi', '#YouTube', '#Video']
+                      };
+                      setHashtags(platformHashtags[videoPlatform].join(' '));
+                    }}
+                    className="mt-1 text-xs text-brand-600 hover:text-brand-700"
+                  >
+                    {t.suggestedHashtags}
+                  </button>
+                </div>
+
+                {/* Caption Preview */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Caption Preview</label>
+                  <div className="w-full rounded-2xl border border-gray-300 bg-gray-50 p-3 text-sm text-gray-700">
+                    {reelText && (
+                      <div>
+                        <p className="font-semibold">{reelText}</p>
+                        <p className="mt-2 text-xs text-gray-500">
+                          {hashtags}
+                        </p>
+                        <p className="mt-2 text-xs text-gray-400">
+                          Platform: {videoPlatform.replace('-', ' ').toUpperCase()}
+                        </p>
+                      </div>
+                    )}
+                    {!reelText && (
+                      <p className="text-gray-400">Add text to see caption preview</p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Duration */}
@@ -5656,7 +5814,7 @@ export default function AdminDashboard() {
                   <input
                     type="range"
                     min="3"
-                    max="30"
+                    max="60"
                     value={reelDuration}
                     onChange={(e) => setReelDuration(Number(e.target.value))}
                     className="w-full h-5"
@@ -5702,8 +5860,8 @@ export default function AdminDashboard() {
                   <div className="border-2 border-dashed border-gray-300 rounded-2xl p-4 bg-gray-50 w-full max-w-sm">
                     <canvas
                       ref={(canvas) => setReelCanvas(canvas)}
-                      width={1080}
-                      height={1920}
+                      width={videoPlatform === 'youtube-video' ? 1920 : 1080}
+                      height={videoPlatform === 'youtube-video' ? 1080 : 1920}
                       className="w-full h-auto rounded-lg shadow-md"
                       style={{ display: reelVideoUrl ? 'none' : 'block' }}
                     />
