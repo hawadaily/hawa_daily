@@ -613,6 +613,8 @@ export default function AdminDashboard() {
   const [hashtags, setHashtags] = useState<string>('');
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
   const [autoGenerate, setAutoGenerate] = useState(false);
+  const [imageControls, setImageControls] = useState<{ [key: number]: { zoom: number; x: number; y: number } }>({});
+  const [selectedImageControl, setSelectedImageControl] = useState<number | null>(null);
 
   // Recipes state
   const [recipesList, setRecipesList] = useState<any[]>([]);
@@ -2714,8 +2716,33 @@ export default function AdminDashboard() {
       const fps = 30;
       const totalFrames = (durationPerImage * images.length * fps);
 
-      // Create MediaRecorder
+      // Create MediaRecorder with audio if available
       const stream = canvas.captureStream(fps);
+      
+      // Add audio to stream if audio file is provided
+      if (audioUrl) {
+        try {
+          const audioContext = new AudioContext();
+          const audioElement = new Audio(audioUrl);
+          audioElement.loop = true;
+          const source = audioContext.createMediaElementSource(audioElement);
+          const destination = audioContext.createMediaStreamDestination();
+          source.connect(destination);
+          source.connect(audioContext.destination);
+          
+          // Add audio tracks to the stream
+          const audioStream = destination.stream;
+          audioStream.getAudioTracks().forEach(track => {
+            stream.addTrack(track);
+          });
+          
+          // Start playing audio
+          audioElement.play().catch(e => console.log('Audio play error:', e));
+        } catch (audioError) {
+          console.log('Audio setup error:', audioError);
+        }
+      }
+
       const mediaRecorder = new MediaRecorder(stream, {
         mimeType: 'video/webm;codecs=vp9',
         videoBitsPerSecond: 5000000
@@ -2757,32 +2784,33 @@ export default function AdminDashboard() {
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Apply transition effect
+        // Apply transition effect with image controls
         ctx.globalAlpha = 1;
+        const controls = imageControls[imageIndex] || { zoom: 1, x: 0, y: 0 };
 
         if (reelTransition === 'fade') {
           // Fade transition
           ctx.globalAlpha = 1 - progress;
-          drawImageCover(ctx, currentImage, canvas.width, canvas.height);
+          drawImageCover(ctx, currentImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
           ctx.globalAlpha = progress;
-          drawImageCover(ctx, nextImage, canvas.width, canvas.height);
+          drawImageCover(ctx, nextImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
         } else if (reelTransition === 'slide') {
           // Slide transition - sudden cut (no gradual slide)
           if (progress < 0.1) {
             // Show current image for most of the duration
-            drawImageCover(ctx, currentImage, canvas.width, canvas.height);
+            drawImageCover(ctx, currentImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
           } else {
             // Sudden cut to next image
-            drawImageCover(ctx, nextImage, canvas.width, canvas.height);
+            drawImageCover(ctx, nextImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
           }
         } else if (reelTransition === 'zoom') {
           // Zoom transition
-          const scale = 1 + progress * 0.5;
+          const scale = (1 + progress * 0.5) * controls.zoom;
           ctx.save();
-          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.translate(canvas.width / 2 + controls.x, canvas.height / 2 + controls.y);
           ctx.scale(scale, scale);
           ctx.translate(-canvas.width / 2, -canvas.height / 2);
-          drawImageCover(ctx, currentImage, canvas.width, canvas.height);
+          drawImageCover(ctx, currentImage, canvas.width, canvas.height, 1, 0, 0);
           ctx.restore();
         }
 
@@ -2822,6 +2850,7 @@ export default function AdminDashboard() {
     img: HTMLImageElement,
     canvasWidth: number,
     canvasHeight: number,
+    zoom: number = 1,
     offsetX: number = 0,
     offsetY: number = 0
   ) => {
@@ -2843,7 +2872,13 @@ export default function AdminDashboard() {
       drawY = (canvasHeight - drawHeight) / 2 + offsetY;
     }
 
-    ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+    // Apply zoom
+    const zoomedWidth = drawWidth * zoom;
+    const zoomedHeight = drawHeight * zoom;
+    const zoomedX = drawX - (zoomedWidth - drawWidth) / 2;
+    const zoomedY = drawY - (zoomedHeight - drawHeight) / 2;
+
+    ctx.drawImage(img, zoomedX, zoomedY, zoomedWidth, zoomedHeight);
   };
 
   // Download Facebook Reel
@@ -5718,6 +5753,12 @@ export default function AdminDashboard() {
                       setReelImages(files);
                       const urls = files.map(file => URL.createObjectURL(file));
                       setReelImageUrls(urls);
+                      // Initialize controls for new images
+                      const newControls: { [key: number]: { zoom: number; x: number; y: number } } = {};
+                      urls.forEach((_, index) => {
+                        newControls[index] = { zoom: 1, x: 0, y: 0 };
+                      });
+                      setImageControls(newControls);
                     }}
                     className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
                   />
@@ -5727,6 +5768,103 @@ export default function AdminDashboard() {
                     </div>
                   )}
                 </div>
+
+                {/* Image Controls */}
+                {reelImageUrls.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Image Controls</label>
+                    <div className="space-y-2">
+                      <select
+                        value={selectedImageControl || 0}
+                        onChange={(e) => setSelectedImageControl(Number(e.target.value))}
+                        className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
+                      >
+                        {reelImageUrls.map((_, index) => (
+                          <option key={index} value={index}>Image {index + 1}</option>
+                        ))}
+                      </select>
+                      
+                      {selectedImageControl !== null && (
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-xs text-gray-600">Zoom: {imageControls[selectedImageControl]?.zoom?.toFixed(1) || 1}</label>
+                            <input
+                              type="range"
+                              min="0.5"
+                              max="3"
+                              step="0.1"
+                              value={imageControls[selectedImageControl]?.zoom || 1}
+                              onChange={(e) => {
+                                setImageControls(prev => ({
+                                  ...prev,
+                                  [selectedImageControl]: {
+                                    ...prev[selectedImageControl],
+                                    zoom: Number(e.target.value)
+                                  }
+                                }));
+                              }}
+                              className="w-full h-2"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs text-gray-600">X Position: {imageControls[selectedImageControl]?.x || 0}</label>
+                            <input
+                              type="range"
+                              min="-500"
+                              max="500"
+                              step="10"
+                              value={imageControls[selectedImageControl]?.x || 0}
+                              onChange={(e) => {
+                                setImageControls(prev => ({
+                                  ...prev,
+                                  [selectedImageControl]: {
+                                    ...prev[selectedImageControl],
+                                    x: Number(e.target.value)
+                                  }
+                                }));
+                              }}
+                              className="w-full h-2"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs text-gray-600">Y Position: {imageControls[selectedImageControl]?.y || 0}</label>
+                            <input
+                              type="range"
+                              min="-500"
+                              max="500"
+                              step="10"
+                              value={imageControls[selectedImageControl]?.y || 0}
+                              onChange={(e) => {
+                                setImageControls(prev => ({
+                                  ...prev,
+                                  [selectedImageControl]: {
+                                    ...prev[selectedImageControl],
+                                    y: Number(e.target.value)
+                                  }
+                                }));
+                              }}
+                              className="w-full h-2"
+                            />
+                          </div>
+                          <div className="flex items-center justify-center">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setImageControls(prev => ({
+                                  ...prev,
+                                  [selectedImageControl]: { zoom: 1, x: 0, y: 0 }
+                                }));
+                              }}
+                              className="text-xs text-brand-600 hover:text-brand-700"
+                            >
+                              Reset Controls
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* Audio Upload */}
                 <div>
