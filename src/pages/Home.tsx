@@ -130,6 +130,41 @@ export default function Home() {
   const latest = useMemo(() => filteredArticles.slice(0, visibleCount), [filteredArticles, visibleCount]);
   const hasMore = filteredArticles.length > visibleCount;
 
+  // Group articles by date for the latest section
+  const groupedLatest = useMemo(() => {
+    const groups: { [date: string]: Article[] } = {};
+    
+    latest.forEach(article => {
+      const date = article.publishedAt;
+      if (!date) return;
+      
+      const articleDate = new Date(date);
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      let dateKey: string;
+      if (articleDate.toDateString() === today.toDateString()) {
+        dateKey = 'އަންގާރަ';
+      } else if (articleDate.toDateString() === yesterday.toDateString()) {
+        dateKey = 'އަހަރުމެން';
+      } else {
+        dateKey = articleDate.toLocaleDateString('dv-MV', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+      }
+      
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(article);
+    });
+    
+    return groups;
+  }, [latest]);
+
   if (loading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
@@ -306,14 +341,21 @@ export default function Home() {
             <h2 className="mt-2 text-2xl font-bold text-slate-900">ފަހުގެ ޚަބަރު</h2>
           </div>
         </div>
-        <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {latest.map((article) => (
-            <ArticleCard 
-              key={article.id} 
-              article={article} 
-              likes={articleReactions[article.id]?.likes || 0}
-              dislikes={articleReactions[article.id]?.dislikes || 0}
-            />
+        <div className="mt-6 space-y-8">
+          {Object.entries(groupedLatest).map(([dateKey, articles]) => (
+            <div key={dateKey}>
+              <h3 className="mb-4 text-lg font-semibold text-slate-700 border-b border-slate-200 pb-2">{dateKey}</h3>
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                {articles.map((article) => (
+                  <ArticleCard 
+                    key={article.id} 
+                    article={article} 
+                    likes={articleReactions[article.id]?.likes || 0}
+                    dislikes={articleReactions[article.id]?.dislikes || 0}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
         {hasMore && (
