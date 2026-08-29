@@ -109,22 +109,24 @@ export default function StoryDetail() {
   useEffect(() => {
     if (!id || episodes.length === 0) return;
 
+    const episodeParam = searchParams.get('episode');
     const viewedEpisodes = new Set(JSON.parse(localStorage.getItem(`viewed_episodes_${id}`) || '[]'));
     
-    episodes.forEach(async (episode) => {
-      if (!viewedEpisodes.has(episode.id)) {
-        try {
-          await updateDoc(doc(db, 'stories', id, 'episodes', episode.id), {
-            viewCount: increment(1)
-          });
+    // Only track the specific episode being viewed (from URL param)
+    if (episodeParam) {
+      const episode = episodes.find((e) => e.id === episodeParam);
+      if (episode && !viewedEpisodes.has(episode.id)) {
+        updateDoc(doc(db, 'stories', id, 'episodes', episode.id), {
+          viewCount: increment(1)
+        }).then(() => {
           viewedEpisodes.add(episode.id);
           localStorage.setItem(`viewed_episodes_${id}`, JSON.stringify([...viewedEpisodes]));
-        } catch (error) {
+        }).catch((error) => {
           console.error('Failed to increment view count:', error);
-        }
+        });
       }
-    });
-  }, [id, episodes]);
+    }
+  }, [id, episodes, searchParams]);
 
   // Load localStorage reactions for anonymous users
   useEffect(() => {
