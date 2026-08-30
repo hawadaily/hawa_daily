@@ -11,7 +11,7 @@ import { getCompanyLogo } from '../data/companyLogos';
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB, compressImage } from '../utils/cloudinary';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'golden-time';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -1199,6 +1199,20 @@ export default function AdminDashboard() {
   const [uploadingStory, setUploadingStory] = useState(false);
   const [storyError, setStoryError] = useState('');
 
+  // Golden Time management state
+  const [goldenTimeArticles, setGoldenTimeArticles] = useState<any[]>([]);
+  const [selectedGoldenTimeArticle, setSelectedGoldenTimeArticle] = useState<any | null>(null);
+  const [goldenTimeTitle, setGoldenTimeTitle] = useState('');
+  const [goldenTimeDescription, setGoldenTimeDescription] = useState('');
+  const [goldenTimeAuthor, setGoldenTimeAuthor] = useState('');
+  const [goldenTimeCoverImage, setGoldenTimeCoverImage] = useState<File | null>(null);
+  const [goldenTimeYear, setGoldenTimeYear] = useState('');
+  const [goldenTimeCategory, setGoldenTimeCategory] = useState('');
+  const [goldenTimeContent, setGoldenTimeContent] = useState('');
+  const [editingGoldenTime, setEditingGoldenTime] = useState(false);
+  const [uploadingGoldenTime, setUploadingGoldenTime] = useState(false);
+  const [goldenTimeError, setGoldenTimeError] = useState('');
+
   // Episodes management state
   const [episodes, setEpisodes] = useState<any[]>([]);
   const [episodeTitle, setEpisodeTitle] = useState('');
@@ -1244,6 +1258,11 @@ export default function AdminDashboard() {
       const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
       const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setStories(storiesData);
+
+      // Load golden time articles
+      const goldenTimeSnapshot = await getDocs(query(collection(db, 'golden-time'), orderBy('createdAt', 'desc')));
+      const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setGoldenTimeArticles(goldenTimeData);
     } catch (error) {
       console.warn('Unable to load dashboard data', error);
     }
@@ -2183,6 +2202,140 @@ export default function AdminDashboard() {
       setEpisodes(episodesData);
     } catch (error) {
       setMessage('Failed to delete episode');
+      console.error(error);
+    }
+  };
+
+  // Golden Time handlers
+  const resetGoldenTimeForm = () => {
+    setGoldenTimeTitle('');
+    setGoldenTimeDescription('');
+    setGoldenTimeAuthor('');
+    setGoldenTimeCoverImage(null);
+    setGoldenTimeYear('');
+    setGoldenTimeCategory('');
+    setGoldenTimeContent('');
+    setGoldenTimeError('');
+  };
+
+  const handleCreateGoldenTime = async () => {
+    if (!goldenTimeTitle || !goldenTimeDescription || !goldenTimeContent) {
+      setGoldenTimeError('Please fill in required fields');
+      return;
+    }
+
+    setUploadingGoldenTime(true);
+    setGoldenTimeError('');
+
+    try {
+      let coverImageUrl = '';
+      if (goldenTimeCoverImage) {
+        const compressedFile = await compressImage(goldenTimeCoverImage, 1920, 0.8);
+        coverImageUrl = await uploadToImgBB(compressedFile);
+      }
+
+      await addDoc(collection(db, 'golden-time'), {
+        title: goldenTimeTitle,
+        description: goldenTimeDescription,
+        author: goldenTimeAuthor,
+        coverImage: coverImageUrl,
+        year: goldenTimeYear ? Number(goldenTimeYear) : null,
+        category: goldenTimeCategory,
+        content: goldenTimeContent,
+        createdAt: serverTimestamp(),
+      });
+
+      resetGoldenTimeForm();
+      setMessage('Article created successfully');
+
+      // Reload golden time articles
+      const goldenTimeSnapshot = await getDocs(query(collection(db, 'golden-time'), orderBy('createdAt', 'desc')));
+      const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setGoldenTimeArticles(goldenTimeData);
+    } catch (error) {
+      setGoldenTimeError('Failed to create article');
+      console.error(error);
+    } finally {
+      setUploadingGoldenTime(false);
+    }
+  };
+
+  const handleSelectGoldenTimeArticle = (article: any) => {
+    setSelectedGoldenTimeArticle(article);
+    setGoldenTimeTitle(article.title);
+    setGoldenTimeDescription(article.description);
+    setGoldenTimeAuthor(article.author || '');
+    setGoldenTimeYear(article.year?.toString() || '');
+    setGoldenTimeCategory(article.category || '');
+    setGoldenTimeContent(article.content || '');
+    setEditingGoldenTime(true);
+  };
+
+  const handleUpdateGoldenTime = async () => {
+    if (!selectedGoldenTimeArticle || !goldenTimeTitle || !goldenTimeDescription || !goldenTimeContent) {
+      setGoldenTimeError('Please fill in required fields');
+      return;
+    }
+
+    setUploadingGoldenTime(true);
+    setGoldenTimeError('');
+
+    try {
+      const updateData: any = {
+        title: goldenTimeTitle,
+        description: goldenTimeDescription,
+        author: goldenTimeAuthor,
+        year: goldenTimeYear ? Number(goldenTimeYear) : null,
+        category: goldenTimeCategory,
+        content: goldenTimeContent,
+      };
+
+      if (goldenTimeCoverImage) {
+        const compressedFile = await compressImage(goldenTimeCoverImage, 1920, 0.8);
+        const coverImageUrl = await uploadToImgBB(compressedFile);
+        updateData.coverImage = coverImageUrl;
+      }
+
+      await updateDoc(doc(db, 'golden-time', selectedGoldenTimeArticle.id), updateData);
+
+      resetGoldenTimeForm();
+      setEditingGoldenTime(false);
+      setSelectedGoldenTimeArticle(null);
+      setMessage('Article updated successfully');
+
+      // Reload golden time articles
+      const goldenTimeSnapshot = await getDocs(query(collection(db, 'golden-time'), orderBy('createdAt', 'desc')));
+      const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setGoldenTimeArticles(goldenTimeData);
+    } catch (error) {
+      setGoldenTimeError('Failed to update article');
+      console.error(error);
+    } finally {
+      setUploadingGoldenTime(false);
+    }
+  };
+
+  const handleDeleteGoldenTime = async (articleId: string) => {
+    if (!confirm('Are you sure you want to delete this article?')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'golden-time', articleId));
+      setMessage('Article deleted successfully');
+
+      // Reload golden time articles
+      const goldenTimeSnapshot = await getDocs(query(collection(db, 'golden-time'), orderBy('createdAt', 'desc')));
+      const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setGoldenTimeArticles(goldenTimeData);
+
+      if (selectedGoldenTimeArticle?.id === articleId) {
+        setSelectedGoldenTimeArticle(null);
+        resetGoldenTimeForm();
+        setEditingGoldenTime(false);
+      }
+    } catch (error) {
+      setMessage('Failed to delete article');
       console.error(error);
     }
   };
@@ -3176,6 +3329,7 @@ export default function AdminDashboard() {
         { id: 'manage' as const, label: t.manageNews, icon: '📋' },
         { id: 'recipes' as const, label: t.recipes, icon: '🍳' },
         { id: 'stories' as const, label: 'ސްޓޯރީތައް', icon: '📖' },
+        { id: 'golden-time' as const, label: 'ދިވެހި ރަން ޒަމާން', icon: '⏳' },
       ]
     },
     {
@@ -3319,7 +3473,7 @@ export default function AdminDashboard() {
 
         {/* Mobile Tabs */}
         <div className="lg:hidden flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories', 'golden-time'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -3344,6 +3498,7 @@ export default function AdminDashboard() {
               {tab === 'recipes' && t.recipes}
               {tab === 'quran' && 'ޤުރްއާން (Quran)'}
               {tab === 'stories' && 'ސްޓޯރީތައް (Stories)'}
+              {tab === 'golden-time' && 'ދިވެހި ރަން ޒަމާން'}
             </button>
           ))}
         </div>
@@ -6967,6 +7122,185 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Golden Time Tab */}
+        {activeTab === 'golden-time' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">ދިވެހި ރަން ޒަމާން (Maldives Golden Time)</h3>
+            <p className="mt-2 text-sm text-gray-600">Create and manage articles about life in Maldives during the 1990s</p>
+
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              {/* Create/Edit Golden Time Article Form */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">
+                  {editingGoldenTime ? 'Edit Article' : 'Create New Article'}
+                </h4>
+                {goldenTimeError && (
+                  <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                    {goldenTimeError}
+                  </div>
+                )}
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Title</label>
+                    <input
+                      type="text"
+                      value={goldenTimeTitle}
+                      onChange={(e) => setGoldenTimeTitle(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Article title..."
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Description</label>
+                    <textarea
+                      value={goldenTimeDescription}
+                      onChange={(e) => setGoldenTimeDescription(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Brief description..."
+                      rows={3}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Author</label>
+                    <input
+                      type="text"
+                      value={goldenTimeAuthor}
+                      onChange={(e) => setGoldenTimeAuthor(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Author name..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Year</label>
+                    <input
+                      type="number"
+                      value={goldenTimeYear}
+                      onChange={(e) => setGoldenTimeYear(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="e.g., 1990"
+                      min="1980"
+                      max="2000"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Category</label>
+                    <input
+                      type="text"
+                      value={goldenTimeCategory}
+                      onChange={(e) => setGoldenTimeCategory(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="e.g., Lifestyle, Culture, Politics"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Cover Image</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setGoldenTimeCoverImage(e.target.files?.[0] || null)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Content</label>
+                    <textarea
+                      value={goldenTimeContent}
+                      onChange={(e) => setGoldenTimeContent(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Full article content..."
+                      rows={6}
+                      required
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={editingGoldenTime ? handleUpdateGoldenTime : handleCreateGoldenTime}
+                      disabled={uploadingGoldenTime}
+                      className="flex-1 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {uploadingGoldenTime ? 'Saving...' : editingGoldenTime ? 'Update Article' : 'Create Article'}
+                    </button>
+                    {editingGoldenTime && (
+                      <button
+                        onClick={() => {
+                          setEditingGoldenTime(false);
+                          setSelectedGoldenTimeArticle(null);
+                          resetGoldenTimeForm();
+                        }}
+                        className="rounded-2xl border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Golden Time Articles List */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">Articles ({goldenTimeArticles.length})</h4>
+                <div className="mt-4 space-y-3 max-h-[600px] overflow-y-auto">
+                  {goldenTimeArticles.length === 0 ? (
+                    <p className="text-sm text-gray-500">No articles yet</p>
+                  ) : (
+                    goldenTimeArticles.map((article) => (
+                      <div
+                        key={article.id}
+                        className="rounded-xl border border-gray-200 bg-white p-3"
+                      >
+                        <div className="flex items-start gap-3">
+                          {article.coverImage && (
+                            <img
+                              src={article.coverImage}
+                              alt={article.title}
+                              className="h-16 w-16 rounded-lg object-cover"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <h5 className="font-semibold text-gray-900 truncate">{article.title}</h5>
+                              {article.year && (
+                                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                                  {article.year}
+                                </span>
+                              )}
+                            </div>
+                            {article.category && (
+                              <span className="mt-1 inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                                {article.category}
+                              </span>
+                            )}
+                            <p className="mt-1 text-sm text-gray-600 line-clamp-2">{article.description}</p>
+                            {article.author && (
+                              <p className="mt-1 text-xs text-gray-500">by {article.author}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="mt-3 flex gap-2">
+                          <button
+                            onClick={() => handleSelectGoldenTimeArticle(article)}
+                            className="flex-1 rounded-xl bg-brand-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-brand-400"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteGoldenTime(article.id)}
+                            className="flex-1 rounded-xl border border-rose-500 px-3 py-1.5 text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

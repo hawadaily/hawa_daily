@@ -129,5 +129,15 @@ service cloud.firestore {
       allow read: if true;
       allow write: if true; // Allow anonymous users to comment
     }
+
+    match /golden-time/{articleId} {
+      allow read: if true;
+      allow write: if request.auth != null || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views', 'likes', 'dislikes', 'comments']);
+    }
+
+    match /golden-time/{articleId}/comments/{commentId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to comment
+    }
   }
 }

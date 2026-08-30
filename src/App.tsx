@@ -21,6 +21,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import Stories from './pages/Stories';
 import StoryDetail from './pages/StoryDetail';
+import GoldenTime from './pages/GoldenTime';
+import GoldenTimeDetail from './pages/GoldenTimeDetail';
 import DesktopNav from './components/DesktopNav';
 import MobileNav from './components/MobileNav';
 import BottomNav from './components/BottomNav';
@@ -218,6 +220,7 @@ function App() {
             { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: FolderOpen },
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
             { label: language === 'en' ? 'Stories' : 'ވާހަކަ', path: '/stories', icon: BookIcon },
+            { label: language === 'en' ? 'Golden Time' : 'ރަން ޒަމާން', path: '/golden-time', icon: BookIcon },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
             { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
           ]}
@@ -249,6 +252,8 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/stories" element={<Stories />} />
             <Route path="/stories/:id" element={<StoryDetail />} />
+            <Route path="/golden-time" element={<GoldenTime />} />
+            <Route path="/golden-time/:id" element={<GoldenTimeDetail />} />
             <Route path="/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
