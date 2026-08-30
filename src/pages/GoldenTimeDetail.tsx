@@ -139,16 +139,16 @@ export default function GoldenTimeDetail() {
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !article || !newComment.trim()) {
-      alert('Please login to comment');
+    if (!article || !newComment.trim()) {
+      alert('Please write a comment');
       return;
     }
 
     setSubmittingComment(true);
     try {
       await addDoc(collection(goldenTimeDb, 'golden-time', article.id, 'comments'), {
-        userId: user.uid,
-        userName: user.displayName || 'Anonymous',
+        userId: user?.uid || `anonymous_${Date.now()}`,
+        userName: user?.displayName || 'Anonymous',
         text: newComment.trim(),
         createdAt: serverTimestamp(),
       });
@@ -209,7 +209,7 @@ export default function GoldenTimeDetail() {
             <img
               src={article.coverImage}
               alt={article.title}
-              className="w-full h-64 object-cover rounded-xl mb-6"
+              className="w-full h-auto object-contain rounded-xl mb-6"
             />
           )}
           
@@ -277,32 +277,26 @@ export default function GoldenTimeDetail() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Comments ({comments.length})</h2>
 
           {/* Add Comment Form */}
-          {user ? (
-            <form onSubmit={handleSubmitComment} className="mb-6">
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Write a comment..."
-                  className="flex-1 rounded-2xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                  required
-                />
-                <button
-                  type="submit"
-                  disabled={submittingComment || !newComment.trim()}
-                  className="rounded-2xl bg-brand-500 px-6 py-3 font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60 flex items-center gap-2"
-                >
-                  <Send className="w-5 h-5" />
-                  <span>{submittingComment ? 'Sending...' : 'Send'}</span>
-                </button>
-              </div>
-            </form>
-          ) : (
-            <p className="mb-6 text-gray-600">
-              Please <Link to="/login" className="text-brand-600 font-semibold">login</Link> to comment
-            </p>
-          )}
+          <form onSubmit={handleSubmitComment} className="mb-6">
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Write a comment..."
+                className="flex-1 rounded-2xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                required
+              />
+              <button
+                type="submit"
+                disabled={submittingComment || !newComment.trim()}
+                className="rounded-2xl bg-brand-500 px-6 py-3 font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60 flex items-center gap-2"
+              >
+                <Send className="w-5 h-5" />
+                <span>{submittingComment ? 'Sending...' : 'Send'}</span>
+              </button>
+            </div>
+          </form>
 
           {/* Comments List */}
           <div className="space-y-4">
