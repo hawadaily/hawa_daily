@@ -4,6 +4,7 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, qu
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
+import { db as goldenTimeDb } from '../firebase-golden-time';
 import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
@@ -1212,6 +1213,7 @@ export default function AdminDashboard() {
   const [editingGoldenTime, setEditingGoldenTime] = useState(false);
   const [uploadingGoldenTime, setUploadingGoldenTime] = useState(false);
   const [goldenTimeError, setGoldenTimeError] = useState('');
+  const [savedAuthors, setSavedAuthors] = useState<string[]>([]);
 
   // Episodes management state
   const [episodes, setEpisodes] = useState<any[]>([]);
@@ -1227,6 +1229,23 @@ export default function AdminDashboard() {
     document.body.classList.toggle('dark', theme === 'dark');
     document.body.classList.toggle('light', theme === 'light');
   }, [theme]);
+
+  // Load saved authors from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('goldenTimeAuthors');
+    if (saved) {
+      setSavedAuthors(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save authors to localStorage
+  const saveAuthor = (authorName: string) => {
+    if (authorName && !savedAuthors.includes(authorName)) {
+      const updated = [...savedAuthors, authorName];
+      setSavedAuthors(updated);
+      localStorage.setItem('goldenTimeAuthors', JSON.stringify(updated));
+    }
+  };
 
   const loadDashboard = async () => {
     try {
@@ -1260,7 +1279,7 @@ export default function AdminDashboard() {
       setStories(storiesData);
 
       // Load golden time articles
-      const goldenTimeSnapshot = await getDocs(query(collection(db, 'golden-time'), orderBy('createdAt', 'desc')));
+      const goldenTimeSnapshot = await getDocs(query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc')));
       const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setGoldenTimeArticles(goldenTimeData);
     } catch (error) {
@@ -2234,7 +2253,7 @@ export default function AdminDashboard() {
         coverImageUrl = await uploadToImgBB(compressedFile);
       }
 
-      await addDoc(collection(db, 'golden-time'), {
+      await addDoc(collection(goldenTimeDb, 'golden-time'), {
         title: goldenTimeTitle,
         description: goldenTimeDescription,
         author: goldenTimeAuthor,
@@ -2245,11 +2264,14 @@ export default function AdminDashboard() {
         createdAt: serverTimestamp(),
       });
 
+      // Save author for future use
+      saveAuthor(goldenTimeAuthor);
+
       resetGoldenTimeForm();
       setMessage('Article created successfully');
 
       // Reload golden time articles
-      const goldenTimeSnapshot = await getDocs(query(collection(db, 'golden-time'), orderBy('createdAt', 'desc')));
+      const goldenTimeSnapshot = await getDocs(query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc')));
       const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setGoldenTimeArticles(goldenTimeData);
     } catch (error) {
@@ -2296,7 +2318,10 @@ export default function AdminDashboard() {
         updateData.coverImage = coverImageUrl;
       }
 
-      await updateDoc(doc(db, 'golden-time', selectedGoldenTimeArticle.id), updateData);
+      await updateDoc(doc(goldenTimeDb, 'golden-time', selectedGoldenTimeArticle.id), updateData);
+
+      // Save author for future use
+      saveAuthor(goldenTimeAuthor);
 
       resetGoldenTimeForm();
       setEditingGoldenTime(false);
@@ -2304,7 +2329,7 @@ export default function AdminDashboard() {
       setMessage('Article updated successfully');
 
       // Reload golden time articles
-      const goldenTimeSnapshot = await getDocs(query(collection(db, 'golden-time'), orderBy('createdAt', 'desc')));
+      const goldenTimeSnapshot = await getDocs(query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc')));
       const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setGoldenTimeArticles(goldenTimeData);
     } catch (error) {
@@ -2321,11 +2346,11 @@ export default function AdminDashboard() {
     }
 
     try {
-      await deleteDoc(doc(db, 'golden-time', articleId));
+      await deleteDoc(doc(goldenTimeDb, 'golden-time', articleId));
       setMessage('Article deleted successfully');
 
       // Reload golden time articles
-      const goldenTimeSnapshot = await getDocs(query(collection(db, 'golden-time'), orderBy('createdAt', 'desc')));
+      const goldenTimeSnapshot = await getDocs(query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc')));
       const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setGoldenTimeArticles(goldenTimeData);
 
@@ -7169,23 +7194,32 @@ export default function AdminDashboard() {
                     <label className="block text-sm font-semibold text-gray-700">Author</label>
                     <input
                       type="text"
+                      list="saved-authors"
                       value={goldenTimeAuthor}
                       onChange={(e) => setGoldenTimeAuthor(e.target.value)}
                       className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                       placeholder="Author name..."
                     />
+                    <datalist id="saved-authors">
+                      {savedAuthors.map((author) => (
+                        <option key={author} value={author} />
+                      ))}
+                    </datalist>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700">Year</label>
-                    <input
-                      type="number"
+                    <select
                       value={goldenTimeYear}
                       onChange={(e) => setGoldenTimeYear(e.target.value)}
                       className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      placeholder="e.g., 1990"
-                      min="1980"
-                      max="2000"
-                    />
+                    >
+                      <option value="">Select year</option>
+                      {Array.from({ length: 21 }, (_, i) => 1980 + i).map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700">Category</label>
@@ -7244,7 +7278,7 @@ export default function AdminDashboard() {
               {/* Golden Time Articles List */}
               <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
                 <h4 className="text-lg font-semibold text-gray-900">Articles ({goldenTimeArticles.length})</h4>
-                <div className="mt-4 space-y-3 max-h-[600px] overflow-y-auto">
+                <div className="mt-4 space-y-3 max-h-[800px] overflow-y-auto">
                   {goldenTimeArticles.length === 0 ? (
                     <p className="text-sm text-gray-500">No articles yet</p>
                   ) : (

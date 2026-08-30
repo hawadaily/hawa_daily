@@ -32,7 +32,6 @@ export default function DesktopNav({ language, setLanguage }: DesktopNavProps) {
                 { to: '/recipes', label: 'ރަހަގެ ސިއްރު' },
                 { to: '/stories', label: 'ވާހަކަ' },
                 { to: '/golden-time', label: 'ރަން ޒަމާން' },
-                { to: '/jobs', label: 'ވަޒީފާ' },
                 { to: '/quran', label: 'الْقُرْآنا ترجمة' },
                 { to: '/profile', label: 'ޕްރޮފައިލް' },
               ].map((item) => (

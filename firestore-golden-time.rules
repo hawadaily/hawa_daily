@@ -1,0 +1,24 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Golden Time articles collection
+    match /golden-time/{articleId} {
+      // Allow read for everyone
+      allow read: if true;
+      
+      // Allow write for everyone (auth is handled in main project)
+      allow write: if true;
+      
+      // Comments subcollection
+      match /comments/{commentId} {
+        // Allow read for everyone
+        allow read: if true;
+        
+        // Allow write for everyone (auth is handled in main project)
+        allow write: if true;
+      }
+    }
+  }
+}

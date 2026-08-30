@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { collection, getDocs, query, orderBy, doc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, addDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { collection, query, orderBy, doc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, addDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
+import { db as goldenTimeDb } from '../firebase-golden-time';
+import { auth } from '../firebase';
 import { Link } from 'react-router-dom';
 import { ThumbsUp, ThumbsDown, MessageCircle, Eye } from 'lucide-react';
 
@@ -33,27 +34,22 @@ export default function GoldenTime() {
   }, []);
 
   const handleLike = async (articleId: string) => {
-    if (!user) {
-      alert('Please login to like articles');
-      return;
-    }
-    try {
-      const articleRef = doc(db, 'golden-time', articleId);
-      const articleSnap = await getDoc(articleRef);
-      const articleData = articleSnap.data();
+    if (!user) return;
+    const articleRef = doc(goldenTimeDb, 'golden-time', articleId);
+    const articleSnap = await getDoc(articleRef);
+    if (articleSnap.exists()) {
+      const article = articleSnap.data() as GoldenTimeArticle;
+      const likes = article.likes || [];
+      const dislikes = article.dislikes || [];
       
-      if (articleData?.likes?.includes(user.uid)) {
-        await updateDoc(articleRef, {
-          likes: arrayRemove(user.uid)
-        });
+      if (likes.includes(user.uid)) {
+        await updateDoc(articleRef, { likes: arrayRemove(user.uid) });
       } else {
-        await updateDoc(articleRef, {
+        await updateDoc(articleRef, { 
           likes: arrayUnion(user.uid),
-          dislikes: arrayRemove(user.uid)
+          dislikes: dislikes.includes(user.uid) ? arrayRemove(user.uid) : []
         });
       }
-    } catch (error) {
-      console.error('Error liking article:', error);
     }
   };
 
@@ -63,7 +59,7 @@ export default function GoldenTime() {
       return;
     }
     try {
-      const articleRef = doc(db, 'golden-time', articleId);
+      const articleRef = doc(goldenTimeDb, 'golden-time', articleId);
       const articleSnap = await getDoc(articleRef);
       const articleData = articleSnap.data();
       
@@ -84,7 +80,7 @@ export default function GoldenTime() {
 
   const incrementView = async (articleId: string) => {
     try {
-      const articleRef = doc(db, 'golden-time', articleId);
+      const articleRef = doc(goldenTimeDb, 'golden-time', articleId);
       await updateDoc(articleRef, {
         views: increment(1)
       });
@@ -95,7 +91,7 @@ export default function GoldenTime() {
 
   useEffect(() => {
     const loadArticles = () => {
-      const articlesQuery = query(collection(db, 'golden-time'), orderBy('createdAt', 'desc'));
+      const articlesQuery = query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc'));
       const unsubscribe = onSnapshot(articlesQuery, (snapshot) => {
         const articlesData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setArticles(articlesData);

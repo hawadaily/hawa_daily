@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, addDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { db as goldenTimeDb } from '../firebase-golden-time';
+import { auth } from '../firebase';
 import { ThumbsUp, ThumbsDown, MessageCircle, Eye, ArrowLeft, Send } from 'lucide-react';
 
 interface Comment {
@@ -49,7 +50,7 @@ export default function GoldenTimeDetail() {
     if (!id) return;
 
     // Load article
-    const articleRef = doc(db, 'golden-time', id);
+    const articleRef = doc(goldenTimeDb, 'golden-time', id);
     const unsubscribeArticle = onSnapshot(articleRef, (docSnap) => {
       if (docSnap.exists()) {
         setArticle({ id: docSnap.id, ...(docSnap.data() as any) });
@@ -60,7 +61,7 @@ export default function GoldenTimeDetail() {
     });
 
     // Load comments
-    const commentsQuery = query(collection(db, 'golden-time', id, 'comments'), orderBy('createdAt', 'desc'));
+    const commentsQuery = query(collection(goldenTimeDb, 'golden-time', id, 'comments'), orderBy('createdAt', 'desc'));
     const unsubscribeComments = onSnapshot(commentsQuery, (snapshot) => {
       const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setComments(commentsData);
@@ -77,7 +78,7 @@ export default function GoldenTimeDetail() {
 
   const incrementView = async (articleId: string) => {
     try {
-      const articleRef = doc(db, 'golden-time', articleId);
+      const articleRef = doc(goldenTimeDb, 'golden-time', articleId);
       await updateDoc(articleRef, {
         views: increment(1)
       });
@@ -92,7 +93,7 @@ export default function GoldenTimeDetail() {
       return;
     }
     try {
-      const articleRef = doc(db, 'golden-time', article.id);
+      const articleRef = doc(goldenTimeDb, 'golden-time', article.id);
       const articleSnap = await getDoc(articleRef);
       const articleData = articleSnap.data();
       
@@ -117,7 +118,7 @@ export default function GoldenTimeDetail() {
       return;
     }
     try {
-      const articleRef = doc(db, 'golden-time', article.id);
+      const articleRef = doc(goldenTimeDb, 'golden-time', article.id);
       const articleSnap = await getDoc(articleRef);
       const articleData = articleSnap.data();
       
@@ -145,7 +146,7 @@ export default function GoldenTimeDetail() {
 
     setSubmittingComment(true);
     try {
-      await addDoc(collection(db, 'golden-time', article.id, 'comments'), {
+      await addDoc(collection(goldenTimeDb, 'golden-time', article.id, 'comments'), {
         userId: user.uid,
         userName: user.displayName || 'Anonymous',
         text: newComment.trim(),
@@ -153,7 +154,7 @@ export default function GoldenTimeDetail() {
       });
 
       // Update comment count on article
-      await updateDoc(doc(db, 'golden-time', article.id), {
+      await updateDoc(doc(goldenTimeDb, 'golden-time', article.id), {
         comments: increment(1)
       });
 
