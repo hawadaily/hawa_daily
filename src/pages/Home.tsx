@@ -12,7 +12,7 @@ export default function Home() {
   const [articlesState, setArticlesState] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [heroIndex, setHeroIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [visibleCount, setVisibleCount] = useState(16);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [articleReactions, setArticleReactions] = useState<Record<string, { likes: number; dislikes: number }>>({});
   const [sidebarPromotions, setSidebarPromotions] = useState<any[]>([]);
