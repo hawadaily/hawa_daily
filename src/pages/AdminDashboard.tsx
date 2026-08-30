@@ -32,6 +32,8 @@ export default function AdminDashboard() {
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [recipesVisits, setRecipesVisits] = useState(0);
   const [jobsVisits, setJobsVisits] = useState(0);
+  const [homeVisits, setHomeVisits] = useState(0);
+  const [quranVisits, setQuranVisits] = useState(0);
   const [vercelAnalytics, setVercelAnalytics] = useState<any>(null);
   const [loadingVercelAnalytics, setLoadingVercelAnalytics] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminTab>('articles');
@@ -709,7 +711,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchPageStats = async () => {
       try {
-        const pages = ['recipes', 'jobs'];
+        const pages = ['recipes', 'jobs', 'home', 'quran'];
         const stats = await Promise.all(
           pages.map(async (page) => {
             try {
@@ -726,6 +728,8 @@ export default function AdminDashboard() {
         stats.forEach(({ page, count }) => {
           if (page === 'recipes') setRecipesVisits(count);
           if (page === 'jobs') setJobsVisits(count);
+          if (page === 'home') setHomeVisits(count);
+          if (page === 'quran') setQuranVisits(count);
         });
       } catch (error) {
         console.error('Error fetching page stats:', error);
@@ -4745,6 +4749,14 @@ export default function AdminDashboard() {
                 <div className="rounded-2xl bg-blue-50 p-4 border border-blue-200">
                   <p className="text-sm text-blue-700">ވަޒީފާ ޒިޔާރަތްތައް (Jobs Visits)</p>
                   <p className="mt-2 text-3xl font-bold text-blue-900">{jobsVisits}</p>
+                </div>
+                <div className="rounded-2xl bg-green-50 p-4 border border-green-200">
+                  <p className="text-sm text-green-700">މައި ސަފުހާ ޒިޔާރަތްތައް (Home Page Visits)</p>
+                  <p className="mt-2 text-3xl font-bold text-green-900">{homeVisits}</p>
+                </div>
+                <div className="rounded-2xl bg-purple-50 p-4 border border-purple-200">
+                  <p className="text-sm text-purple-700">ޤުރުއާން ސަފުހާ ޒިޔާރަތްތައް (Quran Page Visits)</p>
+                  <p className="mt-2 text-3xl font-bold text-purple-900">{quranVisits}</p>
                 </div>
               </div>
             </div>
