@@ -1205,10 +1205,10 @@ export default function AdminDashboard() {
   const [selectedGoldenTimeArticle, setSelectedGoldenTimeArticle] = useState<any | null>(null);
   const [goldenTimeTitle, setGoldenTimeTitle] = useState('');
   const [goldenTimeDescription, setGoldenTimeDescription] = useState('');
-  const [goldenTimeAuthor, setGoldenTimeAuthor] = useState('');
+  const [goldenTimeAuthor, setGoldenTimeAuthor] = useState('ހަވާ ޑެއިލީ');
   const [goldenTimeCoverImage, setGoldenTimeCoverImage] = useState<File | null>(null);
   const [goldenTimeYear, setGoldenTimeYear] = useState('');
-  const [goldenTimeCategory, setGoldenTimeCategory] = useState('');
+  const [goldenTimeCategory, setGoldenTimeCategory] = useState('ދިރިއުޅުމުގެ ވައްޓަފާޅު، ކުޑަކުދިން، ސަގާފަތް');
   const [goldenTimeContent, setGoldenTimeContent] = useState('');
   const [editingGoldenTime, setEditingGoldenTime] = useState(false);
   const [uploadingGoldenTime, setUploadingGoldenTime] = useState(false);
@@ -2229,10 +2229,10 @@ export default function AdminDashboard() {
   const resetGoldenTimeForm = () => {
     setGoldenTimeTitle('');
     setGoldenTimeDescription('');
-    setGoldenTimeAuthor('');
+    setGoldenTimeAuthor('ހަވާ ޑެއިލީ');
     setGoldenTimeCoverImage(null);
     setGoldenTimeYear('');
-    setGoldenTimeCategory('');
+    setGoldenTimeCategory('ދިރިއުޅުމުގެ ވައްޓަފާޅު، ކުޑަކުދިން، ސަގާފަތް');
     setGoldenTimeContent('');
     setGoldenTimeError('');
   };
