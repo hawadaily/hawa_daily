@@ -263,10 +263,90 @@ export async function uploadVideoToImgur(file: File): Promise<string> {
   }
 }
 
-export async function uploadToImgBB(file: File): Promise<string> {
+export async function addLogoOverlay(file: File, options: { enabled: boolean; opacity: number; xPercent: number; yPercent: number }): Promise<File> {
+  if (!options.enabled) {
+    return file;
+  }
+
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const logo = new Image();
+    
+    img.onload = () => {
+      logo.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+        
+        // Set canvas size to match image
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Draw the original image
+        ctx.drawImage(img, 0, 0);
+        
+        // Calculate logo size (15% of image width, max 200px)
+        const logoWidth = Math.min(img.width * 0.15, 200);
+        const logoHeight = (logoWidth / logo.width) * logo.height;
+        
+        // Position logo based on percentage values
+        const logoX = (canvas.width * options.xPercent) / 100 - (logoWidth / 2);
+        const logoY = (canvas.height * options.yPercent) / 100 - (logoHeight / 2);
+        
+        // Draw logo with semi-transparent background
+        ctx.globalAlpha = options.opacity;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillRect(logoX - 5, logoY - 5, logoWidth + 10, logoHeight + 10);
+        
+        // Draw the logo
+        ctx.globalAlpha = options.opacity;
+        ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
+        
+        // Convert canvas to blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const newFile = new File([blob], file.name, { type: 'image/jpeg' });
+            resolve(newFile);
+          } else {
+            reject(new Error('Failed to create blob from canvas'));
+          }
+        }, 'image/jpeg', 0.9);
+      };
+      
+      logo.onerror = () => {
+        // If logo fails to load, just return original file
+        console.warn('Failed to load logo, returning original image');
+        resolve(file);
+      };
+      
+      // Load logo from public folder
+      logo.src = '/HAWA LOGO.jpg';
+    };
+    
+    img.onerror = () => {
+      reject(new Error('Failed to load image'));
+    };
+    
+    // Load the uploaded image
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+export async function uploadToImgBB(file: File, logoOptions?: { enabled: boolean; opacity: number; xPercent: number; yPercent: number }): Promise<string> {
   try {
+    // Add logo overlay before uploading if options provided
+    const imageToUpload = logoOptions ? await addLogoOverlay(file, logoOptions) : file;
+    
     // Convert file to base64
-    const base64 = await fileToBase64(file);
+    const base64 = await fileToBase64(imageToUpload);
     
     // Use ImgBB API with base64 data
     const apiUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;

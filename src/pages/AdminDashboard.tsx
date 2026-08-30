@@ -1214,6 +1214,68 @@ export default function AdminDashboard() {
   const [uploadingGoldenTime, setUploadingGoldenTime] = useState(false);
   const [goldenTimeError, setGoldenTimeError] = useState('');
   const [savedAuthors, setSavedAuthors] = useState<string[]>([]);
+  const [addGoldenTimeLogo, setAddGoldenTimeLogo] = useState(false);
+  const [goldenTimeLogoOpacity, setGoldenTimeLogoOpacity] = useState(0.9);
+  const [goldenTimeLogoXPercent, setGoldenTimeLogoXPercent] = useState(90);
+  const [goldenTimeLogoYPercent, setGoldenTimeLogoYPercent] = useState(90);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+
+  // Generate preview when image or logo settings change
+  useEffect(() => {
+    if (!goldenTimeCoverImage) {
+      setPreviewImageUrl(null);
+      return;
+    }
+
+    const generatePreview = async () => {
+      try {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            if (!ctx) return;
+            
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            
+            if (addGoldenTimeLogo) {
+              const logo = new Image();
+              logo.onload = () => {
+                const logoWidth = Math.min(img.width * 0.15, 200);
+                const logoHeight = (logoWidth / logo.width) * logo.height;
+                const logoX = (canvas.width * goldenTimeLogoXPercent) / 100 - (logoWidth / 2);
+                const logoY = (canvas.height * goldenTimeLogoYPercent) / 100 - (logoHeight / 2);
+                
+                ctx.globalAlpha = goldenTimeLogoOpacity;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.fillRect(logoX - 5, logoY - 5, logoWidth + 10, logoHeight + 10);
+                ctx.globalAlpha = goldenTimeLogoOpacity;
+                ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
+                
+                setPreviewImageUrl(canvas.toDataURL('image/jpeg', 0.9));
+              };
+              logo.onerror = () => {
+                setPreviewImageUrl(canvas.toDataURL('image/jpeg', 0.9));
+              };
+              logo.src = '/HAWA LOGO.jpg';
+            } else {
+              setPreviewImageUrl(canvas.toDataURL('image/jpeg', 0.9));
+            }
+          };
+          img.src = e.target?.result as string;
+        };
+        reader.readAsDataURL(goldenTimeCoverImage);
+      } catch (error) {
+        console.error('Error generating preview:', error);
+      }
+    };
+
+    generatePreview();
+  }, [goldenTimeCoverImage, addGoldenTimeLogo, goldenTimeLogoOpacity, goldenTimeLogoXPercent, goldenTimeLogoYPercent]);
 
   // Episodes management state
   const [episodes, setEpisodes] = useState<any[]>([]);
@@ -2235,6 +2297,11 @@ export default function AdminDashboard() {
     setGoldenTimeCategory('ދިރިއުޅުމުގެ ވައްޓަފާޅު، ކުޑަކުދިން، ސަގާފަތް');
     setGoldenTimeContent('');
     setGoldenTimeError('');
+    setAddGoldenTimeLogo(false);
+    setGoldenTimeLogoOpacity(0.9);
+    setGoldenTimeLogoXPercent(90);
+    setGoldenTimeLogoYPercent(90);
+    setPreviewImageUrl(null);
   };
 
   const handleCreateGoldenTime = async () => {
@@ -2250,7 +2317,12 @@ export default function AdminDashboard() {
       let coverImageUrl = '';
       if (goldenTimeCoverImage) {
         const compressedFile = await compressImage(goldenTimeCoverImage, 1920, 0.8);
-        coverImageUrl = await uploadToImgBB(compressedFile);
+        coverImageUrl = await uploadToImgBB(compressedFile, {
+          enabled: addGoldenTimeLogo,
+          opacity: goldenTimeLogoOpacity,
+          xPercent: goldenTimeLogoXPercent,
+          yPercent: goldenTimeLogoYPercent
+        });
       }
 
       await addDoc(collection(goldenTimeDb, 'golden-time'), {
@@ -2314,7 +2386,12 @@ export default function AdminDashboard() {
 
       if (goldenTimeCoverImage) {
         const compressedFile = await compressImage(goldenTimeCoverImage, 1920, 0.8);
-        const coverImageUrl = await uploadToImgBB(compressedFile);
+        const coverImageUrl = await uploadToImgBB(compressedFile, {
+          enabled: addGoldenTimeLogo,
+          opacity: goldenTimeLogoOpacity,
+          xPercent: goldenTimeLogoXPercent,
+          yPercent: goldenTimeLogoYPercent
+        });
         updateData.coverImage = coverImageUrl;
       }
 
@@ -7239,6 +7316,67 @@ export default function AdminDashboard() {
                       onChange={(e) => setGoldenTimeCoverImage(e.target.files?.[0] || null)}
                       className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                     />
+                  </div>
+                  <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={addGoldenTimeLogo}
+                        onChange={(e) => setAddGoldenTimeLogo(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      />
+                      <span className="text-sm font-semibold text-gray-700">Add Logo to Cover Image</span>
+                    </label>
+                    {addGoldenTimeLogo && (
+                      <div className="mt-4 space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Opacity: {goldenTimeLogoOpacity.toFixed(1)}</label>
+                          <input
+                            type="range"
+                            min="0.1"
+                            max="1"
+                            step="0.1"
+                            value={goldenTimeLogoOpacity}
+                            onChange={(e) => setGoldenTimeLogoOpacity(parseFloat(e.target.value))}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">X Position: {goldenTimeLogoXPercent}%</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="5"
+                            value={goldenTimeLogoXPercent}
+                            onChange={(e) => setGoldenTimeLogoXPercent(parseInt(e.target.value))}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Y Position: {goldenTimeLogoYPercent}%</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="5"
+                            value={goldenTimeLogoYPercent}
+                            onChange={(e) => setGoldenTimeLogoYPercent(parseInt(e.target.value))}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {previewImageUrl && (
+                      <div className="mt-4">
+                        <label className="block text-xs font-medium text-gray-600 mb-2">Preview</label>
+                        <img
+                          src={previewImageUrl}
+                          alt="Preview with logo"
+                          className="w-full rounded-lg border border-gray-300"
+                        />
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700">Content</label>
