@@ -27,6 +27,83 @@ export default function GoldenTime() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [promotions, setPromotions] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTitle, setSelectedTitle] = useState<string>('');
+
+  // Simple bilingual mapping for common terms
+  const bilingualMap: Record<string, string[]> = {
+    'fish': ['ފިހި', 'މަސް', 'ގަރުދިޔަ'],
+    'sea': ['ކަނޑު', 'ކަނޑުރައްތައް'],
+    'water': ['ފެން', 'އައްވާ'],
+    'island': ['ރަށް', 'އަތޮޅު'],
+    'boat': ['ނަވައް', 'ޑޮނީ'],
+    'people': ['މީހުން', 'އާބަދަރިން'],
+    'house': ['ގެ', 'އިމާރާތް'],
+    'food': ['ކާނާ', 'ކައިބު'],
+    'market': ['ބަޒާރު', 'މާރުކެޓް'],
+    'school': ['ސުކޫލް', 'މަދަރަސާ'],
+    'mosque': ['މިސްކިދު', 'މަސްޖިދު'],
+    'beach': ['ބީޗް', 'ކަނޑުފަޅި'],
+    'sun': ['އިރު', 'ޝަމްސު'],
+    'moon': ['މާކަނޑު', 'ކަނޑު'],
+    'star': ['އިރުގަނޑު', 'ތަރި'],
+    'tree': ['ގަސް', 'ފަސް'],
+    'flower': ['ފުޅި', 'ގޮވާ'],
+    'bird': ['ފާނައިގެއް', 'ފިކުރާ'],
+    'animal': ['ޖަނަވާރިއްޔާ', 'ސައިވާނާ'],
+    'gold': ['ރަން', 'އޮލްޑް'],
+    'time': ['ޒަމާން', 'ވަގުތު'],
+    'history': ['ތާރީޚް', 'ހިސާބު'],
+    'old': ['ކުރީގެ', 'އަންހެން'],
+    'new': ['އާ', 'ހަމަ'],
+  };
+
+  const normalizeText = (text: string) => {
+    return text.toLowerCase().trim();
+  };
+
+  const searchInText = (text: string, term: string): boolean => {
+    const normalizedText = normalizeText(text);
+    const normalizedTerm = normalizeText(term);
+    
+    // Direct match (handles both English and Dhivehi)
+    if (normalizedText.includes(normalizedTerm)) {
+      return true;
+    }
+
+    // Check bilingual mappings for cross-language search
+    for (const [english, dhivehiTerms] of Object.entries(bilingualMap)) {
+      // If searching in English, check if text contains any Dhivehi equivalent
+      if (normalizedTerm === english.toLowerCase()) {
+        return dhivehiTerms.some(dhivehi => normalizedText.includes(dhivehi));
+      }
+      // If searching in Dhivehi, check if text contains English equivalent
+      if (dhivehiTerms.includes(normalizedTerm)) {
+        return normalizedText.includes(english.toLowerCase());
+      }
+    }
+
+    return false;
+  };
+
+  const filteredArticles = articles.filter(article => {
+    // Filter by selected title
+    if (selectedTitle && article.title !== selectedTitle) {
+      return false;
+    }
+    
+    // Filter by search term
+    if (!searchTerm) return true;
+    
+    const searchFields = [
+      article.title,
+      article.description,
+      article.category,
+      article.author,
+    ].filter((field): field is string => Boolean(field));
+
+    return searchFields.some(field => searchInText(field, searchTerm));
+  });
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -188,13 +265,76 @@ export default function GoldenTime() {
           <p className="mt-2 text-gray-600">ދިވެހިރާއްޖޭގެ 1900 އަހަރުތަކުގެ ގެ ޒަމާންގެ ވާހަކަތައް </p>
         </div>
 
-        {articles.length === 0 ? (
+        {/* Search Bar */}
+        <div className="mb-8">
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Search Input */}
+            <div className="relative">
+              <svg
+                className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute left-12 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+              <input
+                type="text"
+                placeholder="ހޯދާލާ... / Search... (ފިހި / fish)"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 pl-12 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              />
+            </div>
+
+            {/* Title Dropdown */}
+            <div className="relative">
+              <svg
+                className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              <select
+                value={selectedTitle}
+                onChange={(e) => setSelectedTitle(e.target.value)}
+                className="w-full rounded-2xl border border-gray-200 bg-white pl-12 pr-4 py-3 text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 appearance-none cursor-pointer"
+              >
+                <option value="">ޙާއްސަ ސުރުހީތަށް</option>
+                {[...new Set(articles.map(a => a.title))].sort().map(title => (
+                  <option key={title} value={title}>{title}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {(searchTerm || selectedTitle) && (
+            <p className="mt-2 text-sm text-gray-600">
+              {filteredArticles.length} {filteredArticles.length === 1 ? 'ނަތީޖާ' : 'ނަތީޖާތައް'} ފެނުނު
+            </p>
+          )}
+        </div>
+
+        {filteredArticles.length === 0 ? (
           <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center">
-            <p className="text-gray-600">އެއްވެސް މަޢުލޫމާތެއް ނެތް. No articles available yet. Check back soon!</p>
+            <p className="text-gray-600">
+              {searchTerm ? 'ހޯއްދެވި މަޢުލޫމާތެއް ނެތް. No results found.' : 'އެއްވެސް މަޢުލޫމާތެއް ނެތް. No articles available yet. Check back soon!'}
+            </p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {articles.map((article, index) => {
+            {filteredArticles.map((article, index) => {
               const shouldShowBanner = index > 0 && index % 6 === 0 && promotions.length > 0;
               const bannerIndex = Math.floor(index / 6) - 1;
               const currentBanner = shouldShowBanner ? promotions[bannerIndex % promotions.length] : null;
