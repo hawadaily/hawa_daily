@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, addDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { db as goldenTimeDb } from '../firebase-golden-time';
 import { auth } from '../firebase';
-import { ThumbsUp, ThumbsDown, MessageCircle, Eye, ArrowLeft, Send } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MessageCircle, Eye, ArrowLeft, Send, Share2 } from 'lucide-react';
 
 interface Comment {
   id: string;
@@ -167,6 +167,26 @@ export default function GoldenTimeDetail() {
     }
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: article?.title,
+      text: article?.description,
+      url: window.location.href
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      alert('ލިންކް ކޮޕީ ކުރެވިއްޖެ');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
@@ -258,9 +278,18 @@ export default function GoldenTimeDetail() {
                 <span className="font-semibold">{article.comments || 0}</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl text-gray-600">
-              <Eye className="w-5 h-5" />
-              <span className="font-semibold">{article.views || 0}</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl text-gray-600 hover:bg-gray-200 transition"
+              >
+                <Share2 className="w-5 h-5" />
+                <span className="font-semibold">ޝެއަރ</span>
+              </button>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl text-gray-600">
+                <Eye className="w-5 h-5" />
+                <span className="font-semibold">{article.views || 0}</span>
+              </div>
             </div>
           </div>
 
