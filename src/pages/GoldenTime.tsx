@@ -184,8 +184,8 @@ export default function GoldenTime() {
         </div>
 
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">ދިވެހި ރަން ޒަމާން (Maldives Golden Time)</h1>
-          <p className="mt-2 text-gray-600">ދިވެހިރާއްޖޭގެ 1990 ގެ ޒަމާންގެ ވާހަކަތައް - Stories from Maldives in the 1990s</p>
+          <h1 className="text-4xl font-bold text-gray-900">ދިވެހި ރަން ޒަމާން </h1>
+          <p className="mt-2 text-gray-600">ދިވެހިރާއްޖޭގެ 1900 އަހަރުތަކުގެ ގެ ޒަމާންގެ ވާހަކަތައް </p>
         </div>
 
         {articles.length === 0 ? (

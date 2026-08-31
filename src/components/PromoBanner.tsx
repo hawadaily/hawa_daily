@@ -22,6 +22,7 @@ export default function PromoBanner({ location = 'home', position = 'top' }: Pro
   const [banners, setBanners] = useState<BannerData[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -67,9 +68,25 @@ export default function PromoBanner({ location = 'home', position = 'top' }: Pro
     return () => clearInterval(interval);
   }, [banners.length]);
 
-  if (banners.length === 0) return null;
+  // Filter banners to only show those with successfully loaded images
+  const validBanners = banners.filter(banner => loadedImages.has(banner.image));
+  
+  if (validBanners.length === 0) return null;
 
-  const currentBanner = banners[currentIndex];
+  const currentBanner = validBanners[currentIndex];
+
+  const handleImageLoad = (imageUrl: string) => {
+    setLoadedImages(prev => new Set(prev).add(imageUrl));
+  };
+
+  const handleImageError = (imageUrl: string) => {
+    console.error(`Failed to load banner image: ${imageUrl}`);
+    setLoadedImages(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(imageUrl);
+      return newSet;
+    });
+  };
 
   return (
     <div className="relative w-full h-32 overflow-hidden bg-gradient-to-r from-[#0077b6] to-[#00b4d8]">
@@ -89,15 +106,17 @@ export default function PromoBanner({ location = 'home', position = 'top' }: Pro
               alt={currentBanner.title}
               className="w-full h-full object-contain"
               style={{ objectPosition: 'center' }}
+              onLoad={() => handleImageLoad(currentBanner.image)}
+              onError={() => handleImageError(currentBanner.image)}
             />
           </picture>
         </motion.div>
       </AnimatePresence>
 
       {/* Navigation dots */}
-      {banners.length > 1 && (
+      {validBanners.length > 1 && (
         <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
-          {banners.map((_, index) => (
+          {validBanners.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
@@ -110,10 +129,10 @@ export default function PromoBanner({ location = 'home', position = 'top' }: Pro
       )}
 
       {/* Navigation arrows */}
-      {banners.length > 1 && (
+      {validBanners.length > 1 && (
         <>
           <button
-            onClick={() => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)}
+            onClick={() => setCurrentIndex((prev) => (prev - 1 + validBanners.length) % validBanners.length)}
             className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,7 +140,7 @@ export default function PromoBanner({ location = 'home', position = 'top' }: Pro
             </svg>
           </button>
           <button
-            onClick={() => setCurrentIndex((prev) => (prev + 1) % banners.length)}
+            onClick={() => setCurrentIndex((prev) => (prev + 1) % validBanners.length)}
             className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
