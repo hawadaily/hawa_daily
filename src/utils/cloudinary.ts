@@ -263,7 +263,7 @@ export async function uploadVideoToImgur(file: File): Promise<string> {
   }
 }
 
-export async function addLogoOverlay(file: File, options: { enabled: boolean; opacity: number; xPercent: number; yPercent: number }): Promise<File> {
+export async function addLogoOverlay(file: File, options: { enabled: boolean; opacity: number; xPercent: number; yPercent: number; sizePercent?: number }): Promise<File> {
   if (!options.enabled) {
     return file;
   }
@@ -289,8 +289,9 @@ export async function addLogoOverlay(file: File, options: { enabled: boolean; op
         // Draw the original image
         ctx.drawImage(img, 0, 0);
         
-        // Calculate logo size (15% of image width, max 200px)
-        const logoWidth = Math.min(img.width * 0.15, 200);
+        // Calculate logo size (use sizePercent if provided, default to 15%, max 300px)
+        const sizePercent = options.sizePercent || 15;
+        const logoWidth = Math.min(img.width * (sizePercent / 100), 300);
         const logoHeight = (logoWidth / logo.width) * logo.height;
         
         // Position logo based on percentage values
@@ -340,7 +341,7 @@ export async function addLogoOverlay(file: File, options: { enabled: boolean; op
   });
 }
 
-export async function uploadToImgBB(file: File, logoOptions?: { enabled: boolean; opacity: number; xPercent: number; yPercent: number }): Promise<string> {
+export async function uploadToImgBB(file: File, logoOptions?: { enabled: boolean; opacity: number; xPercent: number; yPercent: number; sizePercent?: number }): Promise<string> {
   try {
     // Add logo overlay before uploading if options provided
     const imageToUpload = logoOptions ? await addLogoOverlay(file, logoOptions) : file;

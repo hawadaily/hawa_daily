@@ -2326,7 +2326,8 @@ export default function AdminDashboard() {
           enabled: addGoldenTimeLogo,
           opacity: goldenTimeLogoOpacity,
           xPercent: goldenTimeLogoXPercent,
-          yPercent: goldenTimeLogoYPercent
+          yPercent: goldenTimeLogoYPercent,
+          sizePercent: goldenTimeLogoSizePercent
         });
       }
 
@@ -2395,7 +2396,8 @@ export default function AdminDashboard() {
           enabled: addGoldenTimeLogo,
           opacity: goldenTimeLogoOpacity,
           xPercent: goldenTimeLogoXPercent,
-          yPercent: goldenTimeLogoYPercent
+          yPercent: goldenTimeLogoYPercent,
+          sizePercent: goldenTimeLogoSizePercent
         });
         updateData.coverImage = coverImageUrl;
       }
