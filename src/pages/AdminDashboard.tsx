@@ -1163,6 +1163,7 @@ export default function AdminDashboard() {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [bannerTitle, setBannerTitle] = useState('');
   const [bannerSubtitle, setBannerSubtitle] = useState('');
+  const [bannerLink, setBannerLink] = useState('');
   const [bannerLocation, setBannerLocation] = useState<'home' | 'article' | 'category'>('home');
   const [bannerPosition, setBannerPosition] = useState<'top' | 'middle' | 'bottom'>('top');
   const [bannerSize, setBannerSize] = useState<'mobile' | 'desktop' | 'both'>('both');
@@ -1904,6 +1905,7 @@ export default function AdminDashboard() {
       const bannerRef = await addDoc(collection(db, 'banners'), {
         title: bannerTitle,
         subtitle: bannerSubtitle,
+        link: bannerLink,
         image: imageUrl,
         location: bannerLocation,
         position: bannerPosition,
@@ -1915,6 +1917,7 @@ export default function AdminDashboard() {
       setBannerFile(null);
       setBannerTitle('');
       setBannerSubtitle('');
+      setBannerLink('');
       setBannerLocation('home');
       setBannerPosition('top');
       setBannerSize('both');
@@ -4360,6 +4363,28 @@ export default function AdminDashboard() {
                   className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
                   placeholder={t.bannerSubtitle}
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">Link</label>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={bannerLink}
+                    onChange={(e) => setBannerLink(e.target.value)}
+                    className="mt-2 flex-1 rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                    placeholder="https://example.com"
+                  />
+                  {bannerLink && (
+                    <a
+                      href={bannerLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 rounded-3xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-400"
+                    >
+                      Visit
+                    </a>
+                  )}
+                </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
