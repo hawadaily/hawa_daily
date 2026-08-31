@@ -819,34 +819,6 @@ export default function ArticlePage() {
                     </AnimatePresence>
                   );
                 })()}
-                
-                {/* Slot 2 */}
-                {(() => {
-                  const slot2Promotions = sidebarPromotions.filter(p => p.slot === 'slot2');
-                  if (slot2Promotions.length === 0) return null;
-                  const currentPromotion = slot2Promotions[slot2Index];
-                  return (
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={currentPromotion.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden"
-                      >
-                        <a href={currentPromotion.link || '#'} target={currentPromotion.link ? '_blank' : '_self'}>
-                          <img
-                            src={currentPromotion.image}
-                            alt={currentPromotion.title || 'Promotion'}
-                            className="w-full h-auto"
-                            style={{ aspectRatio: '1/1.5' }}
-                          />
-                        </a>
-                      </motion.div>
-                    </AnimatePresence>
-                  );
-                })()}
               </div>
             )}
           </aside>
