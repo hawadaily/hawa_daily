@@ -4477,12 +4477,24 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700">Link URL</label>
-                <input
-                  value={sidebarPromotionLink}
-                  onChange={(e) => setSidebarPromotionLink(e.target.value)}
-                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                  placeholder="https://example.com"
-                />
+                <div className="flex gap-2">
+                  <input
+                    value={sidebarPromotionLink}
+                    onChange={(e) => setSidebarPromotionLink(e.target.value)}
+                    className="mt-2 flex-1 rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                    placeholder="https://example.com"
+                  />
+                  {sidebarPromotionLink && (
+                    <a
+                      href={sidebarPromotionLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 rounded-3xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-400"
+                    >
+                      Visit
+                    </a>
+                  )}
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700">Slot</label>
@@ -4570,13 +4582,25 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700">Link</label>
-                <input
-                  type="url"
-                  value={midArticlePromotionLink}
-                  onChange={(e) => setMidArticlePromotionLink(e.target.value)}
-                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
-                  placeholder="https://example.com"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={midArticlePromotionLink}
+                    onChange={(e) => setMidArticlePromotionLink(e.target.value)}
+                    className="mt-2 flex-1 rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                    placeholder="https://example.com"
+                  />
+                  {midArticlePromotionLink && (
+                    <a
+                      href={midArticlePromotionLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 rounded-3xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-400"
+                    >
+                      Visit
+                    </a>
+                  )}
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700">Image</label>
