@@ -8,6 +8,7 @@ import { doc, getDoc, collection, getDocs, query, where, orderBy, limit, addDoc,
 import { auth } from '../firebase';
 import PromoBanner from '../components/PromoBanner';
 import QuranVerseSlider from '../components/QuranVerseSlider';
+import GoldenTimeSlider from '../components/GoldenTimeSlider';
 
 const getRelativeTime = (dateValue: any) => {
   let date: Date;
@@ -771,6 +772,7 @@ export default function ArticlePage() {
             </div>
           </div>
           <aside className="space-y-5">
+            <GoldenTimeSlider />
             <div>
               <h3 className="text-slate-900">ގުޅުން ލިޔުންތައް</h3>
               <div className="mt-4 space-y-3 text-sm text-slate-700">
