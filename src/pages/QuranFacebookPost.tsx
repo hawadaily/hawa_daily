@@ -68,13 +68,22 @@ export default function QuranFacebookPost() {
         querySnapshot.forEach((doc) => {
           surahs.push(doc.data() as Surah);
         });
-        setQuranData(surahs);
+        // Deduplicate by number and sort
+        const uniqueSurahs = surahs.filter((surah, index, self) =>
+          index === self.findIndex((s) => s.number === surah.number)
+        );
+        setQuranData(uniqueSurahs.sort((a, b) => a.number - b.number));
       } catch (error) {
         console.error('Error fetching Quran data:', error);
         // Fallback to JSON if Firebase fails
         try {
           const quranDataJson = await import('../data/quran-full.json');
-          setQuranData(quranDataJson.default as Surah[]);
+          const data = quranDataJson.default as Surah[];
+          // Deduplicate by number and sort
+          const uniqueSurahs = data.filter((surah, index, self) =>
+            index === self.findIndex((s) => s.number === surah.number)
+          );
+          setQuranData(uniqueSurahs.sort((a, b) => a.number - b.number));
         } catch (fallbackError) {
           console.error('Error loading fallback Quran data:', fallbackError);
         }
