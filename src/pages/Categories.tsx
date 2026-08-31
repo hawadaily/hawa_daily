@@ -82,7 +82,12 @@ export default function Categories() {
     world: '🌍',
     entertainment: '🎭',
     health: '🏥',
-    education: '📚'
+    education: '📚',
+    life: '🌱',
+    children: '👶',
+    'human-rights': '⚖️',
+    religion: '🕋',
+    tourism: '✈️'
   };
 
   const categoryColors: Record<string, string> = {
@@ -95,7 +100,12 @@ export default function Categories() {
     world: 'from-[#0077b6] to-[#caf0f8]',
     entertainment: 'from-[#00b4d8] to-[#90e0ef]',
     health: 'from-[#90e0ef] to-[#0077b6]',
-    education: 'from-[#caf0f8] to-[#00b4d8]'
+    education: 'from-[#caf0f8] to-[#00b4d8]',
+    life: 'from-[#14b8a6] to-[#0d9488]',
+    children: 'from-[#ec4899] to-[#db2777]',
+    'human-rights': 'from-[#ef4444] to-[#dc2626]',
+    religion: 'from-[#9333ea] to-[#7c3aed]',
+    tourism: 'from-[#22c55e] to-[#16a34a]'
   };
 
   return (
