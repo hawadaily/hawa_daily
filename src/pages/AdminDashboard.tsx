@@ -1219,6 +1219,7 @@ export default function AdminDashboard() {
   const [goldenTimeLogoOpacity, setGoldenTimeLogoOpacity] = useState(0.9);
   const [goldenTimeLogoXPercent, setGoldenTimeLogoXPercent] = useState(90);
   const [goldenTimeLogoYPercent, setGoldenTimeLogoYPercent] = useState(90);
+  const [goldenTimeLogoSizePercent, setGoldenTimeLogoSizePercent] = useState(15);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   // Generate preview when image or logo settings change
@@ -1246,7 +1247,7 @@ export default function AdminDashboard() {
             if (addGoldenTimeLogo) {
               const logo = new Image();
               logo.onload = () => {
-                const logoWidth = Math.min(img.width * 0.15, 200);
+                const logoWidth = Math.min(img.width * (goldenTimeLogoSizePercent / 100), 300);
                 const logoHeight = (logoWidth / logo.width) * logo.height;
                 const logoX = (canvas.width * goldenTimeLogoXPercent) / 100 - (logoWidth / 2);
                 const logoY = (canvas.height * goldenTimeLogoYPercent) / 100 - (logoHeight / 2);
@@ -1276,7 +1277,7 @@ export default function AdminDashboard() {
     };
 
     generatePreview();
-  }, [goldenTimeCoverImage, addGoldenTimeLogo, goldenTimeLogoOpacity, goldenTimeLogoXPercent, goldenTimeLogoYPercent]);
+  }, [goldenTimeCoverImage, addGoldenTimeLogo, goldenTimeLogoOpacity, goldenTimeLogoXPercent, goldenTimeLogoYPercent, goldenTimeLogoSizePercent]);
 
   // Episodes management state
   const [episodes, setEpisodes] = useState<any[]>([]);
@@ -2304,6 +2305,7 @@ export default function AdminDashboard() {
     setGoldenTimeLogoOpacity(0.9);
     setGoldenTimeLogoXPercent(90);
     setGoldenTimeLogoYPercent(90);
+    setGoldenTimeLogoSizePercent(15);
     setPreviewImageUrl(null);
   };
 
@@ -7411,6 +7413,18 @@ export default function AdminDashboard() {
                             step="5"
                             value={goldenTimeLogoYPercent}
                             onChange={(e) => setGoldenTimeLogoYPercent(parseInt(e.target.value))}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Logo Size: {goldenTimeLogoSizePercent}%</label>
+                          <input
+                            type="range"
+                            min="5"
+                            max="50"
+                            step="1"
+                            value={goldenTimeLogoSizePercent}
+                            onChange={(e) => setGoldenTimeLogoSizePercent(parseInt(e.target.value))}
                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                           />
                         </div>
