@@ -12,7 +12,7 @@ import { getCompanyLogo } from '../data/companyLogos';
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB, compressImage } from '../utils/cloudinary';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'golden-time';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'golden-time' | 'obituary';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -1221,6 +1221,233 @@ export default function AdminDashboard() {
   const [goldenTimeLogoYPercent, setGoldenTimeLogoYPercent] = useState(90);
   const [goldenTimeLogoSizePercent, setGoldenTimeLogoSizePercent] = useState(15);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+
+  // Obituary maker state
+  const [obituaryName, setObituaryName] = useState('');
+  const [obituaryAddress, setObituaryAddress] = useState('');
+  const [obituaryBirthYear, setObituaryBirthYear] = useState('');
+  const [obituaryDeathYear, setObituaryDeathYear] = useState('');
+  const [obituaryPortrait, setObituaryPortrait] = useState<File | null>(null);
+  const [obituaryPreview, setObituaryPreview] = useState<string | null>(null);
+  const [generatingObituary, setGeneratingObituary] = useState(false);
+
+  // Generate obituary preview
+  const generateObituary = async () => {
+    if (!obituaryName) {
+      alert('ނަން ފުރިހަމަ ކުރައްވާ / Please enter name');
+      return;
+    }
+
+    setGeneratingObituary(true);
+
+    try {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) return;
+
+      // Set canvas size (1:1.5 aspect ratio, 800x1200)
+      canvas.width = 1600;
+      canvas.height = 1800;
+
+      // Load background image
+      const bgImg = new Image();
+      bgImg.crossOrigin = 'anonymous';
+      bgImg.src = '/images/backgorund thauziaya.jfif';
+      
+      await new Promise((resolve, reject) => {
+        bgImg.onload = resolve;
+        bgImg.onerror = reject;
+      });
+
+      // Draw background
+      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
+      // Load top image
+      const topImg = new Image();
+      topImg.crossOrigin = 'anonymous';
+      topImg.src = '/images/Inna-lillahi-wa-inna-ilayhi-rajiun-scaled.png';
+      
+      await new Promise((resolve, reject) => {
+        topImg.onload = resolve;
+        topImg.onerror = reject;
+      });
+
+      // Draw top image centered maintaining aspect ratio
+      const maxTopWidth = canvas.width * 0.5;
+      const topImgRatio = topImg.width / topImg.height;
+      let topImgWidth = topImg.width;
+      let topImgHeight = topImg.height;
+      
+      if (topImgWidth > maxTopWidth) {
+        topImgWidth = maxTopWidth;
+        topImgHeight = topImgWidth / topImgRatio;
+      }
+      
+      const topImgX = (canvas.width - topImgWidth) / 2;
+      ctx.drawImage(topImg, topImgX, 60, topImgWidth, topImgHeight);
+
+      // Load logo
+      const logoImg = new Image();
+      logoImg.crossOrigin = 'anonymous';
+      logoImg.src = '/logo.png';
+      
+      await new Promise((resolve, reject) => {
+        logoImg.onload = resolve;
+        logoImg.onerror = reject;
+      });
+
+      // Draw logo at bottom right maintaining aspect ratio
+      const maxLogoWidth = 200;
+      const logoRatio = logoImg.width / logoImg.height;
+      let logoWidth = logoImg.width;
+      let logoHeight = logoImg.height;
+      
+      if (logoWidth > maxLogoWidth) {
+        logoWidth = maxLogoWidth;
+        logoHeight = logoWidth / logoRatio;
+      }
+      
+      ctx.drawImage(logoImg, canvas.width - logoWidth - 30, canvas.height - logoHeight - 30, logoWidth, logoHeight);
+
+      // Draw portrait if uploaded
+      if (obituaryPortrait) {
+        const portraitDataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.readAsDataURL(obituaryPortrait);
+        });
+
+        const portraitImg = new Image();
+        await new Promise((resolve) => {
+          portraitImg.onload = resolve;
+          portraitImg.src = portraitDataUrl;
+        });
+
+        // Draw portrait in rectangle shape centered
+        const portraitX = (canvas.width - 400) / 2;
+        const portraitY = 360;
+        const portraitSize = 400;
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(portraitX, portraitY, portraitSize, portraitSize);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(portraitImg, portraitX, portraitY, portraitSize, portraitSize);
+        ctx.restore();
+
+        // Draw border around portrait
+        ctx.strokeStyle = '#FFD700';
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.rect(portraitX, portraitY, portraitSize, portraitSize);
+        ctx.stroke();
+      }
+
+      if (document.fonts && 'load' in document.fonts) {
+        await document.fonts.ready;
+        await document.fonts.load('700 84px "Dhivehi"');
+        await document.fonts.load('400 40px "Dhivehi"');
+        await document.fonts.load('700 56px "Dhivehi"');
+      }
+
+      // Set text styles
+      ctx.fillStyle = '#000000';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Draw name
+      ctx.font = '700 64px "Dhivehi", sans-serif';
+      ctx.fillText(obituaryName, canvas.width / 2, 840);
+
+      // Draw address
+      ctx.font = '400 52px "Dhivehi", sans-serif';
+      if (obituaryAddress) {
+        ctx.fillText(obituaryAddress, canvas.width / 2, 940);
+      }
+
+      // Draw birth and death years
+      ctx.font = '700 56px sans-serif';
+      if (obituaryBirthYear && obituaryDeathYear) {
+        ctx.fillText(`${obituaryBirthYear} - ${obituaryDeathYear}`, canvas.width / 2, 1040);
+      } else if (obituaryBirthYear) {
+        ctx.fillText(obituaryBirthYear, canvas.width / 2, 1040);
+      } else if (obituaryDeathYear) {
+        ctx.fillText(obituaryDeathYear, canvas.width / 2, 1040);
+      }
+
+      // Draw condolence message with Dhivehi font and wrapping
+      ctx.font = '620 60px "Dhivehi", sans-serif';
+      ctx.textAlign = 'center';
+      const message = `އަޅުގަނޑުމެން (ހަވާ ޑެއިލީ) ގެ އިޙުލާޞްތެރި ތަޢުޒިޔާ
+
+${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލާއަށް ދަންނަވަން
+މާތް ﷲގެ ރުއްސެވުމާއި ފުއްސެވުމުގައި، އަދި ސުވަރުގޭގެ މަތިވެރި ނިޢުމަތާއި ރަޙްމަތުގައި ލަހައްޓަވާށި
+
+އާމިން`;
+
+      const maxWidth = canvas.width - 240;
+      const wrappedLineHeight = 100;
+      const paragraphSpacing = -6;
+      const x = canvas.width / 2;
+      let y = 1140;
+
+      // Split by explicit line breaks first
+      const paragraphs = message.split('\n');
+
+      for (const paragraph of paragraphs) {
+        const words = paragraph.split(' ');
+        let line = '';
+
+        for (let i = 0; i < words.length; i++) {
+          const testLine = line ? `${line} ${words[i]}` : words[i];
+          const metrics = ctx.measureText(testLine);
+
+          if (metrics.width > maxWidth && i > 0) {
+            ctx.fillText(line, x, y);
+            line = words[i];
+            y += wrappedLineHeight;
+          } else {
+            line = testLine;
+          }
+        }
+
+        if (line) {
+          ctx.fillText(line, x, y);
+          y += wrappedLineHeight;
+        }
+
+        // Add extra spacing between paragraphs
+        y += paragraphSpacing;
+      }
+
+      // Set preview
+      setObituaryPreview(canvas.toDataURL('image/jpeg', 0.9));
+    } catch (error) {
+      console.error('Error generating obituary:', error);
+      alert('އުނިކުރެއްވުނީ / Error generating obituary');
+    } finally {
+      setGeneratingObituary(false);
+    }
+  };
+
+  // Download obituary
+  const downloadObituary = () => {
+    if (!obituaryPreview) return;
+    
+    const link = document.createElement('a');
+    link.download = `obituary-${obituaryName}.jpg`;
+    link.href = obituaryPreview;
+    link.click();
+  };
+
+  // Auto-generate preview when fields change
+  useEffect(() => {
+    if (obituaryName) {
+      generateObituary();
+    }
+  }, [obituaryName, obituaryAddress, obituaryBirthYear, obituaryDeathYear, obituaryPortrait]);
 
   // Generate preview when image or logo settings change
   useEffect(() => {
@@ -3439,6 +3666,7 @@ export default function AdminDashboard() {
         { id: 'recipes' as const, label: t.recipes, icon: '🍳' },
         { id: 'stories' as const, label: 'ސްޓޯރީތައް', icon: '📖' },
         { id: 'golden-time' as const, label: 'ދިވެހި ރަން ޒަމާން', icon: '⏳' },
+        { id: 'obituary' as const, label: 'ތަޢުޒިޔާ މޭކަރ', icon: '🕯️' },
       ]
     },
     {
@@ -3582,7 +3810,7 @@ export default function AdminDashboard() {
 
         {/* Mobile Tabs */}
         <div className="lg:hidden flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories', 'golden-time'] as const).map((tab) => (
+          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories', 'golden-time', 'obituary'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -3608,6 +3836,7 @@ export default function AdminDashboard() {
               {tab === 'quran' && 'ޤުރްއާން (Quran)'}
               {tab === 'stories' && 'ސްޓޯރީތައް (Stories)'}
               {tab === 'golden-time' && 'ދިވެހި ރަން ޒަމާން'}
+              {tab === 'obituary' && 'ތަޢުޒިޔާ މޭކަރ'}
             </button>
           ))}
         </div>
@@ -7277,6 +7506,114 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Golden Time Tab */}
+        {activeTab === 'obituary' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">ތަޢުޒިޔާ މޭކަރ (Obituary Maker)</h3>
+            <p className="mt-2 text-sm text-gray-600">Create obituary images with 1:1.5 aspect ratio (portrait)</p>
+
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              {/* Obituary Form */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">ތަޢުޒިޔާ ހުރިހާ މަޢުލަވެސް</h4>
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ނަން (Name)</label>
+                    <input
+                      type="text"
+                      value={obituaryName}
+                      onChange={(e) => setObituaryName(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="ނަން..."
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">އާއިލާ (Address)</label>
+                    <input
+                      type="text"
+                      value={obituaryAddress}
+                      onChange={(e) => setObituaryAddress(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="އާއިލާ..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">އުފެދުނު އަހަރު (Birth Year)</label>
+                    <select
+                      value={obituaryBirthYear}
+                      onChange={(e) => setObituaryBirthYear(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    >
+                      <option value="">އަހަރު އިހްސާސްކުރޭ...</option>
+                      {Array.from({ length: 126 }, (_, i) => 1900 + i).reverse().map(year => (
+                        <option key={year} value={year.toString()}>{year}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ފަރާތުން ދިޔަ އަހަރު (Death Year)</label>
+                    <select
+                      value={obituaryDeathYear}
+                      onChange={(e) => setObituaryDeathYear(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    >
+                      <option value="">އަހަރު އިހްސާސްކުރޭ...</option>
+                      {Array.from({ length: 127 }, (_, i) => 1900 + i).reverse().map(year => (
+                        <option key={year} value={year.toString()}>{year}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ފޮޓޯ (Portrait)</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setObituaryPortrait(e.target.files?.[0] || null)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={generateObituary}
+                      disabled={generatingObituary}
+                      className="flex-1 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {generatingObituary ? 'ހުރިހާކަމެއް...' : 'ތަޢުޒިޔާ ހުރިހާކުރޭ'}
+                    </button>
+                    {obituaryPreview && (
+                      <button
+                        onClick={downloadObituary}
+                        className="flex-1 rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-400"
+                      >
+                        ޑައުންލޯޑް
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">ޕްރިވިއު (Preview)</h4>
+                {obituaryPreview ? (
+                  <div className="mt-4">
+                    <img
+                      src={obituaryPreview}
+                      alt="Obituary Preview"
+                      className="w-full rounded-lg border border-gray-300"
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-4 flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white">
+                    <p className="text-sm text-gray-500">ޕްރިވިއު ފެނޭނީ ތަޢުޒިޔާ ހުރިހާކުރުމަށްފަހު</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
