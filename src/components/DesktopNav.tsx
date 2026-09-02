@@ -28,10 +28,10 @@ export default function DesktopNav({ language, setLanguage }: DesktopNavProps) {
             <ul className="flex items-center justify-center gap-1">
               {[
                 { to: '/', label: 'މައި ޞަފްޙާ' },
-                { to: '/categories', label: 'ބައިތައް' },
                 { to: '/recipes', label: 'ރަހަގެ ސިއްރު' },
                 { to: '/stories', label: 'ވާހަކަ' },
                 { to: '/golden-time', label: 'ރަން ޒަމާން' },
+                { to: '/doctors-duty', label: 'ޑޮކްޓަރުންގެ ޑިއުޓީ' },
                 { to: '/quran', label: 'الْقُرْآنا ترجمة' },
                 { to: '/profile', label: 'ޕްރޮފައިލް' },
               ].map((item) => (

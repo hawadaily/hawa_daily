@@ -74,7 +74,6 @@ export default function MobileNav({ language, setLanguage }: MobileNavProps) {
                 <div className="space-y-2">
                   {[
                     { to: '/', label: 'މައި ޞަފްޙާ' },
-                    { to: '/categories', label: 'ބައިތައް' },
                     { to: '/recipes', label: 'ރަހަގެ ސިއްރު' },
                     { to: '/stories', label: 'ވާހަކަ' },
                     { to: '/golden-time', label: 'ރަން ޒަމާން' },
@@ -93,23 +92,6 @@ export default function MobileNav({ language, setLanguage }: MobileNavProps) {
                 </div>
               </div>
 
-              {/* Categories */}
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-[#0077b6] font-semibold mb-3">ބައިތައް</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      to={`/categories/${category.id}`}
-                      onClick={() => setIsOpen(false)}
-                      className={`relative overflow-hidden rounded-xl border border-[#90e0ef]/30 bg-gradient-to-br ${category.color} bg-opacity-10 p-3 transition-all duration-200 hover:shadow-md hover:scale-[1.02]`}
-                    >
-                      <p className="text-[8px] uppercase tracking-[0.15em] text-[#0077b6]/70">{category.id}</p>
-                      <h3 className="mt-1 text-xs font-semibold text-[#0077b6]">{category.title}</h3>
-                    </Link>
-                  ))}
-                </div>
-              </div>
 
               {/* Language Toggle */}
               <div className="flex items-center justify-between rounded-xl border border-[#90e0ef]/30 bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 px-4 py-3">

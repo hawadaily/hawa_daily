@@ -9,10 +9,10 @@ import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
 
-import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB, compressImage } from '../utils/cloudinary';
+import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB, compressImage, deleteImage } from '../utils/cloudinary';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'golden-time' | 'obituary';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'golden-time' | 'obituary' | 'funeral-poster' | 'advertisements' | 'hero-slides';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -171,6 +171,27 @@ export default function AdminDashboard() {
       gradientTop: 'Top',
       gradientMiddle: 'Middle',
       gradientBottom: 'Bottom',
+      manageAdvertisements: 'Manage Advertisements',
+      advertisementsDesc: 'Upload and manage advertisement images for all slots.',
+      uploadAdvertisement: 'Upload Advertisement',
+      selectAdSlot: 'Select Advertisement Slot',
+      advertisementImage: 'Advertisement Image',
+      advertisementUploaded: 'Advertisement uploaded successfully!',
+      advertisementUploadError: 'Failed to upload advertisement. Please try again.',
+      deleteAdvertisement: 'Delete',
+      confirmDeleteAdvertisement: 'Are you sure you want to delete this advertisement?',
+      advertisementDeleted: 'Advertisement deleted successfully!',
+      advertisementDeleteError: 'Failed to delete advertisement. Please try again.',
+      noAdvertisementSelected: 'No slot selected',
+      currentAdvertisement: 'Current Advertisement',
+      manageHeroSlides: 'Manage Hero Slides',
+      heroSlidesDesc: 'Select articles to display in the main page hero slider carousel.',
+      selectHeroArticle: 'Select Article',
+      addToHero: 'Add to Hero Slider',
+      removeFromHero: 'Remove from Hero Slider',
+      heroSlidesUpdated: 'Hero slides updated successfully!',
+      heroSlidesError: 'Failed to update hero slides',
+      noHeroSlides: 'No hero slides selected yet',
       postLaunchChecklist: 'Post-Launch Checklist',
       checklistDescription: '10 things to do after your website is live',
       addGoogleSearchConsole: 'Add Google Search Console',
@@ -381,6 +402,27 @@ export default function AdminDashboard() {
       gradientTop: 'މައްޗު',
       gradientMiddle: 'މެދު',
       gradientBottom: 'ތިރީ',
+      manageAdvertisements: 'އެޑްވެރްޓައިޒްމެންޓް މެނޭޖް ކުރޭ',
+      advertisementsDesc: 'ހުރިހާ ސްލޮޓްތަކަށް އެޑްވެރްޓައިޒްމެންޓް އިމޭޖް އަޕްލޯޑް ކުރާ އަދި މެނޭޖް ކުރޭ',
+      uploadAdvertisement: 'އެޑްވެރްޓައިޒްމެންޓް އަޕްލޯޑް ކުރޭ',
+      selectAdSlot: 'އެޑްވެރްޓައިޒްމެންޓް ސްލޮޓް ހޮވާ',
+      advertisementImage: 'އެޑްވެރްޓައިޒްމެންޓް އިމޭޖް',
+      advertisementUploaded: 'އެޑްވެރްޓައިޒްމެންޓް އަޕްލޯޑް ކުރެވިއްޖެ',
+      advertisementUploadError: 'އެޑްވެރްޓައިޒްމެންޓް އަޕްލޯޑް ކުރުމަށް ފެއިލް ވެއްޖެ',
+      deleteAdvertisement: 'ޑިލީޓް',
+      confirmDeleteAdvertisement: 'ތިބާގެ މި އެޑްވެރްޓައިޒްމެންޓް ޑިލީޓް ކުރަން ބޭނުމަކު؟',
+      advertisementDeleted: 'އެޑްވެރްޓައިޒްމެންޓް ޑިލީޓް ކުރެވިއްޖެ',
+      advertisementDeleteError: 'އެޑްވެރްޓައިޒްމެންޓް ޑިލީޓް ކުރުމަށް ފެއިލް ވެއްޖެ',
+      noAdvertisementSelected: 'ސްލޮޓެއް ހޮވާފައި ނެތް',
+      currentAdvertisement: 'މިހާރު އެޑްވެރްޓައިޒްމެންޓް',
+      manageHeroSlides: 'ހީރޯ ސްލައިޑް މެނޭޖް ކުރޭ',
+      heroSlidesDesc: 'މެއިން ޞަފްޙާގައި ދައްކާ ޚަބަރު ސްލައިޑަރުތައް ހޮވާ',
+      selectHeroArticle: 'ޚަބަރު ހޮވާ',
+      addToHero: 'ސްލައިޑަރުގައި އިތުރުކުރޭ',
+      removeFromHero: 'ސްލައިޑަރުން ނަޖައްކުރޭ',
+      heroSlidesUpdated: 'ސްލައިޑްތައް އަޕްޑޭޓް ކުރެވިއްޖެ',
+      heroSlidesError: 'ސްލައިޑްތައް އަޕްޑޭޓް ކުރުމަށް ފެއިލް ވެއްޖެ',
+      noHeroSlides: 'ސްލައިޑްތައް ހޮވާފައެއް ނެތް',
       postLaunchChecklist: 'ވެބްސައިޓް ލާންޗް ކުރުމަށް ފަހު ކުރެވޭ ކަންތައްތައް',
       checklistDescription: 'ވެބްސައިޓް ލައިވް ކުރުމަށް ފަހު 10 ކަންތައް',
       addGoogleSearchConsole: 'ގޫގަލް ސާޗް ކޮންސޯލް އިތުރުކުރޭ',
@@ -1187,6 +1229,34 @@ export default function AdminDashboard() {
   const [uploadingMidArticlePromotion, setUploadingMidArticlePromotion] = useState(false);
   const [midArticlePromotionError, setMidArticlePromotionError] = useState('');
 
+  // Advertisement management state
+  const [advertisements, setAdvertisements] = useState<any>({});
+  const [advertisementFile, setAdvertisementFile] = useState<File | null>(null);
+  const [selectedAdSlot, setSelectedAdSlot] = useState<string>('');
+  const [uploadingAdvertisement, setUploadingAdvertisement] = useState(false);
+  const [advertisementError, setAdvertisementError] = useState('');
+
+  const advertisementSlots = [
+    { id: 'ad-doctors-left-tall-160x384', label: 'Doctors Left Tall (160x384)', page: 'Doctors Duty', side: 'Left' },
+    { id: 'ad-doctors-left-medium-160x256', label: 'Doctors Left Medium (160x256)', page: 'Doctors Duty', side: 'Left' },
+    { id: 'ad-doctors-left-medium-160x256-2', label: 'Doctors Left Medium 2 (160x256)', page: 'Doctors Duty', side: 'Left' },
+    { id: 'ad-doctors-right-tall-160x384', label: 'Doctors Right Tall (160x384)', page: 'Doctors Duty', side: 'Right' },
+    { id: 'ad-doctors-right-medium-160x256', label: 'Doctors Right Medium (160x256)', page: 'Doctors Duty', side: 'Right' },
+    { id: 'ad-doctors-right-medium-160x256-2', label: 'Doctors Right Medium 2 (160x256)', page: 'Doctors Duty', side: 'Right' },
+    { id: 'ad-recipes-left-tall-160x384', label: 'Recipes Left Tall (160x384)', page: 'Recipes', side: 'Left' },
+    { id: 'ad-recipes-left-medium-160x256', label: 'Recipes Left Medium (160x256)', page: 'Recipes', side: 'Left' },
+    { id: 'ad-recipes-left-medium-160x256-2', label: 'Recipes Left Medium 2 (160x256)', page: 'Recipes', side: 'Left' },
+    { id: 'ad-recipes-right-tall-160x384', label: 'Recipes Right Tall (160x384)', page: 'Recipes', side: 'Right' },
+    { id: 'ad-recipes-right-medium-160x256', label: 'Recipes Right Medium (160x256)', page: 'Recipes', side: 'Right' },
+    { id: 'ad-recipes-right-medium-160x256-2', label: 'Recipes Right Medium 2 (160x256)', page: 'Recipes', side: 'Right' },
+  ];
+
+  // Hero slides management state
+  const [heroSlides, setHeroSlides] = useState<any[]>([]);
+  const [selectedHeroArticle, setSelectedHeroArticle] = useState<string>('');
+  const [updatingHeroSlides, setUpdatingHeroSlides] = useState(false);
+  const [heroSlidesError, setHeroSlidesError] = useState('');
+
   // Stories management state
   const [stories, setStories] = useState<any[]>([]);
   const [selectedStory, setSelectedStory] = useState<any | null>(null);
@@ -1230,6 +1300,20 @@ export default function AdminDashboard() {
   const [obituaryPortrait, setObituaryPortrait] = useState<File | null>(null);
   const [obituaryPreview, setObituaryPreview] = useState<string | null>(null);
   const [generatingObituary, setGeneratingObituary] = useState(false);
+
+  // Funeral poster state
+  const [funeralName, setFuneralName] = useState('');
+  const [funeralAddress, setFuneralAddress] = useState('');
+  const [funeralAge, setFuneralAge] = useState('');
+  const [funeralPrayerLocation, setFuneralPrayerLocation] = useState('');
+  const [funeralBurialLocation, setFuneralBurialLocation] = useState('');
+  const [funeralDeathDate, setFuneralDeathDate] = useState('');
+  const [funeralPrayerDate, setFuneralPrayerDate] = useState('');
+  const [funeralPhoto, setFuneralPhoto] = useState<File | null>(null);
+  const [funeralContact1, setFuneralContact1] = useState('');
+  const [funeralContact2, setFuneralContact2] = useState('');
+  const [funeralPreview, setFuneralPreview] = useState<string | null>(null);
+  const [generatingFuneralPoster, setGeneratingFuneralPoster] = useState(false);
 
   // Generate obituary preview
   const generateObituary = async () => {
@@ -1432,6 +1516,218 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
   };
 
+  // Generate funeral poster preview
+  const generateFuneralPoster = async () => {
+    if (!funeralName) {
+      alert('ނަން ފުރިހަމަ ކުރައްވާ / Please enter name');
+      return;
+    }
+
+    setGeneratingFuneralPoster(true);
+
+    try {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) return;
+
+      // Set canvas size (800x1000 scaled to 1600x2000 for high quality)
+      canvas.width = 1600;
+      canvas.height = 2000;
+
+      // White background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Load fonts
+      if (document.fonts && 'load' in document.fonts) {
+        await document.fonts.ready;
+        await document.fonts.load('700 60px "Dhivehi"');
+        await document.fonts.load('400 40px "Dhivehi"');
+        await document.fonts.load('700 50px "Dhivehi"');
+        await document.fonts.load('700 40px "Dhivehi"');
+      }
+
+      // Top section - Photo on left
+      if (funeralPhoto) {
+        const photoDataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.readAsDataURL(funeralPhoto);
+        });
+
+        const photoImg = new Image();
+        await new Promise((resolve) => {
+          photoImg.onload = resolve;
+          photoImg.src = photoDataUrl;
+        });
+
+        // Draw photo with border
+        const photoX = 80;
+        const photoY = 80;
+        const photoWidth = 288;
+        const photoHeight = 384;
+
+        ctx.strokeStyle = '#d1d5db';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(photoX, photoY, photoWidth, photoHeight);
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(photoX, photoY, photoWidth, photoHeight);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(photoImg, photoX, photoY, photoWidth, photoHeight);
+        ctx.restore();
+      }
+
+      // Top section - Center/Right header
+      ctx.fillStyle = '#000000';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Bismillah
+      ctx.font = '700 60px serif';
+      ctx.fillText('﷽', canvas.width / 2, 100);
+
+      // KASHUNAMAADHUMV
+      ctx.font = '700 50px sans-serif';
+      ctx.fillText('KASHUNAMAADHUMV', canvas.width / 2, 180);
+
+      // صلاة الجنازة
+      ctx.font = '400 40px sans-serif';
+      ctx.fillText('صلاة الجنازة', canvas.width / 2, 240);
+
+      // Main title
+      ctx.font = '700 60px "Dhivehi", sans-serif';
+      ctx.fillText('ޖނާޒާގެ މަޢުލޫމާތު', canvas.width / 2, 320);
+
+      // Middle section - Right aligned details
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      const detailX = canvas.width - 100;
+      let detailY = 500;
+      const detailSpacing = 120;
+      const labelValueSpacing = 50;
+
+      ctx.font = '400 40px "Dhivehi", sans-serif';
+      ctx.fillStyle = '#6b7280';
+
+      // Name
+      ctx.fillText(':މަރުޙޫމްގެ ނަން', detailX, detailY);
+      detailY += labelValueSpacing;
+      ctx.fillStyle = '#000000';
+      ctx.font = '700 50px "Dhivehi", sans-serif';
+      ctx.fillText(funeralName, detailX - 20, detailY);
+      detailY += detailSpacing;
+
+      // Address
+      if (funeralAddress) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '400 40px "Dhivehi", sans-serif';
+        ctx.fillText(':ގެއެވެސް/މަންޒިލް', detailX, detailY);
+        detailY += labelValueSpacing;
+        ctx.fillStyle = '#000000';
+        ctx.font = '700 50px "Dhivehi", sans-serif';
+        ctx.fillText(funeralAddress, detailX - 20, detailY);
+        detailY += detailSpacing;
+      }
+
+      // Age
+      if (funeralAge) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '400 40px "Dhivehi", sans-serif';
+        ctx.fillText('އުމުރު:', detailX, detailY);
+        detailY += labelValueSpacing;
+        ctx.fillStyle = '#000000';
+        ctx.font = '700 50px "Dhivehi", sans-serif';
+        ctx.fillText(funeralAge, detailX - 20, detailY);
+        detailY += detailSpacing;
+      }
+
+      // Prayer location
+      if (funeralPrayerLocation) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '400 40px "Dhivehi", sans-serif';
+        ctx.fillText(':ކަށުނަމާދު', detailX, detailY);
+        detailY += labelValueSpacing;
+        ctx.fillStyle = '#000000';
+        ctx.font = '700 50px "Dhivehi", sans-serif';
+        ctx.fillText(funeralPrayerLocation, detailX - 20, detailY);
+        detailY += detailSpacing;
+      }
+
+      // Burial location
+      if (funeralBurialLocation) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '400 40px "Dhivehi", sans-serif';
+        ctx.fillText(':ވަޅުލުން', detailX, detailY);
+        detailY += labelValueSpacing;
+        ctx.fillStyle = '#000000';
+        ctx.font = '700 50px "Dhivehi", sans-serif';
+        ctx.fillText(funeralBurialLocation, detailX - 20, detailY);
+        detailY += detailSpacing;
+      }
+
+      // Death date
+      if (funeralDeathDate) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '400 40px "Dhivehi", sans-serif';
+        ctx.fillText(':ނިޔާވި ތާރީޚް', detailX, detailY);
+        detailY += labelValueSpacing;
+        ctx.fillStyle = '#000000';
+        ctx.font = '700 50px "Dhivehi", sans-serif';
+        ctx.fillText(funeralDeathDate, detailX - 20, detailY);
+        detailY += detailSpacing;
+      }
+
+      // Prayer date (red)
+      if (funeralPrayerDate) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '400 40px "Dhivehi", sans-serif';
+        ctx.fillText(':ކަށުނަމާދު ތާރީޚް', detailX, detailY);
+        detailY += labelValueSpacing;
+        ctx.fillStyle = '#dc2626';
+        ctx.font = '700 50px "Dhivehi", sans-serif';
+        ctx.fillText(funeralPrayerDate, detailX - 20, detailY);
+        detailY += detailSpacing;
+      }
+
+      // Footer section
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const footerY = canvas.height - 250;
+
+      // Contact header
+      ctx.fillStyle = '#000000';
+      ctx.font = '400 35px "Dhivehi", sans-serif';
+      ctx.fillText('ކަށުނަމާދުގެ ކަންތައްތައް ހަމަޖެއްސުމުގައި', canvas.width / 2, footerY);
+
+      // Phone numbers
+      ctx.font = '700 50px sans-serif';
+      const contactText = funeralContact1 && funeralContact2 
+        ? `${funeralContact1} / ${funeralContact2}`
+        : funeralContact1 || funeralContact2 || '';
+      ctx.fillText(contactText, canvas.width / 2, footerY + 70);
+
+      // Black bottom bar
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, canvas.height - 120, canvas.width, 120);
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '400 30px "Dhivehi", sans-serif';
+      ctx.fillText('ނިޔާވެފައިވާ ފަރާތްތަކުގެ މަޢުލޫމާތު ހިއްޞާކުރުން، ކަށުނަމާދާއި ކަފުންކުރުމުގެ ކަންތައްތައް...', canvas.width / 2, canvas.height - 60);
+
+      // Set preview
+      setFuneralPreview(canvas.toDataURL('image/jpeg', 0.9));
+    } catch (error) {
+      console.error('Error generating funeral poster:', error);
+      alert('އުނިކުރެއްވުނީ / Error generating funeral poster');
+    } finally {
+      setGeneratingFuneralPoster(false);
+    }
+  };
+
   // Download obituary
   const downloadObituary = () => {
     if (!obituaryPreview) return;
@@ -1442,12 +1738,29 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     link.click();
   };
 
+  // Download funeral poster
+  const downloadFuneralPoster = () => {
+    if (!funeralPreview) return;
+    
+    const link = document.createElement('a');
+    link.download = `funeral-poster-${funeralName}.jpg`;
+    link.href = funeralPreview;
+    link.click();
+  };
+
   // Auto-generate preview when fields change
   useEffect(() => {
     if (obituaryName) {
       generateObituary();
     }
   }, [obituaryName, obituaryAddress, obituaryBirthYear, obituaryDeathYear, obituaryPortrait]);
+
+  // Auto-generate funeral poster preview when fields change
+  useEffect(() => {
+    if (funeralName) {
+      generateFuneralPoster();
+    }
+  }, [funeralName, funeralAddress, funeralAge, funeralPrayerLocation, funeralBurialLocation, funeralDeathDate, funeralPrayerDate, funeralPhoto, funeralContact1, funeralContact2]);
 
   // Generate preview when image or logo settings change
   useEffect(() => {
@@ -1553,6 +1866,18 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       const bannerSnapshot = await getDocs(query(collection(db, 'banners'), orderBy('createdAt', 'desc')));
       const bannersData = bannerSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setBanners(bannersData);
+
+      // Load advertisements
+      const advertisementsDoc = await getDoc(doc(db, 'advertisements', 'slots'));
+      if (advertisementsDoc.exists()) {
+        setAdvertisements(advertisementsDoc.data() || {});
+      }
+
+      // Load hero slides
+      const heroSlidesDoc = await getDoc(doc(db, 'hero-slides', 'config'));
+      if (heroSlidesDoc.exists()) {
+        setHeroSlides(heroSlidesDoc.data()?.slides || []);
+      }
 
       // Load sidebar promotions
       const promotionSnapshot = await getDocs(query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc')));
@@ -1935,6 +2260,30 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
 
     try {
+      // Fetch article to get image URL
+      const articleDoc = await getDoc(doc(db, 'articles', articleId));
+      if (articleDoc.exists()) {
+        const articleData = articleDoc.data();
+        if (articleData?.image) {
+          try {
+            // Check if image is from Cloudinary
+            if (articleData.image.includes('cloudinary.com')) {
+              // Extract public_id from Cloudinary URL
+              const urlParts = articleData.image.split('/');
+              const filename = urlParts[urlParts.length - 1];
+              const publicId = filename.split('.')[0];
+              await deleteImage(publicId);
+            } else {
+              // For ImgBB/Imgur, we can only delete from database
+              console.log('Image deletion not supported for non-Cloudinary URLs');
+            }
+          } catch (cloudinaryError) {
+            console.error('Failed to delete image:', cloudinaryError);
+            // Continue with database deletion even if image deletion fails
+          }
+        }
+      }
+
       // Delete from Firebase
       await deleteDoc(doc(db, 'articles', articleId));
       
@@ -2126,8 +2475,11 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setUploadingBanner(true);
     setBannerError('');
     try {
+      // Compress image before upload
+      const compressedFile = await compressImage(bannerFile, 1920, 0.8);
+      
       // Upload to Cloudinary
-      const imageUrl = await uploadImage(bannerFile, 'banners');
+      const imageUrl = await uploadImage(compressedFile, 'banners');
       
       // Save to Firebase
       const bannerRef = await addDoc(collection(db, 'banners'), {
@@ -2158,12 +2510,155 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
   };
 
+  const handleUploadAdvertisement = async () => {
+    if (!advertisementFile || !selectedAdSlot) {
+      setAdvertisementError('Please select a slot and upload an image');
+      return;
+    }
+
+    setUploadingAdvertisement(true);
+    setAdvertisementError('');
+    try {
+      // Compress image before upload
+      const compressedFile = await compressImage(advertisementFile, 1920, 0.8);
+      
+      // Upload to Cloudinary
+      const imageUrl = await uploadImage(compressedFile, 'advertisements');
+      
+      // Save to Firebase
+      await setDoc(doc(db, 'advertisements', 'slots'), {
+        ...advertisements,
+        [selectedAdSlot]: {
+          image: imageUrl,
+          updatedAt: serverTimestamp(),
+        }
+      }, { merge: true });
+
+      setMessage(t.advertisementUploaded);
+      setAdvertisementFile(null);
+      setSelectedAdSlot('');
+      loadDashboard();
+    } catch (error) {
+      setMessage(t.advertisementUploadError);
+      console.error(error);
+    } finally {
+      setUploadingAdvertisement(false);
+    }
+  };
+
+  const handleDeleteAdvertisement = async (slotId: string) => {
+    if (!window.confirm(t.confirmDeleteAdvertisement)) return;
+
+    try {
+      // Delete image from Cloudinary if it exists
+      const adData = advertisements[slotId];
+      if (adData?.image) {
+        try {
+          // Extract public_id from Cloudinary URL
+          const urlParts = adData.image.split('/');
+          const filename = urlParts[urlParts.length - 1];
+          const publicId = filename.split('.')[0];
+          await deleteImage(publicId);
+        } catch (cloudinaryError) {
+          console.error('Failed to delete image from Cloudinary:', cloudinaryError);
+          // Continue with database deletion even if image deletion fails
+        }
+      }
+
+      // Delete from database
+      await setDoc(doc(db, 'advertisements', 'slots'), {
+        ...advertisements,
+        [slotId]: null
+      }, { merge: true });
+
+      setMessage(t.advertisementDeleted);
+      loadDashboard();
+    } catch (error) {
+      setMessage(t.advertisementDeleteError);
+      console.error(error);
+    }
+  };
+
+  const handleAddToHero = async () => {
+    if (!selectedHeroArticle) {
+      setHeroSlidesError('Please select an article to add');
+      return;
+    }
+
+    const article = articles.find(a => a.id === selectedHeroArticle);
+    if (!article) {
+      setHeroSlidesError('Article not found');
+      return;
+    }
+
+    setUpdatingHeroSlides(true);
+    setHeroSlidesError('');
+    try {
+      const updatedSlides = [...heroSlides, { articleId: article.id, title: article.title, image: article.image, category: article.category, excerpt: article.excerpt }];
+      await setDoc(doc(db, 'hero-slides', 'config'), {
+        slides: updatedSlides,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+
+      setMessage(t.heroSlidesUpdated);
+      setHeroSlides(updatedSlides);
+      setSelectedHeroArticle('');
+      loadDashboard();
+    } catch (error) {
+      setMessage(t.heroSlidesError);
+      console.error(error);
+    } finally {
+      setUpdatingHeroSlides(false);
+    }
+  };
+
+  const handleRemoveFromHero = async (articleId: string) => {
+    if (!window.confirm('Are you sure you want to remove this article from hero slides?')) return;
+
+    setUpdatingHeroSlides(true);
+    setHeroSlidesError('');
+    try {
+      const updatedSlides = heroSlides.filter(slide => slide.articleId !== articleId);
+      await setDoc(doc(db, 'hero-slides', 'config'), {
+        slides: updatedSlides,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+
+      setMessage(t.heroSlidesUpdated);
+      setHeroSlides(updatedSlides);
+      loadDashboard();
+    } catch (error) {
+      setMessage(t.heroSlidesError);
+      console.error(error);
+    } finally {
+      setUpdatingHeroSlides(false);
+    }
+  };
+
   const handleDeleteBanner = async (bannerId: string) => {
     if (!confirm(t.confirmDeleteBanner)) {
       return;
     }
 
     try {
+      // Fetch banner to get image URL
+      const bannerDoc = await getDoc(doc(db, 'banners', bannerId));
+      if (bannerDoc.exists()) {
+        const bannerData = bannerDoc.data();
+        if (bannerData?.image) {
+          try {
+            // Extract public_id from Cloudinary URL
+            const urlParts = bannerData.image.split('/');
+            const filename = urlParts[urlParts.length - 1];
+            const publicId = filename.split('.')[0];
+            await deleteImage(publicId);
+          } catch (cloudinaryError) {
+            console.error('Failed to delete image from Cloudinary:', cloudinaryError);
+            // Continue with database deletion even if image deletion fails
+          }
+        }
+      }
+
       await deleteDoc(doc(db, 'banners', bannerId));
       setMessage(t.bannerDeleted);
       loadDashboard();
@@ -2216,6 +2711,21 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
 
     try {
+      // Fetch promotion to get image URL
+      const promotionDoc = await getDoc(doc(db, 'sidebar-promotions', promotionId));
+      if (promotionDoc.exists()) {
+        const promotionData = promotionDoc.data();
+        if (promotionData?.image) {
+          try {
+            // Extract public_id from ImgBB/Imgur URL (these services don't support deletion via API in the same way)
+            // For ImgBB/Imgur, we can only delete from database
+            console.log('Image deletion not supported for ImgBB/Imgur URLs');
+          } catch (cloudinaryError) {
+            console.error('Failed to delete image:', cloudinaryError);
+          }
+        }
+      }
+
       await deleteDoc(doc(db, 'sidebar-promotions', promotionId));
       setMessage('Sidebar promotion deleted successfully!');
       loadDashboard();
@@ -2266,6 +2776,21 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
 
     try {
+      // Fetch promotion to get image URL
+      const promotionDoc = await getDoc(doc(db, 'mid-article-promotions', promotionId));
+      if (promotionDoc.exists()) {
+        const promotionData = promotionDoc.data();
+        if (promotionData?.image) {
+          try {
+            // Extract public_id from ImgBB/Imgur URL (these services don't support deletion via API in the same way)
+            // For ImgBB/Imgur, we can only delete from database
+            console.log('Image deletion not supported for ImgBB/Imgur URLs');
+          } catch (cloudinaryError) {
+            console.error('Failed to delete image:', cloudinaryError);
+          }
+        }
+      }
+
       await deleteDoc(doc(db, 'mid-article-promotions', promotionId));
       setMessage('Mid-article promotion deleted successfully!');
       loadDashboard();
@@ -2426,6 +2951,21 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
 
     try {
+      // Fetch story to get image URL
+      const storyDoc = await getDoc(doc(db, 'stories', storyId));
+      if (storyDoc.exists()) {
+        const storyData = storyDoc.data();
+        if (storyData?.coverImage) {
+          try {
+            // Extract public_id from ImgBB/Imgur URL (these services don't support deletion via API in the same way)
+            // For ImgBB/Imgur, we can only delete from database
+            console.log('Image deletion not supported for ImgBB/Imgur URLs');
+          } catch (cloudinaryError) {
+            console.error('Failed to delete image:', cloudinaryError);
+          }
+        }
+      }
+
       // Delete all episodes
       const episodesSnapshot = await getDocs(collection(db, 'stories', storyId, 'episodes'));
       for (const episodeDoc of episodesSnapshot.docs) {
@@ -2657,6 +3197,21 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
 
     try {
+      // Fetch article to get image URL
+      const articleDoc = await getDoc(doc(goldenTimeDb, 'golden-time', articleId));
+      if (articleDoc.exists()) {
+        const articleData = articleDoc.data();
+        if (articleData?.coverImage) {
+          try {
+            // Extract public_id from ImgBB/Imgur URL (these services don't support deletion via API in the same way)
+            // For ImgBB/Imgur, we can only delete from database
+            console.log('Image deletion not supported for ImgBB/Imgur URLs');
+          } catch (cloudinaryError) {
+            console.error('Failed to delete image:', cloudinaryError);
+          }
+        }
+      }
+
       await deleteDoc(doc(goldenTimeDb, 'golden-time', articleId));
       setMessage('Article deleted successfully');
 
@@ -2749,7 +3304,9 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       // Get dimensions based on platform
       const dimensions = flyerPlatform === 'instagram-square'
         ? { width: 1080, height: 1080 }
-        : { width: 1080, height: 1350 };
+        : flyerPlatform === 'instagram-portrait'
+        ? { width: 1080, height: 1350 }
+        : { width: 1200, height: 630 }; // Facebook landscape
 
       canvas.width = dimensions.width;
       canvas.height = dimensions.height;
@@ -2999,10 +3556,31 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setRecipeServings(recipe.servings);
   };
 
-  const handleDeleteRecipe = (id: string) => {
-    if (confirm('Are you sure you want to delete this recipe?')) {
+  const handleDeleteRecipe = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this recipe?')) {
+      return;
+    }
+
+    try {
+      // Fetch recipe to get image URL
+      const recipe = recipesList.find(r => r.id === id);
+      if (recipe?.image) {
+        try {
+          // Extract public_id from ImgBB/Imgur URL (these services don't support deletion via API in the same way)
+          // For ImgBB/Imgur, we can only delete from database
+          console.log('Image deletion not supported for ImgBB/Imgur URLs');
+        } catch (cloudinaryError) {
+          console.error('Failed to delete image:', cloudinaryError);
+        }
+      }
+
+      // Delete from Firebase
+      await deleteDoc(doc(db, 'recipes', id));
       setRecipesList(recipesList.filter(r => r.id !== id));
       setMessage('Recipe deleted successfully!');
+    } catch (error) {
+      setMessage('Failed to delete recipe');
+      console.error(error);
     }
   };
 
@@ -3435,7 +4013,9 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       // Get dimensions based on platform
       const dimensions = quotePlatform === 'instagram-square' 
         ? { width: 1080, height: 1080 }
-        : { width: 1080, height: 1350 };
+        : quotePlatform === 'instagram-portrait'
+        ? { width: 1080, height: 1350 }
+        : { width: 1200, height: 630 }; // Facebook landscape
       
       canvas.width = dimensions.width;
       canvas.height = dimensions.height;
@@ -3667,14 +4247,17 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         { id: 'stories' as const, label: 'ސްޓޯރީތައް', icon: '📖' },
         { id: 'golden-time' as const, label: 'ދިވެހި ރަން ޒަމާން', icon: '⏳' },
         { id: 'obituary' as const, label: 'ތަޢުޒިޔާ މޭކަރ', icon: '🕯️' },
+        { id: 'funeral-poster' as const, label: 'ޖނާޒާގެ މަޢުލޫމާތު', icon: '📋' },
       ]
     },
     {
       title: 'Promotions',
       tabs: [
+        { id: 'hero-slides' as const, label: t.manageHeroSlides, icon: '🖼️' },
         { id: 'banners' as const, label: t.manageBanners, icon: '🎨' },
         { id: 'sidebar-promotions' as const, label: 'Sidebar', icon: '📱' },
         { id: 'mid-article-promotions' as const, label: 'Mid-Article', icon: '📄' },
+        { id: 'advertisements' as const, label: t.manageAdvertisements, icon: '📢' },
       ]
     },
     {
@@ -3810,7 +4393,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
         {/* Mobile Tabs */}
         <div className="lg:hidden flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories', 'golden-time', 'obituary'] as const).map((tab) => (
+          {(['articles', 'manage', 'hero-slides', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'advertisements', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories', 'golden-time', 'obituary', 'funeral-poster'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -3822,9 +4405,11 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
             >
               {tab === 'articles' && t.createNews}
               {tab === 'manage' && t.manageNews}
+              {tab === 'hero-slides' && t.manageHeroSlides}
               {tab === 'banners' && t.manageBanners}
               {tab === 'sidebar-promotions' && 'Sidebar Promotions'}
               {tab === 'mid-article-promotions' && 'Mid-Article Promotions'}
+              {tab === 'advertisements' && t.manageAdvertisements}
               {tab === 'analytics' && t.analytics}
               {tab === 'settings' && t.settings}
               {tab === 'rephrase' && 'ޚަބަރު ރީފްރޭޒް (Rephrase)'}
@@ -3837,6 +4422,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
               {tab === 'stories' && 'ސްޓޯރީތައް (Stories)'}
               {tab === 'golden-time' && 'ދިވެހި ރަން ޒަމާން'}
               {tab === 'obituary' && 'ތަޢުޒިޔާ މޭކަރ'}
+              {tab === 'funeral-poster' && 'ޖނާޒާގެ މަޢުލޫމާތު'}
             </button>
           ))}
         </div>
@@ -4901,6 +5487,150 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                   ))
                 ) : (
                   <p className="text-gray-600 col-span-full">No mid-article promotions yet</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Advertisements Tab */}
+        {activeTab === 'advertisements' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">{t.manageAdvertisements}</h3>
+            <p className="mt-2 text-sm text-gray-600">{t.advertisementsDesc}</p>
+            
+            {/* Upload Form */}
+            <form onSubmit={handleUploadAdvertisement} className="mt-6 space-y-4">
+              {advertisementError && (
+                <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                  {advertisementError}
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">{t.selectAdSlot}</label>
+                <select
+                  value={selectedAdSlot}
+                  onChange={(e) => setSelectedAdSlot(e.target.value)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  required
+                >
+                  <option value="">{t.noAdvertisementSelected}</option>
+                  {advertisementSlots.map((slot) => (
+                    <option key={slot.id} value={slot.id}>
+                      {slot.label} - {slot.page} ({slot.side})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">{t.advertisementImage}</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setAdvertisementFile(e.target.files?.[0] || null)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  required
+                />
+              </div>
+              <button
+                disabled={uploadingAdvertisement}
+                className="w-full rounded-3xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {uploadingAdvertisement ? t.uploading : t.uploadAdvertisement}
+              </button>
+            </form>
+
+            {/* Advertisements List */}
+            <div className="mt-8">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">{t.currentAdvertisement}</h4>
+              
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {advertisementSlots.map((slot) => {
+                  const adData = advertisements[slot.id];
+                  return (
+                    <div key={slot.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-soft">
+                      <h5 className="font-semibold text-gray-900 text-sm mb-2">{slot.label}</h5>
+                      <p className="text-xs text-gray-600 mb-3">{slot.page} - {slot.side}</p>
+                      {adData?.image ? (
+                        <>
+                          <img src={adData.image} alt={slot.label} className="w-full h-auto object-cover rounded-lg mb-3" />
+                          <button
+                            onClick={() => handleDeleteAdvertisement(slot.id)}
+                            className="w-full rounded-2xl border border-rose-600 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-600/20"
+                          >
+                            {t.deleteAdvertisement}
+                          </button>
+                        </>
+                      ) : (
+                        <div className="rounded-lg bg-gray-100 p-8 text-center text-sm text-gray-500">
+                          No image uploaded
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Hero Slides Tab */}
+        {activeTab === 'hero-slides' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">{t.manageHeroSlides}</h3>
+            <p className="mt-2 text-sm text-gray-600">{t.heroSlidesDesc}</p>
+            
+            {/* Add to Hero Form */}
+            <form onSubmit={(e) => { e.preventDefault(); handleAddToHero(); }} className="mt-6 space-y-4">
+              {heroSlidesError && (
+                <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                  {heroSlidesError}
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700">{t.selectHeroArticle}</label>
+                <select
+                  value={selectedHeroArticle}
+                  onChange={(e) => setSelectedHeroArticle(e.target.value)}
+                  className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                  required
+                >
+                  <option value="">{t.noAdvertisementSelected}</option>
+                  {articles.map((article) => (
+                    <option key={article.id} value={article.id}>
+                      {article.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button
+                disabled={updatingHeroSlides}
+                className="w-full rounded-3xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {updatingHeroSlides ? t.uploading : t.addToHero}
+              </button>
+            </form>
+
+            {/* Hero Slides List */}
+            <div className="mt-8">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">{t.currentAdvertisement}</h4>
+              
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {heroSlides.length > 0 ? (
+                  heroSlides.map((slide) => (
+                    <div key={slide.articleId} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-soft">
+                      <img src={slide.image} alt={slide.title} className="w-full h-auto object-cover rounded-lg mb-3" />
+                      <h5 className="font-semibold text-gray-900 text-sm mb-2">{slide.title}</h5>
+                      <button
+                        onClick={() => handleRemoveFromHero(slide.articleId)}
+                        className="w-full rounded-2xl border border-rose-600 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-600/20"
+                      >
+                        {t.removeFromHero}
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-600 col-span-full">{t.noHeroSlides}</p>
                 )}
               </div>
             </div>
@@ -7610,6 +8340,158 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                 ) : (
                   <div className="mt-4 flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white">
                     <p className="text-sm text-gray-500">ޕްރިވިއު ފެނޭނީ ތަޢުޒިޔާ ހުރިހާކުރުމަށްފަހު</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Funeral Poster Tab */}
+        {activeTab === 'funeral-poster' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">ޖނާޒާގެ މަޢުލޫމާތު (Funeral Announcement Poster)</h3>
+            <p className="mt-2 text-sm text-gray-600">Create funeral announcement posters</p>
+
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              {/* Funeral Poster Form */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">މަޢުލަވެސް</h4>
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">މަރުޙޫމްގެ ނަން (Name)</label>
+                    <input
+                      type="text"
+                      value={funeralName}
+                      onChange={(e) => setFuneralName(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="ނަން..."
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ގެއެވެސް/މަންޒިލް (Address)</label>
+                    <input
+                      type="text"
+                      value={funeralAddress}
+                      onChange={(e) => setFuneralAddress(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="މ. ނިއުހޯޕް / 1"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">އުމުރު (Age)</label>
+                    <input
+                      type="text"
+                      value={funeralAge}
+                      onChange={(e) => setFuneralAge(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="09 އަހަރު"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ކަށުނަމާދު (Prayer Location)</label>
+                    <input
+                      type="text"
+                      value={funeralPrayerLocation}
+                      onChange={(e) => setFuneralPrayerLocation(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="ހުޅުމާލެ ޢަޞްރު (ސަހަރާ މިސްކިތް) ގައި"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ވަޅުލުން (Burial Location)</label>
+                    <input
+                      type="text"
+                      value={funeralBurialLocation}
+                      onChange={(e) => setFuneralBurialLocation(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="ހުޅުމާލެ ސަހަރާ މިސްކިތް"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ނިޔާވި ތާރީޚް (Death Date)</label>
+                    <input
+                      type="text"
+                      value={funeralDeathDate}
+                      onChange={(e) => setFuneralDeathDate(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="19 ޛުލްޙިއްޖާ 1448 (01 ސެޕްޓެމްބަރު 2026)"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ކަށުނަމާދު ތާރީޚް (Prayer Date)</label>
+                    <input
+                      type="text"
+                      value={funeralPrayerDate}
+                      onChange={(e) => setFuneralPrayerDate(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="01-09-2026"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ފޮޓޯ (Photo)</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setFuneralPhoto(e.target.files?.[0] || null)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ކޮންޓެކްޓް 1 (Contact 1)</label>
+                    <input
+                      type="text"
+                      value={funeralContact1}
+                      onChange={(e) => setFuneralContact1(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="7992266"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">ކޮންޓެކްޓް 2 (Contact 2)</label>
+                    <input
+                      type="text"
+                      value={funeralContact2}
+                      onChange={(e) => setFuneralContact2(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="9394545"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={generateFuneralPoster}
+                      disabled={generatingFuneralPoster}
+                      className="flex-1 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {generatingFuneralPoster ? 'ހުރިހާކަމެއް...' : 'ޕޯސްޓަރ ހުރިހާކުރޭ'}
+                    </button>
+                    {funeralPreview && (
+                      <button
+                        onClick={downloadFuneralPoster}
+                        className="flex-1 rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-400"
+                      >
+                        ޑައުންލޯޑް
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">ޕްރިވިއު (Preview)</h4>
+                {funeralPreview ? (
+                  <div className="mt-4">
+                    <img
+                      src={funeralPreview}
+                      alt="Funeral Poster Preview"
+                      className="w-full rounded-lg border border-gray-300"
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-4 flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white">
+                    <p className="text-sm text-gray-500">ޕްރިވިއު ފެނޭނީ ޕޯސްޓަރ ހުރިހާކުރުމަށްފަހު</p>
                   </div>
                 )}
               </div>

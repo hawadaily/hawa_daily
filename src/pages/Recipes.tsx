@@ -28,14 +28,12 @@ export default function Recipes() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [language, setLanguage] = useState<'dv' | 'en'>('dv');
   const [filter, setFilter] = useState<string>('all');
-  const [selectedIngredient, setSelectedIngredient] = useState<string>('all');
   const [search, setSearch] = useState<string>('');
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
 
   const categories = ['all', 'ހެދުނުގެ ނާސްތާ', 'ކުޅިކާ ތަކެތި', 'ފޮނިކާ ތަކެތި', 'ކުދި ކެއުންތަށް'];
-  const ingredients = ['all', 'ބޯވަ', 'ބީފް', 'މަސް', 'ކުކުޅު', 'މައިސް', 'ކައްކައުން', 'ފެން', 'ތެޔޮ', 'ހަކުރު', 'ލޮނު', 'ބިސް', 'ލުނބޯ ހުތް', 'މުގުރި އަސޭމިރުސް', 'ރާނބާފަތް', 'ކިރު', 'ޗީޒް'];
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -72,10 +70,7 @@ export default function Recipes() {
     const matchesSearch = search === '' || 
       recipe.titleDv.toLowerCase().includes(search.toLowerCase()) ||
       recipe.titleEn.toLowerCase().includes(search.toLowerCase());
-    const matchesIngredient = selectedIngredient === 'all' || 
-      recipe.ingredients.dv.some(ing => ing.toLowerCase().includes(selectedIngredient.toLowerCase())) ||
-      recipe.ingredients.en.some(ing => ing.toLowerCase().includes(selectedIngredient.toLowerCase()));
-    return matchesCategory && matchesSearch && matchesIngredient;
+    return matchesCategory && matchesSearch;
   });
 
   const translations = {
@@ -94,24 +89,7 @@ export default function Recipes() {
       servings: 'ބައިތައް',
       close: 'ނިއްމާލާ',
       noRecipes: 'ރެސިޕީތައް ނެތް',
-      searchPlaceholder: 'ރެސިޕީ ހޯދާ...',
-      allIngredients: 'ހުރިހާ ތަކެތި',
-      'ބޯވަ': 'ބޯވަ',
-      'ބީފް': 'ބީފް',
-      'މަސް': 'މަސް',
-      'ކުކުޅު': 'ކުކުޅު',
-      'މައިސް': 'މައިސް',
-      'ކައްކައުން': 'ކައްކައުން',
-      'ފެން': 'ފެން',
-      'ތެޔޮ': 'ތެޔޮ',
-      'ހަކުރު': 'ހަކުރު',
-      'ލޮނު': 'ލޮނު',
-      'ބިސް': 'ބިސް',
-      'ލުނބޯ ހުތް': 'ލުނބޯ ހުތް',
-      'މުގުރި އަސޭމިރުސް': 'މުގުރި އަސޭމިރުސް',
-      'ރާނބާފަތް': 'ރާނބާފަތް',
-      'ކިރު': 'ކިރު',
-      'ޗީޒް': 'ޗީޒް'
+      searchPlaceholder: 'ރެސިޕީ ހޯދާ...'
     },
     en: {
       title: 'Recipe Secrets',
@@ -128,24 +106,7 @@ export default function Recipes() {
       servings: 'Servings',
       close: 'Close',
       noRecipes: 'No recipes found',
-      searchPlaceholder: 'Search recipes...',
-      allIngredients: 'All Ingredients',
-      'ބޯވަ': 'Beef',
-      'ބީފް': 'Fish',
-      'މަސް': 'Egg',
-      'ކުކުޅު': 'Onion',
-      'މައިސް': 'Rice',
-      'ކައްކައުން': 'Coconut',
-      'ފެން': 'Water',
-      'ތެޔޮ': 'Oil',
-      'ހަކުރު': 'Sugar',
-      'ލޮނު': 'Salt',
-      'ބިސް': 'Biscuit',
-      'ލުނބޯ ހުތް': 'Lemon Juice',
-      'މުގުރި އަސޭމިރުސް': 'Mustard Seeds',
-      'ރާނބާފަތް': 'Pandan Leaf',
-      'ކިރު': 'Milk',
-      'ޗީޒް': 'Cheese'
+      searchPlaceholder: 'Search recipes...'
     }
   };
 
@@ -153,7 +114,7 @@ export default function Recipes() {
 
   return (
     <motion.section
-      className="pt-24 bg-[#caf0f8] min-h-screen"
+      className="pt-5 bg-[#caf0f8] min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -161,7 +122,7 @@ export default function Recipes() {
     >
       {/* Header */}
       <div className="sticky top-20 z-40 bg-[#caf0f8]/95 backdrop-blur-sm border-b-2 border-[#0077b6] shadow-md px-4">
-        <div className="flex items-center justify-between gap-2 max-w-[1600px] mx-auto py-3">
+        <div className="flex items-center justify-between gap-2 max-w-[1600px] mx-auto py-2">
           <div className="flex-1 min-w-0">
             <p className="text-[10px] uppercase tracking-[0.2em] text-[#0077b6] font-bold hidden sm:block">
               {language === 'dv' ? 'ރަހަ' : 'Recipes'}
@@ -213,48 +174,64 @@ export default function Recipes() {
               </button>
             ))}
           </div>
-
-          {/* Ingredient Filter */}
-          <div className="flex flex-wrap gap-2">
-            {ingredients.map(ingredient => (
-              <button
-                key={ingredient}
-                onClick={() => setSelectedIngredient(ingredient)}
-                className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold transition ${
-                  selectedIngredient === ingredient
-                    ? 'bg-[#00b4d8] text-white'
-                    : 'bg-[#00b4d8]/10 text-[#00b4d8] hover:bg-[#00b4d8]/20'
-                }`}
-              >
-                {ingredient === 'all' ? t.allIngredients : t[ingredient as keyof typeof t]}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
-      {/* Recipe Grid */}
-      <div className="max-w-[1600px] mx-auto px-4 pb-8">
-        {loading ? (
-          <div className="text-center py-12">
-            <p className="text-xl text-[#005f73]">{language === 'dv' ? 'ލޯޑް ކުރަމުން...' : 'Loading...'}</p>
+      {/* Recipe Grid with Advertisements */}
+      <div className="flex gap-4 px-4 pb-8 max-w-[1600px] mx-auto">
+        {/* Left Advertisement */}
+        <div className="hidden lg:block w-48 flex-shrink-0">
+          <div className="sticky top-24 space-y-4">
+            <div id="ad-recipes-left-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center">
+              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+            </div>
+            <div id="ad-recipes-left-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
+              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            </div>
+            <div id="ad-recipes-left-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
+              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            </div>
           </div>
-        ) : filteredRecipes.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-xl text-[#005f73]">{t.noRecipes}</p>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 min-w-0">
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-xl text-[#005f73]">{language === 'dv' ? 'ލޯޑް ކުރަމުން...' : 'Loading...'}</p>
+            </div>
+          ) : filteredRecipes.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-xl text-[#005f73]">{t.noRecipes}</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredRecipes.map((recipe: Recipe) => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  onClick={() => setSelectedRecipe(recipe)}
+                  language={language}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right Advertisement */}
+        <div className="hidden lg:block w-48 flex-shrink-0">
+          <div className="sticky top-24 space-y-4">
+            <div id="ad-recipes-right-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center">
+              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+            </div>
+            <div id="ad-recipes-right-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
+              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            </div>
+            <div id="ad-recipes-right-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
+              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredRecipes.map((recipe: Recipe) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                onClick={() => setSelectedRecipe(recipe)}
-                language={language}
-              />
-            ))}
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Recipe Detail Modal */}

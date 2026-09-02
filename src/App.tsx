@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, BookOpen, User, Book as BookIcon } from 'lucide-react';
+import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, BookOpen, User, Book as BookIcon, Stethoscope } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
-import Categories from './pages/Categories';
 import Videos from './pages/Videos';
 import Quran from './pages/Quran';
 import Profile from './pages/Profile';
@@ -23,6 +22,7 @@ import Stories from './pages/Stories';
 import StoryDetail from './pages/StoryDetail';
 import GoldenTime from './pages/GoldenTime';
 import GoldenTimeDetail from './pages/GoldenTimeDetail';
+import DoctorsDuty from './pages/DoctorsDuty';
 import DesktopNav from './components/DesktopNav';
 import MobileNav from './components/MobileNav';
 import BottomNav from './components/BottomNav';
@@ -217,10 +217,10 @@ function App() {
         <BottomNav
           links={[
             { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
-            { label: language === 'en' ? 'Categories' : 'ބައިތައް', path: '/categories', icon: FolderOpen },
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
             { label: language === 'en' ? 'Stories' : 'ވާހަކަ', path: '/stories', icon: BookIcon },
             { label: language === 'en' ? 'Golden Time' : 'ރަން ޒަމާން', path: '/golden-time', icon: BookIcon },
+            { label: language === 'en' ? 'Doctors Duty' : 'ޑޮކްޓަރުންގެ ޑިއުޓީ', path: '/doctors-duty', icon: Stethoscope },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
             { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
           ]}
@@ -238,8 +238,6 @@ function App() {
         >
           <Routes location={location}>
             <Route path="/" element={<Home />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/categories/:categoryId" element={<Categories />} />
             <Route path="/videos" element={<Videos />} />
             <Route path="/quran" element={<Quran />} />
             <Route path="/quran/facebook-post" element={<QuranFacebookPost />} />
@@ -254,6 +252,7 @@ function App() {
             <Route path="/stories/:id" element={<StoryDetail />} />
             <Route path="/golden-time" element={<GoldenTime />} />
             <Route path="/golden-time/:id" element={<GoldenTimeDetail />} />
+            <Route path="/doctors-duty" element={<DoctorsDuty />} />
             <Route path="/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
