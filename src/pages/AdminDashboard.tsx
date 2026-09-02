@@ -2510,7 +2510,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
   };
 
-  const handleUploadAdvertisement = async () => {
+  const handleUploadAdvertisement = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!advertisementFile || !selectedAdSlot) {
       setAdvertisementError('Please select a slot and upload an image');
       return;

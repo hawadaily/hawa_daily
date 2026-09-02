@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 interface Doctor {
   name: string;
@@ -2010,6 +2012,28 @@ export default function DoctorsDuty() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'specialist' | 'doctor' | 'clinic'>('all');
   const [filterValue, setFilterValue] = useState('');
+  const [advertisements, setAdvertisements] = useState<Record<string, any>>({});
+  const [advertisementsError, setAdvertisementsError] = useState(false);
+
+  // Fetch advertisements from Firebase
+  useEffect(() => {
+    const fetchAdvertisements = async () => {
+      try {
+        const advertisementsDoc = await getDoc(doc(db, 'advertisements', 'slots'));
+        if (advertisementsDoc.exists()) {
+          setAdvertisements(advertisementsDoc.data() || {});
+          setAdvertisementsError(false);
+        } else {
+          setAdvertisementsError(true);
+        }
+      } catch (error) {
+        console.error('Error fetching advertisements:', error);
+        setAdvertisementsError(true);
+      }
+    };
+
+    fetchAdvertisements();
+  }, []);
 
   // Get unique specializations
   const specializations = Array.from(
@@ -2155,14 +2179,32 @@ export default function DoctorsDuty() {
         {/* Left Advertisement */}
         <div className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-4 space-y-4">
-            <div id="ad-doctors-left-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+            <div id="ad-doctors-left-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-doctors-left-tall-160x384']?.image ? (
+                <img src={advertisements['ad-doctors-left-tall-160x384'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+              )}
             </div>
-            <div id="ad-doctors-left-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            <div id="ad-doctors-left-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-doctors-left-medium-160x256']?.image ? (
+                <img src={advertisements['ad-doctors-left-medium-160x256'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+              )}
             </div>
-            <div id="ad-doctors-left-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            <div id="ad-doctors-left-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-doctors-left-medium-160x256-2']?.image ? (
+                <img src={advertisements['ad-doctors-left-medium-160x256-2'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+              )}
             </div>
           </div>
         </div>
@@ -2373,14 +2415,32 @@ export default function DoctorsDuty() {
         {/* Right Advertisement */}
         <div className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-4 space-y-4">
-            <div id="ad-doctors-right-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+            <div id="ad-doctors-right-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-doctors-right-tall-160x384']?.image ? (
+                <img src={advertisements['ad-doctors-right-tall-160x384'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+              )}
             </div>
-            <div id="ad-doctors-right-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            <div id="ad-doctors-right-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-doctors-right-medium-160x256']?.image ? (
+                <img src={advertisements['ad-doctors-right-medium-160x256'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+              )}
             </div>
-            <div id="ad-doctors-right-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            <div id="ad-doctors-right-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-doctors-right-medium-160x256-2']?.image ? (
+                <img src={advertisements['ad-doctors-right-medium-160x256-2'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+              )}
             </div>
           </div>
         </div>

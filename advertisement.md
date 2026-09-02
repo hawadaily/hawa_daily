@@ -2,6 +2,32 @@
 
 This document lists all advertisement slots available across the website with their SEO-friendly IDs and image dimensions.
 
+## Home Page (`/`)
+
+### Promo Banners
+- **ID:** `ad-home-top`
+  - **Size:** Full width × 128px height
+  - **Position:** Top of page
+  - **Visibility:** All screen sizes
+
+- **ID:** `ad-home-middle`
+  - **Size:** Full width × 128px height
+  - **Position:** Middle of page (between main news and latest articles)
+  - **Visibility:** All screen sizes
+
+- **ID:** `ad-home-bottom`
+  - **Size:** Full width × 128px height
+  - **Position:** Bottom of page
+  - **Visibility:** All screen sizes
+
+**Notes:**
+- Banners are responsive and adapt to container width
+- Supports separate images for mobile (<768px) and desktop (≥768px)
+- Auto-rotates every 5 seconds if multiple banners are configured
+- Height is fixed at 128px (h-32 in Tailwind)
+
+---
+
 ## Doctors Duty Page (`/doctors-duty`)
 
 ### Left Sidebar

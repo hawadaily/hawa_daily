@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import { IMAGE_FALLBACK } from '../utils/imageFallback';
 import { db } from '../firebase';
-import { collection, getDocs, query, orderBy, doc, updateDoc, increment, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, updateDoc, increment, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 
 interface Recipe {
   id: string;
@@ -32,8 +32,30 @@ export default function Recipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [advertisements, setAdvertisements] = useState<Record<string, any>>({});
+  const [advertisementsError, setAdvertisementsError] = useState(false);
 
   const categories = ['all', 'ހެދުނުގެ ނާސްތާ', 'ކުޅިކާ ތަކެތި', 'ފޮނިކާ ތަކެތި', 'ކުދި ކެއުންތަށް'];
+
+  // Fetch advertisements from Firebase
+  useEffect(() => {
+    const fetchAdvertisements = async () => {
+      try {
+        const advertisementsDoc = await getDoc(doc(db, 'advertisements', 'slots'));
+        if (advertisementsDoc.exists()) {
+          setAdvertisements(advertisementsDoc.data() || {});
+          setAdvertisementsError(false);
+        } else {
+          setAdvertisementsError(true);
+        }
+      } catch (error) {
+        console.error('Error fetching advertisements:', error);
+        setAdvertisementsError(true);
+      }
+    };
+
+    fetchAdvertisements();
+  }, []);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -182,14 +204,32 @@ export default function Recipes() {
         {/* Left Advertisement */}
         <div className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-24 space-y-4">
-            <div id="ad-recipes-left-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+            <div id="ad-recipes-left-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-recipes-left-tall-160x384']?.image ? (
+                <img src={advertisements['ad-recipes-left-tall-160x384'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+              )}
             </div>
-            <div id="ad-recipes-left-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            <div id="ad-recipes-left-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-recipes-left-medium-160x256']?.image ? (
+                <img src={advertisements['ad-recipes-left-medium-160x256'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+              )}
             </div>
-            <div id="ad-recipes-left-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            <div id="ad-recipes-left-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-recipes-left-medium-160x256-2']?.image ? (
+                <img src={advertisements['ad-recipes-left-medium-160x256-2'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+              )}
             </div>
           </div>
         </div>
@@ -221,14 +261,32 @@ export default function Recipes() {
         {/* Right Advertisement */}
         <div className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-24 space-y-4">
-            <div id="ad-recipes-right-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+            <div id="ad-recipes-right-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-recipes-right-tall-160x384']?.image ? (
+                <img src={advertisements['ad-recipes-right-tall-160x384'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x384)</p>
+              )}
             </div>
-            <div id="ad-recipes-right-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            <div id="ad-recipes-right-medium-160x256" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-recipes-right-medium-160x256']?.image ? (
+                <img src={advertisements['ad-recipes-right-medium-160x256'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+              )}
             </div>
-            <div id="ad-recipes-right-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+            <div id="ad-recipes-right-medium-160x256-2" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+              {advertisements['ad-recipes-right-medium-160x256-2']?.image ? (
+                <img src={advertisements['ad-recipes-right-medium-160x256-2'].image} alt="Advertisement" className="w-full h-full object-cover" />
+              ) : advertisementsError ? (
+                <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+              ) : (
+                <p className="text-gray-500 text-sm text-center px-2">Advertisement (160x256)</p>
+              )}
             </div>
           </div>
         </div>
