@@ -18,6 +18,7 @@ export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [lastCreatedArticleId, setLastCreatedArticleId] = useState<string | null>(null);
   const [articlesCount, setArticlesCount] = useState(0);
   const [articles, setArticles] = useState<any[]>([]);
   const [visitorDetails, setVisitorDetails] = useState<any[]>([]);
@@ -643,11 +644,99 @@ export default function AdminDashboard() {
     { id: 1, x: 85, y: 85, opacity: 90, image: '/HAWA LOGO.jpg' }
   ]);
 
-  // Social Media Videos state
+  // Auto-slide animation for text slides
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (isPlayingSlides && textSlides.length > 0) {
+      interval = setInterval(() => {
+        setCurrentSlideIndex(prev => {
+          if (prev >= textSlides.length - 1) {
+            setIsPlayingSlides(false);
+            return 0;
+          }
+          return prev + 1;
+        });
+      }, reelDuration * 1000);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPlayingSlides, textSlides.length, reelDuration]);
+
+  // Update reelText when current slide changes
+  useEffect(() => {
+    if (textSlides.length > 0) {
+      setReelText(textSlides[currentSlideIndex]);
+    }
+  }, [currentSlideIndex, textSlides]);
+
+  // Function to split text into slides for TikTok
+  const splitTextIntoSlides = (text: string, maxCharsPerSlide: number = 100): string[] => {
+    if (!text) return [];
+    
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const slides: string[] = [];
+    let currentSlide = '';
+    
+    for (const sentence of sentences) {
+      const trimmedSentence = sentence.trim();
+      
+      if ((currentSlide + ' ' + trimmedSentence).length <= maxCharsPerSlide) {
+        currentSlide = currentSlide ? currentSlide + '. ' + trimmedSentence : trimmedSentence;
+      } else {
+        if (currentSlide) {
+          slides.push(currentSlide);
+        }
+        currentSlide = trimmedSentence;
+        
+        // If a single sentence is too long, split it by words
+        if (trimmedSentence.length > maxCharsPerSlide) {
+          const words = trimmedSentence.split(' ');
+          currentSlide = '';
+          for (const word of words) {
+            if ((currentSlide + ' ' + word).length <= maxCharsPerSlide) {
+              currentSlide = currentSlide ? currentSlide + ' ' + word : word;
+            } else {
+              if (currentSlide) {
+                slides.push(currentSlide);
+              }
+              currentSlide = word;
+            }
+          }
+        }
+      }
+    }
+    
+    if (currentSlide) {
+      slides.push(currentSlide);
+    }
+    
+    return slides.length > 0 ? slides : [text.slice(0, maxCharsPerSlide)];
+  };
+
+  // Update article selection handler to split text into slides
+  const handleArticleSelect = (articleId: string) => {
+    const article = articles.find(a => a.id === articleId);
+    setSelectedArticle(article || null);
+    
+    if (article && autoGenerate) {
+      // Use full article content for slides, not just title
+      const fullText = article.content || article.title || '';
+      const slides = splitTextIntoSlides(fullText, 80); // 80 chars per slide for TikTok
+      setTextSlides(slides);
+      setReelText(slides[0] || article.title || '');
+      setHashtags(`#${article.category || 'news'} #${language === 'dv' ? 'ހަވާދަވެރިން' : 'HawaDaily'} #${language === 'dv' ? 'ދިވެހިބަސް' : 'Maldives'}`);
+    }
+  };
   const [videoPlatform, setVideoPlatform] = useState<'facebook-reels' | 'tiktok' | 'youtube-shorts' | 'youtube-video'>('facebook-reels');
   const [reelImages, setReelImages] = useState<File[]>([]);
   const [reelImageUrls, setReelImageUrls] = useState<string[]>([]);
   const [reelText, setReelText] = useState('');
+  const [textSlides, setTextSlides] = useState<string[]>([]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isPlayingSlides, setIsPlayingSlides] = useState(false);
   const [reelDuration, setReelDuration] = useState(5);
   const [reelTransition, setReelTransition] = useState<'fade' | 'slide' | 'zoom'>('fade');
   const [reelCanvas, setReelCanvas] = useState<HTMLCanvasElement | null>(null);
@@ -2220,6 +2309,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         createdAt: serverTimestamp(),
       });
 
+      setLastCreatedArticleId(articleId);
       setMessage(t.newsCreated);
 
       // Add author to authors list if new
@@ -3769,7 +3859,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
   // Generate Social Media Video
   const generateFacebookReel = async () => {
-    if (!reelCanvas || reelImageUrls.length === 0) return;
+    if (!reelCanvas) return;
 
     setGeneratingReel(true);
     try {
@@ -3801,7 +3891,9 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         logo.onerror = () => resolve(); // Continue even if logo fails to load
       });
 
-      const images = await Promise.all(
+      // Use text slides if available, otherwise use images
+      const useTextSlides = textSlides.length > 0;
+      const images = reelImageUrls.length > 0 ? await Promise.all(
         reelImageUrls.map(url => {
           return new Promise<HTMLImageElement>((resolve) => {
             const img = new Image();
@@ -3817,12 +3909,13 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
             img.src = url;
           });
         })
-      );
+      ) : [];
 
-      // Calculate duration per image
-      const durationPerImage = reelDuration; // Each image gets the full duration
+      // Calculate duration based on text slides or images
+      const totalSegments = useTextSlides ? textSlides.length : Math.max(images.length, 1);
+      const durationPerSegment = reelDuration;
       const fps = 30;
-      const totalFrames = (durationPerImage * images.length * fps);
+      const totalFrames = (durationPerSegment * totalSegments * fps);
 
       // Create MediaRecorder with audio if available
       const stream = canvas.captureStream(fps);
@@ -3874,56 +3967,89 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
       // Animation loop
       let currentFrame = 0;
-      const framesPerImage = durationPerImage * fps;
+      const framesPerSegment = durationPerSegment * fps;
       const animate = () => {
         if (currentFrame >= totalFrames) {
           mediaRecorder.stop();
           return;
         }
 
-        const imageIndex = Math.floor(currentFrame / framesPerImage);
-        const nextImageIndex = Math.min(imageIndex + 1, images.length - 1);
-        const progress = (currentFrame % framesPerImage) / framesPerImage;
-
-        const currentImage = images[imageIndex];
-        const nextImage = images[nextImageIndex];
+        const segmentIndex = Math.floor(currentFrame / framesPerSegment);
+        const nextSegmentIndex = Math.min(segmentIndex + 1, totalSegments - 1);
+        const progress = (currentFrame % framesPerSegment) / framesPerSegment;
 
         // Clear canvas
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Apply transition effect with image controls
-        ctx.globalAlpha = 1;
-        const controls = imageControls[imageIndex] || { zoom: 1, x: 0, y: 0 };
+        // Draw background image if available
+        if (images.length > 0) {
+          const imageIndex = segmentIndex % images.length;
+          const nextImageIndex = (segmentIndex + 1) % images.length;
+          const currentImage = images[imageIndex];
+          const nextImage = images[nextImageIndex];
+          const controls = imageControls[imageIndex] || { zoom: 1, x: 0, y: 0 };
 
-        if (reelTransition === 'fade') {
-          // Fade transition
-          ctx.globalAlpha = 1 - progress;
-          drawImageCover(ctx, currentImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
-          ctx.globalAlpha = progress;
-          drawImageCover(ctx, nextImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
-        } else if (reelTransition === 'slide') {
-          // Slide transition - sudden cut (no gradual slide)
-          if (progress < 0.1) {
-            // Show current image for most of the duration
+          ctx.globalAlpha = 1;
+
+          if (reelTransition === 'fade') {
+            ctx.globalAlpha = 1 - progress;
             drawImageCover(ctx, currentImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
-          } else {
-            // Sudden cut to next image
+            ctx.globalAlpha = progress;
             drawImageCover(ctx, nextImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
+          } else if (reelTransition === 'slide') {
+            if (progress < 0.1) {
+              drawImageCover(ctx, currentImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
+            } else {
+              drawImageCover(ctx, nextImage, canvas.width, canvas.height, controls.zoom, controls.x, controls.y);
+            }
+          } else if (reelTransition === 'zoom') {
+            const scale = (1 + progress * 0.5) * controls.zoom;
+            ctx.save();
+            ctx.translate(canvas.width / 2 + controls.x, canvas.height / 2 + controls.y);
+            ctx.scale(scale, scale);
+            ctx.translate(-canvas.width / 2, -canvas.height / 2);
+            drawImageCover(ctx, currentImage, canvas.width, canvas.height, 1, 0, 0);
+            ctx.restore();
           }
-        } else if (reelTransition === 'zoom') {
-          // Zoom transition
-          const scale = (1 + progress * 0.5) * controls.zoom;
-          ctx.save();
-          ctx.translate(canvas.width / 2 + controls.x, canvas.height / 2 + controls.y);
-          ctx.scale(scale, scale);
-          ctx.translate(-canvas.width / 2, -canvas.height / 2);
-          drawImageCover(ctx, currentImage, canvas.width, canvas.height, 1, 0, 0);
-          ctx.restore();
+        } else {
+          // Solid background if no images
+          ctx.fillStyle = '#1a1a2e';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Draw text overlay if provided
-        if (reelText) {
+        // Draw text overlay - use current text slide
+        if (useTextSlides && textSlides[segmentIndex]) {
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 48px Arial';
+          ctx.textAlign = 'center';
+          ctx.shadowColor = 'rgba(0,0,0,0.8)';
+          ctx.shadowBlur = 15;
+          
+          // Word wrap text
+          const text = textSlides[segmentIndex];
+          const maxWidth = canvas.width - 100;
+          const words = text.split(' ');
+          let line = '';
+          let y = canvas.height - 200;
+          const lineHeight = 60;
+          
+          for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            const metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth && i > 0) {
+              ctx.fillText(line, canvas.width / 2, y);
+              line = words[i] + ' ';
+              y += lineHeight;
+            } else {
+              line = testLine;
+            }
+          }
+          ctx.fillText(line, canvas.width / 2, y);
+          ctx.shadowBlur = 0;
+        } else if (reelText) {
+          // Fallback to single text if no slides
           ctx.globalAlpha = 1;
           ctx.fillStyle = '#ffffff';
           ctx.font = 'bold 48px Arial';
@@ -5084,6 +5210,41 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
               >
                 {submitting ? t.submitting : t.submit}
               </button>
+
+              {/* Article Created Actions */}
+              {lastCreatedArticleId && (
+                <div className="mt-4 rounded-2xl border border-green-500/30 bg-green-500/10 p-4">
+                  <h4 className="font-semibold text-green-800 mb-3">ޚަބަރު ޝާއިޢު ވެއްޖެ! (Article Published)</h4>
+                  <div className="space-y-3">
+                    <a
+                      href={`/article/${lastCreatedArticleId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
+                    >
+                      👁️ ޚަބަރު ބަލާ (View Article)
+                    </a>
+                    <div className="flex gap-2">
+                      <a
+                        href={`https://www.youtube.com/upload?title=${encodeURIComponent(titleDv || title)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-red-500 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                      >
+                        ▶️ YouTube
+                      </a>
+                      <a
+                        href="https://www.tiktok.com/upload"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-black px-4 py-3 text-sm font-semibold text-black transition hover:bg-gray-100"
+                      >
+                        🎵 TikTok
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
             </form>
           </div>
         )}
@@ -7133,14 +7294,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                   <label className="block text-sm font-semibold text-gray-700 mb-1">{t.selectArticle}</label>
                   <select
                     value={selectedArticle?.id || ''}
-                    onChange={(e) => {
-                      const article = articles.find(a => a.id === e.target.value);
-                      setSelectedArticle(article || null);
-                      if (article && autoGenerate) {
-                        setReelText(article.title || '');
-                        setHashtags(`#${article.category || 'news'} #${language === 'dv' ? 'ހަވާދަވެރިން' : 'HawaDaily'} #${language === 'dv' ? 'ދިވެހިބަސް' : 'Maldives'}`);
-                      }
-                    }}
+                    onChange={(e) => handleArticleSelect(e.target.value)}
                     className="w-full rounded-2xl border border-gray-300 bg-white px-3 py-2 text-gray-900 outline-none focus:border-brand-500 text-sm"
                   >
                     <option value="">Select an article...</option>
@@ -7477,6 +7631,54 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                   </div>
                 </div>
 
+                {/* Text Slides Preview */}
+                {textSlides.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Text Slides ({textSlides.length} slides)
+                    </label>
+                    <div className="w-full rounded-2xl border border-gray-300 bg-gray-50 p-3">
+                      <div className="flex gap-2 mb-3">
+                        <button
+                          onClick={() => {
+                            setIsPlayingSlides(!isPlayingSlides);
+                            if (!isPlayingSlides) {
+                              setCurrentSlideIndex(0);
+                            }
+                          }}
+                          className="rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-white hover:bg-brand-600"
+                        >
+                          {isPlayingSlides ? '⏸ Pause' : '▶ Play'}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsPlayingSlides(false);
+                            setCurrentSlideIndex(0);
+                          }}
+                          className="rounded-full bg-gray-500 px-3 py-1 text-xs font-semibold text-white hover:bg-gray-600"
+                        >
+                          Reset
+                        </button>
+                      </div>
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-white min-h-[120px] flex items-center justify-center">
+                        <p className="text-center text-sm font-medium text-gray-800">
+                          {textSlides[currentSlideIndex]}
+                        </p>
+                      </div>
+                      <div className="flex gap-1 mt-2 justify-center">
+                        {textSlides.map((_, index) => (
+                          <div
+                            key={index}
+                            className={`h-2 w-2 rounded-full transition ${
+                              index === currentSlideIndex ? 'bg-brand-500' : 'bg-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Duration */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">{t.duration} ({reelDuration}s)</label>
@@ -7508,7 +7710,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                 <div className="flex gap-2">
                   <button
                     onClick={generateFacebookReel}
-                    disabled={generatingReel || reelImageUrls.length === 0}
+                    disabled={generatingReel || (reelImageUrls.length === 0 && textSlides.length === 0)}
                     className="flex-1 rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
                   >
                     {generatingReel ? t.generating : t.generateReel}
