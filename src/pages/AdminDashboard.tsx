@@ -646,6 +646,33 @@ export default function AdminDashboard() {
     { id: 1, x: 85, y: 85, opacity: 90, image: '/HAWA LOGO.jpg' }
   ]);
 
+  // Social video state - moved before useEffect to fix initialization error
+  const [videoPlatform, setVideoPlatform] = useState<'facebook-reels' | 'tiktok' | 'youtube-shorts' | 'youtube-video'>('facebook-reels');
+  const [reelImages, setReelImages] = useState<File[]>([]);
+  const [reelImageUrls, setReelImageUrls] = useState<string[]>([]);
+  const [reelText, setReelText] = useState('');
+  const [textSlides, setTextSlides] = useState<string[]>([]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isPlayingSlides, setIsPlayingSlides] = useState(false);
+  const [reelDuration, setReelDuration] = useState(5);
+  const [reelTransition, setReelTransition] = useState<'fade' | 'slide' | 'zoom'>('fade');
+  const [reelCanvas, setReelCanvas] = useState<HTMLCanvasElement | null>(null);
+  const [generatingReel, setGeneratingReel] = useState(false);
+  const [reelVideoUrl, setReelVideoUrl] = useState<string>('');
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string>('');
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [hashtags, setHashtags] = useState<string>('');
+  const [selectedArticle, setSelectedArticle] = useState<any>(null);
+  const [autoGenerate, setAutoGenerate] = useState(false);
+  const [imageControls, setImageControls] = useState<{ [key: number]: { zoom: number; x: number; y: number } }>({});
+  const [selectedImageControl, setSelectedImageControl] = useState<number | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string>('');
+  const [reelLogoPosition, setReelLogoPosition] = useState({ x: 50, y: 50 });
+  const [reelLogoOpacity, setReelLogoOpacity] = useState(80);
+  const [reelVideoFile, setReelVideoFile] = useState<File | null>(null);
+
   // Auto-slide animation for text slides
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -732,31 +759,6 @@ export default function AdminDashboard() {
       setHashtags(`#${article.category || 'news'} #${language === 'dv' ? 'ހަވާދަވެރިން' : 'HawaDaily'} #${language === 'dv' ? 'ދިވެހިބަސް' : 'Maldives'}`);
     }
   };
-  const [videoPlatform, setVideoPlatform] = useState<'facebook-reels' | 'tiktok' | 'youtube-shorts' | 'youtube-video'>('facebook-reels');
-  const [reelImages, setReelImages] = useState<File[]>([]);
-  const [reelImageUrls, setReelImageUrls] = useState<string[]>([]);
-  const [reelText, setReelText] = useState('');
-  const [textSlides, setTextSlides] = useState<string[]>([]);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isPlayingSlides, setIsPlayingSlides] = useState(false);
-  const [reelDuration, setReelDuration] = useState(5);
-  const [reelTransition, setReelTransition] = useState<'fade' | 'slide' | 'zoom'>('fade');
-  const [reelCanvas, setReelCanvas] = useState<HTMLCanvasElement | null>(null);
-  const [generatingReel, setGeneratingReel] = useState(false);
-  const [reelVideoUrl, setReelVideoUrl] = useState<string>('');
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string>('');
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [hashtags, setHashtags] = useState<string>('');
-  const [selectedArticle, setSelectedArticle] = useState<any>(null);
-  const [autoGenerate, setAutoGenerate] = useState(false);
-  const [imageControls, setImageControls] = useState<{ [key: number]: { zoom: number; x: number; y: number } }>({});
-  const [selectedImageControl, setSelectedImageControl] = useState<number | null>(null);
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string>('');
-  const [reelLogoPosition, setReelLogoPosition] = useState({ x: 50, y: 50 });
-  const [reelLogoOpacity, setReelLogoOpacity] = useState(80);
-  const [reelVideoFile, setReelVideoFile] = useState<File | null>(null);
 
   // Recipes state
   const [recipesList, setRecipesList] = useState<any[]>([]);
