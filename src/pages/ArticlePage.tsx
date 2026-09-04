@@ -560,27 +560,32 @@ export default function ArticlePage() {
 
             {/* Social Media Links */}
             {(article.youtubeLink || article.tiktokLink) && (
-              <div className="flex gap-3">
-                {article.youtubeLink && (
-                  <a
-                    href={article.youtubeLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-red-500 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
-                  >
-                    ▶️ YouTube
-                  </a>
-                )}
-                {article.tiktokLink && (
-                  <a
-                    href={article.tiktokLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-gray-50 px-4 py-3 text-sm font-semibold text-black transition hover:bg-gray-100"
-                  >
-                    🎵 TikTok
-                  </a>
-                )}
+              <div className="space-y-3">
+                <h3 className="text-center text-sm font-semibold text-gray-700">
+                  މި އާޓިކަލްއާ ބެހޭ މައުލޫމާތު އިތުރަށް ސާފުކޮށްލެއްވުމަށް ޔޫޓިއުބް ނުވަތަ ޓިކްޓޮކް ލިންކް ޙިޔާރު ކޮށްލައްވާ
+                </h3>
+                <div className="flex gap-3">
+                  {article.youtubeLink && (
+                    <a
+                      href={article.youtubeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-red-500 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                    >
+                      ▶️ YouTube
+                    </a>
+                  )}
+                  {article.tiktokLink && (
+                    <a
+                      href={article.tiktokLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-gray-50 px-4 py-3 text-sm font-semibold text-black transition hover:bg-gray-100"
+                    >
+                      🎵 TikTok
+                    </a>
+                  )}
+                </div>
               </div>
             )}
 
