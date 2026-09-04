@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { Article, categories } from '../data/mockData';
-import { db } from '../firebase';
+import { db, dbWithFallback } from '../firebase';
 import { doc, getDoc, collection, getDocs, query, where, orderBy, limit, addDoc, deleteDoc, setDoc, updateDoc, getDocsFromCache, increment } from 'firebase/firestore';
 import { auth } from '../firebase';
 import PromoBanner from '../components/PromoBanner';
@@ -81,10 +81,19 @@ export default function ArticlePage() {
           } as Article;
           setArticle(articleData);
 
-          // Non-blocking view count increment
-          updateDoc(docRef, { views: (articleData.views || 0) + 1 }).catch(err => {
-            console.warn('Unable to increment article views:', err);
-          });
+          // Debounced view count increment - only increment if not viewed in last hour
+          const viewKey = `article_${id}_viewed`;
+          const lastViewed = localStorage.getItem(viewKey);
+          const now = Date.now();
+          const oneHour = 60 * 60 * 1000;
+
+          if (!lastViewed || (now - parseInt(lastViewed)) > oneHour) {
+            dbWithFallback.writeOperation(async (dbInstance) => {
+              return updateDoc(doc(dbInstance, 'articles', id), { views: increment(1) });
+            })
+              .then(() => localStorage.setItem(viewKey, now.toString()))
+              .catch(err => console.warn('Unable to increment article views:', err));
+          }
 
           // Parallel fetch of likes/dislikes
           Promise.all([
@@ -375,23 +384,38 @@ export default function ArticlePage() {
 
   const updateReactionCount = async (type: 'like' | 'dislike', delta: number) => {
     if (!id) return;
-    const countRef = doc(db, 'articles', id, type === 'like' ? 'likes' : 'dislikes', 'count');
     
-    // Use atomic increment to prevent race conditions
-    await setDoc(countRef, { count: increment(delta) }, { merge: true });
-    
-    // Fetch the updated count to ensure accuracy
-    const countDoc = await getDoc(countRef);
-    const rawCount = countDoc.exists() ? countDoc.data().count : 0;
-    // Strip any non-numeric characters to handle corrupted data
-    const newCount = parseInt(String(rawCount).replace(/[^0-9]/g, '')) || 0;
-    console.log('Updated count - type:', type, 'delta:', delta, 'rawCount:', rawCount, 'newCount:', newCount);
-    
-    if (type === 'like') {
-      setLikes(newCount);
-    } else {
-      setDislikes(newCount);
+    // Debounce reaction updates to prevent rapid successive writes
+    const reactionKey = `article_${id}_${type}_debounce`;
+    const lastUpdate = localStorage.getItem(reactionKey);
+    const now = Date.now();
+    const debounceDelay = 1000; // 1 second debounce
+
+    if (lastUpdate && (now - parseInt(lastUpdate)) < debounceDelay) {
+      console.log('Debouncing reaction update');
+      return;
     }
+
+    localStorage.setItem(reactionKey, now.toString());
+    
+    // Use fallback database for reaction count updates
+    await dbWithFallback.writeOperation(async (dbInstance) => {
+      const countRef = doc(dbInstance, 'articles', id, type === 'like' ? 'likes' : 'dislikes', 'count');
+      await setDoc(countRef, { count: increment(delta) }, { merge: true });
+      
+      // Fetch the updated count to ensure accuracy
+      const countDoc = await getDoc(countRef);
+      const rawCount = countDoc.exists() ? countDoc.data().count : 0;
+      // Strip any non-numeric characters to handle corrupted data
+      const newCount = parseInt(String(rawCount).replace(/[^0-9]/g, '')) || 0;
+      console.log('Updated count - type:', type, 'delta:', delta, 'rawCount:', rawCount, 'newCount:', newCount);
+      
+      if (type === 'like') {
+        setLikes(newCount);
+      } else {
+        setDislikes(newCount);
+      }
+    });
   };
 
   const handleAddComment = async () => {

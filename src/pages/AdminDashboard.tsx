@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase';
+import { auth, db, dbWithFallback } from '../firebase';
 import { db as goldenTimeDb } from '../firebase-golden-time';
 import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
@@ -2290,27 +2290,29 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       
       const articleId = nextId.toString();
       
-      await setDoc(doc(db, 'articles', articleId), {
-        id: articleId,
-        title: titleDv || title,
-        titleEn: title,
-        excerpt: excerptDv || excerpt,
-        excerptEn: excerpt,
-        category,
-        image: finalImageUrl,
-        video: finalVideoUrl,
-        youtubeLink,
-        tiktokLink,
-        publishedAt: new Date().toLocaleDateString('dv'),
-        author: author || 'Admin',
-        views: 0,
-        readingTime,
-        body,
-        bodyEn,
-        trending,
-        featured,
-        breakingNews: breaking,
-        createdAt: serverTimestamp(),
+      await dbWithFallback.writeOperation(async (dbInstance) => {
+        return setDoc(doc(dbInstance, 'articles', articleId), {
+          id: articleId,
+          title: titleDv || title,
+          titleEn: title,
+          excerpt: excerptDv || excerpt,
+          excerptEn: excerpt,
+          category,
+          image: finalImageUrl,
+          video: finalVideoUrl,
+          youtubeLink,
+          tiktokLink,
+          publishedAt: new Date().toLocaleDateString('dv'),
+          author: author || 'Admin',
+          views: 0,
+          readingTime,
+          body,
+          bodyEn,
+          trending,
+          featured,
+          breakingNews: breaking,
+          createdAt: serverTimestamp(),
+        });
       });
 
       setLastCreatedArticleId(articleId);
