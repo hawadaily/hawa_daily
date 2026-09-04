@@ -519,6 +519,8 @@ export default function AdminDashboard() {
   const [author, setAuthor] = useState('');
   const [imageUrl, setImageUrl] = useState('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80');
   const [videoUrl, setVideoUrl] = useState('');
+  const [youtubeLink, setYoutubeLink] = useState('');
+  const [tiktokLink, setTiktokLink] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUploadOption, setVideoUploadOption] = useState<'cloudinary' | 'github'>('github');
   const [imageUploadOption, setImageUploadOption] = useState<'imgbb' | 'cloudinary'>('imgbb');
@@ -2297,6 +2299,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         category,
         image: finalImageUrl,
         video: finalVideoUrl,
+        youtubeLink,
+        tiktokLink,
         publishedAt: new Date().toLocaleDateString('dv'),
         author: author || 'Admin',
         views: 0,
@@ -2328,6 +2332,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setImageUrl('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80');
       setArticleFile(null);
       setVideoUrl('');
+      setYoutubeLink('');
+      setTiktokLink('');
       setVideoFile(null);
       setBody('');
       setBodyEn('');
@@ -4677,6 +4683,30 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                 />
               </div>
 
+              {/* Social Media Links */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700">YouTube Link (Optional)</label>
+                  <input
+                    type="url"
+                    value={youtubeLink}
+                    onChange={(e) => setYoutubeLink(e.target.value)}
+                    className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                    placeholder="https://youtube.com/watch?v=..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700">TikTok Link (Optional)</label>
+                  <input
+                    type="url"
+                    value={tiktokLink}
+                    onChange={(e) => setTiktokLink(e.target.value)}
+                    className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                    placeholder="https://tiktok.com/@user/video/..."
+                  />
+                </div>
+              </div>
+
               {/* Image Generator Section */}
               <div className="rounded-2xl border border-purple-500/30 bg-purple-500/10 p-4">
                 <h4 className="font-semibold text-gray-900 mb-3">އިމޭޖް ޖެނެރޭޓަރ (Image Generator)</h4>
@@ -5224,24 +5254,22 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                     >
                       👁️ ޚަބަރު ބަލާ (View Article)
                     </a>
-                    <div className="flex gap-2">
-                      <a
-                        href={`https://www.youtube.com/upload?title=${encodeURIComponent(titleDv || title)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-red-500 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
-                      >
-                        ▶️ YouTube
-                      </a>
-                      <a
-                        href="https://www.tiktok.com/upload"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-black px-4 py-3 text-sm font-semibold text-black transition hover:bg-gray-100"
-                      >
-                        🎵 TikTok
-                      </a>
-                    </div>
+                    <a
+                      href="https://www.youtube.com/@HawaDaily"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-2xl border-2 border-red-500 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                    >
+                      ▶️ YouTube Channel
+                    </a>
+                    <a
+                      href="https://www.tiktok.com/@hawadaily"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-2xl border-2 border-black px-4 py-3 text-sm font-semibold text-black transition hover:bg-gray-100"
+                    >
+                      🎵 TikTok Channel
+                    </a>
                   </div>
                 </div>
               )}

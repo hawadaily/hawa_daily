@@ -533,6 +533,33 @@ export default function ArticlePage() {
                 </video>
               </div>
             )}
+
+            {/* Social Media Links */}
+            {(article.youtubeLink || article.tiktokLink) && (
+              <div className="flex gap-3">
+                {article.youtubeLink && (
+                  <a
+                    href={article.youtubeLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-red-500 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                  >
+                    ▶️ YouTube
+                  </a>
+                )}
+                {article.tiktokLink && (
+                  <a
+                    href={article.tiktokLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-gray-50 px-4 py-3 text-sm font-semibold text-black transition hover:bg-gray-100"
+                  >
+                    🎵 TikTok
+                  </a>
+                )}
+              </div>
+            )}
+
             {/* Debug: Show video URL if exists */}
             {process.env.NODE_ENV === 'development' && article.video && (
               <div className="rounded-2xl bg-yellow-100 p-2 text-xs text-yellow-800">

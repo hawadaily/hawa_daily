@@ -17,6 +17,8 @@ export type Article = {
   readingTime: string;
   body: string[] | string;
   video?: string;
+  youtubeLink?: string;
+  tiktokLink?: string;
   trending: boolean;
   featured?: boolean;
   breakingNews?: boolean;
