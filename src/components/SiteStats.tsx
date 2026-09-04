@@ -8,6 +8,12 @@ interface SiteStats {
   comments: number;
 }
 
+interface SiteStatsProps {
+  onFilterLikes?: () => void;
+  onFilterComments?: () => void;
+  activeFilter?: 'all' | 'likes' | 'comments';
+}
+
 const formatNumber = (num: number): string => {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + 'M';
@@ -17,7 +23,7 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-export default function SiteStats() {
+export default function SiteStats({ onFilterLikes, onFilterComments, activeFilter = 'all' }: SiteStatsProps) {
   const [stats, setStats] = useState<SiteStats>({
     visitors: 0,
     likes: 0,
@@ -100,11 +106,17 @@ export default function SiteStats() {
           <p className="text-xs uppercase tracking-[0.24em] text-sky-600 mb-2">ވިސިޓަރުން</p>
           <p className="text-2xl font-bold text-slate-900">{formatNumber(stats.visitors)}</p>
         </div>
-        <div className="text-center">
+        <div 
+          className={`text-center cursor-pointer transition ${activeFilter === 'likes' ? 'bg-sky-50 rounded-lg' : ''}`}
+          onClick={onFilterLikes}
+        >
           <p className="text-xs uppercase tracking-[0.24em] text-sky-600 mb-2">ލައިކްތައް</p>
           <p className="text-2xl font-bold text-slate-900">{formatNumber(stats.likes)}</p>
         </div>
-        <div className="text-center">
+        <div 
+          className={`text-center cursor-pointer transition ${activeFilter === 'comments' ? 'bg-sky-50 rounded-lg' : ''}`}
+          onClick={onFilterComments}
+        >
           <p className="text-xs uppercase tracking-[0.24em] text-sky-600 mb-2">ކޮމެންޓްތައް</p>
           <p className="text-2xl font-bold text-slate-900">{formatNumber(stats.comments)}</p>
         </div>

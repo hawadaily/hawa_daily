@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import React from 'react';
 import RecipeCard from '../components/RecipeCard';
 import { IMAGE_FALLBACK } from '../utils/imageFallback';
 import { db } from '../firebase';
@@ -200,8 +201,21 @@ export default function Recipes() {
       </div>
 
       {/* Recipe Grid with Advertisements */}
-      <div className="flex gap-4 px-4 pb-8 max-w-[1600px] mx-auto">
-        {/* Left Advertisement */}
+      <div className="flex flex-col lg:flex-row gap-4 px-4 pb-8 max-w-[1600px] mx-auto">
+        {/* Mobile Top Advertisement */}
+        <div className="lg:hidden w-full">
+          <div id="ad-recipes-mobile-top" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-32 flex items-center justify-center overflow-hidden">
+            {advertisements['ad-recipes-left-medium-160x256']?.image ? (
+              <img src={advertisements['ad-recipes-left-medium-160x256'].image} alt="Advertisement" className="w-full h-full object-cover" />
+            ) : advertisementsError ? (
+              <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+            ) : (
+              <p className="text-gray-500 text-sm text-center px-2">Advertisement</p>
+            )}
+          </div>
+        </div>
+
+        {/* Left Advertisement (Desktop) */}
         <div className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-24 space-y-4">
             <div id="ad-recipes-left-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center overflow-hidden">
@@ -246,19 +260,34 @@ export default function Recipes() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredRecipes.map((recipe: Recipe) => (
-                <RecipeCard
-                  key={recipe.id}
-                  recipe={recipe}
-                  onClick={() => setSelectedRecipe(recipe)}
-                  language={language}
-                />
+              {filteredRecipes.map((recipe: Recipe, index: number) => (
+                <React.Fragment key={recipe.id}>
+                  <RecipeCard
+                    recipe={recipe}
+                    onClick={() => setSelectedRecipe(recipe)}
+                    language={language}
+                  />
+                  {/* Mobile advertisement after every 4 recipes */}
+                  {(index + 1) % 4 === 0 && index + 1 < filteredRecipes.length && (
+                    <div className="lg:hidden col-span-1 sm:col-span-2">
+                      <div className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-32 flex items-center justify-center overflow-hidden">
+                        {advertisements[`ad-recipes-mobile-${Math.floor((index + 1) / 4)}`]?.image ? (
+                          <img src={advertisements[`ad-recipes-mobile-${Math.floor((index + 1) / 4)}`].image} alt="Advertisement" className="w-full h-full object-cover" />
+                        ) : advertisementsError ? (
+                          <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+                        ) : (
+                          <p className="text-gray-500 text-sm text-center px-2">Advertisement</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </React.Fragment>
               ))}
             </div>
           )}
         </div>
 
-        {/* Right Advertisement */}
+        {/* Right Advertisement (Desktop) */}
         <div className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-24 space-y-4">
             <div id="ad-recipes-right-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center overflow-hidden">

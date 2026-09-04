@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import React from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -2175,8 +2176,21 @@ export default function DoctorsDuty() {
       </div>
 
       {/* Main Content with Advertisements */}
-      <div className="flex gap-4 p-4 md:p-8 max-w-7xl mx-auto">
-        {/* Left Advertisement */}
+      <div className="flex flex-col lg:flex-row gap-4 p-4 md:p-8 max-w-7xl mx-auto">
+        {/* Mobile Top Advertisement */}
+        <div className="lg:hidden w-full">
+          <div id="ad-doctors-mobile-top" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-32 flex items-center justify-center overflow-hidden">
+            {advertisements['ad-doctors-left-medium-160x256']?.image ? (
+              <img src={advertisements['ad-doctors-left-medium-160x256'].image} alt="Advertisement" className="w-full h-full object-cover" />
+            ) : advertisementsError ? (
+              <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+            ) : (
+              <p className="text-gray-500 text-sm text-center px-2">Advertisement</p>
+            )}
+          </div>
+        </div>
+
+        {/* Left Advertisement (Desktop) */}
         <div className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-4 space-y-4">
             <div id="ad-doctors-left-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center overflow-hidden">
@@ -2296,9 +2310,9 @@ export default function DoctorsDuty() {
 
       {/* Clinics Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredClinics.map((clinic) => (
+        {filteredClinics.map((clinic, index) => (
+          <React.Fragment key={clinic.id}>
             <motion.div
-              key={clinic.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
@@ -2399,6 +2413,21 @@ export default function DoctorsDuty() {
                 </a>
               </div>
             </motion.div>
+            {/* Mobile advertisement after every 4 clinics */}
+            {(index + 1) % 4 === 0 && index + 1 < filteredClinics.length && (
+              <div className="lg:hidden col-span-1 md:col-span-2">
+                <div className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-32 flex items-center justify-center overflow-hidden">
+                  {advertisements[`ad-doctors-mobile-${Math.floor((index + 1) / 4)}`]?.image ? (
+                    <img src={advertisements[`ad-doctors-mobile-${Math.floor((index + 1) / 4)}`].image} alt="Advertisement" className="w-full h-full object-cover" />
+                  ) : advertisementsError ? (
+                    <img src="/promotions/default-ad.jpg" alt="Advertisement" className="w-full h-full object-cover" />
+                  ) : (
+                    <p className="text-gray-500 text-sm text-center px-2">Advertisement</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </React.Fragment>
         ))}
       </div>
 
@@ -2412,7 +2441,7 @@ export default function DoctorsDuty() {
       </div>
         </div>
 
-        {/* Right Advertisement */}
+        {/* Right Advertisement (Desktop) */}
         <div className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-4 space-y-4">
             <div id="ad-doctors-right-tall-160x384" className="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-96 flex items-center justify-center overflow-hidden">

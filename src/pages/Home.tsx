@@ -15,9 +15,11 @@ export default function Home() {
   const [visibleCount, setVisibleCount] = useState(16);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [articleReactions, setArticleReactions] = useState<Record<string, { likes: number; dislikes: number }>>({});
+  const [articleComments, setArticleComments] = useState<Record<string, number>>({});
   const [sidebarPromotions, setSidebarPromotions] = useState<any[]>([]);
   const [slot1Index, setSlot1Index] = useState(0);
   const [slot2Index, setSlot2Index] = useState(0);
+  const [statsFilter, setStatsFilter] = useState<'all' | 'likes' | 'comments'>('all');
 
   // Fetch articles with periodic updates instead of real-time listeners
   useEffect(() => {
@@ -59,6 +61,26 @@ export default function Home() {
           reactionsData[result.id] = { likes: result.likes, dislikes: result.dislikes };
         });
         setArticleReactions(reactionsData);
+
+        // Fetch comments count for each article in parallel
+        const commentsData: Record<string, number> = {};
+        const commentsPromises = articles.map(async (article) => {
+          try {
+            const commentsSnapshot = await getDocs(collection(db, 'articles', article.id, 'comments'));
+            return {
+              id: article.id,
+              count: commentsSnapshot.size
+            };
+          } catch (e) {
+            return { id: article.id, count: 0 };
+          }
+        });
+
+        const commentsResults = await Promise.all(commentsPromises);
+        commentsResults.forEach(result => {
+          commentsData[result.id] = result.count;
+        });
+        setArticleComments(commentsData);
         
         // Fetch sidebar promotions
         try {
@@ -192,6 +214,25 @@ export default function Home() {
   const filteredArticles = selectedCategory 
     ? articlesState.filter(article => article.category === selectedCategory)
     : articlesState;
+
+  // Apply stats filter (likes or comments)
+  const statsFilteredArticles = useMemo(() => {
+    if (statsFilter === 'all') return filteredArticles;
+    
+    if (statsFilter === 'likes') {
+      return filteredArticles.filter(article => 
+        (articleReactions[article.id]?.likes || 0) > 0
+      );
+    }
+    
+    if (statsFilter === 'comments') {
+      return filteredArticles.filter(article => 
+        (articleComments[article.id] || 0) > 0
+      );
+    }
+    
+    return filteredArticles;
+  }, [filteredArticles, statsFilter, articleReactions, articleComments]);
   
   // Get current time for filtering last 24 hours
   const now = new Date();
@@ -199,7 +240,7 @@ export default function Home() {
   
   // Show articles from last 24 hours in the trending section
   const trending = useMemo(() => {
-    return filteredArticles.filter((article) => {
+    return statsFilteredArticles.filter((article) => {
       let articleDate: Date;
       if (article.publishedAt && typeof article.publishedAt === 'object' && 'toDate' in article.publishedAt) {
         // Firebase Timestamp
@@ -210,10 +251,10 @@ export default function Home() {
       }
       return articleDate >= twentyFourHoursAgo;
     }).slice(0, 4); // Show up to 4 articles from last 24 hours
-  }, [filteredArticles, twentyFourHoursAgo]);
+  }, [statsFilteredArticles, twentyFourHoursAgo]);
   
-  const latest = useMemo(() => filteredArticles.slice(0, visibleCount), [filteredArticles, visibleCount]);
-  const hasMore = filteredArticles.length > visibleCount;
+  const latest = useMemo(() => statsFilteredArticles.slice(0, visibleCount), [statsFilteredArticles, visibleCount]);
+  const hasMore = statsFilteredArticles.length > visibleCount;
 
   if (loading) {
     return (
@@ -416,7 +457,11 @@ export default function Home() {
       </section>
 
       {/* Site Stats */}
-      <SiteStats />
+      <SiteStats 
+        onFilterLikes={() => setStatsFilter(statsFilter === 'likes' ? 'all' : 'likes')}
+        onFilterComments={() => setStatsFilter(statsFilter === 'comments' ? 'all' : 'comments')}
+        activeFilter={statsFilter}
+      />
 
       {/* Bottom Promo Banner */}
       <PromoBanner location="home" position="bottom" />
