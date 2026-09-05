@@ -543,6 +543,8 @@ export default function AdminDashboard() {
   const [editCategory, setEditCategory] = useState('');
   const [editAuthor, setEditAuthor] = useState('');
   const [editVideoUrl, setEditVideoUrl] = useState('');
+  const [editYoutubeLink, setEditYoutubeLink] = useState('');
+  const [editTiktokLink, setEditTiktokLink] = useState('');
   const [editVideoFile, setEditVideoFile] = useState<File | null>(null);
   const [editVideoUploadOption, setEditVideoUploadOption] = useState<'cloudinary' | 'github'>('github');
   const [editImageUploadOption, setEditImageUploadOption] = useState<'imgbb' | 'cloudinary'>('imgbb');
@@ -1357,6 +1359,8 @@ export default function AdminDashboard() {
   const [storyDescription, setStoryDescription] = useState('');
   const [storyAuthor, setStoryAuthor] = useState('');
   const [storyCoverImage, setStoryCoverImage] = useState<File | null>(null);
+  const [storyYoutubeLink, setStoryYoutubeLink] = useState('');
+  const [storyTiktokLink, setStoryTiktokLink] = useState('');
   const [storyStatus, setStoryStatus] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
   const [storyReleaseDate, setStoryReleaseDate] = useState('');
   const [storyLocked, setStoryLocked] = useState(true);
@@ -2407,6 +2411,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setEditCategory(article.category || '');
     setEditAuthor(article.author || '');
     setEditVideoUrl(article.video || '');
+    setEditYoutubeLink(article.youtubeLink || '');
+    setEditTiktokLink(article.tiktokLink || '');
     setEditBody(Array.isArray(article.body) ? article.body.join(' ') : (article.body || ''));
     setEditBodyEn(Array.isArray(article.bodyEn) ? article.bodyEn.join(' ') : (article.bodyEn || ''));
     setEditReadingTime(article.readingTime || '5މިނިޓް');
@@ -2471,6 +2477,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         excerptEn: editExcerpt,
         image: finalImageUrl,
         video: finalVideoUrl,
+        youtubeLink: editYoutubeLink,
+        tiktokLink: editTiktokLink,
         category: editCategory,
         author: editAuthor || 'Admin',
         body: editBody,
@@ -2957,6 +2965,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         title: storyTitle,
         description: storyDescription,
         author: storyAuthor,
+        youtubeLink: storyYoutubeLink,
+        tiktokLink: storyTiktokLink,
         coverImage: coverImageUrl,
         status: storyStatus,
         releaseDate: storyReleaseDate || null,
@@ -2985,6 +2995,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setStoryTitle(story.title);
     setStoryDescription(story.description || '');
     setStoryAuthor(story.author || '');
+    setStoryYoutubeLink(story.youtubeLink || '');
+    setStoryTiktokLink(story.tiktokLink || '');
     setStoryStatus(story.status || 'upcoming');
     setStoryReleaseDate(story.releaseDate || '');
     setStoryLocked(story.locked !== false);
@@ -3006,6 +3018,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         title: storyTitle,
         description: storyDescription,
         author: storyAuthor,
+        youtubeLink: storyYoutubeLink,
+        tiktokLink: storyTiktokLink,
         status: storyStatus,
         releaseDate: storyReleaseDate || null,
         locked: storyLocked,
@@ -3040,6 +3054,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setStoryTitle('');
     setStoryDescription('');
     setStoryAuthor('');
+    setStoryYoutubeLink('');
+    setStoryTiktokLink('');
     setStoryCoverImage(null);
     setStoryStatus('upcoming');
     setStoryReleaseDate('');
@@ -5991,6 +6007,31 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                     {uploadingEditVideo && <p className="text-xs text-gray-600">Uploading video...</p>}
                   </div>
                 </div>
+
+                {/* Social Media Links */}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">YouTube Link (Optional)</label>
+                    <input
+                      type="url"
+                      value={editYoutubeLink}
+                      onChange={(e) => setEditYoutubeLink(e.target.value)}
+                      className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="https://youtube.com/watch?v=..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">TikTok Link (Optional)</label>
+                    <input
+                      type="url"
+                      value={editTiktokLink}
+                      onChange={(e) => setEditTiktokLink(e.target.value)}
+                      className="mt-2 w-full rounded-3xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="https://tiktok.com/@user/video/..."
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-semibold text-gray-700">{t.readingTime}</label>
                   <select
@@ -8247,6 +8288,31 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       placeholder="Author name..."
                     />
                   </div>
+
+                  {/* Social Media Links */}
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">YouTube Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={storyYoutubeLink}
+                        onChange={(e) => setStoryYoutubeLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://youtube.com/watch?v=..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">TikTok Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={storyTiktokLink}
+                        onChange={(e) => setStoryTiktokLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://tiktok.com/@user/video/..."
+                      />
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-semibold text-gray-700">Status</label>
                     <select
