@@ -1374,6 +1374,8 @@ export default function AdminDashboard() {
   const [goldenTimeYear, setGoldenTimeYear] = useState('');
   const [goldenTimeCategory, setGoldenTimeCategory] = useState('ދިރިއުޅުމުގެ ވައްޓަފާޅު، ކުޑަކުދިން، ސަގާފަތް');
   const [goldenTimeContent, setGoldenTimeContent] = useState('');
+  const [goldenTimeYoutubeLink, setGoldenTimeYoutubeLink] = useState('');
+  const [goldenTimeTiktokLink, setGoldenTimeTiktokLink] = useState('');
   const [editingGoldenTime, setEditingGoldenTime] = useState(false);
   const [uploadingGoldenTime, setUploadingGoldenTime] = useState(false);
   const [goldenTimeError, setGoldenTimeError] = useState('');
@@ -3207,6 +3209,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         year: goldenTimeYear ? Number(goldenTimeYear) : null,
         category: goldenTimeCategory,
         content: goldenTimeContent,
+        youtubeLink: goldenTimeYoutubeLink,
+        tiktokLink: goldenTimeTiktokLink,
         createdAt: serverTimestamp(),
       });
 
@@ -3236,6 +3240,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setGoldenTimeYear(article.year?.toString() || '');
     setGoldenTimeCategory(article.category || '');
     setGoldenTimeContent(article.content || '');
+    setGoldenTimeYoutubeLink(article.youtubeLink || '');
+    setGoldenTimeTiktokLink(article.tiktokLink || '');
     setEditingGoldenTime(true);
   };
 
@@ -3256,6 +3262,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         year: goldenTimeYear ? Number(goldenTimeYear) : null,
         category: goldenTimeCategory,
         content: goldenTimeContent,
+        youtubeLink: goldenTimeYoutubeLink,
+        tiktokLink: goldenTimeTiktokLink,
       };
 
       if (goldenTimeCoverImage) {
@@ -8824,6 +8832,31 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                     />
                   </div>
+
+                  {/* Social Media Links */}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">YouTube Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={goldenTimeYoutubeLink}
+                        onChange={(e) => setGoldenTimeYoutubeLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://youtube.com/watch?v=..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">TikTok Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={goldenTimeTiktokLink}
+                        onChange={(e) => setGoldenTimeTiktokLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://tiktok.com/@user/video/..."
+                      />
+                    </div>
+                  </div>
+
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
                     <label className="flex items-center gap-2">
                       <input
