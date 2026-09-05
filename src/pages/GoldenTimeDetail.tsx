@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, addDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, addDoc, collection, query, orderBy, onSnapshot, serverTimestamp, where, getDocs } from 'firebase/firestore';
 import { db as goldenTimeDb } from '../firebase-golden-time';
 import { auth } from '../firebase';
 import { ThumbsUp, ThumbsDown, MessageCircle, Eye, ArrowLeft, Send, Share2 } from 'lucide-react';
@@ -15,6 +15,7 @@ interface Comment {
 
 interface GoldenTimeArticle {
   id: string;
+  slug: string;
   title: string;
   description: string;
   author?: string;
@@ -32,9 +33,10 @@ interface GoldenTimeArticle {
 }
 
 export default function GoldenTimeDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [article, setArticle] = useState<GoldenTimeArticle | null>(null);
+  const [articleId, setArticleId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -49,34 +51,56 @@ export default function GoldenTimeDetail() {
   }, []);
 
   useEffect(() => {
-    if (!id) return;
+    if (!slug) return;
 
-    // Load article
-    const articleRef = doc(goldenTimeDb, 'golden-time', id);
-    const unsubscribeArticle = onSnapshot(articleRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setArticle({ id: docSnap.id, ...(docSnap.data() as any) });
-        setLoading(false);
-      } else {
+    // First, find the article by slug
+    const loadArticle = async () => {
+      try {
+        const articlesQuery = query(collection(goldenTimeDb, 'golden-time'), where('slug', '==', slug));
+        const articlesSnapshot = await getDocs(articlesQuery);
+        
+        if (articlesSnapshot.empty) {
+          setLoading(false);
+          return;
+        }
+
+        const articleDoc = articlesSnapshot.docs[0];
+        const id = articleDoc.id;
+        setArticleId(id);
+
+        // Load article
+        const articleRef = doc(goldenTimeDb, 'golden-time', id);
+        const unsubscribeArticle = onSnapshot(articleRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setArticle({ id: docSnap.id, ...(docSnap.data() as any) });
+            setLoading(false);
+          } else {
+            setLoading(false);
+          }
+        });
+
+        // Load comments
+        const commentsQuery = query(collection(goldenTimeDb, 'golden-time', id, 'comments'), orderBy('createdAt', 'desc'));
+        const unsubscribeComments = onSnapshot(commentsQuery, (snapshot) => {
+          const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+          setComments(commentsData);
+        });
+
+        // Increment view count
+        incrementView(id);
+
+        return () => {
+          unsubscribeArticle();
+          unsubscribeComments();
+        };
+      } catch (error) {
+        console.error('Failed to load article:', error);
         setLoading(false);
       }
-    });
-
-    // Load comments
-    const commentsQuery = query(collection(goldenTimeDb, 'golden-time', id, 'comments'), orderBy('createdAt', 'desc'));
-    const unsubscribeComments = onSnapshot(commentsQuery, (snapshot) => {
-      const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setComments(commentsData);
-    });
-
-    // Increment view count
-    incrementView(id);
-
-    return () => {
-      unsubscribeArticle();
-      unsubscribeComments();
     };
-  }, [id]);
+
+    loadArticle();
+  }, [slug]);
 
   const incrementView = async (articleId: string) => {
     try {
@@ -141,14 +165,14 @@ export default function GoldenTimeDetail() {
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!article || !newComment.trim()) {
+    if (!article || !newComment.trim() || !articleId) {
       alert('Please write a comment');
       return;
     }
 
     setSubmittingComment(true);
     try {
-      await addDoc(collection(goldenTimeDb, 'golden-time', article.id, 'comments'), {
+      await addDoc(collection(goldenTimeDb, 'golden-time', articleId, 'comments'), {
         userId: user?.uid || `anonymous_${Date.now()}`,
         userName: user?.displayName || 'Anonymous',
         text: newComment.trim(),
@@ -156,7 +180,7 @@ export default function GoldenTimeDetail() {
       });
 
       // Update comment count on article
-      await updateDoc(doc(goldenTimeDb, 'golden-time', article.id), {
+      await updateDoc(doc(goldenTimeDb, 'golden-time', articleId), {
         comments: increment(1)
       });
 

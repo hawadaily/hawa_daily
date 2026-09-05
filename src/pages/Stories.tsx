@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 interface Story {
   id: string;
+  slug: string;
   title: string;
   description: string;
   author?: string;
@@ -151,7 +152,7 @@ export default function Stories() {
                     </div>
                   ) : (
                     <Link
-                      to={`/stories/${story.id}`}
+                      to={`/stories/${story.slug}`}
                       className="mt-4 flex items-center text-sm text-brand-600 font-semibold"
                     >
                       <span>Read Episodes</span>

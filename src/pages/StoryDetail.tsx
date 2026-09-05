@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
-import { doc, getDoc, collection, getDocs, query, orderBy, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot, increment, runTransaction } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, orderBy, where, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot, increment, runTransaction } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { ArrowLeft, BookOpen, ThumbsUp, ThumbsDown, Send, Share2, Eye } from 'lucide-react';
 
@@ -36,9 +36,10 @@ interface Story {
 }
 
 export default function StoryDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [story, setStory] = useState<Story | null>(null);
+  const [storyId, setStoryId] = useState<string | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
   const [newComment, setNewComment] = useState<Record<string, string>>({});
@@ -50,24 +51,36 @@ export default function StoryDetail() {
 
   useEffect(() => {
     const loadStoryData = async () => {
-      if (!id) return;
+      if (!slug) return;
 
       try {
+        // First, find the story by slug
+        const storiesQuery = query(collection(db, 'stories'), where('slug', '==', slug));
+        const storiesSnapshot = await getDocs(storiesQuery);
+        
+        if (storiesSnapshot.empty) {
+          setLoading(false);
+          return;
+        }
+
+        const storyDoc = storiesSnapshot.docs[0];
+        const storyId = storyDoc.id;
+        setStoryId(storyId);
+        
         // Load story
-        const storyDoc = await getDoc(doc(db, 'stories', id));
         if (storyDoc.exists()) {
           setStory({ id: storyDoc.id, ...(storyDoc.data() as any) });
         }
 
         // Load episodes
-        const episodesQuery = query(collection(db, 'stories', id, 'episodes'), orderBy('episodeNumber', 'asc'));
+        const episodesQuery = query(collection(db, 'stories', storyId, 'episodes'), orderBy('episodeNumber', 'asc'));
         const episodesSnapshot = await getDocs(episodesQuery);
         const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setEpisodes(episodesData);
 
         // Load comments for each episode
         episodesData.forEach((episode) => {
-          const commentsQuery = query(collection(db, 'stories', id, 'episodes', episode.id, 'comments'), orderBy('createdAt', 'desc'));
+          const commentsQuery = query(collection(db, 'stories', storyId, 'episodes', episode.id, 'comments'), orderBy('createdAt', 'desc'));
           onSnapshot(commentsQuery, (snapshot) => {
             const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
             setComments((prev) => ({ ...prev, [episode.id]: commentsData }));
@@ -107,26 +120,26 @@ export default function StoryDetail() {
 
   // Track episode views
   useEffect(() => {
-    if (!id || episodes.length === 0) return;
+    if (!storyId || episodes.length === 0) return;
 
     const episodeParam = searchParams.get('episode');
-    const viewedEpisodes = new Set(JSON.parse(localStorage.getItem(`viewed_episodes_${id}`) || '[]'));
+    const viewedEpisodes = new Set(JSON.parse(localStorage.getItem(`viewed_episodes_${storyId}`) || '[]'));
     
     // Only track the specific episode being viewed (from URL param)
     if (episodeParam) {
       const episode = episodes.find((e) => e.id === episodeParam);
       if (episode && !viewedEpisodes.has(episode.id)) {
-        updateDoc(doc(db, 'stories', id, 'episodes', episode.id), {
+        updateDoc(doc(db, 'stories', storyId, 'episodes', episode.id), {
           viewCount: increment(1)
         }).then(() => {
           viewedEpisodes.add(episode.id);
-          localStorage.setItem(`viewed_episodes_${id}`, JSON.stringify([...viewedEpisodes]));
+          localStorage.setItem(`viewed_episodes_${storyId}`, JSON.stringify([...viewedEpisodes]));
         }).catch((error) => {
           console.error('Failed to increment view count:', error);
         });
       }
     }
-  }, [id, episodes, searchParams]);
+  }, [storyId, episodes, searchParams]);
 
   // Load localStorage reactions for anonymous users
   useEffect(() => {
@@ -213,7 +226,7 @@ export default function StoryDetail() {
   }, [story, episodes, searchParams]);
 
   const handleShareEpisode = (episodeId: string) => {
-    const shareUrl = `${window.location.origin}/stories/${id}?episode=${episodeId}`;
+    const shareUrl = `${window.location.origin}/stories/${slug}?episode=${episodeId}`;
     if (navigator.share) {
       navigator.share({
         title: story?.title,
@@ -229,13 +242,13 @@ export default function StoryDetail() {
   };
 
   const handleAddComment = async (episodeId: string) => {
-    if (!id) return;
+    if (!storyId) return;
 
     const commentText = newComment[episodeId];
     if (!commentText?.trim()) return;
 
     try {
-      await addDoc(collection(db, 'stories', id, 'episodes', episodeId, 'comments'), {
+      await addDoc(collection(db, 'stories', storyId, 'episodes', episodeId, 'comments'), {
         text: commentText,
         userId: currentUser?.uid || 'anonymous',
         userName: currentUser?.displayName || 'Anonymous',
@@ -250,10 +263,10 @@ export default function StoryDetail() {
   };
 
   const handleLikeComment = async (episodeId: string, commentId: string) => {
-    if (!id) return;
+    if (!storyId) return;
 
     try {
-      const commentRef = doc(db, 'stories', id, 'episodes', episodeId, 'comments', commentId);
+      const commentRef = doc(db, 'stories', storyId, 'episodes', episodeId, 'comments', commentId);
       const comment = comments[episodeId]?.find((c) => c.id === commentId);
       
       if (!comment) return;
@@ -290,10 +303,10 @@ export default function StoryDetail() {
   };
 
   const handleDislikeComment = async (episodeId: string, commentId: string) => {
-    if (!id) return;
+    if (!storyId) return;
 
     try {
-      const commentRef = doc(db, 'stories', id, 'episodes', episodeId, 'comments', commentId);
+      const commentRef = doc(db, 'stories', storyId, 'episodes', episodeId, 'comments', commentId);
       const comment = comments[episodeId]?.find((c) => c.id === commentId);
       
       if (!comment) return;
@@ -330,10 +343,10 @@ export default function StoryDetail() {
   };
 
   const handleLikeEpisode = async (episodeId: string) => {
-    if (!id) return;
+    if (!storyId) return;
 
     try {
-      const episodeRef = doc(db, 'stories', id, 'episodes', episodeId);
+      const episodeRef = doc(db, 'stories', storyId, 'episodes', episodeId);
       const episode = episodes.find((e) => e.id === episodeId);
       
       if (!episode) return;
@@ -370,10 +383,10 @@ export default function StoryDetail() {
   };
 
   const handleDislikeEpisode = async (episodeId: string) => {
-    if (!id) return;
+    if (!storyId) return;
 
     try {
-      const episodeRef = doc(db, 'stories', id, 'episodes', episodeId);
+      const episodeRef = doc(db, 'stories', storyId, 'episodes', episodeId);
       const episode = episodes.find((e) => e.id === episodeId);
       
       if (!episode) return;

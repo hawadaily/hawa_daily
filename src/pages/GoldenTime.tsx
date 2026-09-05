@@ -8,6 +8,7 @@ import { ThumbsUp, ThumbsDown, MessageCircle, Eye } from 'lucide-react';
 
 interface GoldenTimeArticle {
   id: string;
+  slug: string;
   title: string;
   description: string;
   author?: string;
@@ -358,7 +359,7 @@ export default function GoldenTime() {
                     </div>
                   )}
                   <Link
-                    to={`/golden-time/${article.id}`}
+                    to={`/golden-time/${article.slug}`}
                     onClick={() => incrementView(article.id)}
                     className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
                   >
