@@ -10,6 +10,7 @@ import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
 
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB, compressImage, deleteImage } from '../utils/cloudinary';
+import { generateSlug } from '../utils/slug';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
 type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'golden-time' | 'obituary' | 'funeral-poster' | 'advertisements' | 'hero-slides';
@@ -1390,6 +1391,8 @@ export default function AdminDashboard() {
   const [goldenTimeLogoYPercent, setGoldenTimeLogoYPercent] = useState(90);
   const [goldenTimeLogoSizePercent, setGoldenTimeLogoSizePercent] = useState(15);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [migratingSlugs, setMigratingSlugs] = useState(false);
+  const [migrationResult, setMigrationResult] = useState('');
 
   // Obituary maker state
   const [obituaryName, setObituaryName] = useState('');
@@ -2297,10 +2300,12 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       }
       
       const articleId = nextId.toString();
+      const slug = generateSlug(titleDv || title);
       
       await dbWithFallback.writeOperation(async (dbInstance) => {
         return setDoc(doc(dbInstance, 'articles', articleId), {
           id: articleId,
+          slug,
           title: titleDv || title,
           titleEn: title,
           excerpt: excerptDv || excerpt,
@@ -2470,7 +2475,10 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         setUploadingEditVideo(false);
       }
       
+      const slug = generateSlug(editTitleDv || editTitle);
+      
       await updateDoc(doc(db, 'articles', editingArticle.id), {
+        slug,
         title: editTitleDv || editTitle,
         titleEn: editTitle,
         excerpt: editExcerptDv || editExcerpt,
@@ -2946,6 +2954,63 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
   };
 
+  const handleMigrateSlugs = async () => {
+    if (!confirm('This will add slugs to existing stories and golden-time articles that don\'t have them. Continue?')) {
+      return;
+    }
+
+    setMigratingSlugs(true);
+    setMigrationResult('Starting migration...');
+    
+    try {
+      let storiesUpdated = 0;
+      let storiesSkipped = 0;
+      let goldenTimeUpdated = 0;
+      let goldenTimeSkipped = 0;
+
+      // Migrate stories
+      const storiesSnapshot = await getDocs(collection(db, 'stories'));
+      for (const storyDoc of storiesSnapshot.docs) {
+        const story = storyDoc.data();
+        
+        if (story.slug) {
+          storiesSkipped++;
+          continue;
+        }
+        
+        const slug = generateSlug(story.title);
+        await updateDoc(doc(db, 'stories', storyDoc.id), { slug });
+        storiesUpdated++;
+      }
+
+      // Migrate golden-time articles
+      const goldenTimeSnapshot = await getDocs(collection(goldenTimeDb, 'golden-time'));
+      for (const articleDoc of goldenTimeSnapshot.docs) {
+        const article = articleDoc.data();
+        
+        if (article.slug) {
+          goldenTimeSkipped++;
+          continue;
+        }
+        
+        const slug = generateSlug(article.title);
+        await updateDoc(doc(goldenTimeDb, 'golden-time', articleDoc.id), { slug });
+        goldenTimeUpdated++;
+      }
+
+      setMigrationResult(
+        `Migration complete!\n\nStories: ${storiesUpdated} updated, ${storiesSkipped} skipped\nGolden Time: ${goldenTimeUpdated} updated, ${goldenTimeSkipped} skipped`
+      );
+      setMessage('Migration completed successfully!');
+    } catch (error) {
+      setMigrationResult(`Migration failed: ${error}`);
+      setMessage('Migration failed');
+      console.error(error);
+    } finally {
+      setMigratingSlugs(false);
+    }
+  };
+
   // Story management handlers
   const handleCreateStory = async () => {
     if (!storyTitle.trim() || !storyCoverImage) {
@@ -2960,8 +3025,10 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       // Compress image before upload
       const compressedFile = await compressImage(storyCoverImage, 1920, 0.8);
       const coverImageUrl = await uploadToImgBB(compressedFile);
+      const slug = generateSlug(storyTitle);
 
       await addDoc(collection(db, 'stories'), {
+        slug,
         title: storyTitle,
         description: storyDescription,
         author: storyAuthor,
@@ -3014,7 +3081,10 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setUploadingStory(true);
       setStoryError('');
 
+      const slug = generateSlug(storyTitle);
+
       const updateData: any = {
+        slug,
         title: storyTitle,
         description: storyDescription,
         author: storyAuthor,
@@ -3218,6 +3288,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       }
 
       await addDoc(collection(goldenTimeDb, 'golden-time'), {
+        slug: generateSlug(goldenTimeTitle),
         title: goldenTimeTitle,
         description: goldenTimeDescription,
         author: goldenTimeAuthor,
@@ -3271,7 +3342,10 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setGoldenTimeError('');
 
     try {
+      const slug = generateSlug(goldenTimeTitle);
+
       const updateData: any = {
+        slug,
         title: goldenTimeTitle,
         description: goldenTimeDescription,
         author: goldenTimeAuthor,
@@ -6485,6 +6559,24 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
           <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
             <h3 className="text-2xl font-bold text-gray-900">{t.settings}</h3>
             <div className="mt-6 space-y-6">
+              {/* Migrate Slugs Button */}
+              <div className="rounded-2xl border border-brand-300 bg-brand-50 p-4">
+                <h4 className="font-semibold text-gray-900">Add Slugs to Existing Documents</h4>
+                <p className="mt-2 text-sm text-gray-600">Add URL-friendly slugs to existing stories and golden-time articles that don't have them</p>
+                <button
+                  onClick={handleMigrateSlugs}
+                  disabled={migratingSlugs}
+                  className="mt-3 w-full rounded-2xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {migratingSlugs ? 'Migrating...' : 'Migrate Slugs'}
+                </button>
+                {migrationResult && (
+                  <div className="mt-3 rounded-xl border border-gray-300 bg-white p-3">
+                    <pre className="text-xs text-gray-700 whitespace-pre-wrap">{migrationResult}</pre>
+                  </div>
+                )}
+              </div>
+
               {/* Fix Negative Counts Button */}
               <div className="rounded-2xl border border-rose-300 bg-rose-50 p-4">
                 <h4 className="font-semibold text-gray-900">Fix Negative Like/Dislike Counts</h4>
