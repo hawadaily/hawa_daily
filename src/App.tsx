@@ -249,9 +249,9 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/stories" element={<Stories />} />
-            <Route path="/stories/:id" element={<StoryDetail />} />
+            <Route path="/stories/:slug" element={<StoryDetail />} />
             <Route path="/golden-time" element={<GoldenTime />} />
-            <Route path="/golden-time/:id" element={<GoldenTimeDetail />} />
+            <Route path="/golden-time/:slug" element={<GoldenTimeDetail />} />
             <Route path="/doctors-duty" element={<DoctorsDuty />} />
             <Route path="/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />

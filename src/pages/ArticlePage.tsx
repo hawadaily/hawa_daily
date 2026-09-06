@@ -82,9 +82,6 @@ export default function ArticlePage() {
           } as Article;
           setArticle(articleData);
           setArticleId(id);
-          console.log('DEBUG - Article loaded:', articleData.title);
-          console.log('DEBUG - Article youtubeLink:', articleData.youtubeLink);
-          console.log('DEBUG - Article tiktokLink:', articleData.tiktokLink);
 
           // Debounced view count increment - only increment if not viewed in last hour
           const viewKey = `article_${id}_viewed`;
@@ -689,7 +686,6 @@ export default function ArticlePage() {
                         </div>
                       </div>
                     )}
-                    {console.log('DEBUG - Middle social links rendered:', article.youtubeLink, article.tiktokLink)}
 
                     {/* Mid-Article Promotion */}
                     {midArticlePromotions.length > 0 && (
@@ -751,7 +747,6 @@ export default function ArticlePage() {
                         </div>
                       </div>
                     )}
-                    {console.log('DEBUG - Bottom social links rendered:', article.youtubeLink, article.tiktokLink)}
                   </>
                 );
               })()}
