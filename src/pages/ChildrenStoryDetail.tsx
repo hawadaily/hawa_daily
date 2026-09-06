@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs, query, orderBy, where, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot, increment } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { db as realStoryDb } from '../firebase-real-story';
+import { auth } from '../firebase';
 import { ArrowLeft, BookOpen, ThumbsUp, ThumbsDown, Send, Share2, Eye } from 'lucide-react';
 
 interface Episode {
@@ -55,7 +56,7 @@ export default function ChildrenStoryDetail() {
 
       try {
         // First, find the story by slug
-        const storiesQuery = query(collection(db, 'children-stories'), where('slug', '==', slug));
+        const storiesQuery = query(collection(realStoryDb, 'children-stories'), where('slug', '==', slug));
         const storiesSnapshot = await getDocs(storiesQuery);
         
         if (storiesSnapshot.empty) {
@@ -73,14 +74,14 @@ export default function ChildrenStoryDetail() {
         }
 
         // Load episodes
-        const episodesQuery = query(collection(db, 'children-stories', storyId, 'episodes'), orderBy('episodeNumber', 'asc'));
+        const episodesQuery = query(collection(realStoryDb, 'children-stories', storyId, 'episodes'), orderBy('episodeNumber', 'asc'));
         const episodesSnapshot = await getDocs(episodesQuery);
         const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setEpisodes(episodesData);
 
         // Load comments for each episode
         episodesData.forEach((episode) => {
-          const commentsQuery = query(collection(db, 'children-stories', storyId, 'episodes', episode.id, 'comments'), orderBy('createdAt', 'desc'));
+          const commentsQuery = query(collection(realStoryDb, 'children-stories', storyId, 'episodes', episode.id, 'comments'), orderBy('createdAt', 'desc'));
           onSnapshot(commentsQuery, (snapshot) => {
             const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
             setComments((prev) => ({ ...prev, [episode.id]: commentsData }));
@@ -129,7 +130,7 @@ export default function ChildrenStoryDetail() {
     if (episodeParam) {
       const episode = episodes.find((e) => e.id === episodeParam);
       if (episode && !viewedEpisodes.has(episode.id)) {
-        updateDoc(doc(db, 'children-stories', storyId, 'episodes', episode.id), {
+        updateDoc(doc(realStoryDb, 'children-stories', storyId, 'episodes', episode.id), {
           viewCount: increment(1)
         }).then(() => {
           viewedEpisodes.add(episode.id);
@@ -248,7 +249,7 @@ export default function ChildrenStoryDetail() {
     if (!commentText?.trim()) return;
 
     try {
-      await addDoc(collection(db, 'children-stories', storyId, 'episodes', episodeId, 'comments'), {
+      await addDoc(collection(realStoryDb, 'children-stories', storyId, 'episodes', episodeId, 'comments'), {
         text: commentText,
         userId: currentUser?.uid || 'anonymous',
         userName: currentUser?.displayName || 'Anonymous',
@@ -266,7 +267,7 @@ export default function ChildrenStoryDetail() {
     if (!storyId) return;
 
     try {
-      const commentRef = doc(db, 'children-stories', storyId, 'episodes', episodeId, 'comments', commentId);
+      const commentRef = doc(realStoryDb, 'children-stories', storyId, 'episodes', episodeId, 'comments', commentId);
       const comment = comments[episodeId]?.find((c) => c.id === commentId);
       
       if (!comment) return;
@@ -306,7 +307,7 @@ export default function ChildrenStoryDetail() {
     if (!storyId) return;
 
     try {
-      const commentRef = doc(db, 'children-stories', storyId, 'episodes', episodeId, 'comments', commentId);
+      const commentRef = doc(realStoryDb, 'children-stories', storyId, 'episodes', episodeId, 'comments', commentId);
       const comment = comments[episodeId]?.find((c) => c.id === commentId);
       
       if (!comment) return;
@@ -346,7 +347,7 @@ export default function ChildrenStoryDetail() {
     if (!storyId) return;
 
     try {
-      const episodeRef = doc(db, 'children-stories', storyId, 'episodes', episodeId);
+      const episodeRef = doc(realStoryDb, 'children-stories', storyId, 'episodes', episodeId);
       const episode = episodes.find((e) => e.id === episodeId);
       
       if (!episode) return;
@@ -386,7 +387,7 @@ export default function ChildrenStoryDetail() {
     if (!storyId) return;
 
     try {
-      const episodeRef = doc(db, 'children-stories', storyId, 'episodes', episodeId);
+      const episodeRef = doc(realStoryDb, 'children-stories', storyId, 'episodes', episodeId);
       const episode = episodes.find((e) => e.id === episodeId);
       
       if (!episode) return;
