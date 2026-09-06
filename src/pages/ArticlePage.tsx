@@ -618,31 +618,8 @@ export default function ArticlePage() {
                 const bodyText = Array.isArray(article.body) ? article.body.join(' ') : article.body;
                 if (typeof bodyText !== 'string') return null;
 
-                // Split text into paragraphs after every 2 full stops
-                const paragraphs: string[] = [];
-                let currentParagraph = '';
-                let fullStopCount = 0;
-
-                for (let i = 0; i < bodyText.length; i++) {
-                  const char = bodyText[i];
-                  currentParagraph += char;
-
-                  if (char === '.') {
-                    fullStopCount++;
-                    if (fullStopCount === 2) {
-                      paragraphs.push(currentParagraph.trim());
-                      currentParagraph = '';
-                      fullStopCount = 0;
-                    }
-                  }
-                }
-
-                // Add any remaining text
-                if (currentParagraph.trim()) {
-                  paragraphs.push(currentParagraph.trim());
-                }
-
-                // Split paragraphs into 2 halves
+                // Split text by line breaks (Enter key) - matches how user types
+                const paragraphs = bodyText.split('\n').filter(p => p.trim());
                 const midPoint = Math.ceil(paragraphs.length / 2);
                 const firstHalf = paragraphs.slice(0, midPoint);
                 const secondHalf = paragraphs.slice(midPoint);
@@ -655,37 +632,6 @@ export default function ArticlePage() {
                         <p key={`first-${index}`} className="text-base leading-8 text-slate-700">{paragraph}</p>
                       )
                     ))}
-
-                    {/* Social Media Links - Middle */}
-                    {(article.youtubeLink || article.tiktokLink) && (
-                      <div className="my-6 space-y-3">
-                        <h3 className="text-center text-sm font-semibold text-gray-700">
-                          މި އާޓިކަލްއާ ބެހޭ މައުލޫމާތު އިތުރަށް ސާފުކޮށްލެއްވުމަށް ޔޫޓިއުބް ނުވަތަ ޓިކްޓޮކް ލިންކް ޙިޔާރު ކޮށްލައްވާ
-                        </h3>
-                        <div className="flex gap-3">
-                          {article.youtubeLink && (
-                            <a
-                              href={article.youtubeLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-red-500 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
-                            >
-                              ▶️ YouTube
-                            </a>
-                          )}
-                          {article.tiktokLink && (
-                            <a
-                              href={article.tiktokLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-gray-50 px-4 py-3 text-sm font-semibold text-black transition hover:bg-gray-100"
-                            >
-                              🎵 TikTok
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    )}
 
                     {/* Mid-Article Promotion */}
                     {midArticlePromotions.length > 0 && (
