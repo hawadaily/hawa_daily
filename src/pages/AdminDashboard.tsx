@@ -7024,23 +7024,160 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                     <span className="text-xs text-gray-500">އެހެން ވެހެ ފެންނަނީ އެއްވެސް ގޮތަކުން</span>
                   </div>
                   <div className="space-y-6">
-                    <h1 className="text-2xl font-bold leading-[2.5] text-[#0077b6]">{fetchedTitle || fetchedContent.split('\n')[0] || 'ހެޑްލައިން'}</h1>
-                    <p className="text-sm leading-7 text-[#00b4d8]">{fetchedExcerpt || 'އެކްސާޕްޓް...'}</p>
-                    <div className="space-y-6">
-                      {(() => {
-                        const bodyText = fetchedBody || fetchedContent;
-                        if (!bodyText) return <p className="text-sm text-gray-400">ޕްރިވިއުގައި ދައްކާނީ...</p>;
+                    {(() => {
+                      // Parse content in real-time (same logic as Create News button)
+                      const lines = fetchedContent.split('\n').filter(line => line.trim());
+                      
+                      const cleanMarkdown = (text: string) => {
+                        return text
+                          .replace(/#{1,6}\s*/g, '')
+                          .replace(/\*\*(.+?)\*\*/g, '$1')
+                          .replace(/\*(.+?)\*/g, '$1')
+                          .replace(/`(.+?)`/g, '$1')
+                          .replace(/~~(.+?)~~/g, '$1')
+                          .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+                          .replace(/!\[.+?\]\(.+?\)/g, '')
+                          .replace(/^>\s*/gm, '')
+                          .replace(/\n{3,}/g, '\n\n')
+                          .trim();
+                      };
+                      
+                      let title = '';
+                      let startIndex = 0;
+                      
+                      if (lines[0]?.trim() === 'ހެޑްލައިން') {
+                        startIndex = 1;
+                        while (startIndex < lines.length && !lines[startIndex]?.trim()) {
+                          startIndex++;
+                        }
+                        if (startIndex < lines.length) {
+                          title = cleanMarkdown(lines[startIndex]).trim();
+                          startIndex++;
+                        }
+                      } else if (lines[0]?.match(/^#{1,6}\s*\*\*(.+?)\*\*$/)) {
+                        startIndex = 1;
+                        while (startIndex < lines.length && !lines[startIndex]?.trim()) {
+                          startIndex++;
+                        }
+                        const boldMatch = lines[startIndex]?.match(/^\*\*(.+?)\*\*$/);
+                        if (boldMatch) {
+                          title = boldMatch[1].trim();
+                          startIndex++;
+                        } else if (lines[startIndex]) {
+                          title = cleanMarkdown(lines[startIndex]);
+                          startIndex++;
+                        }
+                      } else if (lines[0]?.match(/^#{1,6}\s*(.+)$/)) {
+                        startIndex = 1;
+                        while (startIndex < lines.length && !lines[startIndex]?.trim()) {
+                          startIndex++;
+                        }
+                        const boldMatch = lines[startIndex]?.match(/^\*\*(.+?)\*\*$/);
+                        if (boldMatch) {
+                          title = boldMatch[1].trim();
+                          startIndex++;
+                        } else if (lines[startIndex]) {
+                          title = cleanMarkdown(lines[startIndex]);
+                          startIndex++;
+                        }
+                      } else {
+                        const boldMatch = lines[0]?.match(/^\*\*(.+?)\*\*$/);
+                        if (boldMatch) {
+                          title = boldMatch[1].trim();
+                          startIndex = 1;
+                        } else if (lines[0]) {
+                          title = cleanMarkdown(lines[0]);
+                          startIndex = 1;
+                        }
+                      }
+                      
+                      if (!title && lines.length > 0) {
+                        if (lines[0]?.match(/^#{1,6}\s+/)) {
+                          title = cleanMarkdown(lines[0]);
+                          startIndex = 1;
+                        } else {
+                          let contentIndex = 0;
+                          while (contentIndex < lines.length && lines[contentIndex]?.match(/^#{1,6}\s*/)) {
+                            contentIndex++;
+                          }
+                          while (contentIndex < lines.length && !lines[contentIndex]?.trim()) {
+                            contentIndex++;
+                          }
+                          if (contentIndex < lines.length) {
+                            title = cleanMarkdown(lines[contentIndex]);
+                            startIndex = contentIndex + 1;
+                          }
+                        }
+                      }
+                      
+                      const excerptIndex = lines.findIndex((line, index) => 
+                        index >= startIndex && (
+                          line.trim() === 'އެކްސާޕްޓް' || 
+                          line.trim() === '### **އެކްސާޕްޓް**' || 
+                          line.trim() === '**އެކްސާޕްޓް**' || 
+                          line.trim() === '### އެކްސާޕްޓް' ||
+                          line.trim() === '## **އެކްސާޕްޓް**' ||
+                          line.trim() === '# **އެކްސާޕްޓް**' ||
+                          line.trim() === '## އެކްސާޕްޓް' ||
+                          line.trim() === '# އެކްސާޕްޓް'
+                        )
+                      );
+                      
+                      const bodyIndex = lines.findIndex((line, index) => 
+                        index >= startIndex && (
+                          line.trim() === 'ބޮޑީ' || 
+                          line.trim() === '### **ބޮޑީ**' || 
+                          line.trim() === '**ބޮޑީ**' || 
+                          line.trim() === '### ބޮޑީ' ||
+                          line.trim() === '## **ބޮޑީ**' ||
+                          line.trim() === '# **ބޮޑީ**' ||
+                          line.trim() === '## ބޮޑީ' ||
+                          line.trim() === '# ބޮޑީ'
+                        )
+                      );
+                      
+                      let excerpt = '';
+                      let body = '';
+                      
+                      if (excerptIndex !== -1 && bodyIndex !== -1) {
+                        excerpt = lines.slice(excerptIndex + 1, bodyIndex).join('\n').trim();
+                        body = lines.slice(bodyIndex + 1).join('\n').trim();
+                      } else if (excerptIndex !== -1) {
+                        excerpt = lines.slice(excerptIndex + 1).join('\n').trim();
+                        body = excerpt;
+                      } else if (bodyIndex !== -1) {
+                        excerpt = lines.slice(startIndex, bodyIndex).join('\n').trim();
+                        body = lines.slice(bodyIndex + 1).join('\n').trim();
+                      } else {
+                        body = lines.slice(startIndex).join('\n').trim();
+                        excerpt = body.split('\n')[0]?.substring(0, 300) || '';
+                      }
+                      
+                      title = cleanMarkdown(title);
+                      excerpt = cleanMarkdown(excerpt);
+                      body = cleanMarkdown(body);
+                      
+                      return (
+                        <>
+                          <h1 className="text-2xl font-bold leading-[2.5] text-[#0077b6]">{title || 'ހެޑްލައިން'}</h1>
+                          <p className="text-sm leading-7 text-[#00b4d8]">{excerpt || 'އެކްސާޕްޓް...'}</p>
+                          <div className="space-y-6">
+                            {(() => {
+                              const bodyText = body;
+                              if (!bodyText) return <p className="text-sm text-gray-400">ޕްރިވިއުގައި ދައްކާނީ...</p>;
 
-                        // Split text by line breaks (Enter key)
-                        const paragraphs = bodyText.split('\n').filter(p => p.trim());
+                              const paragraphs = bodyText.split('\n').filter(p => p.trim());
 
-                        return paragraphs.map((paragraph: string, index: number) => (
-                          paragraph && (
-                            <p key={index} className="text-base leading-8 text-slate-700">{paragraph}</p>
-                          )
-                        ));
-                      })()}
-                    </div>
+                              return paragraphs.map((paragraph: string, index: number) => (
+                                paragraph && (
+                                  <p key={index} className="text-base leading-8 text-slate-700">{paragraph}</p>
+                                )
+                              ));
+                            })()}
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
               )}
