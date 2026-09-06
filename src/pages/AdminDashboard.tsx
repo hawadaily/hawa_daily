@@ -7016,6 +7016,35 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                 />
               </div>
 
+              {/* Real-time Preview */}
+              {fetchedContent && (
+                <div className="rounded-2xl border border-gray-200 bg-slate-50 p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-sm font-semibold text-gray-700">ޕްރިވިއު (Preview)</h4>
+                    <span className="text-xs text-gray-500">އެހެން ވެހެ ފެންނަނީ އެއްވެސް ގޮތަކުން</span>
+                  </div>
+                  <div className="space-y-6">
+                    <h1 className="text-2xl font-bold leading-[2.5] text-[#0077b6]">{fetchedTitle || fetchedContent.split('\n')[0] || 'ހެޑްލައިން'}</h1>
+                    <p className="text-sm leading-7 text-[#00b4d8]">{fetchedExcerpt || 'އެކްސާޕްޓް...'}</p>
+                    <div className="space-y-6">
+                      {(() => {
+                        const bodyText = fetchedBody || fetchedContent;
+                        if (!bodyText) return <p className="text-sm text-gray-400">ޕްރިވިއުގައި ދައްކާނީ...</p>;
+
+                        // Split text by line breaks (Enter key)
+                        const paragraphs = bodyText.split('\n').filter(p => p.trim());
+
+                        return paragraphs.map((paragraph: string, index: number) => (
+                          paragraph && (
+                            <p key={index} className="text-base leading-8 text-slate-700">{paragraph}</p>
+                          )
+                        ));
+                      })()}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <button
                 type="button"
                 onClick={() => {
