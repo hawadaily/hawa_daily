@@ -152,8 +152,14 @@ export default function Stories() {
                     </div>
                   ) : (
                     <Link
-                      to={`/stories/${story.slug}`}
+                      to={story.slug ? `/stories/${story.slug}` : '#'}
                       className="mt-4 flex items-center text-sm text-brand-600 font-semibold"
+                      onClick={(e) => {
+                        if (!story.slug) {
+                          e.preventDefault();
+                          alert('Story has no slug. Please add a slug in the admin panel.');
+                        }
+                      }}
                     >
                       <span>Read Episodes</span>
                       <svg className="ml-1 h-4 w-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
