@@ -1425,6 +1425,7 @@ export default function AdminDashboard() {
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [migratingSlugs, setMigratingSlugs] = useState(false);
   const [migrationResult, setMigrationResult] = useState('');
+  const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
 
   // Obituary maker state
   const [obituaryName, setObituaryName] = useState('');
@@ -1986,52 +1987,97 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   };
 
   const loadDashboard = async () => {
+    if (isLoadingDashboard) {
+      console.log('Dashboard already loading, skipping...');
+      return;
+    }
+    
+    setIsLoadingDashboard(true);
+    
     try {
+      console.log('Starting dashboard load...');
+      
       // Get all articles for display (removed limit to show all past news)
       const articleSnapshot = await getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc')));
       const articlesData = articleSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setArticles(articlesData);
+      console.log('Articles loaded:', articlesData.length);
       
       // Extract unique authors from articles
       const uniqueAuthors = Array.from(new Set(articlesData.map((a: any) => a.author).filter(Boolean)));
       setAuthors(uniqueAuthors);
       
       // Load banners
-      const bannerSnapshot = await getDocs(query(collection(db, 'banners'), orderBy('createdAt', 'desc')));
-      const bannersData = bannerSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setBanners(bannersData);
+      try {
+        const bannerSnapshot = await getDocs(query(collection(db, 'banners'), orderBy('createdAt', 'desc')));
+        const bannersData = bannerSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+        setBanners(bannersData);
+        console.log('Banners loaded:', bannersData.length);
+      } catch (bannerError) {
+        console.error('Failed to load banners:', bannerError);
+      }
 
       // Load advertisements
-      const advertisementsDoc = await getDoc(doc(db, 'advertisements', 'slots'));
-      if (advertisementsDoc.exists()) {
-        setAdvertisements(advertisementsDoc.data() || {});
+      try {
+        const advertisementsDoc = await getDoc(doc(db, 'advertisements', 'slots'));
+        if (advertisementsDoc.exists()) {
+          setAdvertisements(advertisementsDoc.data() || {});
+        }
+        console.log('Advertisements loaded');
+      } catch (adError) {
+        console.error('Failed to load advertisements:', adError);
       }
 
       // Load hero slides
-      const heroSlidesDoc = await getDoc(doc(db, 'hero-slides', 'config'));
-      if (heroSlidesDoc.exists()) {
-        setHeroSlides(heroSlidesDoc.data()?.slides || []);
+      try {
+        const heroSlidesDoc = await getDoc(doc(db, 'hero-slides', 'config'));
+        if (heroSlidesDoc.exists()) {
+          setHeroSlides(heroSlidesDoc.data()?.slides || []);
+        }
+        console.log('Hero slides loaded');
+      } catch (heroError) {
+        console.error('Failed to load hero slides:', heroError);
       }
 
       // Load sidebar promotions
-      const promotionSnapshot = await getDocs(query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc')));
-      const promotionsData = promotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setSidebarPromotions(promotionsData);
+      try {
+        const promotionSnapshot = await getDocs(query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc')));
+        const promotionsData = promotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+        setSidebarPromotions(promotionsData);
+        console.log('Sidebar promotions loaded:', promotionsData.length);
+      } catch (promoError) {
+        console.error('Failed to load sidebar promotions:', promoError);
+      }
 
       // Load mid-article promotions
-      const midArticlePromotionSnapshot = await getDocs(query(collection(db, 'mid-article-promotions'), orderBy('createdAt', 'desc')));
-      const midArticlePromotionsData = midArticlePromotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setMidArticlePromotions(midArticlePromotionsData);
+      try {
+        const midArticlePromotionSnapshot = await getDocs(query(collection(db, 'mid-article-promotions'), orderBy('createdAt', 'desc')));
+        const midArticlePromotionsData = midArticlePromotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+        setMidArticlePromotions(midArticlePromotionsData);
+        console.log('Mid-article promotions loaded:', midArticlePromotionsData.length);
+      } catch (midPromoError) {
+        console.error('Failed to load mid-article promotions:', midPromoError);
+      }
 
       // Load stories
-      const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
-      const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setStories(storiesData);
+      try {
+        const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
+        const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+        setStories(storiesData);
+        console.log('Stories loaded:', storiesData.length);
+      } catch (storiesError) {
+        console.error('Failed to load stories:', storiesError);
+      }
 
       // Load children stories
-      const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc')));
-      const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setChildrenStories(childrenStoriesData);
+      try {
+        const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc')));
+        const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+        setChildrenStories(childrenStoriesData);
+        console.log('Real Stories loaded:', childrenStoriesData.length);
+      } catch (realStoryError) {
+        console.error('Failed to load real stories:', realStoryError);
+      }
 
       // Load golden time articles
       try {
@@ -2042,8 +2088,12 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       } catch (goldenTimeError) {
         console.error('Failed to load golden time articles:', goldenTimeError);
       }
+      
+      console.log('Dashboard load complete');
     } catch (error) {
-      console.warn('Unable to load dashboard data', error);
+      console.error('Unable to load dashboard data:', error);
+    } finally {
+      setIsLoadingDashboard(false);
     }
   };
 
