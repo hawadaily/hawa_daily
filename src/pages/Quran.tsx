@@ -313,24 +313,15 @@ export default function Quran() {
                     <h2 className="text-2xl font-bold text-slate-800" dir="rtl">
                       {selectedSurah.nameArabic}
                     </h2>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => navigate('/quran/facebook-post')}
-                        className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition font-medium"
-                      >
-                        <span>Facebook Post</span>
-                        <Share2 className="w-5 h-5" />
-                      </button>
-                      <a
-                        href={selectedSurah.pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition font-medium"
-                      >
-                        <span>PDF</span>
-                        <BookOpen className="w-5 h-5" />
-                      </a>
-                    </div>
+                    <a
+                      href={selectedSurah.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition font-medium"
+                    >
+                      <span>PDF</span>
+                      <BookOpen className="w-5 h-5" />
+                    </a>
                   </div>
                   <div className="space-y-6">
                     {selectedSurah.verses.map((verse, index) => {
