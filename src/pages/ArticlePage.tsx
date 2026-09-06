@@ -84,6 +84,9 @@ export default function ArticlePage() {
             publishedAt: data.createdAt || data.publishedAt
           } as Article;
           setArticle(articleData);
+          console.log('DEBUG - Article loaded:', articleData.title);
+          console.log('DEBUG - Article youtubeLink:', articleData.youtubeLink);
+          console.log('DEBUG - Article tiktokLink:', articleData.tiktokLink);
 
           // Debounced view count increment - only increment if not viewed in last hour
           const viewKey = `article_${id}_viewed`;
