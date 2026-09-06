@@ -10,7 +10,7 @@ import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
 
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB, compressImage, deleteImage } from '../utils/cloudinary';
-import { generateSlug } from '../utils/slug';
+import { generateSlug } from '../utils/slug.js';
 import { getVercelAnalytics } from '../api/vercel-analytics';
 
 type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'golden-time' | 'obituary' | 'funeral-poster' | 'advertisements' | 'hero-slides';
