@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /children-stories/{storyId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /children-stories/{storyId}/episodes/{episodeId} {
+      allow read: if true;
+      allow write: if request.auth != null || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount', 'likes', 'dislikes']);
+    }
+
+    match /children-stories/{storyId}/episodes/{episodeId}/comments/{commentId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to comment
+    }
+
+    match /children-stories/{storyId}/episodes/{episodeId}/likes/{likeId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to like
+    }
+
+    match /children-stories/{storyId}/episodes/{episodeId}/dislikes/{dislikeId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to dislike
+    }
+
+    match /children-stories/{storyId}/episodes/{episodeId}/userReactions/{userId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to write reactions
+    }
+
+    match /children-stories/{storyId}/episodes/{episodeId}/comments/{commentId}/userReactions/{userId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to react to comments
+    }
+
+    match /children-stories/{storyId}/episodes/{episodeId}/comments/{commentId}/likes/{likeId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /children-stories/{storyId}/episodes/{episodeId}/comments/{commentId}/dislikes/{dislikeId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db, dbWithFallback } from '../firebase';
 import { db as goldenTimeDb } from '../firebase-golden-time';
+import { db as realStoryDb } from '../firebase-real-story';
 import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
@@ -2028,7 +2029,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setStories(storiesData);
 
       // Load children stories
-      const childrenStoriesSnapshot = await getDocs(query(collection(db, 'children-stories'), orderBy('createdAt', 'desc')));
+      const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'children-stories'), orderBy('createdAt', 'desc')));
       const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenStories(childrenStoriesData);
 
@@ -3275,7 +3276,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       const coverImageUrl = await uploadToImgBB(compressedFile);
       const slug = generateSlug(childrenStoryTitle);
 
-      await addDoc(collection(db, 'children-stories'), {
+      await addDoc(collection(realStoryDb, 'children-stories'), {
         slug,
         title: childrenStoryTitle,
         description: childrenStoryDescription,
@@ -3294,7 +3295,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setMessage('Children story created successfully');
 
       // Reload children stories
-      const childrenStoriesSnapshot = await getDocs(query(collection(db, 'children-stories'), orderBy('createdAt', 'desc')));
+      const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'children-stories'), orderBy('createdAt', 'desc')));
       const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenStories(childrenStoriesData);
     } catch (error) {
@@ -3351,13 +3352,13 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         updateData.coverImage = coverImageUrl;
       }
 
-      await updateDoc(doc(db, 'children-stories', selectedChildrenStory.id), updateData);
+      await updateDoc(doc(realStoryDb, 'children-stories', selectedChildrenStory.id), updateData);
 
       resetChildrenStoryForm();
       setMessage('Children story updated successfully');
 
       // Reload children stories
-      const childrenStoriesSnapshot = await getDocs(query(collection(db, 'children-stories'), orderBy('createdAt', 'desc')));
+      const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'children-stories'), orderBy('createdAt', 'desc')));
       const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenStories(childrenStoriesData);
     } catch (error) {
@@ -3389,7 +3390,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
     try {
       // Fetch story to get image URL
-      const storyDoc = await getDoc(doc(db, 'children-stories', storyId));
+      const storyDoc = await getDoc(doc(realStoryDb, 'children-stories', storyId));
       if (storyDoc.exists()) {
         const storyData = storyDoc.data();
         if (storyData?.coverImage) {
@@ -3402,17 +3403,17 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       }
 
       // Delete all episodes
-      const episodesSnapshot = await getDocs(collection(db, 'children-stories', storyId, 'episodes'));
+      const episodesSnapshot = await getDocs(collection(realStoryDb, 'children-stories', storyId, 'episodes'));
       for (const episodeDoc of episodesSnapshot.docs) {
-        await deleteDoc(doc(db, 'children-stories', storyId, 'episodes', episodeDoc.id));
+        await deleteDoc(doc(realStoryDb, 'children-stories', storyId, 'episodes', episodeDoc.id));
       }
 
       // Delete story
-      await deleteDoc(doc(db, 'children-stories', storyId));
+      await deleteDoc(doc(realStoryDb, 'children-stories', storyId));
       setMessage('Children story deleted successfully');
 
       // Reload children stories
-      const childrenStoriesSnapshot = await getDocs(query(collection(db, 'children-stories'), orderBy('createdAt', 'desc')));
+      const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'children-stories'), orderBy('createdAt', 'desc')));
       const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenStories(childrenStoriesData);
 
@@ -3429,7 +3430,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const handleSelectChildrenStory = async (story: any) => {
     setSelectedChildrenStory(story);
     try {
-      const episodesSnapshot = await getDocs(query(collection(db, 'children-stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesSnapshot = await getDocs(query(collection(realStoryDb, 'children-stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenEpisodes(episodesData);
       setChildrenEpisodeNumber(episodesData.length + 1);
@@ -3449,7 +3450,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setUploadingChildrenEpisode(true);
       setChildrenEpisodeError('');
 
-      await addDoc(collection(db, 'children-stories', selectedChildrenStory.id, 'episodes'), {
+      await addDoc(collection(realStoryDb, 'children-stories', selectedChildrenStory.id, 'episodes'), {
         title: childrenEpisodeTitle,
         content: childrenEpisodeContent,
         episodeNumber: childrenEpisodeNumber,
@@ -3463,7 +3464,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setMessage('Children episode created successfully');
 
       // Reload children episodes
-      const episodesSnapshot = await getDocs(query(collection(db, 'children-stories', selectedChildrenStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesSnapshot = await getDocs(query(collection(realStoryDb, 'children-stories', selectedChildrenStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenEpisodes(episodesData);
     } catch (error) {
@@ -3480,11 +3481,11 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
 
     try {
-      await deleteDoc(doc(db, 'children-stories', selectedChildrenStory.id, 'episodes', episodeId));
+      await deleteDoc(doc(realStoryDb, 'children-stories', selectedChildrenStory.id, 'episodes', episodeId));
       setMessage('Children episode deleted successfully');
 
       // Reload children episodes
-      const episodesSnapshot = await getDocs(query(collection(db, 'children-stories', selectedChildrenStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesSnapshot = await getDocs(query(collection(realStoryDb, 'children-stories', selectedChildrenStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenEpisodes(episodesData);
     } catch (error) {
