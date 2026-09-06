@@ -105,12 +105,12 @@ export default function ChildrenStories() {
               <span className="text-4xl">✨</span>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-emerald-700 mb-2">މިއީ 100 އިން ސައްތަ ހަޤީޤީ ވާހަކަތަކެކެވެ</h3>
+              <h3 className="text-xl font-bold text-emerald-700 mb-2">މިއީ 100 އިންސައްތަ  ހަޤީޤީ ވާހަކަތަކެކެވެ</h3>
               <p className="text-gray-700 mb-3">
-                ތިބާއާ ހިއްސާކުރާނެ ހަޤީޤީ ވާހަކައެއް އެބަ އޮތްތޯ؟ ނަން ހާމަނުކޮށް (ސިއްރުން) އެ ވާހަކައެއް ޝާއިޢުކޮށްދިނުމަށް ތިބާ އަށް މަރުޙަބާ ކިޔަމެވެ. ތިބާގެ ވާހަކަ މުހިންމެވެ!
+                ތިބާއާ ހިއްސާކުރާނެ ހަޤީޤީ ވާހަކައެއް އެބަ އޮތްތޯ؟ ނަން ހާމަނުކޮށް (ސިއްރުން) އެ ވާހަކައެއް ޝާއިޢުކޮށްދިނުމަށް ތިބާ އަށް މަރުޙަބާ ކިޔަމެވެ. ތިބާގެ ވާހަކަ މުހިންމެވެ! ތިބާގެ ވާހަކަ ޝާއިޢުކުރަން ބޭނުންނަމަ hawainnkhabaru@gmail.com އަށް މެއިލް ފޮނުއްވާ.
               </p>
               <p className="text-emerald-600 font-semibold">
-                These are 100% real stories. If you have a real story to share, we're more than happy to post it anonymously. Your story matters! 📝
+                These are 100% real stories. If you have a real story to share, we're more than happy to post it anonymously. Your story matters! If you wish to share your story please send mail to hawainnkhabaru@gmail.com 📝
               </p>
             </div>
           </div>
