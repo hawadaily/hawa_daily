@@ -38,7 +38,7 @@ const getRelativeTime = (dateValue: any) => {
 };
 
 export default function ArticlePage() {
-  const { slug } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [article, setArticle] = useState<Article | null | undefined>(undefined);
   const [articleId, setArticleId] = useState<string | null>(null);
@@ -61,7 +61,7 @@ export default function ArticlePage() {
   const [midArticlePromotionIndex, setMidArticlePromotionIndex] = useState(0);
 
   useEffect(() => {
-    if (!slug) {
+    if (!id) {
       setArticle(null);
       setLoading(false);
       return;
@@ -70,20 +70,18 @@ export default function ArticlePage() {
     const fetchArticle = async () => {
       setLoading(true);
       try {
-        const q = query(collection(db, 'articles'), where('slug', '==', slug), limit(1));
-        const querySnapshot = await getDocs(q);
+        const docRef = doc(db, 'articles', id);
+        const docSnap = await getDoc(docRef);
         
-        if (!querySnapshot.empty) {
-          const docSnap = querySnapshot.docs[0];
+        if (docSnap.exists()) {
           const data = docSnap.data();
-          const id = docSnap.id;
-          setArticleId(id);
           const articleData = {
             id: id,
             ...data,
             publishedAt: data.createdAt || data.publishedAt
           } as Article;
           setArticle(articleData);
+          setArticleId(id);
           console.log('DEBUG - Article loaded:', articleData.title);
           console.log('DEBUG - Article youtubeLink:', articleData.youtubeLink);
           console.log('DEBUG - Article tiktokLink:', articleData.tiktokLink);
@@ -182,7 +180,7 @@ export default function ArticlePage() {
     };
 
     fetchArticle();
-  }, [slug]);
+  }, [id]);
 
   // Load comments when comments section is opened
   useEffect(() => {
@@ -295,7 +293,7 @@ export default function ArticlePage() {
   const ogTitle = article.title || '';
   const ogDescription = article.excerpt || '';
   const ogImage = article.image || '';
-  const ogUrl = `${window.location.origin}/article/${slug}`;
+  const ogUrl = `${window.location.origin}/article/${id}`;
 
   // Handler functions
   const handleBookmark = async () => {
