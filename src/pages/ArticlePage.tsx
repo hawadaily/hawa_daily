@@ -41,6 +41,7 @@ export default function ArticlePage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [article, setArticle] = useState<Article | null | undefined>(undefined);
+  const [articleId, setArticleId] = useState<string | null>(null);
   const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,23 +76,24 @@ export default function ArticlePage() {
         if (!querySnapshot.empty) {
           const docSnap = querySnapshot.docs[0];
           const data = docSnap.data();
-          const articleId = docSnap.id;
+          const id = docSnap.id;
+          setArticleId(id);
           const articleData = {
-            id: articleId,
+            id: id,
             ...data,
             publishedAt: data.createdAt || data.publishedAt
           } as Article;
           setArticle(articleData);
 
           // Debounced view count increment - only increment if not viewed in last hour
-          const viewKey = `article_${articleId}_viewed`;
+          const viewKey = `article_${id}_viewed`;
           const lastViewed = localStorage.getItem(viewKey);
           const now = Date.now();
           const oneHour = 60 * 60 * 1000;
 
           if (!lastViewed || (now - parseInt(lastViewed)) > oneHour) {
             dbWithFallback.writeOperation(async (dbInstance) => {
-              return updateDoc(doc(dbInstance, 'articles', articleId), { views: increment(1) });
+              return updateDoc(doc(dbInstance, 'articles', id), { views: increment(1) });
             })
               .then(() => localStorage.setItem(viewKey, now.toString()))
               .catch(err => console.warn('Unable to increment article views:', err));
@@ -99,7 +101,7 @@ export default function ArticlePage() {
 
           // Parallel fetch of likes/dislikes
           Promise.all([
-            getDoc(doc(db, 'articles', articleId, 'likes', 'count')),
+            getDoc(doc(db, 'articles', id, 'likes', 'count')),
             getDoc(doc(db, 'articles', id, 'dislikes', 'count'))
           ]).then(([likesDoc, dislikesDoc]) => {
             const likeCount = likesDoc.exists() ? likesDoc.data().count : 0;
@@ -157,7 +159,7 @@ export default function ArticlePage() {
                     publishedAt: data.createdAt || data.publishedAt
                   } as Article;
                 })
-                .filter(item => item.id !== id)
+                .filter(item => item.id !== articleId)
                 .slice(0, 3);
               setRelatedArticles(related);
             } catch (relatedError) {
@@ -177,12 +179,13 @@ export default function ArticlePage() {
     };
 
     fetchArticle();
-  }, [id]);
+  }, [slug]);
 
   // Load comments when comments section is opened
   useEffect(() => {
-    if (showComments && id) {
-      getDocs(query(collection(db, 'articles', id, 'comments'), orderBy('createdAt', 'desc')))
+    if (showComments && article) {
+      const articleId = article.id;
+      getDocs(query(collection(db, 'articles', articleId, 'comments'), orderBy('createdAt', 'desc')))
         .then(commentsSnap => {
           const commentsData = commentsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           setComments(commentsData);
@@ -191,7 +194,7 @@ export default function ArticlePage() {
           console.warn('Unable to load article comments:', err);
         });
     }
-  }, [showComments, id]);
+  }, [showComments, article]);
 
   // Fetch sidebar promotions
   useEffect(() => {
@@ -289,7 +292,7 @@ export default function ArticlePage() {
   const ogTitle = article.title || '';
   const ogDescription = article.excerpt || '';
   const ogImage = article.image || '';
-  const ogUrl = `${window.location.origin}/article/${id}`;
+  const ogUrl = `${window.location.origin}/article/${slug}`;
 
   // Handler functions
   const handleBookmark = async () => {
@@ -297,15 +300,15 @@ export default function ArticlePage() {
       alert('ބުކްމާރކް ކުރުމަށް ލޮގްއިން ކުރޭ');
       return;
     }
-    if (!id) return;
+    if (!articleId) return;
     
     try {
       if (isBookmarked) {
-        await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'bookmarks', id));
+        await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'bookmarks', articleId));
         setIsBookmarked(false);
       } else {
-        await setDoc(doc(db, 'users', auth.currentUser.uid, 'bookmarks', id), {
-          articleId: id,
+        await setDoc(doc(db, 'users', auth.currentUser.uid, 'bookmarks', articleId), {
+          articleId: articleId,
           createdAt: new Date().toISOString()
         });
         setIsBookmarked(true);
@@ -337,12 +340,12 @@ export default function ArticlePage() {
   };
 
   const handleReaction = async (type: 'like' | 'dislike') => {
-    if (!id) return;
+    if (!articleId) return;
 
     try {
       // Use localStorage for anonymous users
       const userId = auth.currentUser?.uid || 'anonymous';
-      const userReactionRef = doc(db, 'articles', id, 'userReactions', userId);
+      const userReactionRef = doc(db, 'articles', articleId, 'userReactions', userId);
       const userReactionDoc = await getDoc(userReactionRef);
       
       if (userReactionDoc.exists()) {
@@ -355,7 +358,7 @@ export default function ArticlePage() {
           setUserReaction(null);
           // Update localStorage for anonymous users
           if (!auth.currentUser) {
-            localStorage.removeItem(`article_${id}_reaction`);
+            localStorage.removeItem(`article_${articleId}_reaction`);
           }
         } else {
           // Change reaction
@@ -365,7 +368,7 @@ export default function ArticlePage() {
           setUserReaction(type);
           // Update localStorage for anonymous users
           if (!auth.currentUser) {
-            localStorage.setItem(`article_${id}_reaction`, type);
+            localStorage.setItem(`article_${articleId}_reaction`, type);
           }
         }
       } else {
@@ -375,7 +378,7 @@ export default function ArticlePage() {
         setUserReaction(type);
         // Update localStorage for anonymous users
         if (!auth.currentUser) {
-          localStorage.setItem(`article_${id}_reaction`, type);
+          localStorage.setItem(`article_${articleId}_reaction`, type);
         }
       }
     } catch (error) {
@@ -385,10 +388,10 @@ export default function ArticlePage() {
   };
 
   const updateReactionCount = async (type: 'like' | 'dislike', delta: number) => {
-    if (!id) return;
+    if (!articleId) return;
     
     // Debounce reaction updates to prevent rapid successive writes
-    const reactionKey = `article_${id}_${type}_debounce`;
+    const reactionKey = `article_${articleId}_${type}_debounce`;
     const lastUpdate = localStorage.getItem(reactionKey);
     const now = Date.now();
     const debounceDelay = 1000; // 1 second debounce
@@ -402,7 +405,7 @@ export default function ArticlePage() {
     
     // Use fallback database for reaction count updates
     await dbWithFallback.writeOperation(async (dbInstance) => {
-      const countRef = doc(dbInstance, 'articles', id, type === 'like' ? 'likes' : 'dislikes', 'count');
+      const countRef = doc(dbInstance, 'articles', articleId, type === 'like' ? 'likes' : 'dislikes', 'count');
       await setDoc(countRef, { count: increment(delta) }, { merge: true });
       
       // Fetch the updated count to ensure accuracy
@@ -421,7 +424,7 @@ export default function ArticlePage() {
   };
 
   const handleAddComment = async () => {
-    if (!id || !newComment.trim()) return;
+    if (!articleId || !newComment.trim()) return;
     if (!auth.currentUser && !commentName.trim()) {
       alert('ނަން ލިޔުން ބޭންޖެއެވެ');
       return;
@@ -431,7 +434,7 @@ export default function ArticlePage() {
       const userId = auth.currentUser?.uid || 'anonymous';
       const userName = auth.currentUser?.displayName || commentName.trim() || 'އަންނަނިވި އަހަރުމެން';
       
-      await addDoc(collection(db, 'articles', id, 'comments'), {
+      await addDoc(collection(db, 'articles', articleId, 'comments'), {
         userId: userId,
         userName: userName,
         text: newComment,
@@ -441,7 +444,7 @@ export default function ArticlePage() {
       setCommentName('');
 
       // Refresh comments
-      const commentsQuery = query(collection(db, 'articles', id, 'comments'), orderBy('createdAt', 'desc'));
+      const commentsQuery = query(collection(db, 'articles', articleId, 'comments'), orderBy('createdAt', 'desc'));
       const commentsSnap = await getDocs(commentsQuery);
       const commentsData = commentsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setComments(commentsData);
@@ -452,11 +455,11 @@ export default function ArticlePage() {
   };
 
   const handleCommentReaction = async (commentId: string, type: 'like' | 'dislike') => {
-    if (!id) return;
+    if (!articleId) return;
 
     try {
       const userId = auth.currentUser?.uid || 'anonymous';
-      const userReactionRef = doc(db, 'articles', id, 'comments', commentId, 'userReactions', userId);
+      const userReactionRef = doc(db, 'articles', articleId, 'comments', commentId, 'userReactions', userId);
       const userReactionDoc = await getDoc(userReactionRef);
 
       if (userReactionDoc.exists()) {
@@ -486,9 +489,9 @@ export default function ArticlePage() {
   };
 
   const updateCommentReactionCount = async (commentId: string, type: 'like' | 'dislike', delta: number) => {
-    if (!id) return;
+    if (!articleId) return;
     try {
-      const countRef = doc(db, 'articles', id, 'comments', commentId, type === 'like' ? 'likes' : 'dislikes', 'count');
+      const countRef = doc(db, 'articles', articleId, 'comments', commentId, type === 'like' ? 'likes' : 'dislikes', 'count');
       const countDoc = await getDoc(countRef);
       const currentCount = countDoc.exists() ? countDoc.data().count : 0;
       await setDoc(countRef, { count: currentCount + delta });

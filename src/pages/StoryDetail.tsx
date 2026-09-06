@@ -101,7 +101,7 @@ export default function StoryDetail() {
     loadStoryData();
 
     return () => unsubscribe();
-  }, [id]);
+  }, [slug]);
 
   // Check for episode parameter in URL
   useEffect(() => {
