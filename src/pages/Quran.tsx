@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, getFirestore } from 'firebase/firestore';
-import { Search, BookOpen, ChevronRight, Share2 } from 'lucide-react';
+import { Search, BookOpen, ChevronRight, Share2, Menu, X } from 'lucide-react';
 
 interface Verse {
   arabic: string | null;
@@ -23,6 +23,7 @@ export default function Quran() {
   const [searchQuery, setSearchQuery] = useState('');
   const [quranSurahs, setQuranSurahs] = useState<Surah[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchQuranData = async () => {
@@ -116,9 +117,15 @@ export default function Quran() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-8 max-w-2xl mx-auto"
+          className="mb-8 max-w-2xl mx-auto flex items-center gap-4"
         >
-          <div className="relative">
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="lg:hidden p-3 rounded-xl bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+          <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-6 h-6" />
             <input
               type="text"
@@ -130,6 +137,71 @@ export default function Quran() {
             />
           </div>
         </motion.div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setMobileMenuOpen(false)}
+                className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              />
+              <motion.div
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="fixed top-0 left-0 h-full w-80 bg-white z-50 lg:hidden overflow-y-auto"
+              >
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-slate-800">ސޫރާތައް</h2>
+                    <button
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="p-2 rounded-lg hover:bg-slate-100 transition"
+                    >
+                      <X className="w-6 h-6 text-slate-600" />
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {quranSurahs.map((surah) => (
+                      <button
+                        key={surah.number}
+                        onClick={() => {
+                          handleSurahSelect(surah);
+                          setMobileMenuOpen(false);
+                        }}
+                        className={`w-full p-4 rounded-2xl text-right transition-all ${
+                          selectedSurah?.number === surah.number
+                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
+                            : 'bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-blue-700'
+                        }`}
+                        dir="rtl"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-base font-bold">{surah.nameArabic}</span>
+                          <span className={`text-sm font-semibold px-2 py-1 rounded-lg ${
+                            selectedSurah?.number === surah.number
+                              ? 'bg-white/20 text-white'
+                              : 'bg-slate-200 text-slate-600'
+                          }`}>{surah.number}</span>
+                        </div>
+                        <div className={`text-sm mt-1 ${
+                          selectedSurah?.number === surah.number
+                            ? 'text-white/80'
+                            : 'text-slate-500'
+                        }`}>{surah.nameEnglish}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
         {/* Content */}
         <div className="grid lg:grid-cols-3 gap-8">
