@@ -20,6 +20,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import Stories from './pages/Stories';
 import StoryDetail from './pages/StoryDetail';
+import ChildrenStories from './pages/ChildrenStories';
+import ChildrenStoryDetail from './pages/ChildrenStoryDetail';
 import GoldenTime from './pages/GoldenTime';
 import GoldenTimeDetail from './pages/GoldenTimeDetail';
 import DoctorsDuty from './pages/DoctorsDuty';
@@ -219,10 +221,10 @@ function App() {
             { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
             { label: language === 'en' ? 'Stories' : 'ވާހަކަ', path: '/stories', icon: BookIcon },
+            { label: language === 'en' ? 'Children Stories' : 'ހަޤީޤީ ވާހަކަ', path: '/children-stories', icon: BookIcon },
             { label: language === 'en' ? 'Golden Time' : 'ރަން ޒަމާން', path: '/golden-time', icon: BookIcon },
             { label: language === 'en' ? 'Doctors Duty' : 'ޑޮކްޓަރުންގެ ޑިއުޓީ', path: '/doctors-duty', icon: Stethoscope },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
-            { label: language === 'en' ? 'Profile' : 'ޕްރޮފައިލް', path: '/profile', icon: User },
           ]}
           activePath={location.pathname}
         />
@@ -250,6 +252,8 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/stories" element={<Stories />} />
             <Route path="/stories/:slug" element={<StoryDetail />} />
+            <Route path="/children-stories" element={<ChildrenStories />} />
+            <Route path="/children-stories/:slug" element={<ChildrenStoryDetail />} />
             <Route path="/golden-time" element={<GoldenTime />} />
             <Route path="/golden-time/:slug" element={<GoldenTimeDetail />} />
             <Route path="/doctors-duty" element={<DoctorsDuty />} />
