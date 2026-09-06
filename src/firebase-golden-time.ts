@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 // Firebase configuration for Golden Time project
@@ -12,8 +12,8 @@ const firebaseConfig = {
   measurementId: "G-Q2QQJKVRHJ"
 };
 
-// Initialize Firebase
-const goldenTimeApp = initializeApp(firebaseConfig, "goldenTimeApp");
+// Initialize Firebase (check if already initialized to avoid duplicate)
+const goldenTimeApp = getApps().find(app => app.name === 'goldenTimeApp') || initializeApp(firebaseConfig, "goldenTimeApp");
 const goldenTimeDb = getFirestore(goldenTimeApp);
 
 export { goldenTimeDb as db };
