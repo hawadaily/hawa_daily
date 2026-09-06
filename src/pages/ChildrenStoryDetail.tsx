@@ -56,7 +56,7 @@ export default function ChildrenStoryDetail() {
 
       try {
         // First, find the story by slug
-        const storiesQuery = query(collection(realStoryDb, 'children-stories'), where('slug', '==', slug));
+        const storiesQuery = query(collection(realStoryDb, 'real-stories'), where('slug', '==', slug));
         const storiesSnapshot = await getDocs(storiesQuery);
         
         if (storiesSnapshot.empty) {
@@ -74,14 +74,14 @@ export default function ChildrenStoryDetail() {
         }
 
         // Load episodes
-        const episodesQuery = query(collection(realStoryDb, 'children-stories', storyId, 'episodes'), orderBy('episodeNumber', 'asc'));
+        const episodesQuery = query(collection(realStoryDb, 'real-stories', storyId, 'episodes'), orderBy('episodeNumber', 'asc'));
         const episodesSnapshot = await getDocs(episodesQuery);
         const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setEpisodes(episodesData);
 
         // Load comments for each episode
         episodesData.forEach((episode) => {
-          const commentsQuery = query(collection(realStoryDb, 'children-stories', storyId, 'episodes', episode.id, 'comments'), orderBy('createdAt', 'desc'));
+          const commentsQuery = query(collection(realStoryDb, 'real-stories', storyId, 'episodes', episode.id, 'comments'), orderBy('createdAt', 'desc'));
           onSnapshot(commentsQuery, (snapshot) => {
             const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
             setComments((prev) => ({ ...prev, [episode.id]: commentsData }));
@@ -130,7 +130,7 @@ export default function ChildrenStoryDetail() {
     if (episodeParam) {
       const episode = episodes.find((e) => e.id === episodeParam);
       if (episode && !viewedEpisodes.has(episode.id)) {
-        updateDoc(doc(realStoryDb, 'children-stories', storyId, 'episodes', episode.id), {
+        updateDoc(doc(realStoryDb, 'real-stories', storyId, 'episodes', episode.id), {
           viewCount: increment(1)
         }).then(() => {
           viewedEpisodes.add(episode.id);
@@ -227,7 +227,7 @@ export default function ChildrenStoryDetail() {
   }, [story, episodes, searchParams]);
 
   const handleShareEpisode = (episodeId: string) => {
-    const shareUrl = `${window.location.origin}/children-stories/${slug}?episode=${episodeId}`;
+    const shareUrl = `${window.location.origin}/real-stories/${slug}?episode=${episodeId}`;
     if (navigator.share) {
       navigator.share({
         title: story?.title,
@@ -249,7 +249,7 @@ export default function ChildrenStoryDetail() {
     if (!commentText?.trim()) return;
 
     try {
-      await addDoc(collection(realStoryDb, 'children-stories', storyId, 'episodes', episodeId, 'comments'), {
+      await addDoc(collection(realStoryDb, 'real-stories', storyId, 'episodes', episodeId, 'comments'), {
         text: commentText,
         userId: currentUser?.uid || 'anonymous',
         userName: currentUser?.displayName || 'Anonymous',
@@ -267,7 +267,7 @@ export default function ChildrenStoryDetail() {
     if (!storyId) return;
 
     try {
-      const commentRef = doc(realStoryDb, 'children-stories', storyId, 'episodes', episodeId, 'comments', commentId);
+      const commentRef = doc(realStoryDb, 'real-stories', storyId, 'episodes', episodeId, 'comments', commentId);
       const comment = comments[episodeId]?.find((c) => c.id === commentId);
       
       if (!comment) return;
@@ -307,7 +307,7 @@ export default function ChildrenStoryDetail() {
     if (!storyId) return;
 
     try {
-      const commentRef = doc(realStoryDb, 'children-stories', storyId, 'episodes', episodeId, 'comments', commentId);
+      const commentRef = doc(realStoryDb, 'real-stories', storyId, 'episodes', episodeId, 'comments', commentId);
       const comment = comments[episodeId]?.find((c) => c.id === commentId);
       
       if (!comment) return;
@@ -347,7 +347,7 @@ export default function ChildrenStoryDetail() {
     if (!storyId) return;
 
     try {
-      const episodeRef = doc(realStoryDb, 'children-stories', storyId, 'episodes', episodeId);
+      const episodeRef = doc(realStoryDb, 'real-stories', storyId, 'episodes', episodeId);
       const episode = episodes.find((e) => e.id === episodeId);
       
       if (!episode) return;
@@ -387,7 +387,7 @@ export default function ChildrenStoryDetail() {
     if (!storyId) return;
 
     try {
-      const episodeRef = doc(realStoryDb, 'children-stories', storyId, 'episodes', episodeId);
+      const episodeRef = doc(realStoryDb, 'real-stories', storyId, 'episodes', episodeId);
       const episode = episodes.find((e) => e.id === episodeId);
       
       if (!episode) return;
@@ -439,7 +439,7 @@ export default function ChildrenStoryDetail() {
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600">ހަޤީޤީ ވާހަކަ not found</p>
-          <Link to="/children-stories" className="mt-4 inline-block text-brand-600 hover:text-brand-700">
+          <Link to="/real-stories" className="mt-4 inline-block text-brand-600 hover:text-brand-700">
             Back to ހަޤީޤީ ވާހަކަ
           </Link>
         </div>
@@ -452,7 +452,7 @@ export default function ChildrenStoryDetail() {
       <div className="mx-auto max-w-4xl px-4 py-8 lg:px-6">
         {/* Back Button */}
         <Link
-          to="/children-stories"
+          to="/real-stories"
           className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
         >
           <ArrowLeft className="h-5 w-5" />

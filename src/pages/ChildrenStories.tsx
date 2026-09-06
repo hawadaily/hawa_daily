@@ -23,7 +23,7 @@ export default function ChildrenStories() {
   useEffect(() => {
     const loadStories = async () => {
       try {
-        const storiesQuery = query(collection(realStoryDb, 'children-stories'), orderBy('createdAt', 'desc'));
+        const storiesQuery = query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(storiesQuery);
         const storiesData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setStories(storiesData);
@@ -170,7 +170,7 @@ export default function ChildrenStories() {
                     </div>
                   ) : (
                     <Link
-                      to={`/children-stories/${story.slug}`}
+                      to={`/real-stories/${story.slug}`}
                       className="mt-4 flex items-center text-sm text-brand-600 font-semibold"
                     >
                       <span>Read Episodes</span>

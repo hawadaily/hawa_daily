@@ -1,47 +1,47 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /children-stories/{storyId} {
+    match /real-stories/{storyId} {
       allow read: if true;
       allow write: if true; // Auth is handled in main project
     }
 
-    match /children-stories/{storyId}/episodes/{episodeId} {
+    match /real-stories/{storyId}/episodes/{episodeId} {
       allow read: if true;
       allow write: if true; // Auth is handled in main project
     }
 
-    match /children-stories/{storyId}/episodes/{episodeId}/comments/{commentId} {
+    match /real-stories/{storyId}/episodes/{episodeId}/comments/{commentId} {
       allow read: if true;
       allow write: if true; // Allow anonymous users to comment
     }
 
-    match /children-stories/{storyId}/episodes/{episodeId}/likes/{likeId} {
+    match /real-stories/{storyId}/episodes/{episodeId}/likes/{likeId} {
       allow read: if true;
       allow write: if true; // Allow anonymous users to like
     }
 
-    match /children-stories/{storyId}/episodes/{episodeId}/dislikes/{dislikeId} {
+    match /real-stories/{storyId}/episodes/{episodeId}/dislikes/{dislikeId} {
       allow read: if true;
       allow write: if true; // Allow anonymous users to dislike
     }
 
-    match /children-stories/{storyId}/episodes/{episodeId}/userReactions/{userId} {
+    match /real-stories/{storyId}/episodes/{episodeId}/userReactions/{userId} {
       allow read: if true;
       allow write: if true; // Allow anonymous users to write reactions
     }
 
-    match /children-stories/{storyId}/episodes/{episodeId}/comments/{commentId}/userReactions/{userId} {
+    match /real-stories/{storyId}/episodes/{episodeId}/comments/{commentId}/userReactions/{userId} {
       allow read: if true;
       allow write: if true; // Allow anonymous users to react to comments
     }
 
-    match /children-stories/{storyId}/episodes/{episodeId}/comments/{commentId}/likes/{likeId} {
+    match /real-stories/{storyId}/episodes/{episodeId}/comments/{commentId}/likes/{likeId} {
       allow read: if true;
       allow write: if true;
     }
 
-    match /children-stories/{storyId}/episodes/{episodeId}/comments/{commentId}/dislikes/{dislikeId} {
+    match /real-stories/{storyId}/episodes/{episodeId}/comments/{commentId}/dislikes/{dislikeId} {
       allow read: if true;
       allow write: if true;
     }

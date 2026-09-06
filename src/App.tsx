@@ -221,7 +221,7 @@ function App() {
             { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
             { label: language === 'en' ? 'Stories' : 'ވާހަކަ', path: '/stories', icon: BookIcon },
-            { label: language === 'en' ? 'Real Stories' : 'ހަޤީޤީ ވާހަކަ', path: '/children-stories', icon: BookIcon },
+            { label: language === 'en' ? 'Real Stories' : 'ހަޤީޤީ ވާހަކަ', path: '/real-stories', icon: BookIcon },
             { label: language === 'en' ? 'Golden Time' : 'ރަން ޒަމާން', path: '/golden-time', icon: BookIcon },
             { label: language === 'en' ? 'Doctors Duty' : 'ޑޮކްޓަރުންގެ ޑިއުޓީ', path: '/doctors-duty', icon: Stethoscope },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
@@ -252,8 +252,8 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/stories" element={<Stories />} />
             <Route path="/stories/:slug" element={<StoryDetail />} />
-            <Route path="/children-stories" element={<ChildrenStories />} />
-            <Route path="/children-stories/:slug" element={<ChildrenStoryDetail />} />
+            <Route path="/real-stories" element={<ChildrenStories />} />
+            <Route path="/real-stories/:slug" element={<ChildrenStoryDetail />} />
             <Route path="/golden-time" element={<GoldenTime />} />
             <Route path="/golden-time/:slug" element={<GoldenTimeDetail />} />
             <Route path="/doctors-duty" element={<DoctorsDuty />} />
