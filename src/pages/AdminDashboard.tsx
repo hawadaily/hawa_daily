@@ -5641,8 +5641,29 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                           const bodyText = body;
                           if (!bodyText) return <p className="text-sm text-gray-400">ޕްރިވިއުގައި ދައްކާނީ...</p>;
 
-                          // Split text by line breaks (enter key)
-                          const paragraphs = bodyText.split('\n').filter(p => p.trim());
+                          // Split text into paragraphs after every 2 full stops (same logic as ArticlePage)
+                          const paragraphs: string[] = [];
+                          let currentParagraph = '';
+                          let fullStopCount = 0;
+
+                          for (let i = 0; i < bodyText.length; i++) {
+                            const char = bodyText[i];
+                            currentParagraph += char;
+
+                            if (char === '.') {
+                              fullStopCount++;
+                              if (fullStopCount === 2) {
+                                paragraphs.push(currentParagraph.trim());
+                                currentParagraph = '';
+                                fullStopCount = 0;
+                              }
+                            }
+                          }
+
+                          // Add any remaining text
+                          if (currentParagraph.trim()) {
+                            paragraphs.push(currentParagraph.trim());
+                          }
 
                           return paragraphs.map((paragraph: string, index: number) => (
                             paragraph && (
