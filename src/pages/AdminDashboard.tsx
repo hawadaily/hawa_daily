@@ -5,7 +5,7 @@ import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db, dbWithFallback } from '../firebase';
 import { db as goldenTimeDb } from '../firebase-golden-time';
-import { db as realStoryDb } from '../firebase-real-story';
+import { db as realStoryDb, auth as realStoryAuth } from '../firebase-real-story';
 import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
