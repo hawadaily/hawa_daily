@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
-import { db as realStoryDb } from '../firebase-real-story';
+import { db } from '../firebase';
 
 interface Story {
   id: string;
@@ -23,7 +23,7 @@ export default function ChildrenStories() {
   useEffect(() => {
     const loadStories = async () => {
       try {
-        const storiesQuery = query(collection(realStoryDb, 'children-stories'), orderBy('createdAt', 'desc'));
+        const storiesQuery = query(collection(db, 'children-stories'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(storiesQuery);
         const storiesData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setStories(storiesData);
