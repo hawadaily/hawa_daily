@@ -52,6 +52,9 @@ export default function ChildrenStoryDetail() {
 
   useEffect(() => {
     const loadStoryData = async () => {
+      console.log('ChildrenStoryDetail mounted');
+      console.log('Slug from URL:', slug);
+      
       if (!slug) {
         console.error('No slug provided');
         setLoading(false);
@@ -78,6 +81,7 @@ export default function ChildrenStoryDetail() {
         setStoryId(storyId);
         
         console.log('Story ID:', storyId);
+        console.log('Story data:', storyDoc.data());
         
         // Load story
         if (storyDoc.exists()) {
