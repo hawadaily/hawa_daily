@@ -688,6 +688,7 @@ export default function ArticlePage() {
                         </div>
                       </div>
                     )}
+                    {console.log('DEBUG - Middle social links rendered:', article.youtubeLink, article.tiktokLink)}
 
                     {/* Mid-Article Promotion */}
                     {midArticlePromotions.length > 0 && (
@@ -749,6 +750,7 @@ export default function ArticlePage() {
                         </div>
                       </div>
                     )}
+                    {console.log('DEBUG - Bottom social links rendered:', article.youtubeLink, article.tiktokLink)}
                   </>
                 );
               })()}
