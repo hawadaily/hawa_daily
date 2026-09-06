@@ -10,8 +10,17 @@ import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
 
 import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToImgur, uploadToImgBB, compressImage, deleteImage } from '../utils/cloudinary';
-import { generateSlug } from '../utils/slug';
 import { getVercelAnalytics } from '../api/vercel-analytics';
+
+// Generate a URL-friendly slug from a string
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters except word chars, spaces, hyphens
+    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
 
 type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'golden-time' | 'obituary' | 'funeral-poster' | 'advertisements' | 'hero-slides';
 
