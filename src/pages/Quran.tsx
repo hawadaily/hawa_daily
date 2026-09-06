@@ -205,13 +205,13 @@ export default function Quran() {
 
         {/* Content */}
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Surah List */}
+          {/* Surah List - Desktop Only */}
           {!searchQuery && (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="lg:col-span-1"
+              className="hidden lg:block lg:col-span-1"
             >
               <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 max-h-[700px] overflow-y-auto">
                 <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center pb-4 border-b border-slate-200">ސޫރާތައް</h2>
