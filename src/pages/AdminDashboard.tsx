@@ -1367,7 +1367,6 @@ export default function AdminDashboard() {
   const [stories, setStories] = useState<any[]>([]);
   const [selectedStory, setSelectedStory] = useState<any | null>(null);
   const [storyTitle, setStoryTitle] = useState('');
-  const [storySlug, setStorySlug] = useState('');
   const [storyDescription, setStoryDescription] = useState('');
   const [storyAuthor, setStoryAuthor] = useState('');
   const [storyCoverImage, setStoryCoverImage] = useState<File | null>(null);
@@ -1384,7 +1383,6 @@ export default function AdminDashboard() {
   const [childrenStories, setChildrenStories] = useState<any[]>([]);
   const [selectedChildrenStory, setSelectedChildrenStory] = useState<any | null>(null);
   const [childrenStoryTitle, setChildrenStoryTitle] = useState('');
-  const [childrenStorySlug, setChildrenStorySlug] = useState('');
   const [childrenStoryDescription, setChildrenStoryDescription] = useState('');
   const [childrenStoryAuthor, setChildrenStoryAuthor] = useState('');
   const [childrenStoryCoverImage, setChildrenStoryCoverImage] = useState<File | null>(null);
@@ -3150,7 +3148,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       // Compress image before upload
       const compressedFile = await compressImage(storyCoverImage, 1920, 0.8);
       const coverImageUrl = await uploadToImgBB(compressedFile);
-      const slug = storySlug.trim() || generateSlug(storyTitle);
+      const slug = generateSlug(storyTitle);
 
       await addDoc(collection(db, 'stories'), {
         slug,
@@ -3185,7 +3183,6 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const handleEditStory = (story: any) => {
     setSelectedStory(story);
     setStoryTitle(story.title);
-    setStorySlug(story.slug || '');
     setStoryDescription(story.description || '');
     setStoryAuthor(story.author || '');
     setStoryYoutubeLink(story.youtubeLink || '');
@@ -3207,7 +3204,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setUploadingStory(true);
       setStoryError('');
 
-      const slug = storySlug.trim() || generateSlug(storyTitle);
+      const slug = generateSlug(storyTitle);
 
       const updateData: any = {
         slug,
@@ -3248,7 +3245,6 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
   const resetStoryForm = () => {
     setStoryTitle('');
-    setStorySlug('');
     setStoryDescription('');
     setStoryAuthor('');
     setStoryYoutubeLink('');
@@ -3333,7 +3329,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       // Compress image before upload
       const compressedFile = await compressImage(childrenStoryCoverImage, 1920, 0.8);
       const coverImageUrl = await uploadToImgBB(compressedFile);
-      const slug = childrenStorySlug.trim() || generateSlug(childrenStoryTitle);
+      const slug = generateSlug(childrenStoryTitle);
 
       await addDoc(collection(realStoryDb, 'real-stories'), {
         slug,
@@ -3368,7 +3364,6 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const handleEditChildrenStory = (story: any) => {
     setSelectedChildrenStory(story);
     setChildrenStoryTitle(story.title);
-    setChildrenStorySlug(story.slug || '');
     setChildrenStoryDescription(story.description || '');
     setChildrenStoryAuthor(story.author || '');
     setChildrenStoryYoutubeLink(story.youtubeLink || '');
@@ -3390,7 +3385,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setUploadingChildrenStory(true);
       setChildrenStoryError('');
 
-      const slug = childrenStorySlug.trim() || generateSlug(childrenStoryTitle);
+      const slug = generateSlug(childrenStoryTitle);
 
       const updateData: any = {
         slug,
@@ -3431,7 +3426,6 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
   const resetChildrenStoryForm = () => {
     setChildrenStoryTitle('');
-    setChildrenStorySlug('');
     setChildrenStoryDescription('');
     setChildrenStoryAuthor('');
     setChildrenStoryYoutubeLink('');
@@ -8891,16 +8885,6 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700">Slug (URL)</label>
-                    <input
-                      type="text"
-                      value={storySlug}
-                      onChange={(e) => setStorySlug(e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      placeholder="story-url (auto-generated if empty)"
-                    />
-                  </div>
-                  <div>
                     <label className="block text-sm font-semibold text-gray-700">Description</label>
                     <textarea
                       value={storyDescription}
@@ -9183,8 +9167,39 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         {/* Children Stories Tab */}
         {activeTab === 'real-stories' && (
           <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
-            <h3 className="text-2xl font-bold text-gray-900">ހަޤީޤީ ވާހަކަ (Real Stories)</h3>
-            <p className="mt-2 text-sm text-gray-600">Create and manage real stories with multiple episodes</p>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">ހަޤީޤީ ވާހަކަ (Real Stories)</h3>
+                <p className="mt-2 text-sm text-gray-600">Create and manage real stories with multiple episodes</p>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    const storiesQuery = query(collection(realStoryDb, 'real-stories'));
+                    const snapshot = await getDocs(storiesQuery);
+                    let updated = 0;
+                    
+                    for (const doc of snapshot.docs) {
+                      const data = doc.data();
+                      if (!data.slug && data.title) {
+                        const slug = generateSlug(data.title);
+                        await updateDoc(doc.ref, { slug });
+                        updated++;
+                      }
+                    }
+                    
+                    alert(`Updated ${updated} real stories with slugs`);
+                    loadDashboard();
+                  } catch (error) {
+                    console.error('Failed to fix slugs:', error);
+                    alert('Failed to fix slugs. Check console for details.');
+                  }
+                }}
+                className="rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400"
+              >
+                Fix Missing Slugs
+              </button>
+            </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
               {/* Create Children Story Form */}
@@ -9207,16 +9222,6 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                       placeholder="Story title..."
                       required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700">Slug (URL)</label>
-                    <input
-                      type="text"
-                      value={childrenStorySlug}
-                      onChange={(e) => setChildrenStorySlug(e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      placeholder="story-url (auto-generated if empty)"
                     />
                   </div>
                   <div>
