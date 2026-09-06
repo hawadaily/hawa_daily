@@ -655,6 +655,37 @@ export default function ArticlePage() {
                       )
                     ))}
 
+                    {/* Social Media Links - Middle */}
+                    {(article.youtubeLink || article.tiktokLink) && (
+                      <div className="my-6 space-y-3">
+                        <h3 className="text-center text-sm font-semibold text-gray-700">
+                          މި އާޓިކަލްއާ ބެހޭ މައުލޫމާތު އިތުރަށް ސާފުކޮށްލެއްވުމަށް ޔޫޓިއުބް ނުވަތަ ޓިކްޓޮކް ލިންކް ޙިޔާރު ކޮށްލައްވާ
+                        </h3>
+                        <div className="flex gap-3">
+                          {article.youtubeLink && (
+                            <a
+                              href={article.youtubeLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-red-500 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                            >
+                              ▶️ YouTube
+                            </a>
+                          )}
+                          {article.tiktokLink && (
+                            <a
+                              href={article.tiktokLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-gray-50 px-4 py-3 text-sm font-semibold text-black transition hover:bg-gray-100"
+                            >
+                              🎵 TikTok
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Mid-Article Promotion */}
                     {midArticlePromotions.length > 0 && (
                       <AnimatePresence mode="wait">
@@ -678,14 +709,43 @@ export default function ArticlePage() {
                       </AnimatePresence>
                     )}
 
-                    <PromoBanner location="article" position="middle" />
-
                     {/* Second half of article body */}
                     {secondHalf.map((paragraph: string, index: number) => (
                       paragraph && (
                         <p key={`second-${index}`} className="text-base leading-8 text-slate-700">{paragraph}</p>
                       )
                     ))}
+
+                    {/* Social Media Links - Bottom */}
+                    {(article.youtubeLink || article.tiktokLink) && (
+                      <div className="my-6 space-y-3">
+                        <h3 className="text-center text-sm font-semibold text-gray-700">
+                          މި އާޓިކަލްއާ ބެހޭ މައުލޫމާތު އިތުރަށް ސާފުކޮށްލެއްވުމަށް ޔޫޓިއުބް ނުވަތަ ޓިކްޓޮކް ލިންކް ޙިޔާރު ކޮށްލައްވާ
+                        </h3>
+                        <div className="flex gap-3">
+                          {article.youtubeLink && (
+                            <a
+                              href={article.youtubeLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-red-500 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                            >
+                              ▶️ YouTube
+                            </a>
+                          )}
+                          {article.tiktokLink && (
+                            <a
+                              href={article.tiktokLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-gray-50 px-4 py-3 text-sm font-semibold text-black transition hover:bg-gray-100"
+                            >
+                              🎵 TikTok
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </>
                 );
               })()}
@@ -693,7 +753,6 @@ export default function ArticlePage() {
             <div className="mt-6">
               <QuranVerseSlider />
             </div>
-            <PromoBanner location="article" position="bottom" />
             <div className="flex flex-col gap-3 lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-5 lg:shadow-soft sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap items-center gap-3">
                 <button 
