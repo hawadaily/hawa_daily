@@ -36,12 +36,22 @@ export default function Quran() {
           surahs.push(doc.data() as Surah);
         });
         setQuranSurahs(surahs);
+        // Set default surah to Al-Fatiha (number 1)
+        const fatiha = surahs.find(s => s.number === 1);
+        if (fatiha) {
+          setSelectedSurah(fatiha);
+        }
       } catch (error) {
         console.error('Error fetching Quran data:', error);
         // Fallback to JSON if Firebase fails
         try {
           const quranData = await import('../data/quran-full.json');
-          setQuranSurahs(quranData.default as Surah[]);
+          const surahs = quranData.default as Surah[];
+          setQuranSurahs(surahs);
+          const fatiha = surahs.find(s => s.number === 1);
+          if (fatiha) {
+            setSelectedSurah(fatiha);
+          }
         } catch (fallbackError) {
           console.error('Error loading fallback Quran data:', fallbackError);
         }
