@@ -52,14 +52,23 @@ export default function ChildrenStoryDetail() {
 
   useEffect(() => {
     const loadStoryData = async () => {
-      if (!slug) return;
+      if (!slug) {
+        console.error('No slug provided');
+        setLoading(false);
+        return;
+      }
 
       try {
+        console.log('Loading story with slug:', slug);
+        
         // First, find the story by slug
         const storiesQuery = query(collection(realStoryDb, 'real-stories'), where('slug', '==', slug));
         const storiesSnapshot = await getDocs(storiesQuery);
         
+        console.log('Stories found:', storiesSnapshot.size);
+        
         if (storiesSnapshot.empty) {
+          console.error('No story found with slug:', slug);
           setLoading(false);
           return;
         }
@@ -67,6 +76,8 @@ export default function ChildrenStoryDetail() {
         const storyDoc = storiesSnapshot.docs[0];
         const storyId = storyDoc.id;
         setStoryId(storyId);
+        
+        console.log('Story ID:', storyId);
         
         // Load story
         if (storyDoc.exists()) {
@@ -78,6 +89,8 @@ export default function ChildrenStoryDetail() {
         const episodesSnapshot = await getDocs(episodesQuery);
         const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setEpisodes(episodesData);
+        
+        console.log('Episodes loaded:', episodesData.length);
 
         // Load comments for each episode
         episodesData.forEach((episode) => {
