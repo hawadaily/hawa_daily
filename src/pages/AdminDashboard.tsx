@@ -5624,6 +5624,16 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       <span className="text-xs text-gray-500">އެހެން ވެހެ ފެންނަނީ އެއްވެސް ގޮތަކުން</span>
                     </div>
                     <div className="space-y-6">
+                      {/* Image Preview */}
+                      {(imageUrl || uploadedImage) && (
+                        <div className="relative">
+                          <img
+                            src={imageUrl || uploadedImage}
+                            alt="Article preview"
+                            className="w-full h-auto rounded-lg border border-gray-300"
+                          />
+                        </div>
+                      )}
                       <h1 className="text-2xl font-bold leading-[2.5] text-[#0077b6]">{titleDv || title}</h1>
                       <p className="text-sm leading-7 text-[#00b4d8]">{excerptDv || excerpt}</p>
                       <div className="space-y-6">
