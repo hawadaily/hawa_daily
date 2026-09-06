@@ -22,7 +22,7 @@ function generateSlug(text: string): string {
     .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 }
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'golden-time' | 'obituary' | 'funeral-poster' | 'advertisements' | 'hero-slides';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'children-stories' | 'golden-time' | 'obituary' | 'funeral-poster' | 'advertisements' | 'hero-slides';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -1378,6 +1378,28 @@ export default function AdminDashboard() {
   const [uploadingStory, setUploadingStory] = useState(false);
   const [storyError, setStoryError] = useState('');
 
+  // Children Stories management state
+  const [childrenStories, setChildrenStories] = useState<any[]>([]);
+  const [selectedChildrenStory, setSelectedChildrenStory] = useState<any | null>(null);
+  const [childrenStoryTitle, setChildrenStoryTitle] = useState('');
+  const [childrenStoryDescription, setChildrenStoryDescription] = useState('');
+  const [childrenStoryAuthor, setChildrenStoryAuthor] = useState('');
+  const [childrenStoryCoverImage, setChildrenStoryCoverImage] = useState<File | null>(null);
+  const [childrenStoryYoutubeLink, setChildrenStoryYoutubeLink] = useState('');
+  const [childrenStoryTiktokLink, setChildrenStoryTiktokLink] = useState('');
+  const [childrenStoryStatus, setChildrenStoryStatus] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
+  const [childrenStoryReleaseDate, setChildrenStoryReleaseDate] = useState('');
+  const [childrenStoryLocked, setChildrenStoryLocked] = useState(true);
+  const [editingChildrenStory, setEditingChildrenStory] = useState(false);
+  const [uploadingChildrenStory, setUploadingChildrenStory] = useState(false);
+  const [childrenStoryError, setChildrenStoryError] = useState('');
+  const [childrenEpisodes, setChildrenEpisodes] = useState<any[]>([]);
+  const [childrenEpisodeTitle, setChildrenEpisodeTitle] = useState('');
+  const [childrenEpisodeContent, setChildrenEpisodeContent] = useState('');
+  const [childrenEpisodeNumber, setChildrenEpisodeNumber] = useState(1);
+  const [uploadingChildrenEpisode, setUploadingChildrenEpisode] = useState(false);
+  const [childrenEpisodeError, setChildrenEpisodeError] = useState('');
+
   // Golden Time management state
   const [goldenTimeArticles, setGoldenTimeArticles] = useState<any[]>([]);
   const [selectedGoldenTimeArticle, setSelectedGoldenTimeArticle] = useState<any | null>(null);
@@ -2005,6 +2027,11 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setStories(storiesData);
 
+      // Load children stories
+      const childrenStoriesSnapshot = await getDocs(query(collection(db, 'children-stories'), orderBy('createdAt', 'desc')));
+      const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setChildrenStories(childrenStoriesData);
+
       // Load golden time articles
       const goldenTimeSnapshot = await getDocs(query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc')));
       const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
@@ -2538,6 +2565,37 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       loadDashboard();
     } catch (error) {
       setMessage('Error updating breaking status');
+      console.error(error);
+    }
+  };
+
+  const handleExportVisitorData = () => {
+    try {
+      const exportData = {
+        exportedAt: new Date().toISOString(),
+        totalVisitors: visitorDetails.length,
+        visitors: visitorDetails.map(visitor => ({
+          id: visitor.id,
+          timestamp: visitor.timestamp?.toDate ? visitor.timestamp.toDate().toISOString() : visitor.timestamp,
+          deviceFingerprint: visitor.deviceFingerprint,
+          userAgent: visitor.userAgent,
+          articleId: visitor.articleId,
+          page: visitor.page
+        }))
+      };
+      
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `visitor-data-${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      
+      setMessage('Visitor data exported successfully');
+    } catch (error) {
+      setMessage('Error exporting visitor data');
       console.error(error);
     }
   };
@@ -3198,6 +3256,240 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setEpisodeNumber(episodesData.length + 1);
     } catch (error) {
       console.error('Failed to load episodes', error);
+    }
+  };
+
+  // Children Stories management handlers
+  const handleCreateChildrenStory = async () => {
+    if (!childrenStoryTitle.trim() || !childrenStoryCoverImage) {
+      setChildrenStoryError('Please provide title and cover image');
+      return;
+    }
+
+    try {
+      setUploadingChildrenStory(true);
+      setChildrenStoryError('');
+
+      // Compress image before upload
+      const compressedFile = await compressImage(childrenStoryCoverImage, 1920, 0.8);
+      const coverImageUrl = await uploadToImgBB(compressedFile);
+      const slug = generateSlug(childrenStoryTitle);
+
+      await addDoc(collection(db, 'children-stories'), {
+        slug,
+        title: childrenStoryTitle,
+        description: childrenStoryDescription,
+        author: childrenStoryAuthor,
+        youtubeLink: childrenStoryYoutubeLink,
+        tiktokLink: childrenStoryTiktokLink,
+        coverImage: coverImageUrl,
+        status: childrenStoryStatus,
+        releaseDate: childrenStoryReleaseDate || null,
+        locked: childrenStoryLocked,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+
+      resetChildrenStoryForm();
+      setMessage('Children story created successfully');
+
+      // Reload children stories
+      const childrenStoriesSnapshot = await getDocs(query(collection(db, 'children-stories'), orderBy('createdAt', 'desc')));
+      const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setChildrenStories(childrenStoriesData);
+    } catch (error) {
+      setChildrenStoryError('Failed to create children story');
+      console.error(error);
+    } finally {
+      setUploadingChildrenStory(false);
+    }
+  };
+
+  const handleEditChildrenStory = (story: any) => {
+    setSelectedChildrenStory(story);
+    setChildrenStoryTitle(story.title);
+    setChildrenStoryDescription(story.description || '');
+    setChildrenStoryAuthor(story.author || '');
+    setChildrenStoryYoutubeLink(story.youtubeLink || '');
+    setChildrenStoryTiktokLink(story.tiktokLink || '');
+    setChildrenStoryStatus(story.status || 'upcoming');
+    setChildrenStoryReleaseDate(story.releaseDate || '');
+    setChildrenStoryLocked(story.locked !== false);
+    setChildrenStoryCoverImage(null);
+    setEditingChildrenStory(true);
+  };
+
+  const handleUpdateChildrenStory = async () => {
+    if (!selectedChildrenStory || !childrenStoryTitle.trim()) {
+      setChildrenStoryError('Please provide title');
+      return;
+    }
+
+    try {
+      setUploadingChildrenStory(true);
+      setChildrenStoryError('');
+
+      const slug = generateSlug(childrenStoryTitle);
+
+      const updateData: any = {
+        slug,
+        title: childrenStoryTitle,
+        description: childrenStoryDescription,
+        author: childrenStoryAuthor,
+        youtubeLink: childrenStoryYoutubeLink,
+        tiktokLink: childrenStoryTiktokLink,
+        status: childrenStoryStatus,
+        releaseDate: childrenStoryReleaseDate || null,
+        locked: childrenStoryLocked,
+        updatedAt: serverTimestamp(),
+      };
+
+      if (childrenStoryCoverImage) {
+        // Compress image before upload
+        const compressedFile = await compressImage(childrenStoryCoverImage, 1920, 0.8);
+        const coverImageUrl = await uploadToImgBB(compressedFile);
+        updateData.coverImage = coverImageUrl;
+      }
+
+      await updateDoc(doc(db, 'children-stories', selectedChildrenStory.id), updateData);
+
+      resetChildrenStoryForm();
+      setMessage('Children story updated successfully');
+
+      // Reload children stories
+      const childrenStoriesSnapshot = await getDocs(query(collection(db, 'children-stories'), orderBy('createdAt', 'desc')));
+      const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setChildrenStories(childrenStoriesData);
+    } catch (error) {
+      setChildrenStoryError('Failed to update children story');
+      console.error(error);
+    } finally {
+      setUploadingChildrenStory(false);
+    }
+  };
+
+  const resetChildrenStoryForm = () => {
+    setChildrenStoryTitle('');
+    setChildrenStoryDescription('');
+    setChildrenStoryAuthor('');
+    setChildrenStoryYoutubeLink('');
+    setChildrenStoryTiktokLink('');
+    setChildrenStoryCoverImage(null);
+    setChildrenStoryStatus('upcoming');
+    setChildrenStoryReleaseDate('');
+    setChildrenStoryLocked(true);
+    setEditingChildrenStory(false);
+    setSelectedChildrenStory(null);
+  };
+
+  const handleDeleteChildrenStory = async (storyId: string) => {
+    if (!confirm('Are you sure you want to delete this children story and all its episodes?')) {
+      return;
+    }
+
+    try {
+      // Fetch story to get image URL
+      const storyDoc = await getDoc(doc(db, 'children-stories', storyId));
+      if (storyDoc.exists()) {
+        const storyData = storyDoc.data();
+        if (storyData?.coverImage) {
+          try {
+            console.log('Image deletion not supported for ImgBB/Imgur URLs');
+          } catch (cloudinaryError) {
+            console.error('Failed to delete image:', cloudinaryError);
+          }
+        }
+      }
+
+      // Delete all episodes
+      const episodesSnapshot = await getDocs(collection(db, 'children-stories', storyId, 'episodes'));
+      for (const episodeDoc of episodesSnapshot.docs) {
+        await deleteDoc(doc(db, 'children-stories', storyId, 'episodes', episodeDoc.id));
+      }
+
+      // Delete story
+      await deleteDoc(doc(db, 'children-stories', storyId));
+      setMessage('Children story deleted successfully');
+
+      // Reload children stories
+      const childrenStoriesSnapshot = await getDocs(query(collection(db, 'children-stories'), orderBy('createdAt', 'desc')));
+      const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setChildrenStories(childrenStoriesData);
+
+      if (selectedChildrenStory?.id === storyId) {
+        setSelectedChildrenStory(null);
+        setChildrenEpisodes([]);
+      }
+    } catch (error) {
+      setMessage('Failed to delete children story');
+      console.error(error);
+    }
+  };
+
+  const handleSelectChildrenStory = async (story: any) => {
+    setSelectedChildrenStory(story);
+    try {
+      const episodesSnapshot = await getDocs(query(collection(db, 'children-stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setChildrenEpisodes(episodesData);
+      setChildrenEpisodeNumber(episodesData.length + 1);
+    } catch (error) {
+      console.error('Failed to load children episodes', error);
+    }
+  };
+
+  // Children Episode management handlers
+  const handleCreateChildrenEpisode = async () => {
+    if (!selectedChildrenStory || !childrenEpisodeTitle.trim() || !childrenEpisodeContent.trim()) {
+      setChildrenEpisodeError('Please select a children story and provide title and content');
+      return;
+    }
+
+    try {
+      setUploadingChildrenEpisode(true);
+      setChildrenEpisodeError('');
+
+      await addDoc(collection(db, 'children-stories', selectedChildrenStory.id, 'episodes'), {
+        title: childrenEpisodeTitle,
+        content: childrenEpisodeContent,
+        episodeNumber: childrenEpisodeNumber,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+
+      setChildrenEpisodeTitle('');
+      setChildrenEpisodeContent('');
+      setChildrenEpisodeNumber(childrenEpisodeNumber + 1);
+      setMessage('Children episode created successfully');
+
+      // Reload children episodes
+      const episodesSnapshot = await getDocs(query(collection(db, 'children-stories', selectedChildrenStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setChildrenEpisodes(episodesData);
+    } catch (error) {
+      setChildrenEpisodeError('Failed to create children episode');
+      console.error(error);
+    } finally {
+      setUploadingChildrenEpisode(false);
+    }
+  };
+
+  const handleDeleteChildrenEpisode = async (episodeId: string) => {
+    if (!confirm('Are you sure you want to delete this episode?')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'children-stories', selectedChildrenStory.id, 'episodes', episodeId));
+      setMessage('Children episode deleted successfully');
+
+      // Reload children episodes
+      const episodesSnapshot = await getDocs(query(collection(db, 'children-stories', selectedChildrenStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setChildrenEpisodes(episodesData);
+    } catch (error) {
+      setMessage('Failed to delete children episode');
+      console.error(error);
     }
   };
 
@@ -4489,6 +4781,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         { id: 'manage' as const, label: t.manageNews, icon: '📋' },
         { id: 'recipes' as const, label: t.recipes, icon: '🍳' },
         { id: 'stories' as const, label: 'ސްޓޯރީތައް', icon: '📖' },
+        { id: 'children-stories' as const, label: 'ހަޤީޤީ ވާހަކަ', icon: '✨' },
         { id: 'golden-time' as const, label: 'ދިވެހި ރަން ޒަމާން', icon: '⏳' },
         { id: 'obituary' as const, label: 'ތަޢުޒިޔާ މޭކަރ', icon: '🕯️' },
         { id: 'funeral-poster' as const, label: 'ޖނާޒާގެ މަޢުލޫމާތު', icon: '📋' },
@@ -6258,6 +6551,16 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
           <div className="grid gap-6 lg:grid-cols-4">
             <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
               <h3 className="text-xl font-semibold text-gray-900">{t.analytics}</h3>
+              
+              {/* Export Button */}
+              <div className="mt-4">
+                <button
+                  onClick={handleExportVisitorData}
+                  className="rounded-xl border border-sky-600 px-4 py-2 text-sm text-sky-600 transition hover:bg-sky-600/20"
+                >
+                  📥 Export Visitor Data (JSON)
+                </button>
+              </div>
               
               {/* Date Range Selector */}
               <div className="mt-4 space-y-3">
@@ -8635,6 +8938,315 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                           </div>
                           <button
                             onClick={() => handleDeleteEpisode(episode.id)}
+                            className="text-rose-600 hover:text-rose-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Children Stories Tab */}
+        {activeTab === 'children-stories' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <h3 className="text-2xl font-bold text-gray-900">ހަޤީޤީ ވާހަކަ (Real Stories)</h3>
+            <p className="mt-2 text-sm text-gray-600">Create and manage real stories with multiple episodes</p>
+
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              {/* Create Children Story Form */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">
+                  {editingChildrenStory ? 'Edit Real Story' : 'Create New Real Story'}
+                </h4>
+                {childrenStoryError && (
+                  <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                    {childrenStoryError}
+                  </div>
+                )}
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Title</label>
+                    <input
+                      type="text"
+                      value={childrenStoryTitle}
+                      onChange={(e) => setChildrenStoryTitle(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Story title..."
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Description</label>
+                    <textarea
+                      value={childrenStoryDescription}
+                      onChange={(e) => setChildrenStoryDescription(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Story description..."
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Author</label>
+                    <input
+                      type="text"
+                      value={childrenStoryAuthor}
+                      onChange={(e) => setChildrenStoryAuthor(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Author name..."
+                    />
+                  </div>
+
+                  {/* Social Media Links */}
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">YouTube Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={childrenStoryYoutubeLink}
+                        onChange={(e) => setChildrenStoryYoutubeLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://youtube.com/watch?v=..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">TikTok Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={childrenStoryTiktokLink}
+                        onChange={(e) => setChildrenStoryTiktokLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://tiktok.com/@user/video/..."
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Status</label>
+                    <select
+                      value={childrenStoryStatus}
+                      onChange={(e) => setChildrenStoryStatus(e.target.value as 'upcoming' | 'ongoing' | 'completed')}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    >
+                      <option value="upcoming">Upcoming</option>
+                      <option value="ongoing">Ongoing</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Release Date</label>
+                    <input
+                      type="date"
+                      value={childrenStoryReleaseDate}
+                      onChange={(e) => setChildrenStoryReleaseDate(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="childrenStoryLocked"
+                      checked={childrenStoryLocked}
+                      onChange={(e) => setChildrenStoryLocked(e.target.checked)}
+                      className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                    />
+                    <label htmlFor="childrenStoryLocked" className="text-sm text-gray-700">
+                      Lock story (content hidden until unlocked by admin)
+                    </label>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Cover Image {editingChildrenStory ? '(leave empty to keep current)' : ''}
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setChildrenStoryCoverImage(e.target.files?.[0] || null)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      required={!editingChildrenStory}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={editingChildrenStory ? handleUpdateChildrenStory : handleCreateChildrenStory}
+                      disabled={uploadingChildrenStory}
+                      className="flex-1 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {uploadingChildrenStory ? 'Saving...' : editingChildrenStory ? 'Update Story' : 'Create Story'}
+                    </button>
+                    {editingChildrenStory && (
+                      <button
+                        onClick={resetChildrenStoryForm}
+                        className="rounded-2xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Children Stories List */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">Real Stories ({childrenStories.length})</h4>
+                <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
+                  {childrenStories.length === 0 ? (
+                    <p className="text-sm text-gray-500">No real stories yet</p>
+                  ) : (
+                    childrenStories.map((story) => (
+                      <div
+                        key={story.id}
+                        className={`rounded-xl border p-3 cursor-pointer transition ${
+                          selectedChildrenStory?.id === story.id
+                            ? 'border-brand-500 bg-brand-50'
+                            : 'border-gray-200 bg-white hover:border-gray-300'
+                        }`}
+                        onClick={() => handleSelectChildrenStory(story)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <img
+                            src={story.coverImage}
+                            alt={story.title}
+                            className="h-16 w-16 rounded-lg object-cover"
+                          />
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-gray-900">{story.title}</h5>
+                            {story.author && (
+                              <p className="mt-1 text-xs text-gray-500">by {story.author}</p>
+                            )}
+                            <p className="mt-1 text-xs text-gray-600 line-clamp-2">{story.description}</p>
+                            <div className="mt-2 flex items-center gap-2">
+                              <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                                story.status === 'upcoming' ? 'bg-amber-100 text-amber-700' :
+                                story.status === 'ongoing' ? 'bg-emerald-100 text-emerald-700' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {story.status}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditChildrenStory(story);
+                              }}
+                              className="text-brand-600 hover:text-brand-700"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteChildrenStory(story.id);
+                              }}
+                              className="text-rose-600 hover:text-rose-700"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Children Episodes Section */}
+            {selectedChildrenStory && (
+              <div className="mt-6 rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900">Episodes for: {selectedChildrenStory.title}</h4>
+                    <p className="mt-1 text-sm text-gray-600">{childrenEpisodes.length} episodes</p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedChildrenStory(null)}
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                {/* Create Children Episode Form */}
+                <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4">
+                  {childrenEpisodeError && (
+                    <div className="mb-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                      {childrenEpisodeError}
+                    </div>
+                  )}
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Episode Number</label>
+                      <input
+                        type="number"
+                        value={childrenEpisodeNumber}
+                        onChange={(e) => setChildrenEpisodeNumber(Number(e.target.value))}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        min="1"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Title</label>
+                      <input
+                        type="text"
+                        value={childrenEpisodeTitle}
+                        onChange={(e) => setChildrenEpisodeTitle(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="Episode title..."
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Content</label>
+                      <textarea
+                        value={childrenEpisodeContent}
+                        onChange={(e) => setChildrenEpisodeContent(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="Episode content..."
+                        rows={6}
+                        required
+                      />
+                    </div>
+                    <button
+                      onClick={handleCreateChildrenEpisode}
+                      disabled={uploadingChildrenEpisode}
+                      className="w-full rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {uploadingChildrenEpisode ? 'Creating...' : 'Add Episode'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Children Episodes List */}
+                <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
+                  {childrenEpisodes.length === 0 ? (
+                    <p className="text-sm text-gray-500">No episodes yet</p>
+                  ) : (
+                    childrenEpisodes.map((episode) => (
+                      <div
+                        key={episode.id}
+                        className="rounded-xl border border-gray-200 bg-white p-3"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-700">
+                                Ep. {episode.episodeNumber}
+                              </span>
+                              <h5 className="font-semibold text-gray-900">{episode.title}</h5>
+                            </div>
+                            <p className="mt-2 text-sm text-gray-600 line-clamp-3">{episode.content}</p>
+                          </div>
+                          <button
+                            onClick={() => handleDeleteChildrenEpisode(episode.id)}
                             className="text-rose-600 hover:text-rose-700"
                           >
                             Delete
