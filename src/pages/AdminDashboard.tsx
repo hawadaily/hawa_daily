@@ -2034,9 +2034,14 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setChildrenStories(childrenStoriesData);
 
       // Load golden time articles
-      const goldenTimeSnapshot = await getDocs(query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc')));
-      const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setGoldenTimeArticles(goldenTimeData);
+      try {
+        const goldenTimeSnapshot = await getDocs(query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc')));
+        const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+        setGoldenTimeArticles(goldenTimeData);
+        console.log('Golden Time articles loaded:', goldenTimeData.length);
+      } catch (goldenTimeError) {
+        console.error('Failed to load golden time articles:', goldenTimeError);
+      }
     } catch (error) {
       console.warn('Unable to load dashboard data', error);
     }
@@ -4931,7 +4936,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
         {/* Mobile Tabs */}
         <div className="lg:hidden flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'hero-slides', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'advertisements', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories', 'golden-time', 'obituary', 'funeral-poster'] as const).map((tab) => (
+          {(['articles', 'manage', 'hero-slides', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'advertisements', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories', 'real-stories', 'golden-time', 'obituary', 'funeral-poster'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -4958,6 +4963,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
               {tab === 'recipes' && t.recipes}
               {tab === 'quran' && 'ޤުރްއާން (Quran)'}
               {tab === 'stories' && 'ސްޓޯރީތައް (Stories)'}
+              {tab === 'real-stories' && 'ހަޤީޤީ ވާހަކަ'}
               {tab === 'golden-time' && 'ދިވެހި ރަން ޒަމާން'}
               {tab === 'obituary' && 'ތަޢުޒިޔާ މޭކަރ'}
               {tab === 'funeral-poster' && 'ޖނާޒާގެ މަޢުލޫމާތު'}
