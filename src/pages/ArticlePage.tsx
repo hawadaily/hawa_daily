@@ -38,7 +38,7 @@ const getRelativeTime = (dateValue: any) => {
 };
 
 export default function ArticlePage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [article, setArticle] = useState<Article | null | undefined>(undefined);
   const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
@@ -60,7 +60,7 @@ export default function ArticlePage() {
   const [midArticlePromotionIndex, setMidArticlePromotionIndex] = useState(0);
 
   useEffect(() => {
-    if (!id) {
+    if (!slug) {
       setArticle(null);
       setLoading(false);
       return;
@@ -69,27 +69,29 @@ export default function ArticlePage() {
     const fetchArticle = async () => {
       setLoading(true);
       try {
-        const docRef = doc(db, 'articles', id);
-        const docSnap = await getDoc(docRef);
+        const q = query(collection(db, 'articles'), where('slug', '==', slug), limit(1));
+        const querySnapshot = await getDocs(q);
         
-        if (docSnap.exists()) {
+        if (!querySnapshot.empty) {
+          const docSnap = querySnapshot.docs[0];
           const data = docSnap.data();
+          const articleId = docSnap.id;
           const articleData = {
-            id: docSnap.id,
+            id: articleId,
             ...data,
             publishedAt: data.createdAt || data.publishedAt
           } as Article;
           setArticle(articleData);
 
           // Debounced view count increment - only increment if not viewed in last hour
-          const viewKey = `article_${id}_viewed`;
+          const viewKey = `article_${articleId}_viewed`;
           const lastViewed = localStorage.getItem(viewKey);
           const now = Date.now();
           const oneHour = 60 * 60 * 1000;
 
           if (!lastViewed || (now - parseInt(lastViewed)) > oneHour) {
             dbWithFallback.writeOperation(async (dbInstance) => {
-              return updateDoc(doc(dbInstance, 'articles', id), { views: increment(1) });
+              return updateDoc(doc(dbInstance, 'articles', articleId), { views: increment(1) });
             })
               .then(() => localStorage.setItem(viewKey, now.toString()))
               .catch(err => console.warn('Unable to increment article views:', err));
@@ -97,7 +99,7 @@ export default function ArticlePage() {
 
           // Parallel fetch of likes/dislikes
           Promise.all([
-            getDoc(doc(db, 'articles', id, 'likes', 'count')),
+            getDoc(doc(db, 'articles', articleId, 'likes', 'count')),
             getDoc(doc(db, 'articles', id, 'dislikes', 'count'))
           ]).then(([likesDoc, dislikesDoc]) => {
             const likeCount = likesDoc.exists() ? likesDoc.data().count : 0;
@@ -676,6 +678,8 @@ export default function ArticlePage() {
                       </AnimatePresence>
                     )}
 
+                    <PromoBanner location="article" position="middle" />
+
                     {/* Second half of article body */}
                     {secondHalf.map((paragraph: string, index: number) => (
                       paragraph && (
@@ -689,6 +693,7 @@ export default function ArticlePage() {
             <div className="mt-6">
               <QuranVerseSlider />
             </div>
+            <PromoBanner location="article" position="bottom" />
             <div className="flex flex-col gap-3 lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-5 lg:shadow-soft sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap items-center gap-3">
                 <button 
