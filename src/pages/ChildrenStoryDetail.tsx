@@ -427,7 +427,7 @@ export default function ChildrenStoryDetail() {
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading children story...</p>
+          <p className="mt-4 text-gray-600">Loading real story...</p>
         </div>
       </div>
     );
@@ -437,9 +437,9 @@ export default function ChildrenStoryDetail() {
     return (
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Children story not found</p>
+          <p className="text-gray-600">ހަޤީޤީ ވާހަކަ not found</p>
           <Link to="/children-stories" className="mt-4 inline-block text-brand-600 hover:text-brand-700">
-            Back to Children Stories
+            Back to ހަޤީޤީ ވާހަކަ
           </Link>
         </div>
       </div>
@@ -455,7 +455,7 @@ export default function ChildrenStoryDetail() {
           className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span>Back to Children Stories</span>
+          <span>Back to ހަޤީޤީ ވާހަކަ</span>
         </Link>
 
         {/* Story Header */}

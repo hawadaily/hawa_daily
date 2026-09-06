@@ -221,7 +221,7 @@ function App() {
             { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
             { label: language === 'en' ? 'Stories' : 'ވާހަކަ', path: '/stories', icon: BookIcon },
-            { label: language === 'en' ? 'Children Stories' : 'ހަޤީޤީ ވާހަކަ', path: '/children-stories', icon: BookIcon },
+            { label: language === 'en' ? 'Real Stories' : 'ހަޤީޤީ ވާހަކަ', path: '/children-stories', icon: BookIcon },
             { label: language === 'en' ? 'Golden Time' : 'ރަން ޒަމާން', path: '/golden-time', icon: BookIcon },
             { label: language === 'en' ? 'Doctors Duty' : 'ޑޮކްޓަރުންގެ ޑިއުޓީ', path: '/doctors-duty', icon: Stethoscope },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },

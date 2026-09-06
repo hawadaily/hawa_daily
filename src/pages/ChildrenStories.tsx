@@ -62,7 +62,7 @@ export default function ChildrenStories() {
     };
 
     updateMetaTag('og:title', 'ހަޤީޤީ ވާހަކަ | ހަވާ ޑެއިލީ');
-    updateMetaTag('og:description', 'ކުޑަކުދިންނަށް ޚިޔާވާ ވާހަކަތައް - Children stories in Dhivehi');
+    updateMetaTag('og:description', '100% ހަޤީޤީ ވާހަކަތައް - ހަޤީޤީ ވާހަކަތައް ހިމާޔަތްކުރުމަށް މަރުޙަބާ ކިޔަމެވެ - 100% real stories from real people');
     updateMetaTag('og:image', 'https://www.hawadaily.com/og-image.jpg');
     updateMetaTag('og:url', window.location.href);
     updateMetaTag('og:type', 'website');
@@ -70,7 +70,7 @@ export default function ChildrenStories() {
     
     updateMetaTagName('twitter:card', 'summary_large_image');
     updateMetaTagName('twitter:title', 'ހަޤީޤީ ވާހަކަ | ހަވާ ޑެއިލީ');
-    updateMetaTagName('twitter:description', 'ކުޑަކުދިންނަށް ޚިޔާވާ ވާހަކަތައް - Children stories in Dhivehi');
+    updateMetaTagName('twitter:description', '100% ހަޤީޤީ ވާހަކަތައް - ހަޤީޤީ ވާހަކަތައް ހިމާޔަތްކުރުމަށް މަރުޙަބާ ކިޔަމެވެ - 100% real stories from real people');
     updateMetaTagName('twitter:image', 'https://www.hawadaily.com/og-image.jpg');
 
     return () => {
@@ -84,7 +84,7 @@ export default function ChildrenStories() {
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading children stories...</p>
+          <p className="mt-4 text-gray-600">Loading real stories...</p>
         </div>
       </div>
     );
@@ -94,13 +94,31 @@ export default function ChildrenStories() {
     <div className="min-h-screen bg-[#caf0f8] pb-24">
       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-6">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">ހަޤީޤީ ވާހަކަ (Children Stories)</h1>
-          <p className="mt-2 text-gray-600">Fun and educational stories for children</p>
+          <h1 className="text-4xl font-bold text-gray-900">ހަޤީޤީ ވާހަކަ (Real Stories)</h1>
+          <p className="mt-2 text-gray-600">100% ހަޤީޤީ ވާހަކަތައް - Real stories from real people</p>
+        </div>
+
+        {/* Real Stories Banner */}
+        <div className="mb-8 rounded-2xl border-2 border-emerald-500 bg-gradient-to-r from-emerald-50 to-teal-50 p-6 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0">
+              <span className="text-4xl">✨</span>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-emerald-700 mb-2">މިއީ 100 އިން ސައްތަ ހަޤީޤީ ވާހަކަތަކެކެވެ</h3>
+              <p className="text-gray-700 mb-3">
+                ތިބާއާ ހިއްސާކުރާނެ ހަޤީޤީ ވާހަކައެއް އެބަ އޮތްތޯ؟ ނަން ހާމަނުކޮށް (ސިއްރުން) އެ ވާހަކައެއް ޝާއިޢުކޮށްދިނުމަށް ތިބާ އަށް މަރުޙަބާ ކިޔަމެވެ. ތިބާގެ ވާހަކަ މުހިންމެވެ!
+              </p>
+              <p className="text-emerald-600 font-semibold">
+                These are 100% real stories. If you have a real story to share, we're more than happy to post it anonymously. Your story matters! 📝
+              </p>
+            </div>
+          </div>
         </div>
 
         {stories.length === 0 ? (
           <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center">
-            <p className="text-gray-600">No children stories available yet. Check back soon!</p>
+            <p className="text-gray-600">No real stories available yet. Check back soon!</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
