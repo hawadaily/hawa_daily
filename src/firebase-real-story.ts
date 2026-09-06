@@ -13,7 +13,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig, 'real-story') : getApp('real-story');
+const app = !getApps().find(app => app.name === 'real-story') ? initializeApp(firebaseConfig, 'real-story') : getApp('real-story');
 const db = getFirestore(app);
 const auth = getAuth(app);
 
