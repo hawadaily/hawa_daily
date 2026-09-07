@@ -10,6 +10,7 @@ interface Episode {
   title: string;
   content: string;
   episodeNumber: number;
+  image?: string;
   viewCount?: number;
   likes?: string[];
   dislikes?: string[];
@@ -517,34 +518,39 @@ export default function ChildrenStoryDetail() {
                 <Link
                   key={episode.id}
                   to={`/real-stories/${slug}/${episode.id}`}
-                  className="block rounded-2xl border bg-white p-6 shadow-sm transition cursor-pointer hover:border-brand-300"
+                  className="block rounded-2xl border bg-white shadow-sm transition cursor-pointer hover:border-brand-300 overflow-hidden"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
+                  <div className="relative aspect-video">
+                    <img
+                      src={episode.image || story.coverImage}
+                      alt={episode.title}
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute top-4 left-4">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-bold text-lg">
                         {episode.episodeNumber}
                       </div>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <h3 className="text-xl font-semibold text-gray-900">{episode.title}</h3>
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center gap-1 text-sm text-gray-500">
-                            <span className="text-lg">😊</span>
-                            <span>{episode.likes?.length || 0}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-sm text-gray-500">
-                            <span className="text-lg">😞</span>
-                            <span>{episode.dislikes?.length || 0}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-sm text-gray-500">
-                            <Eye className="h-4 w-4" />
-                            <span>{episode.viewCount || 0}</span>
-                          </div>
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="text-xl font-semibold text-gray-900">{episode.title}</h3>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <span className="text-lg">😊</span>
+                          <span>{episode.likes?.length || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <span className="text-lg">😞</span>
+                          <span>{episode.dislikes?.length || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <Eye className="h-4 w-4" />
+                          <span>{episode.viewCount || 0}</span>
                         </div>
                       </div>
-                      <p className="mt-2 text-sm text-gray-500">Click to read episode...</p>
                     </div>
+                    <p className="mt-2 text-sm text-gray-500">Click to read episode...</p>
                   </div>
                 </Link>
               ))}

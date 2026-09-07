@@ -1397,6 +1397,7 @@ export default function AdminDashboard() {
   const [childrenEpisodeTitle, setChildrenEpisodeTitle] = useState('');
   const [childrenEpisodeContent, setChildrenEpisodeContent] = useState('');
   const [childrenEpisodeNumber, setChildrenEpisodeNumber] = useState(1);
+  const [childrenEpisodeImage, setChildrenEpisodeImage] = useState<File | null>(null);
   const [uploadingChildrenEpisode, setUploadingChildrenEpisode] = useState(false);
   const [childrenEpisodeError, setChildrenEpisodeError] = useState('');
 
@@ -3515,10 +3516,17 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setUploadingChildrenEpisode(true);
       setChildrenEpisodeError('');
 
+      let episodeImageUrl = '';
+      if (childrenEpisodeImage) {
+        const compressedFile = await compressImage(childrenEpisodeImage, 1920, 0.8);
+        episodeImageUrl = await uploadToImgBB(compressedFile);
+      }
+
       await addDoc(collection(realStoryDb, 'real-stories', selectedChildrenStory.id, 'episodes'), {
         title: childrenEpisodeTitle,
         content: childrenEpisodeContent,
         episodeNumber: childrenEpisodeNumber,
+        image: episodeImageUrl,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
@@ -3526,6 +3534,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setChildrenEpisodeTitle('');
       setChildrenEpisodeContent('');
       setChildrenEpisodeNumber(childrenEpisodeNumber + 1);
+      setChildrenEpisodeImage(null);
       setMessage('Children episode created successfully');
 
       // Reload children episodes
@@ -9464,6 +9473,15 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                         className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                         min="1"
                         required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Episode Image (Optional)</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setChildrenEpisodeImage(e.target.files?.[0] || null)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                       />
                     </div>
                     <div>

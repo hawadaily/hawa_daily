@@ -20,6 +20,7 @@ interface Episode {
   title: string;
   content: string;
   episodeNumber: number;
+  image?: string;
   viewCount?: number;
   likes?: string[];
   dislikes?: string[];
@@ -267,8 +268,8 @@ export default function ChildrenEpisodeDetail() {
         <div className="mt-6 rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm">
           <div className="relative aspect-video">
             <img
-              src={story.coverImage}
-              alt={story.title}
+              src={episode.image || story.coverImage}
+              alt={episode.title}
               className="h-full w-full object-cover"
             />
             <div className="absolute top-4 left-4">
