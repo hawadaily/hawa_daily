@@ -22,6 +22,7 @@ import Stories from './pages/Stories';
 import StoryDetail from './pages/StoryDetail';
 import ChildrenStories from './pages/ChildrenStories';
 import ChildrenStoryDetail from './pages/ChildrenStoryDetail';
+import ChildrenEpisodeDetail from './pages/ChildrenEpisodeDetail';
 import GoldenTime from './pages/GoldenTime';
 import GoldenTimeDetail from './pages/GoldenTimeDetail';
 import DoctorsDuty from './pages/DoctorsDuty';
@@ -254,6 +255,7 @@ function App() {
             <Route path="/stories/:slug" element={<StoryDetail />} />
             <Route path="/real-stories" element={<ChildrenStories />} />
             <Route path="/real-stories/:slug" element={<ChildrenStoryDetail />} />
+            <Route path="/real-stories/:slug/:episodeId" element={<ChildrenEpisodeDetail />} />
             <Route path="/golden-time" element={<GoldenTime />} />
             <Route path="/golden-time/:slug" element={<GoldenTimeDetail />} />
             <Route path="/doctors-duty" element={<DoctorsDuty />} />
