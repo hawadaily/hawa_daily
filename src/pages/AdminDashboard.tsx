@@ -1395,6 +1395,7 @@ export default function AdminDashboard() {
   const [childrenEpisodeLocked, setChildrenEpisodeLocked] = useState(false);
   const [uploadingChildrenEpisode, setUploadingChildrenEpisode] = useState(false);
   const [childrenEpisodeError, setChildrenEpisodeError] = useState('');
+  const [editingChildrenEpisodeId, setEditingChildrenEpisodeId] = useState<string | null>(null);
 
   // Golden Time management state
   const [goldenTimeArticles, setGoldenTimeArticles] = useState<any[]>([]);
@@ -1959,6 +1960,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const [episodeLocked, setEpisodeLocked] = useState(false);
   const [uploadingEpisode, setUploadingEpisode] = useState(false);
   const [episodeError, setEpisodeError] = useState('');
+  const [editingEpisodeId, setEditingEpisodeId] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -3526,16 +3528,37 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         episodeImageUrl = await uploadToImgBB(compressedFile);
       }
 
-      await addDoc(collection(realStoryDb, 'real-stories', selectedChildrenStory.id, 'episodes'), {
-        title: childrenEpisodeTitle,
-        content: childrenEpisodeContent,
-        episodeNumber: childrenEpisodeNumber,
-        image: episodeImageUrl,
-        releaseDate: childrenEpisodeReleaseDate || null,
-        locked: childrenEpisodeLocked,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+      if (editingChildrenEpisodeId) {
+        // Update existing episode
+        const episodeRef = doc(realStoryDb, 'real-stories', selectedChildrenStory.id, 'episodes', editingChildrenEpisodeId);
+        const updateData: any = {
+          title: childrenEpisodeTitle,
+          content: childrenEpisodeContent,
+          episodeNumber: childrenEpisodeNumber,
+          releaseDate: childrenEpisodeReleaseDate || null,
+          locked: childrenEpisodeLocked,
+          updatedAt: serverTimestamp(),
+        };
+        if (episodeImageUrl) {
+          updateData.image = episodeImageUrl;
+        }
+        await updateDoc(episodeRef, updateData);
+        setMessage('Real episode updated successfully');
+        setEditingChildrenEpisodeId(null);
+      } else {
+        // Create new episode
+        await addDoc(collection(realStoryDb, 'real-stories', selectedChildrenStory.id, 'episodes'), {
+          title: childrenEpisodeTitle,
+          content: childrenEpisodeContent,
+          episodeNumber: childrenEpisodeNumber,
+          image: episodeImageUrl,
+          releaseDate: childrenEpisodeReleaseDate || null,
+          locked: childrenEpisodeLocked,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+        setMessage('Real episode created successfully');
+      }
 
       setChildrenEpisodeTitle('');
       setChildrenEpisodeContent('');
@@ -3543,14 +3566,13 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setChildrenEpisodeImage(null);
       setChildrenEpisodeReleaseDate('');
       setChildrenEpisodeLocked(false);
-      setMessage('Real episode created successfully');
 
       // Reload children episodes
       const episodesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories', selectedChildrenStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenEpisodes(episodesData);
     } catch (error) {
-      setChildrenEpisodeError('Failed to create real episode');
+      setChildrenEpisodeError('Failed to save real episode');
       console.error(error);
     } finally {
       setUploadingChildrenEpisode(false);
@@ -3576,6 +3598,15 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
   };
 
+  const handleEditChildrenEpisode = (episode: any) => {
+    setEditingChildrenEpisodeId(episode.id);
+    setChildrenEpisodeTitle(episode.title);
+    setChildrenEpisodeContent(episode.content);
+    setChildrenEpisodeNumber(episode.episodeNumber);
+    setChildrenEpisodeReleaseDate(episode.releaseDate || '');
+    setChildrenEpisodeLocked(episode.locked || false);
+  };
+
   // Episode management handlers
   const handleCreateEpisode = async () => {
     if (!selectedStory || !episodeTitle.trim() || !episodeContent.trim()) {
@@ -3593,16 +3624,37 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         episodeImageUrl = await uploadToImgBB(compressedFile);
       }
 
-      await addDoc(collection(db, 'stories', selectedStory.id, 'episodes'), {
-        title: episodeTitle,
-        content: episodeContent,
-        episodeNumber: episodeNumber,
-        image: episodeImageUrl,
-        releaseDate: episodeReleaseDate || null,
-        locked: episodeLocked,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+      if (editingEpisodeId) {
+        // Update existing episode
+        const episodeRef = doc(db, 'stories', selectedStory.id, 'episodes', editingEpisodeId);
+        const updateData: any = {
+          title: episodeTitle,
+          content: episodeContent,
+          episodeNumber: episodeNumber,
+          releaseDate: episodeReleaseDate || null,
+          locked: episodeLocked,
+          updatedAt: serverTimestamp(),
+        };
+        if (episodeImageUrl) {
+          updateData.image = episodeImageUrl;
+        }
+        await updateDoc(episodeRef, updateData);
+        setMessage('Episode updated successfully');
+        setEditingEpisodeId(null);
+      } else {
+        // Create new episode
+        await addDoc(collection(db, 'stories', selectedStory.id, 'episodes'), {
+          title: episodeTitle,
+          content: episodeContent,
+          episodeNumber: episodeNumber,
+          image: episodeImageUrl,
+          releaseDate: episodeReleaseDate || null,
+          locked: episodeLocked,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+        setMessage('Episode created successfully');
+      }
 
       setEpisodeTitle('');
       setEpisodeContent('');
@@ -3610,14 +3662,13 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setEpisodeImage(null);
       setEpisodeReleaseDate('');
       setEpisodeLocked(false);
-      setMessage('Episode created successfully');
 
       // Reload episodes
       const episodesSnapshot = await getDocs(query(collection(db, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setEpisodes(episodesData);
     } catch (error) {
-      setEpisodeError('Failed to create episode');
+      setEpisodeError('Failed to save episode');
       console.error(error);
     } finally {
       setUploadingEpisode(false);
@@ -3641,6 +3692,15 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setMessage('Failed to delete episode');
       console.error(error);
     }
+  };
+
+  const handleEditEpisode = (episode: any) => {
+    setEditingEpisodeId(episode.id);
+    setEpisodeTitle(episode.title);
+    setEpisodeContent(episode.content);
+    setEpisodeNumber(episode.episodeNumber);
+    setEpisodeReleaseDate(episode.releaseDate || '');
+    setEpisodeLocked(episode.locked || false);
   };
 
   // Golden Time handlers
@@ -9185,13 +9245,31 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                         required
                       />
                     </div>
-                    <button
-                      onClick={handleCreateEpisode}
-                      disabled={uploadingEpisode}
-                      className="w-full rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {uploadingEpisode ? 'Creating...' : 'Add Episode'}
-                    </button>
+                    <div className="flex gap-2">
+                      {editingEpisodeId && (
+                        <button
+                          onClick={() => {
+                            setEditingEpisodeId(null);
+                            setEpisodeTitle('');
+                            setEpisodeContent('');
+                            setEpisodeNumber(1);
+                            setEpisodeImage(null);
+                            setEpisodeReleaseDate('');
+                            setEpisodeLocked(false);
+                          }}
+                          className="flex-1 rounded-2xl bg-gray-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-400"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                      <button
+                        onClick={handleCreateEpisode}
+                        disabled={uploadingEpisode}
+                        className="flex-1 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {uploadingEpisode ? 'Saving...' : editingEpisodeId ? 'Update Episode' : 'Add Episode'}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -9225,12 +9303,20 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                               </p>
                             )}
                           </div>
-                          <button
-                            onClick={() => handleDeleteEpisode(episode.id)}
-                            className="text-rose-600 hover:text-rose-700"
-                          >
-                            Delete
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleEditEpisode(episode)}
+                              className="text-brand-600 hover:text-brand-700"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEpisode(episode.id)}
+                              className="text-rose-600 hover:text-rose-700"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))
@@ -9583,13 +9669,31 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                         required
                       />
                     </div>
-                    <button
-                      onClick={handleCreateChildrenEpisode}
-                      disabled={uploadingChildrenEpisode}
-                      className="w-full rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {uploadingChildrenEpisode ? 'Creating...' : 'Add Episode'}
-                    </button>
+                    <div className="flex gap-2">
+                      {editingChildrenEpisodeId && (
+                        <button
+                          onClick={() => {
+                            setEditingChildrenEpisodeId(null);
+                            setChildrenEpisodeTitle('');
+                            setChildrenEpisodeContent('');
+                            setChildrenEpisodeNumber(1);
+                            setChildrenEpisodeImage(null);
+                            setChildrenEpisodeReleaseDate('');
+                            setChildrenEpisodeLocked(false);
+                          }}
+                          className="flex-1 rounded-2xl bg-gray-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-400"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                      <button
+                        onClick={handleCreateChildrenEpisode}
+                        disabled={uploadingChildrenEpisode}
+                        className="flex-1 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {uploadingChildrenEpisode ? 'Saving...' : editingChildrenEpisodeId ? 'Update Episode' : 'Add Episode'}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -9635,6 +9739,12 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                               title="Copy share link"
                             >
                               Share
+                            </button>
+                            <button
+                              onClick={() => handleEditChildrenEpisode(episode)}
+                              className="text-brand-600 hover:text-brand-700"
+                            >
+                              Edit
                             </button>
                             <button
                               onClick={() => handleDeleteChildrenEpisode(episode.id)}
