@@ -272,49 +272,49 @@ export default function StoryEpisodeDetail() {
               className="h-full w-full object-cover"
             />
             <div className="absolute top-4 left-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-bold text-lg">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-bold text-base sm:text-lg">
                 {episode.episodeNumber}
               </div>
             </div>
           </div>
           <div className="p-4 sm:p-6">
             <div className="flex items-start justify-between gap-2">
-              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">{episode.title}</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">{episode.title}</h1>
               <button
                 onClick={handleShare}
                 className="flex-shrink-0 rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-brand-600"
                 title="Share episode"
               >
-                <Share2 className="h-5 w-5" />
+                <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             </div>
-            <p className="mt-2 text-sm text-gray-500">From: {story.title}</p>
+            <p className="mt-2 text-xs sm:text-sm text-gray-500">From: {story.title}</p>
             {story.author && (
-              <p className="mt-1 text-sm text-gray-500">by {story.author}</p>
+              <p className="mt-1 text-xs sm:text-sm text-gray-500">by {story.author}</p>
             )}
-            <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleLike}
-                  className={`flex items-center gap-1 text-sm transition rounded-lg px-3 py-2 ${
+                  className={`flex items-center gap-1 text-xs sm:text-sm transition rounded-lg px-2 py-1 sm:px-3 sm:py-2 ${
                     episode.likes?.includes(currentUser?.uid) || userReaction === 'like' ? 'bg-brand-100 text-brand-600' : 'text-gray-500 hover:bg-gray-100 hover:text-brand-600'
                   }`}
                 >
-                  <span className="text-lg">😊</span>
+                  <span className="text-base sm:text-lg">😊</span>
                   <span>{episode.likes?.length || 0}</span>
                 </button>
                 <button
                   onClick={handleDislike}
-                  className={`flex items-center gap-1 text-sm transition rounded-lg px-3 py-2 ${
+                  className={`flex items-center gap-1 text-xs sm:text-sm transition rounded-lg px-2 py-1 sm:px-3 sm:py-2 ${
                     episode.dislikes?.includes(currentUser?.uid) || userReaction === 'dislike' ? 'bg-rose-100 text-rose-600' : 'text-gray-500 hover:bg-gray-100 hover:text-rose-600'
                   }`}
                 >
-                  <span className="text-lg">😞</span>
+                  <span className="text-base sm:text-lg">😞</span>
                   <span>{episode.dislikes?.length || 0}</span>
                 </button>
               </div>
-              <div className="flex items-center gap-1 text-sm text-gray-500">
-                <Eye className="h-4 w-4" />
+              <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500">
+                <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>{episode.viewCount || 0} views</span>
               </div>
             </div>
@@ -323,7 +323,7 @@ export default function StoryEpisodeDetail() {
 
         {/* Episode Content */}
         <div className="mt-6 sm:mt-8 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
-          <div className="prose prose-sm max-w-none text-gray-700">
+          <div className="prose prose-sm sm:prose-base max-w-none text-gray-700">
             {episode.content.split('\n').map((paragraph, index) => (
               <p key={index} className={index > 0 ? 'mt-4' : ''}>
                 {paragraph}
@@ -334,8 +334,8 @@ export default function StoryEpisodeDetail() {
 
         {/* Comments Section */}
         <div className="mt-6 sm:mt-8 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-900 sm:text-xl">Comments ({comments.length})</h3>
-          
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900">Comments ({comments.length})</h3>
+
           {/* Add Comment */}
           <div className="mt-4 flex gap-2">
             <input
@@ -343,7 +343,7 @@ export default function StoryEpisodeDetail() {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Write a comment..."
-              className="flex-1 rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand-500 sm:px-4"
+              className="flex-1 rounded-xl border border-gray-300 bg-white px-3 py-2 text-xs sm:text-sm text-gray-900 outline-none focus:border-brand-500 sm:px-4"
               onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
             />
             <button
@@ -351,29 +351,29 @@ export default function StoryEpisodeDetail() {
               disabled={!newComment.trim()}
               className="rounded-xl bg-brand-500 px-3 py-2 text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60 sm:px-4"
             >
-              <Send className="h-5 w-5" />
+              <Send className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           </div>
 
           {/* Comments List */}
           <div className="mt-6 space-y-4">
             {comments.length === 0 ? (
-              <p className="text-sm text-gray-500">No comments yet. Be the first to comment!</p>
+              <p className="text-xs sm:text-sm text-gray-500">No comments yet. Be the first to comment!</p>
             ) : (
               comments.map((comment) => (
-                <div key={comment.id} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                <div key={comment.id} className="rounded-xl border border-gray-200 bg-gray-50 p-3 sm:p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-semibold text-sm">
+                      <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-semibold text-xs sm:text-sm">
                         {comment.userName?.charAt(0).toUpperCase() || 'A'}
                       </div>
-                      <span className="font-semibold text-gray-900">{comment.userName}</span>
+                      <span className="font-semibold text-gray-900 text-xs sm:text-sm">{comment.userName}</span>
                     </div>
                     <span className="text-xs text-gray-500">
                       {comment.createdAt?.toDate?.() ? new Date(comment.createdAt.toDate()).toLocaleDateString() : 'Just now'}
                     </span>
                   </div>
-                  <p className="mt-2 text-gray-700">{comment.text}</p>
+                  <p className="mt-2 text-gray-700 text-xs sm:text-sm">{comment.text}</p>
                 </div>
               ))
             )}

@@ -15,6 +15,8 @@ interface Episode {
   likes?: string[];
   dislikes?: string[];
   createdAt: any;
+  releaseDate?: string;
+  locked?: boolean;
 }
 
 interface Comment {
@@ -51,6 +53,17 @@ export default function RealStoryDetail() {
   const [userReactions, setUserReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
   const [episodeReactions, setEpisodeReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
   const [expandedEpisodes, setExpandedEpisodes] = useState<Record<string, boolean>>({});
+
+  // Check if episode is locked based on release date
+  const isEpisodeLocked = (episode: Episode): boolean => {
+    if (episode.locked === false) return false;
+    if (episode.locked === true) return true;
+    if (!episode.releaseDate) return false;
+
+    const releaseDate = new Date(episode.releaseDate);
+    const now = new Date();
+    return releaseDate > now;
+  };
 
   useEffect(() => {
     const loadStoryData = async () => {
@@ -492,14 +505,14 @@ export default function RealStoryDetail() {
               </span>
             </div>
           </div>
-          <div className="p-6">
-            <h1 className="text-3xl font-bold text-gray-900">{story.title}</h1>
+          <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">{story.title}</h1>
             {story.author && (
-              <p className="mt-2 text-sm text-gray-500">by {story.author}</p>
+              <p className="mt-2 text-xs sm:text-sm text-gray-500">by {story.author}</p>
             )}
-            <p className="mt-3 text-gray-600">{story.description}</p>
-            <div className="mt-4 flex items-center gap-2 text-sm text-gray-500">
-              <BookOpen className="h-4 w-4" />
+            <p className="mt-3 text-sm sm:text-base text-gray-600">{story.description}</p>
+            <div className="mt-4 flex items-center gap-2 text-xs sm:text-sm text-gray-500">
+              <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
               <span>{episodes.length} episodes</span>
             </div>
           </div>
@@ -507,51 +520,89 @@ export default function RealStoryDetail() {
 
         {/* Episodes List */}
         <div className="mt-8">
-          <h2 className="text-2xl font-bold text-gray-900">Episodes</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Episodes</h2>
           {episodes.length === 0 ? (
-            <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-8 text-center">
-              <p className="text-gray-600">No episodes available yet. Check back soon!</p>
+            <div className="mt-4 rounded-2xl border border-gray-200 bg-white p-4 sm:p-8 text-center">
+              <p className="text-sm sm:text-base text-gray-600">No episodes available yet. Check back soon!</p>
             </div>
           ) : (
             <div className="mt-4 space-y-4">
-              {episodes.map((episode) => (
-                <Link
-                  key={episode.id}
-                  to={`/real-stories/${slug}/ep-${episode.episodeNumber}`}
-                  className="block rounded-2xl border bg-white shadow-sm transition cursor-pointer hover:border-brand-300 overflow-hidden"
-                >
-                  <div className="relative aspect-video">
-                    <img
-                      src={episode.image || story.coverImage}
-                      alt={episode.title}
-                      className="h-full w-full object-cover"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-bold text-lg">
-                        {episode.episodeNumber}
+              {episodes.map((episode) => {
+                const locked = isEpisodeLocked(episode);
+                return locked ? (
+                  <div
+                    key={episode.id}
+                    className="rounded-2xl border bg-gray-100 shadow-sm overflow-hidden opacity-75"
+                  >
+                    <div className="relative aspect-video">
+                      <img
+                        src={episode.image || story.coverImage}
+                        alt={episode.title}
+                        className="h-full w-full object-cover grayscale"
+                      />
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <svg className="h-12 w-12 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                          <p className="font-semibold">Locked</p>
+                          {episode.releaseDate && (
+                            <p className="text-sm mt-1">
+                              Available: {new Date(episode.releaseDate).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="absolute top-4 left-4">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-gray-300 text-gray-600 font-bold text-base sm:text-lg">
+                          {episode.episodeNumber}
+                        </div>
                       </div>
                     </div>
+                    <div className="p-3 sm:p-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900">{episode.title}</h3>
+                      <p className="mt-2 text-xs sm:text-sm text-gray-500">This episode is locked until its release date.</p>
+                    </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 sm:text-xl">{episode.title}</h3>
-                    <div className="mt-3 flex flex-wrap items-center gap-3 sm:gap-2">
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <span className="text-lg">😊</span>
-                        <span>{episode.likes?.length || 0}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <span className="text-lg">😞</span>
-                        <span>{episode.dislikes?.length || 0}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <Eye className="h-4 w-4" />
-                        <span>{episode.viewCount || 0}</span>
+                ) : (
+                  <Link
+                    key={episode.id}
+                    to={`/real-stories/${slug}/ep-${episode.episodeNumber}`}
+                    className="block rounded-2xl border bg-white shadow-sm transition cursor-pointer hover:border-brand-300 overflow-hidden"
+                  >
+                    <div className="relative aspect-video">
+                      <img
+                        src={episode.image || story.coverImage}
+                        alt={episode.title}
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-bold text-base sm:text-lg">
+                          {episode.episodeNumber}
+                        </div>
                       </div>
                     </div>
-                    <p className="mt-2 text-sm text-gray-500">Click to read episode...</p>
-                  </div>
-                </Link>
-              ))}
+                    <div className="p-3 sm:p-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900">{episode.title}</h3>
+                      <div className="mt-3 flex flex-wrap items-center gap-2 sm:gap-3">
+                        <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500">
+                          <span className="text-base sm:text-lg">😊</span>
+                          <span>{episode.likes?.length || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500">
+                          <span className="text-base sm:text-lg">😞</span>
+                          <span>{episode.dislikes?.length || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500">
+                          <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span>{episode.viewCount || 0}</span>
+                        </div>
+                      </div>
+                      <p className="mt-2 text-xs sm:text-sm text-gray-500">Click to read episode...</p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

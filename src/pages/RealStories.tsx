@@ -95,22 +95,22 @@ export default function ChildrenStories() {
     <div className="min-h-screen bg-[#caf0f8] pb-24">
       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-6">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">ހަޤީޤީ ވާހަކަ (Real Stories)</h1>
-          <p className="mt-2 text-gray-600">100% ހަޤީޤީ ވާހަކަތައް - Real stories from real people</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">ހަޤީޤީ ވާހަކަ (Real Stories)</h1>
+          <p className="mt-2 text-sm sm:text-base text-gray-600">100% ހަޤީޤީ ވާހަކަތައް - Real stories from real people</p>
         </div>
 
         {/* Real Stories Banner */}
-        <div className="mb-8 rounded-2xl border-2 border-emerald-500 bg-gradient-to-r from-emerald-50 to-teal-50 p-6 shadow-sm">
-          <div className="flex items-start gap-4">
+        <div className="mb-8 rounded-2xl border-2 border-emerald-500 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 sm:p-6 shadow-sm">
+          <div className="flex items-start gap-3 sm:gap-4">
             <div className="flex-shrink-0">
-              <span className="text-4xl">✨</span>
+              <span className="text-3xl sm:text-4xl">✨</span>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-emerald-700 mb-2">މިއީ 100 އިންސައްތަ  ހަޤީޤީ ވާހަކަތަކެކެވެ</h3>
-              <p className="text-gray-700 mb-3">
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-emerald-700 mb-2">މިއީ 100 އިންސައްތަ  ހަޤީޤީ ވާހަކަތަކެކެވެ</h3>
+              <p className="text-xs sm:text-sm text-gray-700 mb-3">
                 ތިބާއާ ހިއްސާކުރާނެ ހަޤީޤީ ވާހަކައެއް އެބަ އޮތްތޯ؟ ނަން ހާމަނުކޮށް (ސިއްރުން) އެ ވާހަކައެއް ޝާއިޢުކޮށްދިނުމަށް ތިބާ އަށް މަރުޙަބާ ކިޔަމެވެ. ތިބާގެ ވާހަކަ މުހިންމެވެ! ތިބާގެ ވާހަކަ ޝާއިޢުކުރަން ބޭނުންނަމަ hawainnkhabaru@gmail.com އަށް މެއިލް ފޮނުއްވާ.
               </p>
-              <p className="text-emerald-600 font-semibold">
+              <p className="text-xs sm:text-sm text-emerald-600 font-semibold">
                 These are 100% real stories. If you have a real story to share, we're more than happy to post it anonymously. Your story matters! If you wish to share your story please send mail to hawainnkhabaru@gmail.com 📝
               </p>
             </div>
@@ -145,26 +145,26 @@ export default function ChildrenStories() {
                       story.status === 'ongoing' ? 'bg-emerald-500 text-white' :
                       'bg-gray-500 text-white'
                     }`}>
-                      {story.status}
+                      {story.status === 'upcoming' ? 'އަންނަނީ' : story.status === 'ongoing' ? 'މިހާރު ކުރިޔަށްދަނީ' : story.status}
                     </span>
                   </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand-600 transition">
+                <div className="p-3 sm:p-4">
+                  <h3 className="text-base sm:text-lg xl:text-xl font-semibold text-gray-900 group-hover:text-brand-600 transition">
                     {story.title}
                   </h3>
                   {story.author && (
-                    <p className="mt-1 text-sm text-gray-500">by {story.author}</p>
+                    <p className="mt-1 text-xs sm:text-sm text-gray-500">ވާހަކަ ލިޔުއްވީ {story.author}</p>
                   )}
-                  <p className="mt-2 text-sm text-gray-600 line-clamp-2">{story.description}</p>
+                  <p className="mt-2 text-xs sm:text-sm text-gray-600 line-clamp-2">{story.description}</p>
                   {story.releaseDate && (
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-xs sm:text-sm text-gray-500">
                       📅 Release: {new Date(story.releaseDate).toLocaleDateString()}
                     </p>
                   )}
                   {story.locked ? (
-                    <div className="mt-4 flex items-center text-sm text-rose-600 font-semibold">
-                      <svg className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="mt-4 flex items-center text-xs sm:text-sm text-rose-600 font-semibold">
+                      <svg className="mr-1 h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
                       <span>Coming Soon</span>
@@ -172,11 +172,11 @@ export default function ChildrenStories() {
                   ) : (
                     <Link
                       to={`/real-stories/${story.slug}`}
-                      className="mt-4 flex items-center text-sm text-brand-600 font-semibold"
+                      className="mt-4 flex items-center text-xs sm:text-sm text-brand-600 font-semibold"
                       onClick={() => console.log('Clicking Read Episodes for story:', story.id, 'slug:', story.slug)}
                     >
                       <span>Read Episodes</span>
-                      <svg className="ml-1 h-4 w-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="ml-1 h-3 w-3 sm:h-4 sm:w-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>

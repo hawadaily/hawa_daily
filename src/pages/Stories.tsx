@@ -94,8 +94,8 @@ export default function Stories() {
     <div className="min-h-screen bg-[#caf0f8] pb-24">
       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-6">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">ސްޓޯރީތައް (Stories)</h1>
-          <p className="mt-2 text-gray-600">Read your favorite stories with multiple episodes</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">ވާހަކަތަށް</h1>
+          <p className="mt-2 text-sm sm:text-base text-gray-600">ތިމާ އެންެމެ ގަޔާވާ ވާހަކައެއް ކިޔުއްވާ. ކޮންމެ ވާހަކައެއްގާ ވެސް އެކި ބައިތަށް ހިމެނޭ</p>
         </div>
 
         {stories.length === 0 ? (
@@ -126,26 +126,26 @@ export default function Stories() {
                       story.status === 'ongoing' ? 'bg-emerald-500 text-white' :
                       'bg-gray-500 text-white'
                     }`}>
-                      {story.status}
+                      {story.status === 'upcoming' ? 'އަންނަނީ' : story.status === 'ongoing' ? 'މިހާރު ކުރިޔަށްދަނީ' : story.status}
                     </span>
                   </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-brand-600 transition">
+                <div className="p-3 sm:p-4">
+                  <h3 className="text-base sm:text-lg xl:text-xl font-semibold text-gray-900 group-hover:text-brand-600 transition">
                     {story.title}
                   </h3>
                   {story.author && (
-                    <p className="mt-1 text-sm text-gray-500">by {story.author}</p>
+                    <p className="mt-1 text-xs sm:text-sm text-gray-500">ވާހަކަ ލިޔުއްވީ {story.author}</p>
                   )}
-                  <p className="mt-2 text-sm text-gray-600 line-clamp-2">{story.description}</p>
+                  <p className="mt-2 text-xs sm:text-sm text-gray-600 line-clamp-2">{story.description}</p>
                   {story.releaseDate && (
-                    <p className="mt-2 text-sm text-gray-500">
-                      📅 Release: {new Date(story.releaseDate).toLocaleDateString()}
+                    <p className="mt-2 text-xs sm:text-sm text-gray-500">
+                      ވާހަކަ ނެރުނީ {new Date(story.releaseDate).toLocaleDateString()}
                     </p>
                   )}
                   {story.locked ? (
-                    <div className="mt-4 flex items-center text-sm text-rose-600 font-semibold">
-                      <svg className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="mt-4 flex items-center text-xs sm:text-sm text-rose-600 font-semibold">
+                      <svg className="mr-1 h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
                       <span>Coming Soon</span>
@@ -153,10 +153,10 @@ export default function Stories() {
                   ) : (
                     <Link
                       to={`/stories/${story.slug}`}
-                      className="mt-4 flex items-center text-sm text-brand-600 font-semibold"
+                      className="mt-4 flex items-center text-xs sm:text-sm text-brand-600 font-semibold"
                     >
-                      <span>Read Episodes</span>
-                      <svg className="ml-1 h-4 w-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <span>ބައިތަށް ކިޔަާލުމަށް</span>
+                      <svg className="ml-1 h-3 w-3 sm:h-4 sm:w-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>
