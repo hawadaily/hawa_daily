@@ -1391,6 +1391,8 @@ export default function AdminDashboard() {
   const [childrenEpisodeContent, setChildrenEpisodeContent] = useState('');
   const [childrenEpisodeNumber, setChildrenEpisodeNumber] = useState(1);
   const [childrenEpisodeImage, setChildrenEpisodeImage] = useState<File | null>(null);
+  const [childrenEpisodeReleaseDate, setChildrenEpisodeReleaseDate] = useState('');
+  const [childrenEpisodeLocked, setChildrenEpisodeLocked] = useState(false);
   const [uploadingChildrenEpisode, setUploadingChildrenEpisode] = useState(false);
   const [childrenEpisodeError, setChildrenEpisodeError] = useState('');
 
@@ -1953,6 +1955,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const [episodeContent, setEpisodeContent] = useState('');
   const [episodeNumber, setEpisodeNumber] = useState(1);
   const [episodeImage, setEpisodeImage] = useState<File | null>(null);
+  const [episodeReleaseDate, setEpisodeReleaseDate] = useState('');
+  const [episodeLocked, setEpisodeLocked] = useState(false);
   const [uploadingEpisode, setUploadingEpisode] = useState(false);
   const [episodeError, setEpisodeError] = useState('');
 
@@ -3527,6 +3531,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         content: childrenEpisodeContent,
         episodeNumber: childrenEpisodeNumber,
         image: episodeImageUrl,
+        releaseDate: childrenEpisodeReleaseDate || null,
+        locked: childrenEpisodeLocked,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
@@ -3535,6 +3541,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setChildrenEpisodeContent('');
       setChildrenEpisodeNumber(childrenEpisodeNumber + 1);
       setChildrenEpisodeImage(null);
+      setChildrenEpisodeReleaseDate('');
+      setChildrenEpisodeLocked(false);
       setMessage('Real episode created successfully');
 
       // Reload children episodes
@@ -3590,6 +3598,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         content: episodeContent,
         episodeNumber: episodeNumber,
         image: episodeImageUrl,
+        releaseDate: episodeReleaseDate || null,
+        locked: episodeLocked,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
@@ -3598,6 +3608,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setEpisodeContent('');
       setEpisodeNumber(episodeNumber + 1);
       setEpisodeImage(null);
+      setEpisodeReleaseDate('');
+      setEpisodeLocked(false);
       setMessage('Episode created successfully');
 
       // Reload episodes
@@ -9133,6 +9145,25 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       />
                     </div>
                     <div>
+                      <label className="block text-sm font-semibold text-gray-700">Release Date (Optional)</label>
+                      <input
+                        type="date"
+                        value={episodeReleaseDate}
+                        onChange={(e) => setEpisodeReleaseDate(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="episodeLocked"
+                        checked={episodeLocked}
+                        onChange={(e) => setEpisodeLocked(e.target.checked)}
+                        className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      />
+                      <label htmlFor="episodeLocked" className="text-sm font-semibold text-gray-700">Lock Episode</label>
+                    </div>
+                    <div>
                       <label className="block text-sm font-semibold text-gray-700">Title</label>
                       <input
                         type="text"
@@ -9181,8 +9212,18 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                                 Ep. {episode.episodeNumber}
                               </span>
                               <h5 className="font-semibold text-gray-900">{episode.title}</h5>
+                              {episode.locked && (
+                                <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
+                                  🔒 Locked
+                                </span>
+                              )}
                             </div>
                             <p className="mt-2 text-sm text-gray-600 line-clamp-3">{episode.content}</p>
+                            {episode.releaseDate && (
+                              <p className="mt-1 text-xs text-gray-500">
+                                Release: {new Date(episode.releaseDate).toLocaleDateString()}
+                              </p>
+                            )}
                           </div>
                           <button
                             onClick={() => handleDeleteEpisode(episode.id)}
@@ -9502,6 +9543,25 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       />
                     </div>
                     <div>
+                      <label className="block text-sm font-semibold text-gray-700">Release Date (Optional)</label>
+                      <input
+                        type="date"
+                        value={childrenEpisodeReleaseDate}
+                        onChange={(e) => setChildrenEpisodeReleaseDate(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="childrenEpisodeLocked"
+                        checked={childrenEpisodeLocked}
+                        onChange={(e) => setChildrenEpisodeLocked(e.target.checked)}
+                        className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      />
+                      <label htmlFor="childrenEpisodeLocked" className="text-sm font-semibold text-gray-700">Lock Episode</label>
+                    </div>
+                    <div>
                       <label className="block text-sm font-semibold text-gray-700">Title</label>
                       <input
                         type="text"
@@ -9550,8 +9610,18 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                                 Ep. {episode.episodeNumber}
                               </span>
                               <h5 className="font-semibold text-gray-900">{episode.title}</h5>
+                              {episode.locked && (
+                                <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
+                                  🔒 Locked
+                                </span>
+                              )}
                             </div>
                             <p className="mt-2 text-sm text-gray-600 line-clamp-3">{episode.content}</p>
+                            {episode.releaseDate && (
+                              <p className="mt-1 text-xs text-gray-500">
+                                Release: {new Date(episode.releaseDate).toLocaleDateString()}
+                              </p>
+                            )}
                           </div>
                           <div className="flex items-center gap-2">
                             <button
