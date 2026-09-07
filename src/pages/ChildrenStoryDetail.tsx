@@ -49,12 +49,10 @@ export default function ChildrenStoryDetail() {
   const [highlightedEpisode, setHighlightedEpisode] = useState<string | null>(null);
   const [userReactions, setUserReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
   const [episodeReactions, setEpisodeReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
+  const [expandedEpisodes, setExpandedEpisodes] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const loadStoryData = async () => {
-      console.log('ChildrenStoryDetail mounted');
-      console.log('Slug from URL:', slug);
-      
       if (!slug) {
         console.error('No slug provided');
         setLoading(false);
@@ -81,7 +79,6 @@ export default function ChildrenStoryDetail() {
         setStoryId(storyId);
         
         console.log('Story ID:', storyId);
-        console.log('Story data:', storyDoc.data());
         
         // Load story
         if (storyDoc.exists()) {
@@ -520,50 +517,61 @@ export default function ChildrenStoryDetail() {
                 <div
                   key={episode.id}
                   id={`episode-${episode.id}`}
-                  className={`rounded-2xl border bg-white p-6 shadow-sm transition ${
-                    highlightedEpisode === episode.id ? 'border-brand-500 ring-2 ring-brand-200' : 'border-gray-200'
+                  className={`rounded-2xl border bg-white shadow-sm transition cursor-pointer ${
+                    highlightedEpisode === episode.id ? 'border-brand-500 ring-2 ring-brand-200' : 'border-gray-200 hover:border-brand-300'
                   }`}
+                  onClick={() => setExpandedEpisodes((prev) => ({ ...prev, [episode.id]: !prev[episode.id] }))}
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-bold text-lg">
-                        {episode.episodeNumber}
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <h3 className="text-xl font-semibold text-gray-900">{episode.title}</h3>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleLikeEpisode(episode.id)}
-                            className={`flex items-center gap-1 text-sm transition rounded-lg px-2 py-1 ${
-                              episode.likes?.includes(currentUser?.uid) || episodeReactions[episode.id] === 'like' ? 'bg-brand-100 text-brand-600' : 'text-gray-500 hover:bg-gray-100 hover:text-brand-600'
-                            }`}
-                            title="Like episode"
-                          >
-                            <span className="text-lg">😊</span>
-                            <span>{episode.likes?.length || 0}</span>
-                          </button>
-                          <button
-                            onClick={() => handleDislikeEpisode(episode.id)}
-                            className={`flex items-center gap-1 text-sm transition rounded-lg px-2 py-1 ${
-                              episode.dislikes?.includes(currentUser?.uid) || episodeReactions[episode.id] === 'dislike' ? 'bg-rose-100 text-rose-600' : 'text-gray-500 hover:bg-gray-100 hover:text-rose-600'
-                            }`}
-                            title="Dislike episode"
-                          >
-                            <span className="text-lg">😞</span>
-                            <span>{episode.dislikes?.length || 0}</span>
-                          </button>
-                          <button
-                            onClick={() => handleShareEpisode(episode.id)}
-                            className="flex-shrink-0 rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-brand-600"
-                            title="Share episode"
-                          >
-                            <Share2 className="h-5 w-5" />
-                          </button>
+                  <div className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-bold text-lg">
+                          {episode.episodeNumber}
                         </div>
                       </div>
-                      <div className="mt-3 prose prose-sm max-w-none text-gray-700">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="text-xl font-semibold text-gray-900">{episode.title}</h3>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleLikeEpisode(episode.id); }}
+                              className={`flex items-center gap-1 text-sm transition rounded-lg px-2 py-1 ${
+                                episode.likes?.includes(currentUser?.uid) || episodeReactions[episode.id] === 'like' ? 'bg-brand-100 text-brand-600' : 'text-gray-500 hover:bg-gray-100 hover:text-brand-600'
+                              }`}
+                              title="Like episode"
+                            >
+                              <span className="text-lg">😊</span>
+                              <span>{episode.likes?.length || 0}</span>
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleDislikeEpisode(episode.id); }}
+                              className={`flex items-center gap-1 text-sm transition rounded-lg px-2 py-1 ${
+                                episode.dislikes?.includes(currentUser?.uid) || episodeReactions[episode.id] === 'dislike' ? 'bg-rose-100 text-rose-600' : 'text-gray-500 hover:bg-gray-100 hover:text-rose-600'
+                              }`}
+                              title="Dislike episode"
+                            >
+                              <span className="text-lg">😞</span>
+                              <span>{episode.dislikes?.length || 0}</span>
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleShareEpisode(episode.id); }}
+                              className="flex-shrink-0 rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-brand-600"
+                              title="Share episode"
+                            >
+                              <Share2 className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </div>
+                        {!expandedEpisodes[episode.id] && (
+                          <p className="mt-2 text-sm text-gray-500">Click to read episode...</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {expandedEpisodes[episode.id] && (
+                    <div className="border-t border-gray-200 p-6">
+                      <div className="prose prose-sm max-w-none text-gray-700">
                         {episode.content.split('\n').map((paragraph, index) => (
                           <p key={index} className={index > 0 ? 'mt-2' : ''}>
                             {paragraph}
@@ -644,7 +652,7 @@ export default function ChildrenStoryDetail() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>
