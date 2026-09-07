@@ -25,8 +25,11 @@ export default function Home() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const articlesQuery = query(collection(db, 'articles'), orderBy('createdAt', 'desc'));
+        console.log('Fetching articles from Firebase...');
+        const articlesQuery = query(collection(db, 'articles'), orderBy('createdAt', 'desc'), limit(50));
+        console.log('Query created, executing...');
         const snapshot = await getDocs(articlesQuery);
+        console.log('Articles snapshot size:', snapshot.size);
         const articles = snapshot.docs.map(docSnap => {
           const data = docSnap.data();
           return {
@@ -35,6 +38,7 @@ export default function Home() {
             publishedAt: data.createdAt || data.publishedAt
           } as Article;
         });
+        console.log('Articles loaded:', articles.length);
         setArticlesState(articles);
         setLoading(false);
         

@@ -5,13 +5,13 @@ import { getAnalytics } from 'firebase/analytics';
 import { dbBackup } from './firebase-backup';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyBdWKqik66fis2Bs4rdjM8YZkdCOoqLuqM',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'hawainn-khabaru.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'hawainn-khabaru',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'hawainn-khabaru.firebasestorage.app',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '623605252027',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:623605252027:web:41035193d2062fc6f14e9e',
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-ED3QC22TWG',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyBJJm90lDcgjxmgXsWpGE0lIVNSK6VFGa0',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'hawa-daily-v2.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'hawa-daily-v2',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'hawa-daily-v2.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '142164818850',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:142164818850:web:f45b05791880d66cf690fb',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-1TSRYXFSGX',
 };
 
 const app = initializeApp(firebaseConfig);
