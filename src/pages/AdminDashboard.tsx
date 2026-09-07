@@ -16,10 +16,8 @@ import { getVercelAnalytics } from '../api/vercel-analytics';
 // Generate a URL-friendly slug from a string
 function generateSlug(text: string): string {
   return text
-    .toLowerCase()
     .trim()
-    .replace(/[^\w\s-ހ-]/g, '') // Remove special characters except word chars, spaces, hyphens, and Dhivehi
-    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 }
 
