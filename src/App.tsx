@@ -20,6 +20,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import Stories from './pages/Stories';
 import StoryDetail from './pages/StoryDetail';
+import StoryEpisodeDetail from './pages/StoryEpisodeDetail';
 import ChildrenStories from './pages/ChildrenStories';
 import ChildrenStoryDetail from './pages/ChildrenStoryDetail';
 import ChildrenEpisodeDetail from './pages/ChildrenEpisodeDetail';
@@ -253,6 +254,7 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/stories" element={<Stories />} />
             <Route path="/stories/:slug" element={<StoryDetail />} />
+            <Route path="/stories/:slug/:episodeId" element={<StoryEpisodeDetail />} />
             <Route path="/real-stories" element={<ChildrenStories />} />
             <Route path="/real-stories/:slug" element={<ChildrenStoryDetail />} />
             <Route path="/real-stories/:slug/:episodeId" element={<ChildrenEpisodeDetail />} />

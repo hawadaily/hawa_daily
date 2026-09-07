@@ -1959,6 +1959,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const [episodeTitle, setEpisodeTitle] = useState('');
   const [episodeContent, setEpisodeContent] = useState('');
   const [episodeNumber, setEpisodeNumber] = useState(1);
+  const [episodeImage, setEpisodeImage] = useState<File | null>(null);
   const [uploadingEpisode, setUploadingEpisode] = useState(false);
   const [episodeError, setEpisodeError] = useState('');
 
@@ -3534,7 +3535,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setChildrenEpisodeTitle('');
       setChildrenEpisodeContent('');
       setChildrenEpisodeNumber(childrenEpisodeNumber + 1);
-      setChildrenEpisodeImage(null);
+      setChildrenEpisodeImage(undefined);
       setMessage('Children episode created successfully');
 
       // Reload children episodes
@@ -3579,10 +3580,17 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setUploadingEpisode(true);
       setEpisodeError('');
 
+      let episodeImageUrl = '';
+      if (episodeImage) {
+        const compressedFile = await compressImage(episodeImage, 1920, 0.8);
+        episodeImageUrl = await uploadToImgBB(compressedFile);
+      }
+
       await addDoc(collection(db, 'stories', selectedStory.id, 'episodes'), {
         title: episodeTitle,
         content: episodeContent,
         episodeNumber: episodeNumber,
+        image: episodeImageUrl,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
@@ -3590,6 +3598,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setEpisodeTitle('');
       setEpisodeContent('');
       setEpisodeNumber(episodeNumber + 1);
+      setEpisodeImage(undefined);
       setMessage('Episode created successfully');
 
       // Reload episodes
@@ -9113,6 +9122,15 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                         className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                         min="1"
                         required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Episode Image (Optional)</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setEpisodeImage(e.target.files?.[0] || null)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                       />
                     </div>
                     <div>
