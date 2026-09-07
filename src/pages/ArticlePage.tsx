@@ -549,7 +549,7 @@ export default function ArticlePage() {
         <div className="grid gap-6 lg:grid-cols-[1fr_0.5fr] lg:items-start">
           <div className="space-y-4">
             <div className="rounded-2xl overflow-hidden bg-slate-100 shadow-soft">
-              <img src={article.image} alt={article.title} className="h-[360px] w-full object-cover" />
+              <img src={article.image} alt={article.title} className="h-[240px] w-full object-cover sm:h-[300px] lg:h-[360px]" />
             </div>
 
             {article.video && (
@@ -610,10 +610,10 @@ export default function ArticlePage() {
                 <span className="font-medium text-slate-700">ލިޔުއްވީ: {article.author || 'Admin'}</span>
                 <span>{article.readingTime}</span>
               </div>
-              <h1 className="mt-4 mb-6 text-2xl font-bold leading-[2.5] text-[#0077b6] sm:text-3xl">{article.title}</h1>
+              <h1 className="mt-4 mb-6 text-xl font-bold leading-[2.5] text-[#0077b6] sm:text-2xl lg:text-3xl">{article.title}</h1>
               <p className="text-sm leading-7 text-[#00b4d8]">{article.excerpt}</p>
             </div>
-            <div className="space-y-6 rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-soft">
+            <div className="space-y-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-soft sm:p-6">
               {(() => {
                 const bodyText = Array.isArray(article.body) ? article.body.join(' ') : article.body;
                 if (typeof bodyText !== 'string') return null;
@@ -701,10 +701,10 @@ export default function ArticlePage() {
               <QuranVerseSlider />
             </div>
             <div className="flex flex-col gap-3 lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-5 lg:shadow-soft sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <button 
                   onClick={() => handleReaction('like')}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  className={`inline-flex items-center gap-1 rounded-full px-3 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
                     userReaction === 'like' 
                       ? 'bg-sky-600 text-white' 
                       : 'border border-slate-300 bg-slate-50 text-slate-700 hover:border-slate-500 hover:text-slate-900'
@@ -714,7 +714,7 @@ export default function ArticlePage() {
                 </button>
                 <button 
                   onClick={() => handleReaction('dislike')}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  className={`inline-flex items-center gap-1 rounded-full px-3 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
                     userReaction === 'dislike' 
                       ? 'bg-red-600 text-white' 
                       : 'border border-slate-300 bg-slate-50 text-slate-700 hover:border-slate-500 hover:text-slate-900'
@@ -724,7 +724,7 @@ export default function ArticlePage() {
                 </button>
                 <button 
                   onClick={handleBookmark}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  className={`inline-flex items-center gap-1 rounded-full px-3 py-2 text-xs font-semibold transition sm:gap-2 sm:px-4 sm:text-sm ${
                     isBookmarked 
                       ? 'bg-amber-500 text-white' 
                       : 'border border-slate-300 bg-slate-50 text-slate-700 hover:border-slate-500 hover:text-slate-900'
@@ -734,13 +734,13 @@ export default function ArticlePage() {
                 </button>
                 <button 
                   onClick={handleShare}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-900"
+                  className="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-900 sm:gap-2 sm:px-4 sm:text-sm"
                 >
                   📤 ޝެއަރ
                 </button>
                 <button 
                   onClick={() => setShowComments(!showComments)}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-900"
+                  className="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-900 sm:gap-2 sm:px-4 sm:text-sm"
                 >
                   💬 {comments.length}
                 </button>
@@ -759,20 +759,20 @@ export default function ArticlePage() {
                       value={commentName}
                       onChange={(e) => setCommentName(e.target.value)}
                       placeholder="ނަން..."
-                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 focus:border-sky-500 focus:outline-none"
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none sm:px-4 sm:py-3"
                     />
                   )}
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 sm:gap-3">
                     <textarea
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       placeholder="ކޮމެންޓް ލިޔޭ..."
-                      className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 focus:border-sky-500 focus:outline-none"
+                      className="flex-1 rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-sky-500 focus:outline-none sm:px-4 sm:py-3"
                       rows={3}
                     />
                     <button 
                       onClick={handleAddComment}
-                      className="rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-700"
+                      className="rounded-full bg-sky-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-sky-700 sm:px-4 sm:py-2 sm:text-sm"
                     >
                       ފޮނުވާ
                     </button>
@@ -799,23 +799,23 @@ export default function ArticlePage() {
             )}
 
             {/* Home Button */}
-            <div className="mt-6 rounded-2xl border border-[#90e0ef] bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 p-6 text-center shadow-soft">
+            <div className="mt-6 rounded-2xl border border-[#90e0ef] bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 p-4 text-center shadow-soft sm:p-6">
               <p className="text-sm text-[#0077b6] mb-3">އިތުރު ޚަބަރު ބަލާން ބޭންނެވޭތޯ؟</p>
               <button
                 onClick={() => navigate('/')}
-                className="inline-flex items-center gap-2 rounded-full bg-[#0077b6] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#005f8c] shadow-md"
+                className="inline-flex items-center gap-2 rounded-full bg-[#0077b6] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#005f8c] shadow-md sm:px-6 sm:py-3 sm:text-sm"
               >
                 🏠 މައި ޞަފްޙާއަށް ގޮސްދޭ
               </button>
             </div>
 
             {/* Engagement CTA */}
-            <div className="mt-6 rounded-2xl border border-[#90e0ef] bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 p-6 text-center shadow-soft">
+            <div className="mt-6 rounded-2xl border border-[#90e0ef] bg-gradient-to-r from-[#caf0f8]/50 to-[#90e0ef]/30 p-4 text-center shadow-soft sm:p-6">
               <p className="text-sm text-[#0077b6] mb-3">މި ޚަބަރާމަށް ކިޔާންތެއް ދޭން ބޭންނެވޭތޯ؟</p>
               <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
                 <button
                   onClick={() => handleReaction('like')}
-                  className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition shadow-md ${
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition shadow-md sm:px-6 sm:py-3 sm:text-sm ${
                     userReaction === 'like' 
                       ? 'bg-sky-600 text-white' 
                       : 'bg-[#0077b6] text-white hover:bg-[#005f8c]'
@@ -831,7 +831,7 @@ export default function ArticlePage() {
                       if (textarea) textarea.focus();
                     }, 100);
                   }}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#0077b6] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#005f8c] shadow-md"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#0077b6] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#005f8c] shadow-md sm:px-6 sm:py-3 sm:text-sm"
                 >
                   💬 ކޮމެންޓް ލިޔޭ
                 </button>

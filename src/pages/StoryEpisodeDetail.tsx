@@ -277,9 +277,9 @@ export default function StoryEpisodeDetail() {
               </div>
             </div>
           </div>
-          <div className="p-6">
-            <div className="flex items-center justify-between gap-2">
-              <h1 className="text-3xl font-bold text-gray-900">{episode.title}</h1>
+          <div className="p-4 sm:p-6">
+            <div className="flex items-start justify-between gap-2">
+              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">{episode.title}</h1>
               <button
                 onClick={handleShare}
                 className="flex-shrink-0 rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-brand-600"
@@ -292,7 +292,7 @@ export default function StoryEpisodeDetail() {
             {story.author && (
               <p className="mt-1 text-sm text-gray-500">by {story.author}</p>
             )}
-            <div className="mt-4 flex items-center gap-4">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleLike}
@@ -322,7 +322,7 @@ export default function StoryEpisodeDetail() {
         </div>
 
         {/* Episode Content */}
-        <div className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mt-6 sm:mt-8 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
           <div className="prose prose-sm max-w-none text-gray-700">
             {episode.content.split('\n').map((paragraph, index) => (
               <p key={index} className={index > 0 ? 'mt-4' : ''}>
@@ -333,8 +333,8 @@ export default function StoryEpisodeDetail() {
         </div>
 
         {/* Comments Section */}
-        <div className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-900">Comments ({comments.length})</h3>
+        <div className="mt-6 sm:mt-8 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-900 sm:text-xl">Comments ({comments.length})</h3>
           
           {/* Add Comment */}
           <div className="mt-4 flex gap-2">
@@ -343,13 +343,13 @@ export default function StoryEpisodeDetail() {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Write a comment..."
-              className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+              className="flex-1 rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand-500 sm:px-4"
               onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
             />
             <button
               onClick={handleAddComment}
               disabled={!newComment.trim()}
-              className="rounded-xl bg-brand-500 px-4 py-2 text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-brand-500 px-3 py-2 text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60 sm:px-4"
             >
               <Send className="h-5 w-5" />
             </button>

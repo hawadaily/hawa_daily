@@ -37,7 +37,7 @@ interface Story {
   createdAt: any;
 }
 
-export default function ChildrenStoryDetail() {
+export default function RealStoryDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [story, setStory] = useState<Story | null>(null);
@@ -103,7 +103,7 @@ export default function ChildrenStoryDetail() {
           });
         });
       } catch (error) {
-        console.error('Failed to load children story data:', error);
+        console.error('Failed to load real story data:', error);
       } finally {
         setLoading(false);
       }
@@ -533,21 +533,19 @@ export default function ChildrenStoryDetail() {
                     </div>
                   </div>
                   <div className="p-4">
-                    <div className="flex items-center justify-between gap-2">
-                      <h3 className="text-xl font-semibold text-gray-900">{episode.title}</h3>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <span className="text-lg">😊</span>
-                          <span>{episode.likes?.length || 0}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <span className="text-lg">😞</span>
-                          <span>{episode.dislikes?.length || 0}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <Eye className="h-4 w-4" />
-                          <span>{episode.viewCount || 0}</span>
-                        </div>
+                    <h3 className="text-lg font-semibold text-gray-900 sm:text-xl">{episode.title}</h3>
+                    <div className="mt-3 flex flex-wrap items-center gap-3 sm:gap-2">
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <span className="text-lg">😊</span>
+                        <span>{episode.likes?.length || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <span className="text-lg">😞</span>
+                        <span>{episode.dislikes?.length || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <Eye className="h-4 w-4" />
+                        <span>{episode.viewCount || 0}</span>
                       </div>
                     </div>
                     <p className="mt-2 text-sm text-gray-500">Click to read episode...</p>

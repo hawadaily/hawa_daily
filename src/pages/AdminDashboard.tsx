@@ -584,7 +584,7 @@ export default function AdminDashboard() {
   const [authors, setAuthors] = useState<string[]>([]);
   
   // Image Generator state
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | undefined>(undefined);
   const [overlayText, setOverlayText] = useState('');
   const [overlayText2, setOverlayText2] = useState('');
   const [bannerColor, setBannerColor] = useState('#000000');
@@ -597,7 +597,7 @@ export default function AdminDashboard() {
   const [textPosition, setTextPosition] = useState<'bottom-center' | 'bottom-left' | 'bottom-right' | 'top-center' | 'top-left' | 'top-right' | 'middle-center' | 'middle-left' | 'middle-right'>('bottom-center');
   const [textPosition2, setTextPosition2] = useState<'bottom-center' | 'bottom-left' | 'bottom-right' | 'top-center' | 'top-left' | 'top-right' | 'middle-center' | 'middle-left' | 'middle-right'>('bottom-center');
   const [gradientLocation, setGradientLocation] = useState<'top' | 'middle' | 'bottom'>('bottom');
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [generatedImage, setGeneratedImage] = useState<string | undefined>(undefined);
   
   // Post-launch checklist state
   const [checklistItems, setChecklistItems] = useState([
@@ -1377,7 +1377,7 @@ export default function AdminDashboard() {
   const [uploadingStory, setUploadingStory] = useState(false);
   const [storyError, setStoryError] = useState('');
 
-  // Children Stories management state
+  // Real Stories management state
   const [childrenStories, setChildrenStories] = useState<any[]>([]);
   const [selectedChildrenStory, setSelectedChildrenStory] = useState<any | null>(null);
   const [childrenStoryTitle, setChildrenStoryTitle] = useState('');
@@ -2070,7 +2070,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         console.error('Failed to load stories:', storiesError);
       }
 
-      // Load children stories
+      // Load real stories
       try {
         const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc')));
         const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
@@ -3316,7 +3316,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
   };
 
-  // Children Stories management handlers
+  // Real Stories management handlers
   const handleCreateChildrenStory = async () => {
     if (!childrenStoryTitle.trim() || !childrenStoryCoverImage) {
       setChildrenStoryError('Please provide title and cover image');
@@ -3348,14 +3348,14 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       });
 
       resetChildrenStoryForm();
-      setMessage('Children story created successfully');
+      setMessage('Real story created successfully');
 
       // Reload children stories
       const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc')));
       const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenStories(childrenStoriesData);
     } catch (error) {
-      setChildrenStoryError('Failed to create children story');
+      setChildrenStoryError('Failed to create real story');
       console.error(error);
     } finally {
       setUploadingChildrenStory(false);
@@ -3411,14 +3411,14 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       await updateDoc(doc(realStoryDb, 'real-stories', selectedChildrenStory.id), updateData);
 
       resetChildrenStoryForm();
-      setMessage('Children story updated successfully');
+      setMessage('Real story updated successfully');
 
       // Reload children stories
       const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc')));
       const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenStories(childrenStoriesData);
     } catch (error) {
-      setChildrenStoryError('Failed to update children story');
+      setChildrenStoryError('Failed to update real story');
       console.error(error);
     } finally {
       setUploadingChildrenStory(false);
@@ -3467,7 +3467,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
       // Delete story
       await deleteDoc(doc(realStoryDb, 'real-stories', storyId));
-      setMessage('Children story deleted successfully');
+      setMessage('Real story deleted successfully');
 
       // Reload children stories
       const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc')));
@@ -3479,7 +3479,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         setChildrenEpisodes([]);
       }
     } catch (error) {
-      setMessage('Failed to delete children story');
+      setMessage('Failed to delete real story');
       console.error(error);
     }
   };
@@ -3502,14 +3502,14 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setChildrenEpisodes(episodesData);
       setChildrenEpisodeNumber(episodesData.length + 1);
     } catch (error) {
-      console.error('Failed to load children episodes', error);
+      console.error('Failed to load real episodes', error);
     }
   };
 
-  // Children Episode management handlers
+  // Real Episode management handlers
   const handleCreateChildrenEpisode = async () => {
     if (!selectedChildrenStory || !childrenEpisodeTitle.trim() || !childrenEpisodeContent.trim()) {
-      setChildrenEpisodeError('Please select a children story and provide title and content');
+      setChildrenEpisodeError('Please select a real story and provide title and content');
       return;
     }
 
@@ -3535,15 +3535,15 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setChildrenEpisodeTitle('');
       setChildrenEpisodeContent('');
       setChildrenEpisodeNumber(childrenEpisodeNumber + 1);
-      setChildrenEpisodeImage(undefined);
-      setMessage('Children episode created successfully');
+      setChildrenEpisodeImage(null);
+      setMessage('Real episode created successfully');
 
       // Reload children episodes
       const episodesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories', selectedChildrenStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenEpisodes(episodesData);
     } catch (error) {
-      setChildrenEpisodeError('Failed to create children episode');
+      setChildrenEpisodeError('Failed to create real episode');
       console.error(error);
     } finally {
       setUploadingChildrenEpisode(false);
@@ -3557,14 +3557,14 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
     try {
       await deleteDoc(doc(realStoryDb, 'real-stories', selectedChildrenStory.id, 'episodes', episodeId));
-      setMessage('Children episode deleted successfully');
+      setMessage('Real episode deleted successfully');
 
       // Reload children episodes
       const episodesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories', selectedChildrenStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setChildrenEpisodes(episodesData);
     } catch (error) {
-      setMessage('Failed to delete children episode');
+      setMessage('Failed to delete real episode');
       console.error(error);
     }
   };
@@ -3598,7 +3598,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setEpisodeTitle('');
       setEpisodeContent('');
       setEpisodeNumber(episodeNumber + 1);
-      setEpisodeImage(undefined);
+      setEpisodeImage(null);
       setMessage('Episode created successfully');
 
       // Reload episodes
@@ -5206,7 +5206,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                     type="button"
                     onClick={() => {
                       setUploadedImage('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800');
-                      setGeneratedImage(null);
+                      setGeneratedImage(undefined);
                       setMessage('Sample image loaded');
                     }}
                     className="w-full rounded-2xl border border-purple-500 bg-purple-500/20 px-4 py-2 text-sm font-semibold text-purple-700 transition hover:bg-purple-500/30"
@@ -5227,7 +5227,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                         const reader = new FileReader();
                         reader.onload = (event) => {
                           setUploadedImage(event.target?.result as string);
-                          setGeneratedImage(null);
+                          setGeneratedImage(undefined);
                         };
                         reader.readAsDataURL(file);
                       }

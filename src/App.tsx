@@ -21,9 +21,9 @@ import AdminLogin from './pages/AdminLogin';
 import Stories from './pages/Stories';
 import StoryDetail from './pages/StoryDetail';
 import StoryEpisodeDetail from './pages/StoryEpisodeDetail';
-import ChildrenStories from './pages/ChildrenStories';
-import ChildrenStoryDetail from './pages/ChildrenStoryDetail';
-import ChildrenEpisodeDetail from './pages/ChildrenEpisodeDetail';
+import RealStories from './pages/RealStories';
+import RealStoryDetail from './pages/RealStoryDetail';
+import RealEpisodeDetail from './pages/RealEpisodeDetail';
 import GoldenTime from './pages/GoldenTime';
 import GoldenTimeDetail from './pages/GoldenTimeDetail';
 import DoctorsDuty from './pages/DoctorsDuty';
@@ -255,9 +255,9 @@ function App() {
             <Route path="/stories" element={<Stories />} />
             <Route path="/stories/:slug" element={<StoryDetail />} />
             <Route path="/stories/:slug/:episodeId" element={<StoryEpisodeDetail />} />
-            <Route path="/real-stories" element={<ChildrenStories />} />
-            <Route path="/real-stories/:slug" element={<ChildrenStoryDetail />} />
-            <Route path="/real-stories/:slug/:episodeId" element={<ChildrenEpisodeDetail />} />
+            <Route path="/real-stories" element={<RealStories />} />
+            <Route path="/real-stories/:slug" element={<RealStoryDetail />} />
+            <Route path="/real-stories/:slug/:episodeId" element={<RealEpisodeDetail />} />
             <Route path="/golden-time" element={<GoldenTime />} />
             <Route path="/golden-time/:slug" element={<GoldenTimeDetail />} />
             <Route path="/doctors-duty" element={<DoctorsDuty />} />
