@@ -9179,12 +9179,21 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                     const snapshot = await getDocs(storiesQuery);
                     let updated = 0;
                     
+                    console.log('Found', snapshot.size, 'real stories');
+                    
                     for (const doc of snapshot.docs) {
                       const data = doc.data();
-                      if (!data.slug && data.title) {
-                        const slug = generateSlug(data.title);
-                        await updateDoc(doc.ref, { slug });
-                        updated++;
+                      console.log('Story:', doc.id, 'has slug:', !!data.slug, 'has title:', !!data.title, 'title:', data.title);
+                      
+                      if (!data.slug) {
+                        if (data.title) {
+                          const slug = generateSlug(data.title);
+                          console.log('Setting slug:', slug, 'for story:', doc.id);
+                          await updateDoc(doc.ref, { slug });
+                          updated++;
+                        } else {
+                          console.error('Story has no title, cannot generate slug:', doc.id);
+                        }
                       }
                     }
                     

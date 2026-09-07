@@ -26,6 +26,7 @@ export default function ChildrenStories() {
         const storiesQuery = query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(storiesQuery);
         const storiesData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+        console.log('Real stories loaded:', storiesData.map(s => ({ id: s.id, title: s.title, slug: s.slug })));
         setStories(storiesData);
       } catch (error) {
         console.error('Failed to load children stories:', error);
@@ -170,14 +171,9 @@ export default function ChildrenStories() {
                     </div>
                   ) : (
                     <Link
-                      to={story.slug ? `/real-stories/${story.slug}` : '#'}
+                      to={`/real-stories/${story.slug}`}
                       className="mt-4 flex items-center text-sm text-brand-600 font-semibold"
-                      onClick={(e) => {
-                        if (!story.slug) {
-                          e.preventDefault();
-                          alert('Story has no slug. Please add a slug in the admin panel.');
-                        }
-                      }}
+                      onClick={() => console.log('Clicking Read Episodes for story:', story.id, 'slug:', story.slug)}
                     >
                       <span>Read Episodes</span>
                       <svg className="ml-1 h-4 w-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
