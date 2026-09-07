@@ -517,7 +517,7 @@ export default function RealStoryDetail() {
               {episodes.map((episode) => (
                 <Link
                   key={episode.id}
-                  to={`/real-stories/${slug}/${episode.id}`}
+                  to={`/real-stories/${slug}/ep-${episode.episodeNumber}`}
                   className="block rounded-2xl border bg-white shadow-sm transition cursor-pointer hover:border-brand-300 overflow-hidden"
                 >
                   <div className="relative aspect-video">

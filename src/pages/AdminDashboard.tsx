@@ -15,10 +15,21 @@ import { getVercelAnalytics } from '../api/vercel-analytics';
 
 // Generate a URL-friendly slug from a string
 function generateSlug(text: string): string {
-  return text
+  // Transliterate non-ASCII characters to ASCII (basic implementation for common characters)
+  const transliterated = text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-zA-Z0-9\s-]/g, '') // Remove non-alphanumeric characters except spaces and hyphens
     .trim()
     .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+  
+  // If result is empty or too short, use a fallback
+  if (!transliterated || transliterated.length < 3) {
+    return 'story-' + Date.now();
+  }
+  
+  return transliterated.toLowerCase();
 }
 
 type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'real-stories' | 'golden-time' | 'obituary' | 'funeral-poster' | 'advertisements' | 'hero-slides';
@@ -1381,6 +1392,7 @@ export default function AdminDashboard() {
   const [childrenStories, setChildrenStories] = useState<any[]>([]);
   const [selectedChildrenStory, setSelectedChildrenStory] = useState<any | null>(null);
   const [childrenStoryTitle, setChildrenStoryTitle] = useState('');
+  const [childrenStoryTitleEn, setChildrenStoryTitleEn] = useState('');
   const [childrenStorySlug, setChildrenStorySlug] = useState('');
   const [childrenStoryDescription, setChildrenStoryDescription] = useState('');
   const [childrenStoryAuthor, setChildrenStoryAuthor] = useState('');
@@ -3330,11 +3342,12 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       // Compress image before upload
       const compressedFile = await compressImage(childrenStoryCoverImage, 1920, 0.8);
       const coverImageUrl = await uploadToImgBB(compressedFile);
-      const slug = childrenStorySlug || generateSlug(childrenStoryTitle);
+      const slug = childrenStorySlug || generateSlug(childrenStoryTitleEn || childrenStoryTitle);
 
       await addDoc(collection(realStoryDb, 'real-stories'), {
         slug,
         title: childrenStoryTitle,
+        titleEn: childrenStoryTitleEn,
         description: childrenStoryDescription,
         author: childrenStoryAuthor,
         youtubeLink: childrenStoryYoutubeLink,
@@ -3365,6 +3378,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const handleEditChildrenStory = (story: any) => {
     setSelectedChildrenStory(story);
     setChildrenStoryTitle(story.title);
+    setChildrenStoryTitleEn(story.titleEn || '');
     setChildrenStoryDescription(story.description || '');
     setChildrenStoryAuthor(story.author || '');
     setChildrenStoryYoutubeLink(story.youtubeLink || '');
@@ -3386,11 +3400,12 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setUploadingChildrenStory(true);
       setChildrenStoryError('');
 
-      const slug = childrenStorySlug || generateSlug(childrenStoryTitle);
+      const slug = childrenStorySlug || generateSlug(childrenStoryTitleEn || childrenStoryTitle);
 
       const updateData: any = {
         slug,
         title: childrenStoryTitle,
+        titleEn: childrenStoryTitleEn,
         description: childrenStoryDescription,
         author: childrenStoryAuthor,
         youtubeLink: childrenStoryYoutubeLink,
@@ -3427,6 +3442,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
   const resetChildrenStoryForm = () => {
     setChildrenStoryTitle('');
+    setChildrenStoryTitleEn('');
     setChildrenStorySlug('');
     setChildrenStoryDescription('');
     setChildrenStoryAuthor('');
@@ -3487,6 +3503,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const handleSelectChildrenStory = async (story: any) => {
     setSelectedChildrenStory(story);
     setChildrenStoryTitle(story.title || '');
+    setChildrenStoryTitleEn(story.titleEn || '');
     setChildrenStorySlug(story.slug || '');
     setChildrenStoryDescription(story.description || '');
     setChildrenStoryAuthor(story.author || '');
@@ -9260,15 +9277,26 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                 )}
                 <div className="mt-4 space-y-3">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700">Title</label>
+                    <label className="block text-sm font-semibold text-gray-700">Title (Dhivehi)</label>
                     <input
                       type="text"
                       value={childrenStoryTitle}
                       onChange={(e) => setChildrenStoryTitle(e.target.value)}
                       className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      placeholder="Story title..."
+                      placeholder="ހަޤީޤީ ވާހަކަގެ ނަން..."
                       required
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Title [English - for URL]</label>
+                    <input
+                      type="text"
+                      value={childrenStoryTitleEn}
+                      onChange={(e) => setChildrenStoryTitleEn(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="The Mafia's Stepmother"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Used for generating clean English URLs</p>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700">Slug (English URL)</label>
@@ -9279,7 +9307,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
                       placeholder="english-slug-for-url"
                     />
-                    <p className="mt-1 text-xs text-gray-500">Leave empty to auto-generate from title</p>
+                    <p className="mt-1 text-xs text-gray-500">Leave empty to auto-generate from English title</p>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700">Description</label>
@@ -9554,12 +9582,26 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                             </div>
                             <p className="mt-2 text-sm text-gray-600 line-clamp-3">{episode.content}</p>
                           </div>
-                          <button
-                            onClick={() => handleDeleteChildrenEpisode(episode.id)}
-                            className="text-rose-600 hover:text-rose-700"
-                          >
-                            Delete
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => {
+                                const shareUrl = `https://www.hawadaily.com/real-stories/${selectedChildrenStory.slug}/ep-${episode.episodeNumber}`;
+                                navigator.clipboard.writeText(shareUrl);
+                                setMessage('Link copied to clipboard!');
+                                setTimeout(() => setMessage(''), 2000);
+                              }}
+                              className="text-brand-600 hover:text-brand-700"
+                              title="Copy share link"
+                            >
+                              Share
+                            </button>
+                            <button
+                              onClick={() => handleDeleteChildrenEpisode(episode.id)}
+                              className="text-rose-600 hover:text-rose-700"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))

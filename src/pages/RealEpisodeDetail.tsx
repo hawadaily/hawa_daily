@@ -39,9 +39,10 @@ interface Story {
 }
 
 export default function RealEpisodeDetail() {
-  const { slug, episodeId } = useParams<{ slug: string; episodeId: string }>();
+  const { slug, episodeNumber } = useParams<{ slug: string; episodeNumber: string }>();
   const [story, setStory] = useState<Story | null>(null);
   const [episode, setEpisode] = useState<Episode | null>(null);
+  const [episodeId, setEpisodeId] = useState<string | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
@@ -50,14 +51,14 @@ export default function RealEpisodeDetail() {
 
   useEffect(() => {
     const loadEpisodeData = async () => {
-      if (!slug || !episodeId) {
-        console.error('No slug or episodeId provided');
+      if (!slug || !episodeNumber) {
+        console.error('No slug or episodeNumber provided');
         setLoading(false);
         return;
       }
 
       try {
-        console.log('Loading episode:', slug, episodeId);
+        console.log('Loading episode:', slug, episodeNumber);
         
         // Find the story by slug
         const storiesQuery = query(collection(realStoryDb, 'real-stories'), where('slug', '==', slug));
@@ -77,24 +78,30 @@ export default function RealEpisodeDetail() {
           setStory({ id: storyDoc.id, ...(storyDoc.data() as any) });
         }
 
-        // Load episode
-        const episodeDoc = await getDoc(doc(realStoryDb, 'real-stories', storyId, 'episodes', episodeId));
-        if (episodeDoc.exists()) {
+        // Load episode by episodeNumber
+        const episodesQuery = query(collection(realStoryDb, 'real-stories', storyId, 'episodes'), where('episodeNumber', '==', parseInt(episodeNumber)));
+        const episodesSnapshot = await getDocs(episodesQuery);
+        
+        if (!episodesSnapshot.empty) {
+          const episodeDoc = episodesSnapshot.docs[0];
           const episodeData = { id: episodeDoc.id, ...(episodeDoc.data() as any) };
           setEpisode(episodeData);
+          setEpisodeId(episodeDoc.id);
           
           // Increment view count
-          await updateDoc(doc(realStoryDb, 'real-stories', storyId, 'episodes', episodeId), {
+          await updateDoc(doc(realStoryDb, 'real-stories', storyId, 'episodes', episodeDoc.id), {
             viewCount: increment(1)
           });
-        }
 
-        // Load comments
-        const commentsQuery = query(collection(realStoryDb, 'real-stories', storyId, 'episodes', episodeId, 'comments'), orderBy('createdAt', 'desc'));
-        onSnapshot(commentsQuery, (snapshot) => {
-          const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-          setComments(commentsData);
-        });
+          // Load comments
+          const commentsQuery = query(collection(realStoryDb, 'real-stories', storyId, 'episodes', episodeDoc.id, 'comments'), orderBy('createdAt', 'desc'));
+          onSnapshot(commentsQuery, (snapshot) => {
+            const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+            setComments(commentsData);
+          });
+        } else {
+          console.error('No episode found with number:', episodeNumber);
+        }
       } catch (error) {
         console.error('Failed to load episode data:', error);
       } finally {
@@ -110,7 +117,7 @@ export default function RealEpisodeDetail() {
     });
 
     return () => unsubscribe();
-  }, [slug, episodeId]);
+  }, [slug, episodeNumber]);
 
   useEffect(() => {
     if (story && episode) {
