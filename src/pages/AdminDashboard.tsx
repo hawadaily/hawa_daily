@@ -1381,6 +1381,7 @@ export default function AdminDashboard() {
   const [childrenStories, setChildrenStories] = useState<any[]>([]);
   const [selectedChildrenStory, setSelectedChildrenStory] = useState<any | null>(null);
   const [childrenStoryTitle, setChildrenStoryTitle] = useState('');
+  const [childrenStorySlug, setChildrenStorySlug] = useState('');
   const [childrenStoryDescription, setChildrenStoryDescription] = useState('');
   const [childrenStoryAuthor, setChildrenStoryAuthor] = useState('');
   const [childrenStoryCoverImage, setChildrenStoryCoverImage] = useState<File | null>(null);
@@ -3327,7 +3328,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       // Compress image before upload
       const compressedFile = await compressImage(childrenStoryCoverImage, 1920, 0.8);
       const coverImageUrl = await uploadToImgBB(compressedFile);
-      const slug = generateSlug(childrenStoryTitle);
+      const slug = childrenStorySlug || generateSlug(childrenStoryTitle);
 
       await addDoc(collection(realStoryDb, 'real-stories'), {
         slug,
@@ -3383,7 +3384,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setUploadingChildrenStory(true);
       setChildrenStoryError('');
 
-      const slug = generateSlug(childrenStoryTitle);
+      const slug = childrenStorySlug || generateSlug(childrenStoryTitle);
 
       const updateData: any = {
         slug,
@@ -3424,6 +3425,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
   const resetChildrenStoryForm = () => {
     setChildrenStoryTitle('');
+    setChildrenStorySlug('');
     setChildrenStoryDescription('');
     setChildrenStoryAuthor('');
     setChildrenStoryYoutubeLink('');
@@ -3482,6 +3484,16 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
   const handleSelectChildrenStory = async (story: any) => {
     setSelectedChildrenStory(story);
+    setChildrenStoryTitle(story.title || '');
+    setChildrenStorySlug(story.slug || '');
+    setChildrenStoryDescription(story.description || '');
+    setChildrenStoryAuthor(story.author || '');
+    setChildrenStoryYoutubeLink(story.youtubeLink || '');
+    setChildrenStoryTiktokLink(story.tiktokLink || '');
+    setChildrenStoryStatus(story.status || 'upcoming');
+    setChildrenStoryReleaseDate(story.releaseDate || '');
+    setChildrenStoryLocked(story.locked !== undefined ? story.locked : true);
+    setEditingChildrenStory(true);
     try {
       const episodesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
@@ -9230,6 +9242,17 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       placeholder="Story title..."
                       required
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Slug (English URL)</label>
+                    <input
+                      type="text"
+                      value={childrenStorySlug}
+                      onChange={(e) => setChildrenStorySlug(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="english-slug-for-url"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Leave empty to auto-generate from title</p>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700">Description</label>
