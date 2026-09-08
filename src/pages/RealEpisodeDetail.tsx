@@ -308,11 +308,11 @@ export default function RealEpisodeDetail() {
               <p className="mt-1 text-sm text-gray-500">by {story.author}</p>
             )}
             {/* Social Media Links */}
-            {(story.youtubeLink || story.tiktokLink) && (
+            {(episode.youtubeLink || episode.tiktokLink || story.youtubeLink || story.tiktokLink) && (
               <div className="mt-4 flex flex-wrap gap-2">
-                {story.youtubeLink && (
+                {(episode.youtubeLink || story.youtubeLink) && (
                   <a
-                    href={story.youtubeLink}
+                    href={episode.youtubeLink || story.youtubeLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
@@ -323,9 +323,9 @@ export default function RealEpisodeDetail() {
                     YouTube
                   </a>
                 )}
-                {story.tiktokLink && (
+                {(episode.tiktokLink || story.tiktokLink) && (
                   <a
-                    href={story.tiktokLink}
+                    href={episode.tiktokLink || story.tiktokLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray- border border-gray-700"
@@ -382,13 +382,13 @@ export default function RealEpisodeDetail() {
         <PromoBanner location="real-story-episode" position="middle" />
 
         {/* Social Media Links */}
-        {(story.youtubeLink || story.tiktokLink) && (
+        {(episode.youtubeLink || episode.tiktokLink || story.youtubeLink || story.tiktokLink) && (
           <div className="mt-6 sm:mt-8 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-gray-900 sm:text-xl">މީގެ އިގިރޭސި ބައި ތިރީ ގައިވާ އަޅުގަނޑުމެންގެ ޓިކް ޓޮކް އަދި ޔޫޓިއުބް ޗެނަލް އިން ބަލާ ލެވޭނެއެވެ.</h3>
             <div className="mt-4 flex flex-wrap gap-2">
-              {story.youtubeLink && (
+              {(episode.youtubeLink || story.youtubeLink) && (
                 <a
-                  href={story.youtubeLink}
+                  href={episode.youtubeLink || story.youtubeLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
@@ -399,9 +399,9 @@ export default function RealEpisodeDetail() {
                   YouTube
                 </a>
               )}
-              {story.tiktokLink && (
+              {(episode.tiktokLink || story.tiktokLink) && (
                 <a
-                  href={story.tiktokLink}
+                  href={episode.tiktokLink || story.tiktokLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray- border border-gray-700"

@@ -1377,6 +1377,8 @@ export default function AdminDashboard() {
   const [childrenEpisodeContent, setChildrenEpisodeContent] = useState('');
   const [childrenEpisodeNumber, setChildrenEpisodeNumber] = useState(1);
   const [childrenEpisodeImage, setChildrenEpisodeImage] = useState<File | null>(null);
+  const [childrenEpisodeYoutubeLink, setChildrenEpisodeYoutubeLink] = useState('');
+  const [childrenEpisodeTiktokLink, setChildrenEpisodeTiktokLink] = useState('');
   const [childrenEpisodeReleaseDate, setChildrenEpisodeReleaseDate] = useState('');
   const [childrenEpisodeLocked, setChildrenEpisodeLocked] = useState(false);
   const [uploadingChildrenEpisode, setUploadingChildrenEpisode] = useState(false);
@@ -1404,6 +1406,8 @@ export default function AdminDashboard() {
   const [vahakaEpisodeContent, setVahakaEpisodeContent] = useState('');
   const [vahakaEpisodeNumber, setVahakaEpisodeNumber] = useState(1);
   const [vahakaEpisodeImage, setVahakaEpisodeImage] = useState<File | null>(null);
+  const [vahakaEpisodeYoutubeLink, setVahakaEpisodeYoutubeLink] = useState('');
+  const [vahakaEpisodeTiktokLink, setVahakaEpisodeTiktokLink] = useState('');
   const [vahakaEpisodeReleaseDate, setVahakaEpisodeReleaseDate] = useState('');
   const [vahakaEpisodeLocked, setVahakaEpisodeLocked] = useState(false);
   const [uploadingVahakaEpisode, setUploadingVahakaEpisode] = useState(false);
@@ -3319,6 +3323,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
           title: childrenEpisodeTitle,
           content: childrenEpisodeContent,
           episodeNumber: childrenEpisodeNumber,
+          youtubeLink: childrenEpisodeYoutubeLink,
+          tiktokLink: childrenEpisodeTiktokLink,
           releaseDate: childrenEpisodeReleaseDate || null,
           locked: childrenEpisodeLocked,
           updatedAt: serverTimestamp(),
@@ -3336,6 +3342,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
           content: childrenEpisodeContent,
           episodeNumber: childrenEpisodeNumber,
           image: episodeImageUrl,
+          youtubeLink: childrenEpisodeYoutubeLink,
+          tiktokLink: childrenEpisodeTiktokLink,
           releaseDate: childrenEpisodeReleaseDate || null,
           locked: childrenEpisodeLocked,
           createdAt: serverTimestamp(),
@@ -3348,6 +3356,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setChildrenEpisodeContent('');
       setChildrenEpisodeNumber(childrenEpisodeNumber + 1);
       setChildrenEpisodeImage(null);
+      setChildrenEpisodeYoutubeLink('');
+      setChildrenEpisodeTiktokLink('');
       setChildrenEpisodeReleaseDate('');
       setChildrenEpisodeLocked(false);
 
@@ -3387,6 +3397,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setChildrenEpisodeTitle(episode.title);
     setChildrenEpisodeContent(episode.content);
     setChildrenEpisodeNumber(episode.episodeNumber);
+    setChildrenEpisodeYoutubeLink(episode.youtubeLink || '');
+    setChildrenEpisodeTiktokLink(episode.tiktokLink || '');
     setChildrenEpisodeReleaseDate(episode.releaseDate || '');
     setChildrenEpisodeLocked(episode.locked || false);
   };
@@ -3611,6 +3623,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
           title: vahakaEpisodeTitle,
           content: vahakaEpisodeContent,
           episodeNumber: vahakaEpisodeNumber,
+          youtubeLink: vahakaEpisodeYoutubeLink,
+          tiktokLink: vahakaEpisodeTiktokLink,
           releaseDate: vahakaEpisodeReleaseDate || null,
           locked: vahakaEpisodeLocked,
           updatedAt: serverTimestamp(),
@@ -3628,6 +3642,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
           content: vahakaEpisodeContent,
           episodeNumber: vahakaEpisodeNumber,
           image: episodeImageUrl,
+          youtubeLink: vahakaEpisodeYoutubeLink,
+          tiktokLink: vahakaEpisodeTiktokLink,
           releaseDate: vahakaEpisodeReleaseDate || null,
           locked: vahakaEpisodeLocked,
           createdAt: serverTimestamp(),
@@ -3640,6 +3656,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setVahakaEpisodeContent('');
       setVahakaEpisodeNumber(vahakaEpisodeNumber + 1);
       setVahakaEpisodeImage(null);
+      setVahakaEpisodeYoutubeLink('');
+      setVahakaEpisodeTiktokLink('');
       setVahakaEpisodeReleaseDate('');
       setVahakaEpisodeLocked(false);
 
@@ -3679,6 +3697,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setVahakaEpisodeTitle(episode.title);
     setVahakaEpisodeContent(episode.content);
     setVahakaEpisodeNumber(episode.episodeNumber);
+    setVahakaEpisodeYoutubeLink(episode.youtubeLink || '');
+    setVahakaEpisodeTiktokLink(episode.tiktokLink || '');
     setVahakaEpisodeReleaseDate(episode.releaseDate || '');
     setVahakaEpisodeLocked(episode.locked || false);
   };
@@ -9158,6 +9178,26 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       />
                     </div>
                     <div>
+                      <label className="block text-sm font-semibold text-gray-700">YouTube Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={vahakaEpisodeYoutubeLink}
+                        onChange={(e) => setVahakaEpisodeYoutubeLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://youtube.com/watch?v=..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">TikTok Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={vahakaEpisodeTiktokLink}
+                        onChange={(e) => setVahakaEpisodeTiktokLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://tiktok.com/@user/video/..."
+                      />
+                    </div>
+                    <div>
                       <label className="block text-sm font-semibold text-gray-700">Release Date</label>
                       <input
                         type="date"
@@ -9630,6 +9670,26 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                         value={childrenEpisodeReleaseDate}
                         onChange={(e) => setChildrenEpisodeReleaseDate(e.target.value)}
                         className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">YouTube Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={childrenEpisodeYoutubeLink}
+                        onChange={(e) => setChildrenEpisodeYoutubeLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://youtube.com/watch?v=..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">TikTok Link (Optional)</label>
+                      <input
+                        type="url"
+                        value={childrenEpisodeTiktokLink}
+                        onChange={(e) => setChildrenEpisodeTiktokLink(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="https://tiktok.com/@user/video/..."
                       />
                     </div>
                     <div className="flex items-center gap-2">
