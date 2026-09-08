@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /stories/{storyId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /stories/{storyId}/episodes/{episodeId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /stories/{storyId}/episodes/{episodeId}/comments/{commentId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to comment
+    }
+
+    match /stories/{storyId}/episodes/{episodeId}/likes/{likeId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to like
+    }
+
+    match /stories/{storyId}/episodes/{episodeId}/dislikes/{dislikeId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to dislike
+    }
+
+    match /stories/{storyId}/episodes/{episodeId}/userReactions/{userId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to track reactions
+    }
+
+    match /articles/{articleId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /articles/{articleId}/comments/{commentId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to comment
+    }
+
+    match /articles/{articleId}/likes/{likeId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to like
+    }
+
+    match /articles/{articleId}/dislikes/{dislikeId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to dislike
+    }
+
+    match /sidebar-promotions/{promoId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /mid-article-promotions/{promoId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /hero-slides/{slideId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /quotes/{quoteId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /recipes/{recipeId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /quran/{quranId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /visitors/{visitorId} {
+      allow read: if true;
+      allow write: if true; // Allow tracking visitors
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+  }
+}

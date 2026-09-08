@@ -3151,7 +3151,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       const coverImageUrl = await uploadToImgBB(compressedFile);
       const slug = generateSlug(storyTitle);
 
-      await addDoc(collection(dbHawainn, 'stories'), {
+      await addDoc(collection(db, 'stories'), {
         slug,
         title: storyTitle,
         description: storyDescription,
@@ -3227,7 +3227,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         updateData.coverImage = coverImageUrl;
       }
 
-      await updateDoc(doc(dbHawainn, 'stories', selectedStory.id), updateData);
+      await updateDoc(doc(db, 'stories', selectedStory.id), updateData);
 
       resetStoryForm();
       setMessage('Story updated successfully');
@@ -3265,7 +3265,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
     try {
       // Fetch story to get image URL
-      const storyDoc = await getDoc(doc(dbHawainn, 'stories', storyId));
+      const storyDoc = await getDoc(doc(db, 'stories', storyId));
       if (storyDoc.exists()) {
         const storyData = storyDoc.data();
         if (storyData?.coverImage) {
@@ -3280,13 +3280,13 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       }
 
       // Delete all episodes
-      const episodesSnapshot = await getDocs(collection(dbHawainn, 'stories', storyId, 'episodes'));
+      const episodesSnapshot = await getDocs(collection(db, 'stories', storyId, 'episodes'));
       for (const episodeDoc of episodesSnapshot.docs) {
-        await deleteDoc(doc(dbHawainn, 'stories', storyId, 'episodes', episodeDoc.id));
+        await deleteDoc(doc(db, 'stories', storyId, 'episodes', episodeDoc.id));
       }
 
       // Delete story
-      await deleteDoc(doc(dbHawainn, 'stories', storyId));
+      await deleteDoc(doc(db, 'stories', storyId));
       setMessage('Story deleted successfully');
 
       // Reload stories
@@ -3307,7 +3307,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const handleSelectStory = async (story: any) => {
     setSelectedStory(story);
     try {
-      const episodesSnapshot = await getDocs(query(collection(dbHawainn, 'stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesSnapshot = await getDocs(query(collection(db, 'stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setEpisodes(episodesData);
       setEpisodeNumber(episodesData.length + 1);
@@ -3627,7 +3627,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
       if (editingEpisodeId) {
         // Update existing episode
-        const episodeRef = doc(dbHawainn, 'stories', selectedStory.id, 'episodes', editingEpisodeId);
+        const episodeRef = doc(db, 'stories', selectedStory.id, 'episodes', editingEpisodeId);
         const updateData: any = {
           title: episodeTitle,
           content: episodeContent,
@@ -3644,7 +3644,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         setEditingEpisodeId(null);
       } else {
         // Create new episode
-        await addDoc(collection(dbHawainn, 'stories', selectedStory.id, 'episodes'), {
+        await addDoc(collection(db, 'stories', selectedStory.id, 'episodes'), {
           title: episodeTitle,
           content: episodeContent,
           episodeNumber: episodeNumber,
@@ -3665,7 +3665,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setEpisodeLocked(false);
 
       // Reload episodes
-      const episodesSnapshot = await getDocs(query(collection(dbHawainn, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesSnapshot = await getDocs(query(collection(db, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setEpisodes(episodesData);
     } catch (error) {
@@ -3682,11 +3682,11 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
 
     try {
-      await deleteDoc(doc(dbHawainn, 'stories', selectedStory.id, 'episodes', episodeId));
+      await deleteDoc(doc(db, 'stories', selectedStory.id, 'episodes', episodeId));
       setMessage('Episode deleted successfully');
 
       // Reload episodes
-      const episodesSnapshot = await getDocs(query(collection(dbHawainn, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesSnapshot = await getDocs(query(collection(db, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setEpisodes(episodesData);
     } catch (error) {
