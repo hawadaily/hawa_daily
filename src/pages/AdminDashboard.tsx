@@ -4,6 +4,7 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, qu
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db, dbWithFallback } from '../firebase';
+import { dbHawainn } from '../firebase-hawainn';
 import { db as goldenTimeDb } from '../firebase-golden-time';
 import { db as realStoryDb } from '../firebase-real-story';
 import { categories } from '../data/mockData';
@@ -2059,9 +2060,9 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         console.error('Failed to load mid-article promotions:', midPromoError);
       }
 
-      // Load stories
+      // Load stories from hawainn-khabaru database
       try {
-        const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
+        const storiesSnapshot = await getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc')));
         const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setStories(storiesData);
         console.log('Stories loaded:', storiesData.length);
@@ -3092,7 +3093,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       let goldenTimeSkipped = 0;
 
       // Migrate stories
-      const storiesSnapshot = await getDocs(collection(db, 'stories'));
+      const storiesSnapshot = await getDocs(collection(dbHawainn, 'stories'));
       for (const storyDoc of storiesSnapshot.docs) {
         const story = storyDoc.data();
         
@@ -3102,7 +3103,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         }
         
         const slug = generateSlug(story.title);
-        await updateDoc(doc(db, 'stories', storyDoc.id), { slug });
+        await updateDoc(doc(dbHawainn, 'stories', storyDoc.id), { slug });
         storiesUpdated++;
       }
 
@@ -3150,7 +3151,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       const coverImageUrl = await uploadToImgBB(compressedFile);
       const slug = generateSlug(storyTitle);
 
-      await addDoc(collection(db, 'stories'), {
+      await addDoc(collection(dbHawainn, 'stories'), {
         slug,
         title: storyTitle,
         description: storyDescription,
@@ -3169,7 +3170,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setMessage('Story created successfully');
 
       // Reload stories
-      const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
+      const storiesSnapshot = await getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc')));
       const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setStories(storiesData);
     } catch (error) {
@@ -3226,13 +3227,13 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         updateData.coverImage = coverImageUrl;
       }
 
-      await updateDoc(doc(db, 'stories', selectedStory.id), updateData);
+      await updateDoc(doc(dbHawainn, 'stories', selectedStory.id), updateData);
 
       resetStoryForm();
       setMessage('Story updated successfully');
 
       // Reload stories
-      const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
+      const storiesSnapshot = await getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc')));
       const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setStories(storiesData);
     } catch (error) {
@@ -3264,7 +3265,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
     try {
       // Fetch story to get image URL
-      const storyDoc = await getDoc(doc(db, 'stories', storyId));
+      const storyDoc = await getDoc(doc(dbHawainn, 'stories', storyId));
       if (storyDoc.exists()) {
         const storyData = storyDoc.data();
         if (storyData?.coverImage) {
@@ -3279,17 +3280,17 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       }
 
       // Delete all episodes
-      const episodesSnapshot = await getDocs(collection(db, 'stories', storyId, 'episodes'));
+      const episodesSnapshot = await getDocs(collection(dbHawainn, 'stories', storyId, 'episodes'));
       for (const episodeDoc of episodesSnapshot.docs) {
-        await deleteDoc(doc(db, 'stories', storyId, 'episodes', episodeDoc.id));
+        await deleteDoc(doc(dbHawainn, 'stories', storyId, 'episodes', episodeDoc.id));
       }
 
       // Delete story
-      await deleteDoc(doc(db, 'stories', storyId));
+      await deleteDoc(doc(dbHawainn, 'stories', storyId));
       setMessage('Story deleted successfully');
 
       // Reload stories
-      const storiesSnapshot = await getDocs(query(collection(db, 'stories'), orderBy('createdAt', 'desc')));
+      const storiesSnapshot = await getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc')));
       const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setStories(storiesData);
 
@@ -3306,7 +3307,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
   const handleSelectStory = async (story: any) => {
     setSelectedStory(story);
     try {
-      const episodesSnapshot = await getDocs(query(collection(db, 'stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesSnapshot = await getDocs(query(collection(dbHawainn, 'stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setEpisodes(episodesData);
       setEpisodeNumber(episodesData.length + 1);
@@ -3626,7 +3627,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
       if (editingEpisodeId) {
         // Update existing episode
-        const episodeRef = doc(db, 'stories', selectedStory.id, 'episodes', editingEpisodeId);
+        const episodeRef = doc(dbHawainn, 'stories', selectedStory.id, 'episodes', editingEpisodeId);
         const updateData: any = {
           title: episodeTitle,
           content: episodeContent,
@@ -3643,7 +3644,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         setEditingEpisodeId(null);
       } else {
         // Create new episode
-        await addDoc(collection(db, 'stories', selectedStory.id, 'episodes'), {
+        await addDoc(collection(dbHawainn, 'stories', selectedStory.id, 'episodes'), {
           title: episodeTitle,
           content: episodeContent,
           episodeNumber: episodeNumber,
@@ -3664,7 +3665,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       setEpisodeLocked(false);
 
       // Reload episodes
-      const episodesSnapshot = await getDocs(query(collection(db, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesSnapshot = await getDocs(query(collection(dbHawainn, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setEpisodes(episodesData);
     } catch (error) {
@@ -3681,11 +3682,11 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
 
     try {
-      await deleteDoc(doc(db, 'stories', selectedStory.id, 'episodes', episodeId));
+      await deleteDoc(doc(dbHawainn, 'stories', selectedStory.id, 'episodes', episodeId));
       setMessage('Episode deleted successfully');
 
       // Reload episodes
-      const episodesSnapshot = await getDocs(query(collection(db, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesSnapshot = await getDocs(query(collection(dbHawainn, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setEpisodes(episodesData);
     } catch (error) {
