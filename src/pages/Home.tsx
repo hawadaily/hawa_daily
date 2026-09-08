@@ -28,35 +28,41 @@ export default function Home() {
       try {
         console.log('Fetching articles from Firebase...');
         
-        // Fetch from both databases in parallel
-        const [v2Snapshot, hawainnSnapshot] = await Promise.all([
-          getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc'), limit(50))),
-          getDocs(query(collection(dbHawainn, 'articles'), orderBy('createdAt', 'desc'), limit(50)))
-        ]);
+        // Fetch from both databases in parallel with error handling
+        let v2Articles: any[] = [];
+        let hawainnArticles: any[] = [];
         
-        console.log('V2 snapshot size:', v2Snapshot.size);
-        console.log('Hawainn snapshot size:', hawainnSnapshot.size);
+        try {
+          const v2Snapshot = await getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc'), limit(50)));
+          console.log('V2 snapshot size:', v2Snapshot.size);
+          v2Articles = v2Snapshot.docs.map(docSnap => {
+            const data = docSnap.data();
+            return {
+              id: docSnap.id,
+              ...data,
+              publishedAt: data.createdAt || data.publishedAt,
+              source: 'hawa-daily-v2'
+            } as Article & { source: string };
+          });
+        } catch (v2Error: any) {
+          console.warn('Failed to fetch from V2 database:', v2Error.message);
+        }
         
-        // Combine articles from both databases
-        const v2Articles = v2Snapshot.docs.map(docSnap => {
-          const data = docSnap.data();
-          return {
-            id: docSnap.id,
-            ...data,
-            publishedAt: data.createdAt || data.publishedAt,
-            source: 'hawa-daily-v2'
-          } as Article & { source: string };
-        });
-        
-        const hawainnArticles = hawainnSnapshot.docs.map(docSnap => {
-          const data = docSnap.data();
-          return {
-            id: docSnap.id,
-            ...data,
-            publishedAt: data.createdAt || data.publishedAt,
-            source: 'hawainn-khabaru'
-          } as Article & { source: string };
-        });
+        try {
+          const hawainnSnapshot = await getDocs(query(collection(dbHawainn, 'articles'), orderBy('createdAt', 'desc'), limit(50)));
+          console.log('Hawainn snapshot size:', hawainnSnapshot.size);
+          hawainnArticles = hawainnSnapshot.docs.map(docSnap => {
+            const data = docSnap.data();
+            return {
+              id: docSnap.id,
+              ...data,
+              publishedAt: data.createdAt || data.publishedAt,
+              source: 'hawainn-khabaru'
+            } as Article & { source: string };
+          });
+        } catch (hawainnError: any) {
+          console.warn('Failed to fetch from Hawainn database:', hawainnError.message);
+        }
         
         // Combine and sort by date
         const allArticles = [...v2Articles, ...hawainnArticles].sort((a, b) => {
