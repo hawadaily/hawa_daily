@@ -4,7 +4,7 @@ import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 
 interface PromoBannerProps {
-  location?: 'home' | 'article' | 'category';
+  location?: 'home' | 'article' | 'category' | 'vahaka-episode' | 'real-story-episode';
   position?: 'top' | 'middle' | 'bottom';
 }
 
@@ -13,7 +13,7 @@ interface BannerData {
   title: string;
   subtitle?: string;
   image: string;
-  location: 'home' | 'article' | 'category';
+  location: 'home' | 'article' | 'category' | 'vahaka-episode' | 'real-story-episode';
   position: 'top' | 'middle' | 'bottom';
   size: 'mobile' | 'desktop' | 'both';
 }
