@@ -28,56 +28,27 @@ export default function Home() {
       try {
         console.log('Fetching articles from Firebase...');
         
-        // Fetch from both databases in parallel with error handling
-        let v2Articles: any[] = [];
-        let hawainnArticles: any[] = [];
+        // Fetch from hawainn-khabaru database only (V2 is empty)
+        const hawainnSnapshot = await getDocs(query(collection(dbHawainn, 'articles'), orderBy('createdAt', 'desc'), limit(50)));
+        console.log('Hawainn snapshot size:', hawainnSnapshot.size);
         
-        try {
-          const v2Snapshot = await getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc'), limit(50)));
-          console.log('V2 snapshot size:', v2Snapshot.size);
-          v2Articles = v2Snapshot.docs.map(docSnap => {
-            const data = docSnap.data();
-            return {
-              id: docSnap.id,
-              ...data,
-              publishedAt: data.createdAt || data.publishedAt,
-              source: 'hawa-daily-v2'
-            } as Article & { source: string };
-          });
-        } catch (v2Error: any) {
-          console.warn('Failed to fetch from V2 database:', v2Error.message);
-        }
-        
-        try {
-          const hawainnSnapshot = await getDocs(query(collection(dbHawainn, 'articles'), orderBy('createdAt', 'desc'), limit(50)));
-          console.log('Hawainn snapshot size:', hawainnSnapshot.size);
-          hawainnArticles = hawainnSnapshot.docs.map(docSnap => {
-            const data = docSnap.data();
-            return {
-              id: docSnap.id,
-              ...data,
-              publishedAt: data.createdAt || data.publishedAt,
-              source: 'hawainn-khabaru'
-            } as Article & { source: string };
-          });
-        } catch (hawainnError: any) {
-          console.warn('Failed to fetch from Hawainn database:', hawainnError.message);
-        }
-        
-        // Combine and sort by date
-        const allArticles = [...v2Articles, ...hawainnArticles].sort((a, b) => {
-          const dateA = new Date(a.publishedAt || 0);
-          const dateB = new Date(b.publishedAt || 0);
-          return dateB.getTime() - dateA.getTime();
+        const hawainnArticles = hawainnSnapshot.docs.map(docSnap => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            ...data,
+            publishedAt: data.createdAt || data.publishedAt,
+            source: 'hawainn-khabaru'
+          } as Article & { source: string };
         });
         
-        console.log('Total articles loaded:', allArticles.length);
-        setArticlesState(allArticles);
+        console.log('Total articles loaded:', hawainnArticles.length);
+        setArticlesState(hawainnArticles);
         setLoading(false);
         
         // Fetch reactions for each article in parallel
         const reactionsData: Record<string, { likes: number; dislikes: number }> = {};
-        const reactionPromises = allArticles.map(async (article: any) => {
+        const reactionPromises = hawainnArticles.map(async (article: any) => {
           try {
             const [likesDoc, dislikesDoc] = await Promise.all([
               getDoc(doc(db, 'articles', article.id, 'likes', 'count')),
@@ -101,7 +72,7 @@ export default function Home() {
 
         // Fetch comments count for each article in parallel
         const commentsData: Record<string, number> = {};
-        const commentsPromises = allArticles.map(async (article: any) => {
+        const commentsPromises = hawainnArticles.map(async (article: any) => {
           try {
             const commentsSnapshot = await getDocs(collection(db, 'articles', article.id, 'comments'));
             return {
