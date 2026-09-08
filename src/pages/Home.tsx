@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { db } from '../firebase';
+import { dbHawainn } from '../firebase-hawainn';
 import { collection, getDocs, query, orderBy, limit, doc, getDoc } from 'firebase/firestore';
 import { Article, categories } from '../data/mockData';
 import ArticleCard from '../components/ArticleCard';
@@ -26,25 +27,51 @@ export default function Home() {
     const fetchArticles = async () => {
       try {
         console.log('Fetching articles from Firebase...');
-        const articlesQuery = query(collection(db, 'articles'), orderBy('createdAt', 'desc'), limit(50));
-        console.log('Query created, executing...');
-        const snapshot = await getDocs(articlesQuery);
-        console.log('Articles snapshot size:', snapshot.size);
-        const articles = snapshot.docs.map(docSnap => {
+        
+        // Fetch from both databases in parallel
+        const [v2Snapshot, hawainnSnapshot] = await Promise.all([
+          getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc'), limit(50))),
+          getDocs(query(collection(dbHawainn, 'articles'), orderBy('createdAt', 'desc'), limit(50)))
+        ]);
+        
+        console.log('V2 snapshot size:', v2Snapshot.size);
+        console.log('Hawainn snapshot size:', hawainnSnapshot.size);
+        
+        // Combine articles from both databases
+        const v2Articles = v2Snapshot.docs.map(docSnap => {
           const data = docSnap.data();
           return {
             id: docSnap.id,
             ...data,
-            publishedAt: data.createdAt || data.publishedAt
-          } as Article;
+            publishedAt: data.createdAt || data.publishedAt,
+            source: 'hawa-daily-v2'
+          } as Article & { source: string };
         });
-        console.log('Articles loaded:', articles.length);
-        setArticlesState(articles);
+        
+        const hawainnArticles = hawainnSnapshot.docs.map(docSnap => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            ...data,
+            publishedAt: data.createdAt || data.publishedAt,
+            source: 'hawainn-khabaru'
+          } as Article & { source: string };
+        });
+        
+        // Combine and sort by date
+        const allArticles = [...v2Articles, ...hawainnArticles].sort((a, b) => {
+          const dateA = new Date(a.publishedAt || 0);
+          const dateB = new Date(b.publishedAt || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        
+        console.log('Total articles loaded:', allArticles.length);
+        setArticlesState(allArticles);
         setLoading(false);
         
         // Fetch reactions for each article in parallel
         const reactionsData: Record<string, { likes: number; dislikes: number }> = {};
-        const reactionPromises = articles.map(async (article) => {
+        const reactionPromises = allArticles.map(async (article: any) => {
           try {
             const [likesDoc, dislikesDoc] = await Promise.all([
               getDoc(doc(db, 'articles', article.id, 'likes', 'count')),
@@ -68,7 +95,7 @@ export default function Home() {
 
         // Fetch comments count for each article in parallel
         const commentsData: Record<string, number> = {};
-        const commentsPromises = articles.map(async (article) => {
+        const commentsPromises = allArticles.map(async (article: any) => {
           try {
             const commentsSnapshot = await getDocs(collection(db, 'articles', article.id, 'comments'));
             return {

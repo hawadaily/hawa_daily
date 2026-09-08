@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { getAnalytics } from 'firebase/analytics';
 import { dbBackup } from './firebase-backup';
 
 const firebaseConfig = {
@@ -15,16 +14,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
-// Initialize analytics only in production and when supported
-let analytics = null;
-if (typeof window !== 'undefined' && 'measurementId' in firebaseConfig) {
-  try {
-    analytics = getAnalytics(app);
-  } catch (error) {
-    console.warn('Analytics initialization failed:', error);
-  }
-}
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
