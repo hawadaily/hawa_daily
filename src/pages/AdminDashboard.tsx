@@ -7,6 +7,7 @@ import { auth, db, dbWithFallback } from '../firebase';
 import { dbHawainn } from '../firebase-hawainn';
 import { db as goldenTimeDb } from '../firebase-golden-time';
 import { db as realStoryDb } from '../firebase-real-story';
+import { db as vahakaDb } from '../firebase-vahaka';
 import { categories } from '../data/mockData';
 import { fallbackJobs } from '../data/fallbackJobs';
 import { getCompanyLogo } from '../data/companyLogos';
@@ -15,7 +16,7 @@ import { uploadImage, uploadVideo, uploadToGitHub, uploadToImgur, uploadVideoToI
 import { getVercelAnalytics } from '../api/vercel-analytics';
 import { generateSlug } from '../utils/slug';
 
-type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'stories' | 'real-stories' | 'golden-time' | 'obituary' | 'funeral-poster' | 'advertisements' | 'hero-slides';
+type AdminTab = 'articles' | 'manage' | 'analytics' | 'settings' | 'banners' | 'sidebar-promotions' | 'mid-article-promotions' | 'rephrase' | 'checklist' | 'flyers' | 'quotes' | 'social-videos' | 'recipes' | 'quran' | 'vahaka' | 'real-stories' | 'golden-time' | 'obituary' | 'funeral-poster' | 'advertisements' | 'hero-slides';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -1355,23 +1356,7 @@ export default function AdminDashboard() {
   const [updatingHeroSlides, setUpdatingHeroSlides] = useState(false);
   const [heroSlidesError, setHeroSlidesError] = useState('');
 
-  // Stories management state
-  const [stories, setStories] = useState<any[]>([]);
-  const [selectedStory, setSelectedStory] = useState<any | null>(null);
-  const [storyTitle, setStoryTitle] = useState('');
-  const [storyDescription, setStoryDescription] = useState('');
-  const [storyAuthor, setStoryAuthor] = useState('');
-  const [storyCoverImage, setStoryCoverImage] = useState<File | null>(null);
-  const [storyYoutubeLink, setStoryYoutubeLink] = useState('');
-  const [storyTiktokLink, setStoryTiktokLink] = useState('');
-  const [storyStatus, setStoryStatus] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
-  const [storyReleaseDate, setStoryReleaseDate] = useState('');
-  const [storyLocked, setStoryLocked] = useState(true);
-  const [editingStory, setEditingStory] = useState(false);
-  const [uploadingStory, setUploadingStory] = useState(false);
-  const [storyError, setStoryError] = useState('');
-
-  // Real Stories management state
+  // Real Incident management state
   const [childrenStories, setChildrenStories] = useState<any[]>([]);
   const [selectedChildrenStory, setSelectedChildrenStory] = useState<any | null>(null);
   const [childrenStoryTitle, setChildrenStoryTitle] = useState('');
@@ -1397,6 +1382,33 @@ export default function AdminDashboard() {
   const [uploadingChildrenEpisode, setUploadingChildrenEpisode] = useState(false);
   const [childrenEpisodeError, setChildrenEpisodeError] = useState('');
   const [editingChildrenEpisodeId, setEditingChildrenEpisodeId] = useState<string | null>(null);
+
+  // Vahaka management state
+  const [vahakaStories, setVahakaStories] = useState<any[]>([]);
+  const [selectedVahakaStory, setSelectedVahakaStory] = useState<any | null>(null);
+  const [vahakaStoryTitle, setVahakaStoryTitle] = useState('');
+  const [vahakaStoryTitleEn, setVahakaStoryTitleEn] = useState('');
+  const [vahakaStoryDescription, setVahakaStoryDescription] = useState('');
+  const [vahakaStoryAuthor, setVahakaStoryAuthor] = useState('');
+  const [vahakaStoryCoverImage, setVahakaStoryCoverImage] = useState<File | null>(null);
+  const [vahakaStoryYoutubeLink, setVahakaStoryYoutubeLink] = useState('');
+  const [vahakaStoryTiktokLink, setVahakaStoryTiktokLink] = useState('');
+  const [vahakaStoryStatus, setVahakaStoryStatus] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
+  const [vahakaStoryReleaseDate, setVahakaStoryReleaseDate] = useState('');
+  const [vahakaStoryLocked, setVahakaStoryLocked] = useState(true);
+  const [editingVahakaStory, setEditingVahakaStory] = useState(false);
+  const [uploadingVahakaStory, setUploadingVahakaStory] = useState(false);
+  const [vahakaStoryError, setVahakaStoryError] = useState('');
+  const [vahakaEpisodes, setVahakaEpisodes] = useState<any[]>([]);
+  const [vahakaEpisodeTitle, setVahakaEpisodeTitle] = useState('');
+  const [vahakaEpisodeContent, setVahakaEpisodeContent] = useState('');
+  const [vahakaEpisodeNumber, setVahakaEpisodeNumber] = useState(1);
+  const [vahakaEpisodeImage, setVahakaEpisodeImage] = useState<File | null>(null);
+  const [vahakaEpisodeReleaseDate, setVahakaEpisodeReleaseDate] = useState('');
+  const [vahakaEpisodeLocked, setVahakaEpisodeLocked] = useState(false);
+  const [uploadingVahakaEpisode, setUploadingVahakaEpisode] = useState(false);
+  const [vahakaEpisodeError, setVahakaEpisodeError] = useState('');
+  const [editingVahakaEpisodeId, setEditingVahakaEpisodeId] = useState<string | null>(null);
 
   // Golden Time management state
   const [goldenTimeArticles, setGoldenTimeArticles] = useState<any[]>([]);
@@ -1951,18 +1963,6 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     generatePreview();
   }, [goldenTimeCoverImage, addGoldenTimeLogo, goldenTimeLogoOpacity, goldenTimeLogoXPercent, goldenTimeLogoYPercent, goldenTimeLogoSizePercent]);
 
-  // Episodes management state
-  const [episodes, setEpisodes] = useState<any[]>([]);
-  const [episodeTitle, setEpisodeTitle] = useState('');
-  const [episodeContent, setEpisodeContent] = useState('');
-  const [episodeNumber, setEpisodeNumber] = useState(1);
-  const [episodeImage, setEpisodeImage] = useState<File | null>(null);
-  const [episodeReleaseDate, setEpisodeReleaseDate] = useState('');
-  const [episodeLocked, setEpisodeLocked] = useState(false);
-  const [uploadingEpisode, setUploadingEpisode] = useState(false);
-  const [episodeError, setEpisodeError] = useState('');
-  const [editingEpisodeId, setEditingEpisodeId] = useState<string | null>(null);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -1998,97 +1998,78 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     try {
       console.log('Starting dashboard load...');
       
-      // Get all articles for display (removed limit to show all past news)
-      const articleSnapshot = await getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc')));
+      // Load all data in parallel for faster loading
+      const [
+        articleSnapshot,
+        bannerSnapshot,
+        advertisementsDoc,
+        heroSlidesDoc,
+        promotionSnapshot,
+        midArticlePromotionSnapshot,
+        childrenStoriesSnapshot,
+        vahakaSnapshot,
+        goldenTimeSnapshot
+      ] = await Promise.all([
+        getDocs(query(collection(db, 'articles'), orderBy('createdAt', 'desc'))),
+        getDocs(query(collection(db, 'banners'), orderBy('createdAt', 'desc'))).catch(() => ({ docs: [] })),
+        getDoc(doc(db, 'advertisements', 'slots')).catch(() => ({ exists: () => false })),
+        getDoc(doc(db, 'hero-slides', 'config')).catch(() => ({ exists: () => false })),
+        getDocs(query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc'))).catch(() => ({ docs: [] })),
+        getDocs(query(collection(db, 'mid-article-promotions'), orderBy('createdAt', 'desc'))).catch(() => ({ docs: [] })),
+        getDocs(query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc'))).catch(() => ({ docs: [] })),
+        getDocs(query(collection(vahakaDb, 'vahaka'), orderBy('createdAt', 'desc'))).catch(() => ({ docs: [] })),
+        getDocs(query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc'))).catch(() => ({ docs: [] }))
+      ]);
+
+      // Process articles
       const articlesData = articleSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
       setArticles(articlesData);
       console.log('Articles loaded:', articlesData.length);
       
-      // Extract unique authors from articles
       const uniqueAuthors = Array.from(new Set(articlesData.map((a: any) => a.author).filter(Boolean)));
       setAuthors(uniqueAuthors);
-      
-      // Load banners
-      try {
-        const bannerSnapshot = await getDocs(query(collection(db, 'banners'), orderBy('createdAt', 'desc')));
-        const bannersData = bannerSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-        setBanners(bannersData);
-        console.log('Banners loaded:', bannersData.length);
-      } catch (bannerError) {
-        console.error('Failed to load banners:', bannerError);
-      }
 
-      // Load advertisements
-      try {
-        const advertisementsDoc = await getDoc(doc(db, 'advertisements', 'slots'));
-        if (advertisementsDoc.exists()) {
-          setAdvertisements(advertisementsDoc.data() || {});
-        }
-        console.log('Advertisements loaded');
-      } catch (adError) {
-        console.error('Failed to load advertisements:', adError);
-      }
+      // Process banners
+      const bannersData = bannerSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setBanners(bannersData);
+      console.log('Banners loaded:', bannersData.length);
 
-      // Load hero slides
-      try {
-        const heroSlidesDoc = await getDoc(doc(db, 'hero-slides', 'config'));
-        if (heroSlidesDoc.exists()) {
-          setHeroSlides(heroSlidesDoc.data()?.slides || []);
-        }
-        console.log('Hero slides loaded');
-      } catch (heroError) {
-        console.error('Failed to load hero slides:', heroError);
+      // Process advertisements
+      if (advertisementsDoc.exists()) {
+        setAdvertisements(advertisementsDoc.data() || {});
       }
+      console.log('Advertisements loaded');
 
-      // Load sidebar promotions
-      try {
-        const promotionSnapshot = await getDocs(query(collection(db, 'sidebar-promotions'), orderBy('createdAt', 'desc')));
-        const promotionsData = promotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-        setSidebarPromotions(promotionsData);
-        console.log('Sidebar promotions loaded:', promotionsData.length);
-      } catch (promoError) {
-        console.error('Failed to load sidebar promotions:', promoError);
+      // Process hero slides
+      if (heroSlidesDoc.exists()) {
+        setHeroSlides(heroSlidesDoc.data()?.slides || []);
       }
+      console.log('Hero slides loaded');
 
-      // Load mid-article promotions
-      try {
-        const midArticlePromotionSnapshot = await getDocs(query(collection(db, 'mid-article-promotions'), orderBy('createdAt', 'desc')));
-        const midArticlePromotionsData = midArticlePromotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-        setMidArticlePromotions(midArticlePromotionsData);
-        console.log('Mid-article promotions loaded:', midArticlePromotionsData.length);
-      } catch (midPromoError) {
-        console.error('Failed to load mid-article promotions:', midPromoError);
-      }
+      // Process sidebar promotions
+      const promotionsData = promotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setSidebarPromotions(promotionsData);
+      console.log('Sidebar promotions loaded:', promotionsData.length);
 
-      // Load stories from hawainn-khabaru database
-      try {
-        const storiesSnapshot = await getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc')));
-        const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-        setStories(storiesData);
-        console.log('Stories loaded:', storiesData.length);
-      } catch (storiesError) {
-        console.error('Failed to load stories:', storiesError);
-      }
+      // Process mid-article promotions
+      const midArticlePromotionsData = midArticlePromotionSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setMidArticlePromotions(midArticlePromotionsData);
+      console.log('Mid-article promotions loaded:', midArticlePromotionsData.length);
 
-      // Load real stories
-      try {
-        const childrenStoriesSnapshot = await getDocs(query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc')));
-        const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-        setChildrenStories(childrenStoriesData);
-        console.log('Real Stories loaded:', childrenStoriesData.length);
-      } catch (realStoryError) {
-        console.error('Failed to load real stories:', realStoryError);
-      }
+      // Process real incidents
+      const childrenStoriesData = childrenStoriesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setChildrenStories(childrenStoriesData);
+      console.log('Real Incident loaded:', childrenStoriesData.length);
 
-      // Load golden time articles
-      try {
-        const goldenTimeSnapshot = await getDocs(query(collection(goldenTimeDb, 'golden-time'), orderBy('createdAt', 'desc')));
-        const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-        setGoldenTimeArticles(goldenTimeData);
-        console.log('Golden Time articles loaded:', goldenTimeData.length);
-      } catch (goldenTimeError) {
-        console.error('Failed to load golden time articles:', goldenTimeError);
-      }
+      // Process vahaka
+      const vahakaData = vahakaSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setVahakaStories(vahakaData);
+      console.log('Vahaka loaded:', vahakaData.length);
+
+      // Process golden time
+      const goldenTimeData = goldenTimeSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setGoldenTimeArticles(goldenTimeData);
+      console.log('Golden Time articles loaded:', goldenTimeData.length);
       
       console.log('Dashboard load complete');
     } catch (error) {
@@ -3087,25 +3068,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setMigrationResult('Starting migration...');
     
     try {
-      let storiesUpdated = 0;
-      let storiesSkipped = 0;
       let goldenTimeUpdated = 0;
       let goldenTimeSkipped = 0;
-
-      // Migrate stories
-      const storiesSnapshot = await getDocs(collection(dbHawainn, 'stories'));
-      for (const storyDoc of storiesSnapshot.docs) {
-        const story = storyDoc.data();
-        
-        if (story.slug) {
-          storiesSkipped++;
-          continue;
-        }
-        
-        const slug = generateSlug(story.title);
-        await updateDoc(doc(dbHawainn, 'stories', storyDoc.id), { slug });
-        storiesUpdated++;
-      }
 
       // Migrate golden-time articles
       const goldenTimeSnapshot = await getDocs(collection(goldenTimeDb, 'golden-time'));
@@ -3123,7 +3087,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
       }
 
       setMigrationResult(
-        `Migration complete!\n\nStories: ${storiesUpdated} updated, ${storiesSkipped} skipped\nGolden Time: ${goldenTimeUpdated} updated, ${goldenTimeSkipped} skipped`
+        `Migration complete!\n\nGolden Time: ${goldenTimeUpdated} updated, ${goldenTimeSkipped} skipped`
       );
       setMessage('Migration completed successfully!');
     } catch (error) {
@@ -3135,188 +3099,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     }
   };
 
-  // Story management handlers
-  const handleCreateStory = async () => {
-    if (!storyTitle.trim() || !storyCoverImage) {
-      setStoryError('Please provide title and cover image');
-      return;
-    }
-
-    try {
-      setUploadingStory(true);
-      setStoryError('');
-
-      // Compress image before upload
-      const compressedFile = await compressImage(storyCoverImage, 1920, 0.8);
-      const coverImageUrl = await uploadToImgBB(compressedFile);
-      const slug = generateSlug(storyTitle);
-
-      await addDoc(collection(db, 'stories'), {
-        slug,
-        title: storyTitle,
-        description: storyDescription,
-        author: storyAuthor,
-        youtubeLink: storyYoutubeLink,
-        tiktokLink: storyTiktokLink,
-        coverImage: coverImageUrl,
-        status: storyStatus,
-        releaseDate: storyReleaseDate || null,
-        locked: storyLocked,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-
-      resetStoryForm();
-      setMessage('Story created successfully');
-
-      // Reload stories
-      const storiesSnapshot = await getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc')));
-      const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setStories(storiesData);
-    } catch (error) {
-      setStoryError('Failed to create story');
-      console.error(error);
-    } finally {
-      setUploadingStory(false);
-    }
-  };
-
-  const handleEditStory = (story: any) => {
-    setSelectedStory(story);
-    setStoryTitle(story.title);
-    setStoryDescription(story.description || '');
-    setStoryAuthor(story.author || '');
-    setStoryYoutubeLink(story.youtubeLink || '');
-    setStoryTiktokLink(story.tiktokLink || '');
-    setStoryStatus(story.status || 'upcoming');
-    setStoryReleaseDate(story.releaseDate || '');
-    setStoryLocked(story.locked !== false);
-    setStoryCoverImage(null);
-    setEditingStory(true);
-  };
-
-  const handleUpdateStory = async () => {
-    if (!selectedStory || !storyTitle.trim()) {
-      setStoryError('Please provide title');
-      return;
-    }
-
-    try {
-      setUploadingStory(true);
-      setStoryError('');
-
-      const slug = generateSlug(storyTitle);
-
-      const updateData: any = {
-        slug,
-        title: storyTitle,
-        description: storyDescription,
-        author: storyAuthor,
-        youtubeLink: storyYoutubeLink,
-        tiktokLink: storyTiktokLink,
-        status: storyStatus,
-        releaseDate: storyReleaseDate || null,
-        locked: storyLocked,
-        updatedAt: serverTimestamp(),
-      };
-
-      if (storyCoverImage) {
-        // Compress image before upload
-        const compressedFile = await compressImage(storyCoverImage, 1920, 0.8);
-        const coverImageUrl = await uploadToImgBB(compressedFile);
-        updateData.coverImage = coverImageUrl;
-      }
-
-      await updateDoc(doc(db, 'stories', selectedStory.id), updateData);
-
-      resetStoryForm();
-      setMessage('Story updated successfully');
-
-      // Reload stories
-      const storiesSnapshot = await getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc')));
-      const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setStories(storiesData);
-    } catch (error) {
-      setStoryError('Failed to update story');
-      console.error(error);
-    } finally {
-      setUploadingStory(false);
-    }
-  };
-
-  const resetStoryForm = () => {
-    setStoryTitle('');
-    setStoryDescription('');
-    setStoryAuthor('');
-    setStoryYoutubeLink('');
-    setStoryTiktokLink('');
-    setStoryCoverImage(null);
-    setStoryStatus('upcoming');
-    setStoryReleaseDate('');
-    setStoryLocked(true);
-    setEditingStory(false);
-    setSelectedStory(null);
-  };
-
-  const handleDeleteStory = async (storyId: string) => {
-    if (!confirm('Are you sure you want to delete this story and all its episodes?')) {
-      return;
-    }
-
-    try {
-      // Fetch story to get image URL
-      const storyDoc = await getDoc(doc(db, 'stories', storyId));
-      if (storyDoc.exists()) {
-        const storyData = storyDoc.data();
-        if (storyData?.coverImage) {
-          try {
-            // Extract public_id from ImgBB/Imgur URL (these services don't support deletion via API in the same way)
-            // For ImgBB/Imgur, we can only delete from database
-            console.log('Image deletion not supported for ImgBB/Imgur URLs');
-          } catch (cloudinaryError) {
-            console.error('Failed to delete image:', cloudinaryError);
-          }
-        }
-      }
-
-      // Delete all episodes
-      const episodesSnapshot = await getDocs(collection(db, 'stories', storyId, 'episodes'));
-      for (const episodeDoc of episodesSnapshot.docs) {
-        await deleteDoc(doc(db, 'stories', storyId, 'episodes', episodeDoc.id));
-      }
-
-      // Delete story
-      await deleteDoc(doc(db, 'stories', storyId));
-      setMessage('Story deleted successfully');
-
-      // Reload stories
-      const storiesSnapshot = await getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc')));
-      const storiesData = storiesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setStories(storiesData);
-
-      if (selectedStory?.id === storyId) {
-        setSelectedStory(null);
-        setEpisodes([]);
-      }
-    } catch (error) {
-      setMessage('Failed to delete story');
-      console.error(error);
-    }
-  };
-
-  const handleSelectStory = async (story: any) => {
-    setSelectedStory(story);
-    try {
-      const episodesSnapshot = await getDocs(query(collection(db, 'stories', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
-      const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setEpisodes(episodesData);
-      setEpisodeNumber(episodesData.length + 1);
-    } catch (error) {
-      console.error('Failed to load episodes', error);
-    }
-  };
-
-  // Real Stories management handlers
+  // Real Incident management handlers
   const handleCreateChildrenStory = async () => {
     if (!childrenStoryTitle.trim() || !childrenStoryCoverImage) {
       setChildrenStoryError('Please provide title and cover image');
@@ -3608,100 +3391,296 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
     setChildrenEpisodeLocked(episode.locked || false);
   };
 
-  // Episode management handlers
-  const handleCreateEpisode = async () => {
-    if (!selectedStory || !episodeTitle.trim() || !episodeContent.trim()) {
-      setEpisodeError('Please select a story and provide title and content');
+  // Vahaka management handlers
+  const handleCreateVahakaStory = async () => {
+    if (!vahakaStoryTitle.trim() || !vahakaStoryCoverImage) {
+      setVahakaStoryError('Please provide title and cover image');
       return;
     }
 
     try {
-      setUploadingEpisode(true);
-      setEpisodeError('');
+      setUploadingVahakaStory(true);
+      setVahakaStoryError('');
+
+      // Compress image before upload
+      const compressedFile = await compressImage(vahakaStoryCoverImage, 1920, 0.8);
+      const coverImageUrl = await uploadToImgBB(compressedFile);
+      const slug = generateSlug(vahakaStoryTitleEn || vahakaStoryTitle);
+
+      const docRef = await addDoc(collection(vahakaDb, 'vahaka'), {
+        slug,
+        title: vahakaStoryTitle,
+        titleEn: vahakaStoryTitleEn,
+        description: vahakaStoryDescription,
+        author: vahakaStoryAuthor,
+        youtubeLink: vahakaStoryYoutubeLink,
+        tiktokLink: vahakaStoryTiktokLink,
+        coverImage: coverImageUrl,
+        status: vahakaStoryStatus,
+        releaseDate: vahakaStoryReleaseDate || null,
+        locked: vahakaStoryLocked,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+
+      resetVahakaStoryForm();
+      setMessage('Vahaka created successfully');
+
+      // Reload vahaka stories
+      const vahakaSnapshot = await getDocs(query(collection(vahakaDb, 'vahaka'), orderBy('createdAt', 'desc')));
+      const vahakaData = vahakaSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setVahakaStories(vahakaData);
+
+      // Navigate to the newly created story
+      navigate(`/vahaka/${slug}`);
+    } catch (error) {
+      setVahakaStoryError('Failed to create vahaka');
+      console.error(error);
+    } finally {
+      setUploadingVahakaStory(false);
+    }
+  };
+
+  const handleEditVahakaStory = (story: any) => {
+    setSelectedVahakaStory(story);
+    setVahakaStoryTitle(story.title);
+    setVahakaStoryTitleEn(story.titleEn || '');
+    setVahakaStoryDescription(story.description || '');
+    setVahakaStoryAuthor(story.author || '');
+    setVahakaStoryYoutubeLink(story.youtubeLink || '');
+    setVahakaStoryTiktokLink(story.tiktokLink || '');
+    setVahakaStoryStatus(story.status || 'upcoming');
+    setVahakaStoryReleaseDate(story.releaseDate || '');
+    setVahakaStoryLocked(story.locked !== false);
+    setVahakaStoryCoverImage(null);
+    setEditingVahakaStory(true);
+  };
+
+  const handleUpdateVahakaStory = async () => {
+    if (!selectedVahakaStory || !vahakaStoryTitle.trim()) {
+      setVahakaStoryError('Please provide title');
+      return;
+    }
+
+    try {
+      setUploadingVahakaStory(true);
+      setVahakaStoryError('');
+
+      const slug = generateSlug(vahakaStoryTitleEn || vahakaStoryTitle);
+
+      const updateData: any = {
+        slug,
+        title: vahakaStoryTitle,
+        titleEn: vahakaStoryTitleEn,
+        description: vahakaStoryDescription,
+        author: vahakaStoryAuthor,
+        youtubeLink: vahakaStoryYoutubeLink,
+        tiktokLink: vahakaStoryTiktokLink,
+        status: vahakaStoryStatus,
+        releaseDate: vahakaStoryReleaseDate || null,
+        locked: vahakaStoryLocked,
+        updatedAt: serverTimestamp(),
+      };
+
+      if (vahakaStoryCoverImage) {
+        // Compress image before upload
+        const compressedFile = await compressImage(vahakaStoryCoverImage, 1920, 0.8);
+        const coverImageUrl = await uploadToImgBB(compressedFile);
+        updateData.coverImage = coverImageUrl;
+      }
+
+      await updateDoc(doc(vahakaDb, 'vahaka', selectedVahakaStory.id), updateData);
+
+      resetVahakaStoryForm();
+      setMessage('Vahaka updated successfully');
+
+      // Reload vahaka stories
+      const vahakaSnapshot = await getDocs(query(collection(vahakaDb, 'vahaka'), orderBy('createdAt', 'desc')));
+      const vahakaData = vahakaSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setVahakaStories(vahakaData);
+    } catch (error) {
+      setVahakaStoryError('Failed to update vahaka');
+      console.error(error);
+    } finally {
+      setUploadingVahakaStory(false);
+    }
+  };
+
+  const resetVahakaStoryForm = () => {
+    setVahakaStoryTitle('');
+    setVahakaStoryTitleEn('');
+    setVahakaStoryDescription('');
+    setVahakaStoryAuthor('');
+    setVahakaStoryYoutubeLink('');
+    setVahakaStoryTiktokLink('');
+    setVahakaStoryCoverImage(null);
+    setVahakaStoryStatus('upcoming');
+    setVahakaStoryReleaseDate('');
+    setVahakaStoryLocked(true);
+    setEditingVahakaStory(false);
+    setSelectedVahakaStory(null);
+  };
+
+  const handleDeleteVahakaStory = async (storyId: string) => {
+    if (!confirm('Are you sure you want to delete this vahaka and all its episodes?')) {
+      return;
+    }
+
+    try {
+      // Fetch story to get image URL
+      const storyDoc = await getDoc(doc(vahakaDb, 'vahaka', storyId));
+      if (storyDoc.exists()) {
+        const storyData = storyDoc.data();
+        if (storyData?.coverImage) {
+          try {
+            console.log('Image deletion not supported for ImgBB/Imgur URLs');
+          } catch (cloudinaryError) {
+            console.error('Failed to delete image:', cloudinaryError);
+          }
+        }
+      }
+
+      // Delete all episodes
+      const episodesSnapshot = await getDocs(collection(vahakaDb, 'vahaka', storyId, 'episodes'));
+      for (const episodeDoc of episodesSnapshot.docs) {
+        await deleteDoc(doc(vahakaDb, 'vahaka', storyId, 'episodes', episodeDoc.id));
+      }
+
+      // Delete story
+      await deleteDoc(doc(vahakaDb, 'vahaka', storyId));
+      setMessage('Vahaka deleted successfully');
+
+      // Reload vahaka stories
+      const vahakaSnapshot = await getDocs(query(collection(vahakaDb, 'vahaka'), orderBy('createdAt', 'desc')));
+      const vahakaData = vahakaSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setVahakaStories(vahakaData);
+
+      if (selectedVahakaStory?.id === storyId) {
+        setSelectedVahakaStory(null);
+        setVahakaEpisodes([]);
+      }
+    } catch (error) {
+      setMessage('Failed to delete vahaka');
+      console.error(error);
+    }
+  };
+
+  const handleSelectVahakaStory = async (story: any) => {
+    setSelectedVahakaStory(story);
+    setVahakaStoryTitle(story.title || '');
+    setVahakaStoryTitleEn(story.titleEn || '');
+    setVahakaStoryDescription(story.description || '');
+    setVahakaStoryAuthor(story.author || '');
+    setVahakaStoryYoutubeLink(story.youtubeLink || '');
+    setVahakaStoryTiktokLink(story.tiktokLink || '');
+    setVahakaStoryStatus(story.status || 'upcoming');
+    setVahakaStoryReleaseDate(story.releaseDate || '');
+    setVahakaStoryLocked(story.locked !== undefined ? story.locked : true);
+    setEditingVahakaStory(true);
+    try {
+      const episodesSnapshot = await getDocs(query(collection(vahakaDb, 'vahaka', story.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+      setVahakaEpisodes(episodesData);
+      setVahakaEpisodeNumber(episodesData.length + 1);
+    } catch (error) {
+      console.error('Failed to load vahaka episodes', error);
+    }
+  };
+
+  // Vahaka Episode management handlers
+  const handleCreateVahakaEpisode = async () => {
+    if (!selectedVahakaStory || !vahakaEpisodeTitle.trim() || !vahakaEpisodeContent.trim()) {
+      setVahakaEpisodeError('Please select a vahaka and provide title and content');
+      return;
+    }
+
+    try {
+      setUploadingVahakaEpisode(true);
+      setVahakaEpisodeError('');
 
       let episodeImageUrl = '';
-      if (episodeImage) {
-        const compressedFile = await compressImage(episodeImage, 1920, 0.8);
+      if (vahakaEpisodeImage) {
+        const compressedFile = await compressImage(vahakaEpisodeImage, 1920, 0.8);
         episodeImageUrl = await uploadToImgBB(compressedFile);
       }
 
-      if (editingEpisodeId) {
+      if (editingVahakaEpisodeId) {
         // Update existing episode
-        const episodeRef = doc(db, 'stories', selectedStory.id, 'episodes', editingEpisodeId);
+        const episodeRef = doc(vahakaDb, 'vahaka', selectedVahakaStory.id, 'episodes', editingVahakaEpisodeId);
         const updateData: any = {
-          title: episodeTitle,
-          content: episodeContent,
-          episodeNumber: episodeNumber,
-          releaseDate: episodeReleaseDate || null,
-          locked: episodeLocked,
+          title: vahakaEpisodeTitle,
+          content: vahakaEpisodeContent,
+          episodeNumber: vahakaEpisodeNumber,
+          releaseDate: vahakaEpisodeReleaseDate || null,
+          locked: vahakaEpisodeLocked,
           updatedAt: serverTimestamp(),
         };
         if (episodeImageUrl) {
           updateData.image = episodeImageUrl;
         }
         await updateDoc(episodeRef, updateData);
-        setMessage('Episode updated successfully');
-        setEditingEpisodeId(null);
+        setMessage('Vahaka episode updated successfully');
+        setEditingVahakaEpisodeId(null);
       } else {
         // Create new episode
-        await addDoc(collection(db, 'stories', selectedStory.id, 'episodes'), {
-          title: episodeTitle,
-          content: episodeContent,
-          episodeNumber: episodeNumber,
+        await addDoc(collection(vahakaDb, 'vahaka', selectedVahakaStory.id, 'episodes'), {
+          title: vahakaEpisodeTitle,
+          content: vahakaEpisodeContent,
+          episodeNumber: vahakaEpisodeNumber,
           image: episodeImageUrl,
-          releaseDate: episodeReleaseDate || null,
-          locked: episodeLocked,
+          releaseDate: vahakaEpisodeReleaseDate || null,
+          locked: vahakaEpisodeLocked,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
-        setMessage('Episode created successfully');
+        setMessage('Vahaka episode created successfully');
       }
 
-      setEpisodeTitle('');
-      setEpisodeContent('');
-      setEpisodeNumber(episodeNumber + 1);
-      setEpisodeImage(null);
-      setEpisodeReleaseDate('');
-      setEpisodeLocked(false);
+      setVahakaEpisodeTitle('');
+      setVahakaEpisodeContent('');
+      setVahakaEpisodeNumber(vahakaEpisodeNumber + 1);
+      setVahakaEpisodeImage(null);
+      setVahakaEpisodeReleaseDate('');
+      setVahakaEpisodeLocked(false);
 
-      // Reload episodes
-      const episodesSnapshot = await getDocs(query(collection(db, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      // Reload vahaka episodes
+      const episodesSnapshot = await getDocs(query(collection(vahakaDb, 'vahaka', selectedVahakaStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setEpisodes(episodesData);
+      setVahakaEpisodes(episodesData);
     } catch (error) {
-      setEpisodeError('Failed to save episode');
+      setVahakaEpisodeError('Failed to save vahaka episode');
       console.error(error);
     } finally {
-      setUploadingEpisode(false);
+      setUploadingVahakaEpisode(false);
     }
   };
 
-  const handleDeleteEpisode = async (episodeId: string) => {
-    if (!selectedStory || !confirm('Are you sure you want to delete this episode?')) {
+  const handleDeleteVahakaEpisode = async (episodeId: string) => {
+    if (!confirm('Are you sure you want to delete this episode?')) {
       return;
     }
 
     try {
-      await deleteDoc(doc(db, 'stories', selectedStory.id, 'episodes', episodeId));
-      setMessage('Episode deleted successfully');
+      await deleteDoc(doc(vahakaDb, 'vahaka', selectedVahakaStory.id, 'episodes', episodeId));
+      setMessage('Vahaka episode deleted successfully');
 
-      // Reload episodes
-      const episodesSnapshot = await getDocs(query(collection(db, 'stories', selectedStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
+      // Reload vahaka episodes
+      const episodesSnapshot = await getDocs(query(collection(vahakaDb, 'vahaka', selectedVahakaStory.id, 'episodes'), orderBy('episodeNumber', 'asc')));
       const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-      setEpisodes(episodesData);
+      setVahakaEpisodes(episodesData);
     } catch (error) {
-      setMessage('Failed to delete episode');
+      setMessage('Failed to delete vahaka episode');
       console.error(error);
     }
   };
 
-  const handleEditEpisode = (episode: any) => {
-    setEditingEpisodeId(episode.id);
-    setEpisodeTitle(episode.title);
-    setEpisodeContent(episode.content);
-    setEpisodeNumber(episode.episodeNumber);
-    setEpisodeReleaseDate(episode.releaseDate || '');
-    setEpisodeLocked(episode.locked || false);
+  const handleEditVahakaEpisode = (episode: any) => {
+    setEditingVahakaEpisodeId(episode.id);
+    setVahakaEpisodeTitle(episode.title);
+    setVahakaEpisodeContent(episode.content);
+    setVahakaEpisodeNumber(episode.episodeNumber);
+    setVahakaEpisodeReleaseDate(episode.releaseDate || '');
+    setVahakaEpisodeLocked(episode.locked || false);
   };
 
   // Golden Time handlers
@@ -4936,8 +4915,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
         { id: 'articles' as const, label: t.createNews, icon: '📝' },
         { id: 'manage' as const, label: t.manageNews, icon: '📋' },
         { id: 'recipes' as const, label: t.recipes, icon: '🍳' },
-        { id: 'stories' as const, label: 'ސްޓޯރީތައް', icon: '📖' },
-        { id: 'real-stories' as const, label: 'ހަޤީޤީ ވާހަކަ', icon: '✨' },
+        { id: 'vahaka' as const, label: 'ވާހަކަ', icon: '📖' },
+        { id: 'real-stories' as const, label: 'ހަޤީޤީ ހާދިސާ', icon: '✨' },
         { id: 'golden-time' as const, label: 'ދިވެހި ރަން ޒަމާން', icon: '⏳' },
         { id: 'obituary' as const, label: 'ތަޢުޒިޔާ މޭކަރ', icon: '🕯️' },
         { id: 'funeral-poster' as const, label: 'ޖނާޒާގެ މަޢުލޫމާތު', icon: '📋' },
@@ -5086,7 +5065,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
         {/* Mobile Tabs */}
         <div className="lg:hidden flex gap-1 sm:gap-2 border-b border-gray-300 pb-3 sm:pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-          {(['articles', 'manage', 'hero-slides', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'advertisements', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'stories', 'real-stories', 'golden-time', 'obituary', 'funeral-poster'] as const).map((tab) => (
+          {(['articles', 'manage', 'hero-slides', 'banners', 'sidebar-promotions', 'mid-article-promotions', 'advertisements', 'analytics', 'settings', 'rephrase', 'checklist', 'flyers', 'quotes', 'social-videos', 'recipes', 'quran', 'vahaka', 'real-stories', 'golden-time', 'obituary', 'funeral-poster'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -5112,8 +5091,8 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
               {tab === 'social-videos' && t.socialVideos}
               {tab === 'recipes' && t.recipes}
               {tab === 'quran' && 'ޤުރްއާން (Quran)'}
-              {tab === 'stories' && 'ސްޓޯރީތައް (Stories)'}
-              {tab === 'real-stories' && 'ހަޤީޤީ ވާހަކަ'}
+              {tab === 'vahaka' && 'ވާހަކަ'}
+              {tab === 'real-stories' && 'ހަޤީޤީ ހާދިސާ'}
               {tab === 'golden-time' && 'ދިވެހި ރަން ޒަމާން'}
               {tab === 'obituary' && 'ތަޢުޒިޔާ މޭކަރ'}
               {tab === 'funeral-poster' && 'ޖނާޒާގެ މަޢުލޫމާތު'}
@@ -8955,395 +8934,22 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
           </div>
         )}
 
-        {/* Stories Tab */}
-        {activeTab === 'stories' && (
-          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
-            <h3 className="text-2xl font-bold text-gray-900">ސްޓޯރީތައް (Stories)</h3>
-            <p className="mt-2 text-sm text-gray-600">Create and manage stories with multiple episodes</p>
-
-            <div className="mt-6 grid gap-6 lg:grid-cols-2">
-              {/* Create Story Form */}
-              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-                <h4 className="text-lg font-semibold text-gray-900">
-                  {editingStory ? 'Edit Story' : 'Create New Story'}
-                </h4>
-                {storyError && (
-                  <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
-                    {storyError}
-                  </div>
-                )}
-                <div className="mt-4 space-y-3">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700">Title</label>
-                    <input
-                      type="text"
-                      value={storyTitle}
-                      onChange={(e) => setStoryTitle(e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      placeholder="Story title..."
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700">Description</label>
-                    <textarea
-                      value={storyDescription}
-                      onChange={(e) => setStoryDescription(e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      placeholder="Story description..."
-                      rows={3}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700">Author</label>
-                    <input
-                      type="text"
-                      value={storyAuthor}
-                      onChange={(e) => setStoryAuthor(e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      placeholder="Author name..."
-                    />
-                  </div>
-
-                  {/* Social Media Links */}
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700">YouTube Link (Optional)</label>
-                      <input
-                        type="url"
-                        value={storyYoutubeLink}
-                        onChange={(e) => setStoryYoutubeLink(e.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                        placeholder="https://youtube.com/watch?v=..."
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700">TikTok Link (Optional)</label>
-                      <input
-                        type="url"
-                        value={storyTiktokLink}
-                        onChange={(e) => setStoryTiktokLink(e.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                        placeholder="https://tiktok.com/@user/video/..."
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700">Status</label>
-                    <select
-                      value={storyStatus}
-                      onChange={(e) => setStoryStatus(e.target.value as 'upcoming' | 'ongoing' | 'completed')}
-                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                    >
-                      <option value="upcoming">Upcoming</option>
-                      <option value="ongoing">Ongoing</option>
-                      <option value="completed">Completed</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700">Release Date</label>
-                    <input
-                      type="date"
-                      value={storyReleaseDate}
-                      onChange={(e) => setStoryReleaseDate(e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="storyLocked"
-                      checked={storyLocked}
-                      onChange={(e) => setStoryLocked(e.target.checked)}
-                      className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                    />
-                    <label htmlFor="storyLocked" className="text-sm text-gray-700">
-                      Lock story (content hidden until unlocked by admin)
-                    </label>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700">
-                      Cover Image {editingStory ? '(leave empty to keep current)' : ''}
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setStoryCoverImage(e.target.files?.[0] || null)}
-                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      required={!editingStory}
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={editingStory ? handleUpdateStory : handleCreateStory}
-                      disabled={uploadingStory}
-                      className="flex-1 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {uploadingStory ? 'Saving...' : editingStory ? 'Update Story' : 'Create Story'}
-                    </button>
-                    {editingStory && (
-                      <button
-                        onClick={resetStoryForm}
-                        className="rounded-2xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-                      >
-                        Cancel
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Stories List */}
-              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-                <h4 className="text-lg font-semibold text-gray-900">Stories ({stories.length})</h4>
-                <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
-                  {stories.length === 0 ? (
-                    <p className="text-sm text-gray-500">No stories yet</p>
-                  ) : (
-                    stories.map((story) => (
-                      <div
-                        key={story.id}
-                        className={`rounded-xl border p-3 cursor-pointer transition ${
-                          selectedStory?.id === story.id
-                            ? 'border-brand-500 bg-brand-50'
-                            : 'border-gray-200 bg-white hover:border-gray-300'
-                        }`}
-                        onClick={() => handleSelectStory(story)}
-                      >
-                        <div className="flex items-start gap-3">
-                          <img
-                            src={story.coverImage}
-                            alt={story.title}
-                            className="h-16 w-16 rounded-lg object-cover"
-                          />
-                          <div className="flex-1">
-                            <h5 className="font-semibold text-gray-900">{story.title}</h5>
-                            {story.author && (
-                              <p className="mt-1 text-xs text-gray-500">by {story.author}</p>
-                            )}
-                            <p className="mt-1 text-xs text-gray-600 line-clamp-2">{story.description}</p>
-                            <div className="mt-2 flex items-center gap-2">
-                              <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                                story.status === 'upcoming' ? 'bg-amber-100 text-amber-700' :
-                                story.status === 'ongoing' ? 'bg-emerald-100 text-emerald-700' :
-                                'bg-gray-100 text-gray-700'
-                              }`}>
-                                {story.status}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEditStory(story);
-                              }}
-                              className="text-brand-600 hover:text-brand-700"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteStory(story.id);
-                              }}
-                              className="text-rose-600 hover:text-rose-700"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Episodes Section */}
-            {selectedStory && (
-              <div className="mt-6 rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900">Episodes for: {selectedStory.title}</h4>
-                    <p className="mt-1 text-sm text-gray-600">{episodes.length} episodes</p>
-                  </div>
-                  <button
-                    onClick={() => setSelectedStory(null)}
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Close
-                  </button>
-                </div>
-
-                {/* Create Episode Form */}
-                <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4">
-                  {episodeError && (
-                    <div className="mb-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
-                      {episodeError}
-                    </div>
-                  )}
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700">Episode Number</label>
-                      <input
-                        type="number"
-                        value={episodeNumber}
-                        onChange={(e) => setEpisodeNumber(Number(e.target.value))}
-                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                        min="1"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700">Episode Image (Optional)</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setEpisodeImage(e.target.files?.[0] || null)}
-                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700">Release Date (Optional)</label>
-                      <input
-                        type="date"
-                        value={episodeReleaseDate}
-                        onChange={(e) => setEpisodeReleaseDate(e.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="episodeLocked"
-                        checked={episodeLocked}
-                        onChange={(e) => setEpisodeLocked(e.target.checked)}
-                        className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                      />
-                      <label htmlFor="episodeLocked" className="text-sm font-semibold text-gray-700">Lock Episode</label>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700">Title</label>
-                      <input
-                        type="text"
-                        value={episodeTitle}
-                        onChange={(e) => setEpisodeTitle(e.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                        placeholder="Episode title..."
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700">Content</label>
-                      <textarea
-                        value={episodeContent}
-                        onChange={(e) => setEpisodeContent(e.target.value)}
-                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                        placeholder="Episode content..."
-                        rows={6}
-                        required
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      {editingEpisodeId && (
-                        <button
-                          onClick={() => {
-                            setEditingEpisodeId(null);
-                            setEpisodeTitle('');
-                            setEpisodeContent('');
-                            setEpisodeNumber(1);
-                            setEpisodeImage(null);
-                            setEpisodeReleaseDate('');
-                            setEpisodeLocked(false);
-                          }}
-                          className="flex-1 rounded-2xl bg-gray-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-400"
-                        >
-                          Cancel
-                        </button>
-                      )}
-                      <button
-                        onClick={handleCreateEpisode}
-                        disabled={uploadingEpisode}
-                        className="flex-1 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {uploadingEpisode ? 'Saving...' : editingEpisodeId ? 'Update Episode' : 'Add Episode'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Episodes List */}
-                <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
-                  {episodes.length === 0 ? (
-                    <p className="text-sm text-gray-500">No episodes yet</p>
-                  ) : (
-                    episodes.map((episode) => (
-                      <div
-                        key={episode.id}
-                        className="rounded-xl border border-gray-200 bg-white p-3"
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-700">
-                                Ep. {episode.episodeNumber}
-                              </span>
-                              <h5 className="font-semibold text-gray-900">{episode.title}</h5>
-                              {episode.locked && (
-                                <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
-                                  🔒 Locked
-                                </span>
-                              )}
-                            </div>
-                            <p className="mt-2 text-sm text-gray-600 line-clamp-3">{episode.content}</p>
-                            {episode.releaseDate && (
-                              <p className="mt-1 text-xs text-gray-500">
-                                Release: {new Date(episode.releaseDate).toLocaleDateString()}
-                              </p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleEditEpisode(episode)}
-                              className="text-brand-600 hover:text-brand-700"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteEpisode(episode.id)}
-                              className="text-rose-600 hover:text-rose-700"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Children Stories Tab */}
-        {activeTab === 'real-stories' && (
+        {/* Vahaka Tab */}
+        {activeTab === 'vahaka' && (
           <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900">ހަޤީޤީ ވާހަކަ (Real Stories)</h3>
-                <p className="mt-2 text-sm text-gray-600">Create and manage real stories with multiple episodes</p>
+                <h3 className="text-2xl font-bold text-gray-900">ވާހަކަ (Stories)</h3>
+                <p className="mt-2 text-sm text-gray-600">Create and manage stories with multiple episodes</p>
               </div>
               <button
                 onClick={async () => {
                   try {
-                    const storiesQuery = query(collection(realStoryDb, 'real-stories'));
+                    const storiesQuery = query(collection(vahakaDb, 'vahaka'));
                     const snapshot = await getDocs(storiesQuery);
                     let updated = 0;
                     
-                    console.log('Found', snapshot.size, 'real stories');
+                    console.log('Found', snapshot.size, 'vahaka stories');
                     
                     for (const doc of snapshot.docs) {
                       const data = doc.data();
@@ -9361,7 +8967,357 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       }
                     }
                     
-                    alert(`Updated ${updated} real stories with slugs`);
+                    alert(`Updated ${updated} vahaka stories with slugs`);
+                    loadDashboard();
+                  } catch (error) {
+                    console.error('Failed to fix slugs:', error);
+                    alert('Failed to fix slugs. Check console for details.');
+                  }
+                }}
+                className="rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400"
+              >
+                Fix Missing Slugs
+              </button>
+            </div>
+
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              {/* Create Vahaka Story Form */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">
+                  {editingVahakaStory ? 'Edit Vahaka' : 'Create New Vahaka'}
+                </h4>
+                {vahakaStoryError && (
+                  <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                    {vahakaStoryError}
+                  </div>
+                )}
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Title (Dhivehi)</label>
+                    <input
+                      type="text"
+                      value={vahakaStoryTitle}
+                      onChange={(e) => setVahakaStoryTitle(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="ވާހަކަގެ ނަން..."
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Title [English - for URL]</label>
+                    <input
+                      type="text"
+                      value={vahakaStoryTitleEn}
+                      onChange={(e) => setVahakaStoryTitleEn(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Story Title"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Used for generating clean English URLs</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Description</label>
+                    <textarea
+                      value={vahakaStoryDescription}
+                      onChange={(e) => setVahakaStoryDescription(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Story description..."
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Author</label>
+                    <input
+                      type="text"
+                      value={vahakaStoryAuthor}
+                      onChange={(e) => setVahakaStoryAuthor(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="Author name..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Cover Image</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setVahakaStoryCoverImage(e.target.files?.[0] || null)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">YouTube Link</label>
+                    <input
+                      type="text"
+                      value={vahakaStoryYoutubeLink}
+                      onChange={(e) => setVahakaStoryYoutubeLink(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="https://youtube.com/..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">TikTok Link</label>
+                    <input
+                      type="text"
+                      value={vahakaStoryTiktokLink}
+                      onChange={(e) => setVahakaStoryTiktokLink(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      placeholder="https://tiktok.com/..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Status</label>
+                    <select
+                      value={vahakaStoryStatus}
+                      onChange={(e) => setVahakaStoryStatus(e.target.value as 'upcoming' | 'ongoing' | 'completed')}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    >
+                      <option value="upcoming">އަންނަނީ (Upcoming)</option>
+                      <option value="ongoing">މިހާރު ކުރިޔަށްދަނީ (Ongoing)</option>
+                      <option value="completed">ނިމިއަށް (Completed)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700">Release Date</label>
+                    <input
+                      type="date"
+                      value={vahakaStoryReleaseDate}
+                      onChange={(e) => setVahakaStoryReleaseDate(e.target.value)}
+                      className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="vahakaLocked"
+                      checked={vahakaStoryLocked}
+                      onChange={(e) => setVahakaStoryLocked(e.target.checked)}
+                      className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                    />
+                    <label htmlFor="vahakaLocked" className="text-sm font-semibold text-gray-700">Locked</label>
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={editingVahakaStory ? handleUpdateVahakaStory : handleCreateVahakaStory}
+                      disabled={uploadingVahakaStory}
+                      className="flex-1 rounded-full bg-brand-500 px-6 py-3 font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
+                    >
+                      {uploadingVahakaStory ? 'Saving...' : (editingVahakaStory ? 'Update Vahaka' : 'Create Vahaka')}
+                    </button>
+                    {editingVahakaStory && (
+                      <button
+                        onClick={resetVahakaStoryForm}
+                        className="rounded-full border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Vahaka Episodes Management */}
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <h4 className="text-lg font-semibold text-gray-900">Episodes</h4>
+                {selectedVahakaStory ? (
+                  <div className="mt-4 space-y-3">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Episode Title</label>
+                      <input
+                        type="text"
+                        value={vahakaEpisodeTitle}
+                        onChange={(e) => setVahakaEpisodeTitle(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="Episode title..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Episode Content</label>
+                      <textarea
+                        value={vahakaEpisodeContent}
+                        onChange={(e) => setVahakaEpisodeContent(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                        placeholder="Episode content..."
+                        rows={5}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Episode Number</label>
+                      <input
+                        type="number"
+                        value={vahakaEpisodeNumber}
+                        onChange={(e) => setVahakaEpisodeNumber(parseInt(e.target.value))}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Episode Image</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setVahakaEpisodeImage(e.target.files?.[0] || null)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700">Release Date</label>
+                      <input
+                        type="date"
+                        value={vahakaEpisodeReleaseDate}
+                        onChange={(e) => setVahakaEpisodeReleaseDate(e.target.value)}
+                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="vahakaEpisodeLocked"
+                        checked={vahakaEpisodeLocked}
+                        onChange={(e) => setVahakaEpisodeLocked(e.target.checked)}
+                        className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      />
+                      <label htmlFor="vahakaEpisodeLocked" className="text-sm font-semibold text-gray-700">Locked</label>
+                    </div>
+                    {vahakaEpisodeError && (
+                      <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-sm text-rose-600">
+                        {vahakaEpisodeError}
+                      </div>
+                    )}
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleCreateVahakaEpisode}
+                        disabled={uploadingVahakaEpisode}
+                        className="flex-1 rounded-full bg-brand-500 px-6 py-3 font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50"
+                      >
+                        {uploadingVahakaEpisode ? 'Saving...' : (editingVahakaEpisodeId ? 'Update Episode' : 'Add Episode')}
+                      </button>
+                      {editingVahakaEpisodeId && (
+                        <button
+                          onClick={() => {
+                            setEditingVahakaEpisodeId(null);
+                            setVahakaEpisodeTitle('');
+                            setVahakaEpisodeContent('');
+                          }}
+                          className="rounded-full border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                    <div className="mt-4 space-y-2 max-h-[200px] overflow-y-auto">
+                      {vahakaEpisodes.map((episode) => (
+                        <div key={episode.id} className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3">
+                          <div>
+                            <p className="font-semibold text-gray-900">Episode {episode.episodeNumber}: {episode.title}</p>
+                            <p className="text-xs text-gray-500">{episode.releaseDate || 'No release date'}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEditVahakaEpisode(episode)}
+                              className="rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-white transition hover:bg-brand-600"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteVahakaEpisode(episode.id)}
+                              className="rounded-full border-2 border-red-500 px-3 py-1 text-xs font-semibold text-red-500 transition hover:bg-red-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="mt-4 text-sm text-gray-500">Select a vahaka to manage episodes</p>
+                )}
+              </div>
+            </div>
+
+            {/* Vahaka List */}
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+              <h4 className="text-lg font-semibold text-gray-900">Vahaka ({vahakaStories.length})</h4>
+              <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
+                {vahakaStories.length === 0 ? (
+                  <p className="text-sm text-gray-500">No vahaka yet</p>
+                ) : (
+                  vahakaStories.map((story) => (
+                    <div
+                      key={story.id}
+                      className={`rounded-xl border p-3 cursor-pointer transition ${
+                        selectedVahakaStory?.id === story.id
+                          ? 'border-brand-500 bg-brand-50'
+                          : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}
+                      onClick={() => handleSelectVahakaStory(story)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-gray-900">{story.title}</p>
+                          <p className="text-xs text-gray-500">{story.status} • {story.author || 'No author'}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditVahakaStory(story);
+                            }}
+                            className="rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-white transition hover:bg-brand-600"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteVahakaStory(story.id);
+                            }}
+                            className="rounded-full border-2 border-red-500 px-3 py-1 text-xs font-semibold text-red-500 transition hover:bg-red-50"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Children Stories Tab */}
+        {activeTab === 'real-stories' && (
+          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-soft">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">ހަޤީޤީ ހާދިސާ (Real Incident)</h3>
+                <p className="mt-2 text-sm text-gray-600">Create and manage real incidents with multiple episodes</p>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    const storiesQuery = query(collection(realStoryDb, 'real-stories'));
+                    const snapshot = await getDocs(storiesQuery);
+                    let updated = 0;
+                    
+                    console.log('Found', snapshot.size, 'real incidents');
+                    
+                    for (const doc of snapshot.docs) {
+                      const data = doc.data();
+                      console.log('Story:', doc.id, 'has slug:', !!data.slug, 'has title:', !!data.title, 'title:', data.title);
+                      
+                      if (!data.slug) {
+                        if (data.title) {
+                          const slug = generateSlug(data.title);
+                          console.log('Setting slug:', slug, 'for story:', doc.id);
+                          await updateDoc(doc.ref, { slug });
+                          updated++;
+                        } else {
+                          console.error('Story has no title, cannot generate slug:', doc.id);
+                        }
+                      }
+                    }
+                    
+                    alert(`Updated ${updated} real incidents with slugs`);
                     loadDashboard();
                   } catch (error) {
                     console.error('Failed to fix slugs:', error);
@@ -9393,7 +9349,7 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
                       value={childrenStoryTitle}
                       onChange={(e) => setChildrenStoryTitle(e.target.value)}
                       className="mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none focus:border-brand-500"
-                      placeholder="ހަޤީޤީ ވާހަކަގެ ނަން..."
+                      placeholder="ހަޤީޤީ ހާދިސާގެ ނަން..."
                       required
                     />
                   </div>
@@ -9520,10 +9476,10 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
               {/* Children Stories List */}
               <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-                <h4 className="text-lg font-semibold text-gray-900">Real Stories ({childrenStories.length})</h4>
+                <h4 className="text-lg font-semibold text-gray-900">Real Incident ({childrenStories.length})</h4>
                 <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
                   {childrenStories.length === 0 ? (
-                    <p className="text-sm text-gray-500">No real stories yet</p>
+                    <p className="text-sm text-gray-500">No real incidents yet</p>
                   ) : (
                     childrenStories.map((story) => (
                       <div

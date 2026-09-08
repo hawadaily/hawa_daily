@@ -18,12 +18,12 @@ import RecipeFacebookPost from './pages/RecipeFacebookPost';
 import RecipeDetail from './pages/RecipeDetail';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
-import Stories from './pages/Stories';
-import StoryDetail from './pages/StoryDetail';
-import StoryEpisodeDetail from './pages/StoryEpisodeDetail';
 import RealStories from './pages/RealStories';
 import RealStoryDetail from './pages/RealStoryDetail';
 import RealEpisodeDetail from './pages/RealEpisodeDetail';
+import Vahaka from './pages/Vahaka';
+import VahakaDetail from './pages/VahakaDetail';
+import VahakaEpisodeDetail from './pages/VahakaEpisodeDetail';
 import GoldenTime from './pages/GoldenTime';
 import GoldenTimeDetail from './pages/GoldenTimeDetail';
 import DoctorsDuty from './pages/DoctorsDuty';
@@ -222,8 +222,7 @@ function App() {
           links={[
             { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
-            { label: language === 'en' ? 'Stories' : 'ވާހަކަ', path: '/stories', icon: BookIcon },
-            { label: language === 'en' ? 'Real Stories' : 'ހަޤީޤީ ވާހަކަ', path: '/real-stories', icon: BookIcon },
+            { label: language === 'en' ? 'Real Incident' : 'ހަޤީޤީ ހާދިސާ', path: '/real-stories', icon: BookIcon },
             { label: language === 'en' ? 'Golden Time' : 'ރަން ޒަމާން', path: '/golden-time', icon: BookIcon },
             { label: language === 'en' ? 'Doctors Duty' : 'ޑޮކްޓަރުންގެ ޑިއުޓީ', path: '/doctors-duty', icon: Stethoscope },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
@@ -252,12 +251,12 @@ function App() {
             <Route path="/recipes" element={<Recipes />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/stories" element={<Stories />} />
-            <Route path="/stories/:slug" element={<StoryDetail />} />
-            <Route path="/stories/:slug/:episodeId" element={<StoryEpisodeDetail />} />
             <Route path="/real-stories" element={<RealStories />} />
             <Route path="/real-stories/:slug" element={<RealStoryDetail />} />
             <Route path="/real-stories/:slug/ep-:episodeNumber" element={<RealEpisodeDetail />} />
+            <Route path="/vahaka" element={<Vahaka />} />
+            <Route path="/vahaka/:slug" element={<VahakaDetail />} />
+            <Route path="/vahaka/:slug/ep-:episodeNumber" element={<VahakaEpisodeDetail />} />
             <Route path="/golden-time" element={<GoldenTime />} />
             <Route path="/golden-time/:slug" element={<GoldenTimeDetail />} />
             <Route path="/doctors-duty" element={<DoctorsDuty />} />

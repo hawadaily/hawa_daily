@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { db } from '../firebase';
-import { dbHawainn } from '../firebase-hawainn';
-import { db as dbRealStory } from '../firebase-real-story';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { db as vahakaDb } from '../firebase-vahaka';
 
 interface Story {
   id: string;
@@ -18,46 +16,20 @@ interface Story {
   createdAt: any;
 }
 
-export default function Stories() {
+export default function Vahaka() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadStories = async () => {
       try {
-        console.log('Loading stories from Firebase...');
-        
-        // Fetch from both databases in parallel
-        const [hawainnSnapshot, realStorySnapshot] = await Promise.all([
-          getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc'))),
-          getDocs(query(collection(dbRealStory, 'stories'), orderBy('createdAt', 'desc')))
-        ]);
-        
-        console.log('Hawainn stories size:', hawainnSnapshot.size);
-        console.log('Real story stories size:', realStorySnapshot.size);
-        
-        const hawainnStories = hawainnSnapshot.docs.map((doc) => ({ 
-          id: doc.id, 
-          ...(doc.data() as any),
-          source: 'hawainn-khabaru'
-        }));
-        
-        const realStoryStories = realStorySnapshot.docs.map((doc) => ({ 
-          id: doc.id, 
-          ...(doc.data() as any),
-          source: 'real-story'
-        }));
-        
-        // Combine and deduplicate by id
-        const allStories = [...hawainnStories, ...realStoryStories];
-        const uniqueStories = allStories.filter((story, index, self) =>
-          index === self.findIndex(s => s.id === story.id)
-        );
-        
-        console.log('Total stories loaded:', uniqueStories.length);
-        setStories(uniqueStories);
+        const storiesQuery = query(collection(vahakaDb, 'vahaka'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(storiesQuery);
+        const storiesData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+        console.log('Vahaka loaded:', storiesData.map(s => ({ id: s.id, title: s.title, slug: s.slug })));
+        setStories(storiesData);
       } catch (error) {
-        console.error('Failed to load stories:', error);
+        console.error('Failed to load vahaka:', error);
       } finally {
         setLoading(false);
       }
@@ -68,7 +40,7 @@ export default function Stories() {
 
   // Update meta tags for social sharing
   useEffect(() => {
-    document.title = 'ސްޓޯރީތައް | ހަވާ ޑެއިލީ';
+    document.title = 'ވާހަކަ | ހަވާ ޑެއިލީ';
 
     const updateMetaTag = (property: string, content: string) => {
       let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
@@ -90,16 +62,16 @@ export default function Stories() {
       meta.setAttribute('content', content);
     };
 
-    updateMetaTag('og:title', 'ސްޓޯރީތައް | ހަވާ ޑެއިލީ');
-    updateMetaTag('og:description', 'ދިވެހި ބަހުން ލޯކަލް ސްޓޯރީތައް - Read local stories in Dhivehi');
+    updateMetaTag('og:title', 'ވާހަކަ | ހަވާ ޑެއިލީ');
+    updateMetaTag('og:description', 'ވާހަކަތައް - ވާހަކަތައް ހިމާޔަތްކުރުމަށް މަރުޙަބާ ކިޔަމެވެ - Stories from people');
     updateMetaTag('og:image', 'https://www.hawadaily.com/og-image.jpg');
     updateMetaTag('og:url', window.location.href);
     updateMetaTag('og:type', 'website');
     updateMetaTag('og:site_name', 'ހަވާ ޑެއިލީ');
     
     updateMetaTagName('twitter:card', 'summary_large_image');
-    updateMetaTagName('twitter:title', 'ސްޓޯރީތައް | ހަވާ ޑެއިލީ');
-    updateMetaTagName('twitter:description', 'ދިވެހި ބަހުން ލޯކަލް ސްޓޯރީތައް - Read local stories in Dhivehi');
+    updateMetaTagName('twitter:title', 'ވާހަކަ | ހަވާ ޑެއިލީ');
+    updateMetaTagName('twitter:description', 'ވާހަކަތައް - ވާހަކަތައް ހިމާޔަތްކުރުމަށް މަރުޙަބާ ކިޔަމެވެ - Stories from people');
     updateMetaTagName('twitter:image', 'https://www.hawadaily.com/og-image.jpg');
 
     return () => {
@@ -113,7 +85,7 @@ export default function Stories() {
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading stories...</p>
+          <p className="mt-4 text-gray-600">Loading vahaka...</p>
         </div>
       </div>
     );
@@ -123,13 +95,31 @@ export default function Stories() {
     <div className="min-h-screen bg-[#caf0f8] pb-24">
       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-6">
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">ވާހަކަތަށް</h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-600">ތިމާ އެންެމެ ގަޔާވާ ވާހަކައެއް ކިޔުއްވާ. ކޮންމެ ވާހަކައެއްގާ ވެސް އެކި ބައިތަށް ހިމެނޭ</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">ވާހަކަ (Stories)</h1>
+          <p className="mt-2 text-sm sm:text-base text-gray-600">ވާހަކަތައް - Stories from people</p>
+        </div>
+
+        {/* Vahaka Banner */}
+        <div className="mb-8 rounded-2xl border-2 border-purple-500 bg-gradient-to-r from-purple-50 to-pink-50 p-4 sm:p-6 shadow-sm">
+          <div className="flex items-start gap-3 sm:gap-4">
+            <div className="flex-shrink-0">
+              <span className="text-3xl sm:text-4xl">📖</span>
+            </div>
+            <div>
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-purple-700 mb-2">ވާހަކަތައް</h3>
+              <p className="text-xs sm:text-sm text-gray-700 mb-3">
+                ތިބާއާ ހިއްސާކުރާނެ ވާހަކައެއް އެބަ އޮތްތޯ؟ ނަން ހާމަނުކޮށް (ސިއްރުން) އެ ވާހަކައެއް ޝާއިޢުކޮށްދިނުމަށް ތިބާ އަށް މަރުޙަބާ ކިޔަމެވެ. ތިބާގެ ވާހަކަ މުހިންމެވެ! ތިބާގެ ވާހަކަ ޝާއިޢުކުރަން ބޭނުންނަމަ hawainnkhabaru@gmail.com އަށް މެއިލް ފޮނުއްވާ.
+              </p>
+              <p className="text-xs sm:text-sm text-purple-600 font-semibold">
+                If you have a story to share, we're more than happy to post it anonymously. Your story matters! If you wish to share your story please send mail to hawainnkhabaru@gmail.com 📝
+              </p>
+            </div>
+          </div>
         </div>
 
         {stories.length === 0 ? (
           <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center">
-            <p className="text-gray-600">No stories available yet. Check back soon!</p>
+            <p className="text-gray-600">No vahaka available yet. Check back soon!</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -169,7 +159,7 @@ export default function Stories() {
                   <p className="mt-2 text-xs sm:text-sm text-gray-600 line-clamp-2">{story.description}</p>
                   {story.releaseDate && (
                     <p className="mt-2 text-xs sm:text-sm text-gray-500">
-                      ވާހަކަ ނެރުނީ {new Date(story.releaseDate).toLocaleDateString()}
+                      📅 Release: {new Date(story.releaseDate).toLocaleDateString()}
                     </p>
                   )}
                   {story.locked ? (
@@ -181,10 +171,11 @@ export default function Stories() {
                     </div>
                   ) : (
                     <Link
-                      to={`/stories/${story.slug}`}
+                      to={`/vahaka/${story.slug}`}
                       className="mt-4 flex items-center text-xs sm:text-sm text-brand-600 font-semibold"
+                      onClick={() => console.log('Clicking Read Episodes for story:', story.id, 'slug:', story.slug)}
                     >
-                      <span>ބައިތަށް ކިޔަާލުމަށް</span>
+                      <span>Read Episodes</span>
                       <svg className="ml-1 h-3 w-3 sm:h-4 sm:w-4 transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>

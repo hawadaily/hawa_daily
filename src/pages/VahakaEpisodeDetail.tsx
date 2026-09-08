@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs, query, orderBy, where, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot, increment } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { db as vahakaDb } from '../firebase-vahaka';
+import { auth } from '../firebase';
 import { ArrowLeft, ThumbsUp, ThumbsDown, Send, Share2, Eye } from 'lucide-react';
 
 interface Comment {
@@ -37,10 +38,11 @@ interface Story {
   createdAt: any;
 }
 
-export default function StoryEpisodeDetail() {
-  const { slug, episodeId } = useParams<{ slug: string; episodeId: string }>();
+export default function VahakaEpisodeDetail() {
+  const { slug, episodeNumber } = useParams<{ slug: string; episodeNumber: string }>();
   const [story, setStory] = useState<Story | null>(null);
   const [episode, setEpisode] = useState<Episode | null>(null);
+  const [episodeId, setEpisodeId] = useState<string | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
@@ -49,17 +51,17 @@ export default function StoryEpisodeDetail() {
 
   useEffect(() => {
     const loadEpisodeData = async () => {
-      if (!slug || !episodeId) {
-        console.error('No slug or episodeId provided');
+      if (!slug || !episodeNumber) {
+        console.error('No slug or episodeNumber provided');
         setLoading(false);
         return;
       }
 
       try {
-        console.log('Loading episode:', slug, episodeId);
+        console.log('Loading episode:', slug, episodeNumber);
         
         // Find the story by slug
-        const storiesQuery = query(collection(db, 'stories'), where('slug', '==', slug));
+        const storiesQuery = query(collection(vahakaDb, 'vahaka'), where('slug', '==', slug));
         const storiesSnapshot = await getDocs(storiesQuery);
         
         if (storiesSnapshot.empty) {
@@ -76,24 +78,30 @@ export default function StoryEpisodeDetail() {
           setStory({ id: storyDoc.id, ...(storyDoc.data() as any) });
         }
 
-        // Load episode
-        const episodeDoc = await getDoc(doc(db, 'stories', storyId, 'episodes', episodeId));
-        if (episodeDoc.exists()) {
+        // Load episode by episodeNumber
+        const episodesQuery = query(collection(vahakaDb, 'vahaka', storyId, 'episodes'), where('episodeNumber', '==', parseInt(episodeNumber)));
+        const episodesSnapshot = await getDocs(episodesQuery);
+        
+        if (!episodesSnapshot.empty) {
+          const episodeDoc = episodesSnapshot.docs[0];
           const episodeData = { id: episodeDoc.id, ...(episodeDoc.data() as any) };
           setEpisode(episodeData);
+          setEpisodeId(episodeDoc.id);
           
           // Increment view count
-          await updateDoc(doc(db, 'stories', storyId, 'episodes', episodeId), {
+          await updateDoc(doc(vahakaDb, 'vahaka', storyId, 'episodes', episodeDoc.id), {
             viewCount: increment(1)
           });
-        }
 
-        // Load comments
-        const commentsQuery = query(collection(db, 'stories', storyId, 'episodes', episodeId, 'comments'), orderBy('createdAt', 'desc'));
-        onSnapshot(commentsQuery, (snapshot) => {
-          const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-          setComments(commentsData);
-        });
+          // Load comments
+          const commentsQuery = query(collection(vahakaDb, 'vahaka', storyId, 'episodes', episodeDoc.id, 'comments'), orderBy('createdAt', 'desc'));
+          onSnapshot(commentsQuery, (snapshot) => {
+            const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
+            setComments(commentsData);
+          });
+        } else {
+          console.error('No episode found with number:', episodeNumber);
+        }
       } catch (error) {
         console.error('Failed to load episode data:', error);
       } finally {
@@ -109,7 +117,7 @@ export default function StoryEpisodeDetail() {
     });
 
     return () => unsubscribe();
-  }, [slug, episodeId]);
+  }, [slug, episodeNumber]);
 
   useEffect(() => {
     if (story && episode) {
@@ -141,7 +149,7 @@ export default function StoryEpisodeDetail() {
     if (!commentText) return;
 
     try {
-      await addDoc(collection(db, 'stories', story.id, 'episodes', episodeId, 'comments'), {
+      await addDoc(collection(vahakaDb, 'vahaka', story.id, 'episodes', episodeId, 'comments'), {
         text: commentText,
         userId: currentUser?.uid || 'anonymous',
         userName: currentUser?.displayName || 'Anonymous',
@@ -159,9 +167,9 @@ export default function StoryEpisodeDetail() {
     if (!slug || !episodeId || !story) return;
 
     try {
-      const episodeRef = doc(db, 'stories', story.id, 'episodes', episodeId);
+      const episodeRef = doc(vahakaDb, 'vahaka', story.id, 'episodes', episodeId);
       const userId = currentUser?.uid || 'anonymous';
-      const storageKey = `episode_${episodeId}_reaction`;
+      const storageKey = `vahaka_episode_${episodeId}_reaction`;
       const localReaction = localStorage.getItem(storageKey);
 
       if (episode?.likes?.includes(userId) || localReaction === 'like') {
@@ -195,9 +203,9 @@ export default function StoryEpisodeDetail() {
     if (!slug || !episodeId || !story) return;
 
     try {
-      const episodeRef = doc(db, 'stories', story.id, 'episodes', episodeId);
+      const episodeRef = doc(vahakaDb, 'vahaka', story.id, 'episodes', episodeId);
       const userId = currentUser?.uid || 'anonymous';
-      const storageKey = `episode_${episodeId}_reaction`;
+      const storageKey = `vahaka_episode_${episodeId}_reaction`;
       const localReaction = localStorage.getItem(storageKey);
 
       if (episode?.dislikes?.includes(userId) || localReaction === 'dislike') {
@@ -243,8 +251,8 @@ export default function StoryEpisodeDetail() {
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600">Episode not found</p>
-          <Link to="/stories" className="mt-4 inline-block text-brand-600 hover:text-brand-700">
-            Back to Stories
+          <Link to="/vahaka" className="mt-4 inline-block text-brand-600 hover:text-brand-700">
+            Back to ވާހަކަ
           </Link>
         </div>
       </div>
@@ -256,7 +264,7 @@ export default function StoryEpisodeDetail() {
       <div className="mx-auto max-w-4xl px-4 py-8 lg:px-6">
         {/* Back Button */}
         <Link
-          to={`/stories/${slug}`}
+          to={`/vahaka/${slug}`}
           className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -272,49 +280,49 @@ export default function StoryEpisodeDetail() {
               className="h-full w-full object-cover"
             />
             <div className="absolute top-4 left-4">
-              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-bold text-base sm:text-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-bold text-lg">
                 {episode.episodeNumber}
               </div>
             </div>
           </div>
           <div className="p-4 sm:p-6">
             <div className="flex items-start justify-between gap-2">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">{episode.title}</h1>
+              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">{episode.title}</h1>
               <button
                 onClick={handleShare}
                 className="flex-shrink-0 rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-brand-600"
                 title="Share episode"
               >
-                <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                <Share2 className="h-5 w-5" />
               </button>
             </div>
-            <p className="mt-2 text-xs sm:text-sm text-gray-500">From: {story.title}</p>
+            <p className="mt-2 text-sm text-gray-500">From: {story.title}</p>
             {story.author && (
-              <p className="mt-1 text-xs sm:text-sm text-gray-500">by {story.author}</p>
+              <p className="mt-1 text-sm text-gray-500">by {story.author}</p>
             )}
-            <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleLike}
-                  className={`flex items-center gap-1 text-xs sm:text-sm transition rounded-lg px-2 py-1 sm:px-3 sm:py-2 ${
+                  className={`flex items-center gap-1 text-sm transition rounded-lg px-3 py-2 ${
                     episode.likes?.includes(currentUser?.uid) || userReaction === 'like' ? 'bg-brand-100 text-brand-600' : 'text-gray-500 hover:bg-gray-100 hover:text-brand-600'
                   }`}
                 >
-                  <span className="text-base sm:text-lg">😊</span>
+                  <span className="text-lg">😊</span>
                   <span>{episode.likes?.length || 0}</span>
                 </button>
                 <button
                   onClick={handleDislike}
-                  className={`flex items-center gap-1 text-xs sm:text-sm transition rounded-lg px-2 py-1 sm:px-3 sm:py-2 ${
+                  className={`flex items-center gap-1 text-sm transition rounded-lg px-3 py-2 ${
                     episode.dislikes?.includes(currentUser?.uid) || userReaction === 'dislike' ? 'bg-rose-100 text-rose-600' : 'text-gray-500 hover:bg-gray-100 hover:text-rose-600'
                   }`}
                 >
-                  <span className="text-base sm:text-lg">😞</span>
+                  <span className="text-lg">😞</span>
                   <span>{episode.dislikes?.length || 0}</span>
                 </button>
               </div>
-              <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500">
-                <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+              <div className="flex items-center gap-1 text-sm text-gray-500">
+                <Eye className="h-4 w-4" />
                 <span>{episode.viewCount || 0} views</span>
               </div>
             </div>
@@ -323,7 +331,7 @@ export default function StoryEpisodeDetail() {
 
         {/* Episode Content */}
         <div className="mt-6 sm:mt-8 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
-          <div className="prose prose-sm sm:prose-base max-w-none text-gray-700">
+          <div className="prose prose-sm max-w-none text-gray-700">
             {episode.content.split('\n').map((paragraph, index) => (
               <p key={index} className={index > 0 ? 'mt-4' : ''}>
                 {paragraph}
@@ -334,8 +342,8 @@ export default function StoryEpisodeDetail() {
 
         {/* Comments Section */}
         <div className="mt-6 sm:mt-8 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900">Comments ({comments.length})</h3>
-
+          <h3 className="text-lg font-semibold text-gray-900 sm:text-xl">Comments ({comments.length})</h3>
+          
           {/* Add Comment */}
           <div className="mt-4 flex gap-2">
             <input
@@ -343,7 +351,7 @@ export default function StoryEpisodeDetail() {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Write a comment..."
-              className="flex-1 rounded-xl border border-gray-300 bg-white px-3 py-2 text-xs sm:text-sm text-gray-900 outline-none focus:border-brand-500 sm:px-4"
+              className="flex-1 rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand-500 sm:px-4"
               onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
             />
             <button
@@ -351,29 +359,29 @@ export default function StoryEpisodeDetail() {
               disabled={!newComment.trim()}
               className="rounded-xl bg-brand-500 px-3 py-2 text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-60 sm:px-4"
             >
-              <Send className="h-4 w-4 sm:h-5 sm:w-5" />
+              <Send className="h-5 w-5" />
             </button>
           </div>
 
           {/* Comments List */}
           <div className="mt-6 space-y-4">
             {comments.length === 0 ? (
-              <p className="text-xs sm:text-sm text-gray-500">No comments yet. Be the first to comment!</p>
+              <p className="text-sm text-gray-500">No comments yet. Be the first to comment!</p>
             ) : (
               comments.map((comment) => (
-                <div key={comment.id} className="rounded-xl border border-gray-200 bg-gray-50 p-3 sm:p-4">
+                <div key={comment.id} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-semibold text-xs sm:text-sm">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-brand-600 font-semibold text-sm">
                         {comment.userName?.charAt(0).toUpperCase() || 'A'}
                       </div>
-                      <span className="font-semibold text-gray-900 text-xs sm:text-sm">{comment.userName}</span>
+                      <span className="font-semibold text-gray-900">{comment.userName}</span>
                     </div>
                     <span className="text-xs text-gray-500">
                       {comment.createdAt?.toDate?.() ? new Date(comment.createdAt.toDate()).toLocaleDateString() : 'Just now'}
                     </span>
                   </div>
-                  <p className="mt-2 text-gray-700 text-xs sm:text-sm">{comment.text}</p>
+                  <p className="mt-2 text-gray-700">{comment.text}</p>
                 </div>
               ))
             )}

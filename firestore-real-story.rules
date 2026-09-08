@@ -45,5 +45,50 @@ service cloud.firestore {
       allow read: if true;
       allow write: if true;
     }
+
+    match /vahaka/{storyId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /vahaka/{storyId}/episodes/{episodeId} {
+      allow read: if true;
+      allow write: if true; // Auth is handled in main project
+    }
+
+    match /vahaka/{storyId}/episodes/{episodeId}/comments/{commentId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to comment
+    }
+
+    match /vahaka/{storyId}/episodes/{episodeId}/likes/{likeId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to like
+    }
+
+    match /vahaka/{storyId}/episodes/{episodeId}/dislikes/{dislikeId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to dislike
+    }
+
+    match /vahaka/{storyId}/episodes/{episodeId}/userReactions/{userId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to write reactions
+    }
+
+    match /vahaka/{storyId}/episodes/{episodeId}/comments/{commentId}/userReactions/{userId} {
+      allow read: if true;
+      allow write: if true; // Allow anonymous users to react to comments
+    }
+
+    match /vahaka/{storyId}/episodes/{episodeId}/comments/{commentId}/likes/{likeId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /vahaka/{storyId}/episodes/{episodeId}/comments/{commentId}/dislikes/{dislikeId} {
+      allow read: if true;
+      allow write: if true;
+    }
   }
 }

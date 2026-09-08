@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
-import { doc, getDoc, collection, getDocs, query, orderBy, where, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot, increment, runTransaction } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { doc, getDoc, collection, getDocs, query, orderBy, where, addDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot, increment } from 'firebase/firestore';
+import { db as vahakaDb } from '../firebase-vahaka';
+import { auth } from '../firebase';
 import { ArrowLeft, BookOpen, ThumbsUp, ThumbsDown, Send, Share2, Eye } from 'lucide-react';
 
 interface Episode {
@@ -38,7 +39,7 @@ interface Story {
   createdAt: any;
 }
 
-export default function StoryDetail() {
+export default function VahakaDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [story, setStory] = useState<Story | null>(null);
@@ -50,8 +51,8 @@ export default function StoryDetail() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [highlightedEpisode, setHighlightedEpisode] = useState<string | null>(null);
   const [userReactions, setUserReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
-  const [expandedEpisodes, setExpandedEpisodes] = useState<Record<string, boolean>>({});
   const [episodeReactions, setEpisodeReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
+  const [expandedEpisodes, setExpandedEpisodes] = useState<Record<string, boolean>>({});
 
   // Check if episode is locked based on release date
   const isEpisodeLocked = (episode: Episode): boolean => {
@@ -66,14 +67,23 @@ export default function StoryDetail() {
 
   useEffect(() => {
     const loadStoryData = async () => {
-      if (!slug) return;
+      if (!slug) {
+        console.error('No slug provided');
+        setLoading(false);
+        return;
+      }
 
       try {
+        console.log('Loading story with slug:', slug);
+        
         // First, find the story by slug
-        const storiesQuery = query(collection(db, 'stories'), where('slug', '==', slug));
+        const storiesQuery = query(collection(vahakaDb, 'vahaka'), where('slug', '==', slug));
         const storiesSnapshot = await getDocs(storiesQuery);
         
+        console.log('Stories found:', storiesSnapshot.size);
+        
         if (storiesSnapshot.empty) {
+          console.error('No story found with slug:', slug);
           setLoading(false);
           return;
         }
@@ -82,34 +92,38 @@ export default function StoryDetail() {
         const storyId = storyDoc.id;
         setStoryId(storyId);
         
+        console.log('Story ID:', storyId);
+        
         // Load story
         if (storyDoc.exists()) {
           setStory({ id: storyDoc.id, ...(storyDoc.data() as any) });
         }
 
         // Load episodes
-        const episodesQuery = query(collection(db, 'stories', storyId, 'episodes'), orderBy('episodeNumber', 'asc'));
+        const episodesQuery = query(collection(vahakaDb, 'vahaka', storyId, 'episodes'), orderBy('episodeNumber', 'asc'));
         const episodesSnapshot = await getDocs(episodesQuery);
         const episodesData = episodesSnapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
         setEpisodes(episodesData);
+        
+        console.log('Episodes loaded:', episodesData.length);
 
         // Load comments for each episode
         episodesData.forEach((episode) => {
-          const commentsQuery = query(collection(db, 'stories', storyId, 'episodes', episode.id, 'comments'), orderBy('createdAt', 'desc'));
+          const commentsQuery = query(collection(vahakaDb, 'vahaka', storyId, 'episodes', episode.id, 'comments'), orderBy('createdAt', 'desc'));
           onSnapshot(commentsQuery, (snapshot) => {
             const commentsData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
             setComments((prev) => ({ ...prev, [episode.id]: commentsData }));
           });
         });
       } catch (error) {
-        console.error('Failed to load story data:', error);
+        console.error('Failed to load vahaka data:', error);
       } finally {
         setLoading(false);
       }
     };
 
     // Listen to auth state
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user: any) => {
       setCurrentUser(user);
     });
 
@@ -138,17 +152,17 @@ export default function StoryDetail() {
     if (!storyId || episodes.length === 0) return;
 
     const episodeParam = searchParams.get('episode');
-    const viewedEpisodes = new Set(JSON.parse(localStorage.getItem(`viewed_episodes_${storyId}`) || '[]'));
+    const viewedEpisodes = new Set(JSON.parse(localStorage.getItem(`viewed_vahaka_episodes_${storyId}`) || '[]'));
     
     // Only track the specific episode being viewed (from URL param)
     if (episodeParam) {
       const episode = episodes.find((e) => e.id === episodeParam);
       if (episode && !viewedEpisodes.has(episode.id)) {
-        updateDoc(doc(db, 'stories', storyId, 'episodes', episode.id), {
+        updateDoc(doc(vahakaDb, 'vahaka', storyId, 'episodes', episode.id), {
           viewCount: increment(1)
         }).then(() => {
           viewedEpisodes.add(episode.id);
-          localStorage.setItem(`viewed_episodes_${storyId}`, JSON.stringify([...viewedEpisodes]));
+          localStorage.setItem(`viewed_vahaka_episodes_${storyId}`, JSON.stringify([...viewedEpisodes]));
         }).catch((error) => {
           console.error('Failed to increment view count:', error);
         });
@@ -161,7 +175,7 @@ export default function StoryDetail() {
     const reactions: Record<string, 'like' | 'dislike' | null> = {};
     Object.keys(comments).forEach((episodeId) => {
       comments[episodeId]?.forEach((comment) => {
-        const localReaction = localStorage.getItem(`comment_${comment.id}_reaction`);
+        const localReaction = localStorage.getItem(`vahaka_comment_${comment.id}_reaction`);
         if (localReaction === 'like' || localReaction === 'dislike') {
           reactions[comment.id] = localReaction;
         }
@@ -174,7 +188,7 @@ export default function StoryDetail() {
   useEffect(() => {
     const reactions: Record<string, 'like' | 'dislike' | null> = {};
     episodes.forEach((episode) => {
-      const localReaction = localStorage.getItem(`episode_${episode.id}_reaction`);
+      const localReaction = localStorage.getItem(`vahaka_episode_${episode.id}_reaction`);
       if (localReaction === 'like' || localReaction === 'dislike') {
         reactions[episode.id] = localReaction;
       }
@@ -241,7 +255,7 @@ export default function StoryDetail() {
   }, [story, episodes, searchParams]);
 
   const handleShareEpisode = (episodeId: string) => {
-    const shareUrl = `${window.location.origin}/stories/${slug}?episode=${episodeId}`;
+    const shareUrl = `${window.location.origin}/vahaka/${slug}?episode=${episodeId}`;
     if (navigator.share) {
       navigator.share({
         title: story?.title,
@@ -263,7 +277,7 @@ export default function StoryDetail() {
     if (!commentText?.trim()) return;
 
     try {
-      await addDoc(collection(db, 'stories', storyId, 'episodes', episodeId, 'comments'), {
+      await addDoc(collection(vahakaDb, 'vahaka', storyId, 'episodes', episodeId, 'comments'), {
         text: commentText,
         userId: currentUser?.uid || 'anonymous',
         userName: currentUser?.displayName || 'Anonymous',
@@ -281,13 +295,13 @@ export default function StoryDetail() {
     if (!storyId) return;
 
     try {
-      const commentRef = doc(db, 'stories', storyId, 'episodes', episodeId, 'comments', commentId);
+      const commentRef = doc(vahakaDb, 'vahaka', storyId, 'episodes', episodeId, 'comments', commentId);
       const comment = comments[episodeId]?.find((c) => c.id === commentId);
       
       if (!comment) return;
 
       const userId = currentUser?.uid || 'anonymous';
-      const storageKey = `comment_${commentId}_reaction`;
+      const storageKey = `vahaka_comment_${commentId}_reaction`;
       const localReaction = localStorage.getItem(storageKey);
 
       if (comment.likes?.includes(userId) || localReaction === 'like') {
@@ -321,13 +335,13 @@ export default function StoryDetail() {
     if (!storyId) return;
 
     try {
-      const commentRef = doc(db, 'stories', storyId, 'episodes', episodeId, 'comments', commentId);
+      const commentRef = doc(vahakaDb, 'vahaka', storyId, 'episodes', episodeId, 'comments', commentId);
       const comment = comments[episodeId]?.find((c) => c.id === commentId);
       
       if (!comment) return;
 
       const userId = currentUser?.uid || 'anonymous';
-      const storageKey = `comment_${commentId}_reaction`;
+      const storageKey = `vahaka_comment_${commentId}_reaction`;
       const localReaction = localStorage.getItem(storageKey);
 
       if (comment.dislikes?.includes(userId) || localReaction === 'dislike') {
@@ -361,13 +375,13 @@ export default function StoryDetail() {
     if (!storyId) return;
 
     try {
-      const episodeRef = doc(db, 'stories', storyId, 'episodes', episodeId);
+      const episodeRef = doc(vahakaDb, 'vahaka', storyId, 'episodes', episodeId);
       const episode = episodes.find((e) => e.id === episodeId);
       
       if (!episode) return;
 
       const userId = currentUser?.uid || 'anonymous';
-      const storageKey = `episode_${episodeId}_reaction`;
+      const storageKey = `vahaka_episode_${episodeId}_reaction`;
       const localReaction = localStorage.getItem(storageKey);
 
       if (episode.likes?.includes(userId) || localReaction === 'like') {
@@ -401,13 +415,13 @@ export default function StoryDetail() {
     if (!storyId) return;
 
     try {
-      const episodeRef = doc(db, 'stories', storyId, 'episodes', episodeId);
+      const episodeRef = doc(vahakaDb, 'vahaka', storyId, 'episodes', episodeId);
       const episode = episodes.find((e) => e.id === episodeId);
       
       if (!episode) return;
 
       const userId = currentUser?.uid || 'anonymous';
-      const storageKey = `episode_${episodeId}_reaction`;
+      const storageKey = `vahaka_episode_${episodeId}_reaction`;
       const localReaction = localStorage.getItem(storageKey);
 
       if (episode.dislikes?.includes(userId) || localReaction === 'dislike') {
@@ -442,7 +456,7 @@ export default function StoryDetail() {
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading story...</p>
+          <p className="mt-4 text-gray-600">Loading vahaka...</p>
         </div>
       </div>
     );
@@ -452,9 +466,9 @@ export default function StoryDetail() {
     return (
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Story not found</p>
-          <Link to="/stories" className="mt-4 inline-block text-brand-600 hover:text-brand-700">
-            Back to Stories
+          <p className="text-gray-600">ވާހަކަ not found</p>
+          <Link to="/vahaka" className="mt-4 inline-block text-brand-600 hover:text-brand-700">
+            Back to ވާހަކަ
           </Link>
         </div>
       </div>
@@ -466,11 +480,11 @@ export default function StoryDetail() {
       <div className="mx-auto max-w-4xl px-4 py-8 lg:px-6">
         {/* Back Button */}
         <Link
-          to="/stories"
+          to="/vahaka"
           className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span>Back to Stories</span>
+          <span>Back to ވާހަކަ</span>
         </Link>
 
         {/* Story Header */}
@@ -540,7 +554,7 @@ export default function StoryDetail() {
                         </div>
                       </div>
                       <div className="absolute top-4 left-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-300 text-gray-600 font-bold text-lg">
+                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-gray-300 text-gray-600 font-bold text-base sm:text-lg">
                           {episode.episodeNumber}
                         </div>
                       </div>
@@ -553,7 +567,7 @@ export default function StoryDetail() {
                 ) : (
                   <Link
                     key={episode.id}
-                    to={`/stories/${slug}/${episode.id}`}
+                    to={`/vahaka/${slug}/ep-${episode.episodeNumber}`}
                     className="block rounded-2xl border bg-white shadow-sm transition cursor-pointer hover:border-brand-300 overflow-hidden"
                   >
                     <div className="relative aspect-video">
