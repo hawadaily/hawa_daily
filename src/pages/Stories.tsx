@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
+import { dbHawainn } from '../firebase-hawainn';
+import { db as dbRealStory } from '../firebase-real-story';
 import { Link } from 'react-router-dom';
 
 interface Story {
@@ -23,10 +25,37 @@ export default function Stories() {
   useEffect(() => {
     const loadStories = async () => {
       try {
-        const storiesQuery = query(collection(db, 'stories'), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(storiesQuery);
-        const storiesData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-        setStories(storiesData);
+        console.log('Loading stories from Firebase...');
+        
+        // Fetch from both databases in parallel
+        const [hawainnSnapshot, realStorySnapshot] = await Promise.all([
+          getDocs(query(collection(dbHawainn, 'stories'), orderBy('createdAt', 'desc'))),
+          getDocs(query(collection(dbRealStory, 'stories'), orderBy('createdAt', 'desc')))
+        ]);
+        
+        console.log('Hawainn stories size:', hawainnSnapshot.size);
+        console.log('Real story stories size:', realStorySnapshot.size);
+        
+        const hawainnStories = hawainnSnapshot.docs.map((doc) => ({ 
+          id: doc.id, 
+          ...(doc.data() as any),
+          source: 'hawainn-khabaru'
+        }));
+        
+        const realStoryStories = realStorySnapshot.docs.map((doc) => ({ 
+          id: doc.id, 
+          ...(doc.data() as any),
+          source: 'real-story'
+        }));
+        
+        // Combine and deduplicate by id
+        const allStories = [...hawainnStories, ...realStoryStories];
+        const uniqueStories = allStories.filter((story, index, self) =>
+          index === self.findIndex(s => s.id === story.id)
+        );
+        
+        console.log('Total stories loaded:', uniqueStories.length);
+        setStories(uniqueStories);
       } catch (error) {
         console.error('Failed to load stories:', error);
       } finally {
