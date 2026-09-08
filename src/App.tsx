@@ -253,10 +253,10 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/real-stories" element={<RealStories />} />
             <Route path="/real-stories/:slug" element={<RealStoryDetail />} />
-            <Route path="/real-stories/:slug/ep-:episodeNumber" element={<RealEpisodeDetail />} />
+            <Route path="/real-stories/:slug/*" element={<RealEpisodeDetail />} />
             <Route path="/vahaka" element={<Vahaka />} />
             <Route path="/vahaka/:slug" element={<VahakaDetail />} />
-            <Route path="/vahaka/:slug/ep-:episodeNumber" element={<VahakaEpisodeDetail />} />
+            <Route path="/vahaka/:slug/*" element={<VahakaEpisodeDetail />} />
             <Route path="/golden-time" element={<GoldenTime />} />
             <Route path="/golden-time/:slug" element={<GoldenTimeDetail />} />
             <Route path="/doctors-duty" element={<DoctorsDuty />} />

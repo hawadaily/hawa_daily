@@ -39,7 +39,8 @@ interface Story {
 }
 
 export default function RealEpisodeDetail() {
-  const { slug, episodeNumber } = useParams<{ slug: string; episodeNumber: string }>();
+  const { slug, '*': episodePath } = useParams<{ slug: string; '*': string }>();
+  const episodeNumber = episodePath?.replace('ep-', '') || '';
   const [story, setStory] = useState<Story | null>(null);
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [episodeId, setEpisodeId] = useState<string | null>(null);
@@ -252,7 +253,7 @@ export default function RealEpisodeDetail() {
         <div className="text-center">
           <p className="text-gray-600">Episode not found</p>
           <Link to="/real-stories" className="mt-4 inline-block text-brand-600 hover:text-brand-700">
-            Back to ހަޤީޤީ ވާހަކަ
+            Back to ހަޤީޤީ ހާދިސާ
           </Link>
         </div>
       </div>

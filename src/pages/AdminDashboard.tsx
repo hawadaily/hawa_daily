@@ -9235,7 +9235,45 @@ ${obituaryName}ގެ ލޮބުވެތި މައިންބަފައިންނާ ޢާއިލ
 
             {/* Vahaka List */}
             <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-              <h4 className="text-lg font-semibold text-gray-900">Vahaka ({vahakaStories.length})</h4>
+              <div className="flex items-center justify-between">
+                <h4 className="text-lg font-semibold text-gray-900">Vahaka ({vahakaStories.length})</h4>
+                <button
+                  onClick={async () => {
+                    try {
+                      const storiesQuery = query(collection(vahakaDb, 'vahaka'));
+                      const snapshot = await getDocs(storiesQuery);
+                      let updated = 0;
+                      
+                      console.log('Found', snapshot.size, 'vahaka stories');
+                      
+                      for (const doc of snapshot.docs) {
+                        const data = doc.data();
+                        console.log('Story:', doc.id, 'has slug:', !!data.slug, 'has title:', !!data.title, 'title:', data.title);
+                        
+                        if (!data.slug) {
+                          if (data.title) {
+                            const slug = generateSlug(data.title);
+                            console.log('Setting slug:', slug, 'for story:', doc.id);
+                            await updateDoc(doc.ref, { slug });
+                            updated++;
+                          } else {
+                            console.error('Story has no title, cannot generate slug:', doc.id);
+                          }
+                        }
+                      }
+                      
+                      alert(`Updated ${updated} vahaka stories with slugs`);
+                      loadDashboard();
+                    } catch (error) {
+                      console.error('Failed to fix slugs:', error);
+                      alert('Failed to fix slugs. Check console for details.');
+                    }
+                  }}
+                  className="rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400"
+                >
+                  Fix Missing Slugs
+                </button>
+              </div>
               <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
                 {vahakaStories.length === 0 ? (
                   <p className="text-sm text-gray-500">No vahaka yet</p>

@@ -26,7 +26,7 @@ export default function ChildrenStories() {
         const storiesQuery = query(collection(realStoryDb, 'real-stories'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(storiesQuery);
         const storiesData = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as any) }));
-        console.log('Real stories loaded:', storiesData.map(s => ({ id: s.id, title: s.title, slug: s.slug })));
+        console.log('Real incidents loaded:', storiesData.map(s => ({ id: s.id, title: s.title, slug: s.slug })));
         setStories(storiesData);
       } catch (error) {
         console.error('Failed to load children stories:', error);
@@ -40,7 +40,7 @@ export default function ChildrenStories() {
 
   // Update meta tags for social sharing
   useEffect(() => {
-    document.title = 'ހަޤީޤީ ވާހަކަ | ހަވާ ޑެއިލީ';
+    document.title = 'ހަޤީޤީ ހާދިސާ | ހަވާ ޑެއިލީ';
 
     const updateMetaTag = (property: string, content: string) => {
       let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
@@ -62,16 +62,16 @@ export default function ChildrenStories() {
       meta.setAttribute('content', content);
     };
 
-    updateMetaTag('og:title', 'ހަޤީޤީ ވާހަކަ | ހަވާ ޑެއިލީ');
-    updateMetaTag('og:description', '100% ހަޤީޤީ ވާހަކަތައް - ހަޤީޤީ ވާހަކަތައް ހިމާޔަތްކުރުމަށް މަރުޙަބާ ކިޔަމެވެ - 100% real stories from real people');
+    updateMetaTag('og:title', 'ހަޤީޤީ ހާދިސާ | ހަވާ ޑެއިލީ');
+    updateMetaTag('og:description', '100% ހަޤީޤީ ހާދިސާތައް - ހަޤީޤީ ހާދިސާތައް ހިމާޔަތްކުރުމަށް މަރުޙަބާ ކިޔަމެވެ - 100% real incidents from real people');
     updateMetaTag('og:image', 'https://www.hawadaily.com/og-image.jpg');
     updateMetaTag('og:url', window.location.href);
     updateMetaTag('og:type', 'website');
     updateMetaTag('og:site_name', 'ހަވާ ޑެއިލީ');
     
     updateMetaTagName('twitter:card', 'summary_large_image');
-    updateMetaTagName('twitter:title', 'ހަޤީޤީ ވާހަކަ | ހަވާ ޑެއިލީ');
-    updateMetaTagName('twitter:description', '100% ހަޤީޤީ ވާހަކަތައް - ހަޤީޤީ ވާހަކަތައް ހިމާޔަތްކުރުމަށް މަރުޙަބާ ކިޔަމެވެ - 100% real stories from real people');
+    updateMetaTagName('twitter:title', 'ހަޤީޤީ ހާދިސާ | ހަވާ ޑެއިލީ');
+    updateMetaTagName('twitter:description', '100% ހަޤީޤީ ހާދިސާތައް - ހަޤީޤީ ހާދިސާތައް ހިމާޔަތްކުރުމަށް މަރުޙަބާ ކިޔަމެވެ - 100% real incidents from real people');
     updateMetaTagName('twitter:image', 'https://www.hawadaily.com/og-image.jpg');
 
     return () => {
@@ -85,7 +85,7 @@ export default function ChildrenStories() {
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading real stories...</p>
+          <p className="mt-4 text-gray-600">Loading real incidents...</p>
         </div>
       </div>
     );
@@ -95,23 +95,23 @@ export default function ChildrenStories() {
     <div className="min-h-screen bg-[#caf0f8] pb-24">
       <div className="mx-auto max-w-7xl px-4 py-8 lg:px-6">
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">ހަޤީޤީ ވާހަކަ (Real Stories)</h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-600">100% ހަޤީޤީ ވާހަކަތައް - Real stories from real people</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">ހަޤީޤީ ހާދިސާ (Real Incident)</h1>
+          <p className="mt-2 text-sm sm:text-base text-gray-600">100% ހަޤީޤީ ހާދިސާތައް - Real incidents from real people</p>
         </div>
 
-        {/* Real Stories Banner */}
+        {/* Real Incident Banner */}
         <div className="mb-8 rounded-2xl border-2 border-emerald-500 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 sm:p-6 shadow-sm">
           <div className="flex items-start gap-3 sm:gap-4">
             <div className="flex-shrink-0">
               <span className="text-3xl sm:text-4xl">✨</span>
             </div>
             <div>
-              <h3 className="text-base sm:text-lg md:text-xl font-bold text-emerald-700 mb-2">މިއީ 100 އިންސައްތަ  ހަޤީޤީ ވާހަކަތަކެކެވެ</h3>
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-emerald-700 mb-2">މިއީ 100 އިންސައްތަ  ހަޤީޤީ ހާދިސާތަކެކެވެ</h3>
               <p className="text-xs sm:text-sm text-gray-700 mb-3">
-                ތިބާއާ ހިއްސާކުރާނެ ހަޤީޤީ ވާހަކައެއް އެބަ އޮތްތޯ؟ ނަން ހާމަނުކޮށް (ސިއްރުން) އެ ވާހަކައެއް ޝާއިޢުކޮށްދިނުމަށް ތިބާ އަށް މަރުޙަބާ ކިޔަމެވެ. ތިބާގެ ވާހަކަ މުހިންމެވެ! ތިބާގެ ވާހަކަ ޝާއިޢުކުރަން ބޭނުންނަމަ hawainnkhabaru@gmail.com އަށް މެއިލް ފޮނުއްވާ.
+                ތިބާއާ ހިއްސާކުރާނެ ހަޤީޤީ ހާދިސާއެއް އެބަ އޮތްތޯ؟ ނަން ހާމަނުކޮށް (ސިއްރުން) އެ ވާހަކައެއް ޝާއިޢުކޮށްދިނުމަށް ތިބާ އަށް މަރުޙަބާ ކިޔަމެވެ. ތިބާގެ ވާހަކަ މުހިންމެވެ! ތިބާގެ ވާހަކަ ޝާއިޢުކުރަން ބޭނުންނަމަ hawainnkhabaru@gmail.com އަށް މެއިލް ފޮނުއްވާ.
               </p>
               <p className="text-xs sm:text-sm text-emerald-600 font-semibold">
-                These are 100% real stories. If you have a real story to share, we're more than happy to post it anonymously. Your story matters! If you wish to share your story please send mail to hawainnkhabaru@gmail.com 📝
+                These are 100% real incidents. If you have a real story to share, we're more than happy to post it anonymously. Your story matters! If you wish to share your story please send mail to hawainnkhabaru@gmail.com 📝
               </p>
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function ChildrenStories() {
 
         {stories.length === 0 ? (
           <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center">
-            <p className="text-gray-600">No real stories available yet. Check back soon!</p>
+            <p className="text-gray-600">No real incidents available yet. Check back soon!</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

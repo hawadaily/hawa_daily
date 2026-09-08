@@ -466,9 +466,9 @@ export default function RealStoryDetail() {
     return (
       <div className="min-h-screen bg-[#caf0f8] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">ހަޤީޤީ ވާހަކަ not found</p>
+          <p className="text-gray-600">ހަޤީޤީ ހާދިސާ not found</p>
           <Link to="/real-stories" className="mt-4 inline-block text-brand-600 hover:text-brand-700">
-            Back to ހަޤީޤީ ވާހަކަ
+            Back to ހަޤީޤީ ހާދިސާ
           </Link>
         </div>
       </div>
@@ -484,7 +484,7 @@ export default function RealStoryDetail() {
           className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span>Back to ހަޤީޤީ ވާހަކަ</span>
+          <span>Back to ހަޤީޤީ ހާދިސާ</span>
         </Link>
 
         {/* Story Header */}

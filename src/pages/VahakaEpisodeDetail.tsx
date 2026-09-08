@@ -5,6 +5,8 @@ import { db as vahakaDb } from '../firebase-vahaka';
 import { auth } from '../firebase';
 import { ArrowLeft, ThumbsUp, ThumbsDown, Send, Share2, Eye } from 'lucide-react';
 
+console.log('VahakaEpisodeDetail module loaded');
+
 interface Comment {
   id: string;
   text: string;
@@ -39,7 +41,9 @@ interface Story {
 }
 
 export default function VahakaEpisodeDetail() {
-  const { slug, episodeNumber } = useParams<{ slug: string; episodeNumber: string }>();
+  console.log('VahakaEpisodeDetail component mounted');
+  const { slug, '*': episodePath } = useParams<{ slug: string; '*': string }>();
+  const episodeNumber = episodePath?.replace('ep-', '') || '';
   const [story, setStory] = useState<Story | null>(null);
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [episodeId, setEpisodeId] = useState<string | null>(null);
