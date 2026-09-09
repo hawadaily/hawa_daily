@@ -489,13 +489,6 @@ export default function RealStoryDetail() {
           <span>Back to ހަޤީޤީ ހާދިސާ</span>
         </Link>
 
-        {/* Story Description */}
-        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
-          <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-            މިއީ މި އެންމެ ފަހުން ނެރުނު ވަރަށް މަޝްހޫރު އިގިރޭސި ސީރީސް އެއްގެ މައްޗަށް ބިނާ ކޮއް ލިވެފައިވާ ވާހަކަ ވުމާ އެކު މީގެ އިގިރޭސި ބައި އަޅުގަނޑުމެންގެ ޓިކް ޓޮކް އަދި ޔޫޓުބް ޗެނަލް އިން ބަލާ ލެވޭނެއެވެ. ކޮންމެ ވާހަކަ ބަޔަކާ އެކު ވީޑިއޯ ރިލީސް ވާނެއެވެ. މި ސީރީސް އަކީ ވަރަށް ގިނަ މީހުން ހޯދަން މަސައްކަތް ކުރާ އެއްޗަކަވުމުން ހަވާ ޑެއިލީ ޓީމުން ގެ މަސައްކަތުން މިހާރު ވަނީ މީގެ ސީރީސްތަށް ހޯދާފައެވެ.
-          </p>
-        </div>
-
         {/* Story Header */}
         <div className="mt-6 rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm">
           <div className="relative aspect-video">
