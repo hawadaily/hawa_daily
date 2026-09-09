@@ -224,7 +224,7 @@ function App() {
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
             { label: language === 'en' ? 'Real Incident' : 'ހަޤީޤީ ހާދިސާ', path: '/real-stories', icon: BookIcon },
             { label: language === 'en' ? 'Golden Time' : 'ރަން ޒަމާން', path: '/golden-time', icon: BookIcon },
-            { label: language === 'en' ? 'Doctors Duty' : 'ޑޮކްޓަރުންގެ ޑިއުޓީ', path: '/doctors-duty', icon: Stethoscope },
+            { label: language === 'en' ? 'Vahaka' : 'ވާހަކަ', path: '/vahaka', icon: BookIcon },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
           ]}
           activePath={location.pathname}
