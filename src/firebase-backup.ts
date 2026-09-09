@@ -4,13 +4,13 @@ import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBJJm90lDcgjxmgXsWpGE0lIVNSK6VFGa0',
-  authDomain: 'hawa-daily-v2.firebaseapp.com',
-  projectId: 'hawa-daily-v2',
-  storageBucket: 'hawa-daily-v2.firebasestorage.app',
-  messagingSenderId: '142164818850',
-  appId: '1:142164818850:web:f45b05791880d66cf690fb',
-  measurementId: 'G-1TSRYXFSGX'
+  apiKey: 'AIzaSyBdWKqik66fis2Bs4rdjM8YZkdCOoqLuqM',
+  authDomain: 'hawainn-khabaru.firebaseapp.com',
+  projectId: 'hawainn-khabaru',
+  storageBucket: 'hawainn-khabaru.firebasestorage.app',
+  messagingSenderId: '623605252027',
+  appId: '1:623605252027:web:41035193d2062fc6f14e9e',
+  measurementId: 'G-ED3QC22TWG'
 };
 
 const app = initializeApp(firebaseConfig, 'backup');
