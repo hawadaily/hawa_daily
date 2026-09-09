@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, BookOpen, User, Book as BookIcon, Stethoscope } from 'lucide-react';
+import { Download, X, Home as HomeIcon, FolderOpen, ChefHat, BookOpen, User, Book as BookIcon, Stethoscope, Newspaper, Clock, Sparkles } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import { Analytics } from '@vercel/analytics/react';
@@ -222,9 +222,9 @@ function App() {
           links={[
             { label: language === 'en' ? 'Home' : 'މައި ޞަފްޙާ', path: '/', icon: HomeIcon },
             { label: language === 'en' ? 'Recipes' : 'ރަހަގެ ސިއްރު', path: '/recipes', icon: ChefHat },
-            { label: language === 'en' ? 'Real Incident' : 'ހަޤީޤީ ހާދިސާ', path: '/real-stories', icon: BookIcon },
-            { label: language === 'en' ? 'Golden Time' : 'ރަން ޒަމާން', path: '/golden-time', icon: BookIcon },
-            { label: language === 'en' ? 'Vahaka' : 'ވާހަކަ', path: '/vahaka', icon: BookIcon },
+            { label: language === 'en' ? 'Real Incident' : 'ހަޤީޤީ ހާދިސާ', path: '/real-stories', icon: Newspaper },
+            { label: language === 'en' ? 'Golden Time' : 'ރަން ޒަމާން', path: '/golden-time', icon: Clock },
+            { label: language === 'en' ? 'Vahaka' : 'ވާހަކަ', path: '/vahaka', icon: Sparkles },
             { label: language === 'en' ? 'Quran' : 'الْقُرْآنا ترجمة', path: '/quran', icon: BookOpen },
           ]}
           activePath={location.pathname}
