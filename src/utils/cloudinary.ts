@@ -375,9 +375,8 @@ export async function uploadToImgBB(file: File, logoOptions?: { enabled: boolean
 
     return data.data.url;
   } catch (error) {
-    console.error('ImgBB upload failed due to CORS:', error);
-    console.log('Falling back to Imgur...');
-    // Fallback to Imgur since ImgBB doesn't support CORS
-    return uploadToImgur(file);
+    console.error('ImgBB upload failed, trying Cloudinary:', error);
+    // Fallback to Cloudinary when ImgBB is down
+    return uploadImage(file, 'articles');
   }
 }
