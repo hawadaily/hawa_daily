@@ -2,6 +2,40 @@
 
 All notable changes to the Hawainn Khabaru news portal are documented in this file.
 
+## [2.3.0] - 2026-09-21 - Image Upload Fallback System
+
+### 🔧 Technical Changes
+- **Changed image upload fallback** from Imgur to Cloudinary
+  - Primary: ImgBB (when available)
+  - Fallback: Cloudinary (when ImgBB is down)
+  - Automatic switching between services without manual intervention
+- **Fixed Cloudinary upload issue** - Removed `folder` parameter
+  - Unsigned Cloudinary presets don't support folder parameter
+  - Images now upload successfully to Cloudinary root folder
+- **Updated Cloudinary credentials** to new account
+  - Cloud name: `qzlla1ky`
+  - Upload preset: `hawadaily`
+  - Added to Vercel environment variables
+
+### 📝 Updated Files
+- `src/utils/cloudinary.ts` - Changed fallback logic + removed folder parameter
+- `.env` - Updated Cloudinary credentials
+
+### 🐛 Fixes
+- Fixed Cloudinary upload failures caused by unsupported folder parameter
+- Resolved ImgBB downtime issues with automatic Cloudinary fallback
+
+### 🚀 Deployment
+- ✅ Changes pushed to GitHub (commit `25c0401`)
+- ✅ Vercel environment variables updated with new Cloudinary credentials
+- ✅ Automatic fallback system now active
+
+### ⚠️ Known Issues
+- Firebase Firestore quota exceeded - requires upgrade to Blaze plan
+- ImgBB currently under maintenance (503 errors) - Cloudinary fallback active
+
+---
+
 ## [2.2.0] - 2026-07-12 - Image Generator Enhancements & Bug Fixes
 
 ### 🎨 New Features
