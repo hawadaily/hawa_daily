@@ -3,7 +3,7 @@ export async function uploadImage(file: File, folder: string = 'banners'): Promi
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'unsigned_preset');
-    formData.append('folder', folder);
+    // Note: Unsigned presets don't support folder parameter, so we remove it
 
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
@@ -14,7 +14,7 @@ export async function uploadImage(file: File, folder: string = 'banners'): Promi
     );
 
     const data = await response.json();
-    
+
     if (data.error) {
       throw new Error(data.error.message);
     }
@@ -31,7 +31,7 @@ export async function uploadVideo(file: File, folder: string = 'videos'): Promis
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'unsigned_preset');
-    formData.append('folder', folder);
+    // Note: Unsigned presets don't support folder parameter, so we remove it
     formData.append('resource_type', 'video');
 
     const response = await fetch(
@@ -43,7 +43,7 @@ export async function uploadVideo(file: File, folder: string = 'videos'): Promis
     );
 
     const data = await response.json();
-    
+
     if (data.error) {
       throw new Error(data.error.message);
     }
